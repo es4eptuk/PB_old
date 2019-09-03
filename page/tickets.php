@@ -4,15 +4,24 @@ class Tickets
     private $user;
     private $robot;
     private $link_ticket;
-    function __construct()
+    private $query;
+    /**
+     * @var string
+     */
+
+
+    public function __construct()
     {
         global $database_server, $database_user, $database_password, $dbase;
-        $this->link_ticket = mysql_connect($database_server, $database_user, $database_password) or die('Не удалось соединиться: ' . mysql_error());
-        mysql_set_charset('utf8', $this->link_ticket);
-        //echo 'Соединение успешно установлено';
-        mysql_select_db($dbase) or die('Не удалось выбрать базу данных');
-        //$this -> telegram = new TelegramAPI;
-        
+        $this->link_ticket = mysqli_connect($database_server, $database_user, $database_password, $dbase);
+        if ( $this->link_ticket->connect_errno) {
+            echo "Извините, возникла проблема на сайте";
+            echo "Ошибка: Не удалась создать соединение с базой MySQL и вот почему: \n";
+            echo "Номер ошибки: " .  $this->link_ticket->connect_errno . "\n";
+            echo "Ошибка: " .  $this->link_ticket->connect_error . "\n";
+            exit;
+        }
+
         //Подключение внешних классов
         $this->robot = new Robots;
         $this->user  = new User;
@@ -25,9 +34,9 @@ class Tickets
         if ($id == 0) {
             $where = 'WHERE `id` !=6';
         }
-        $query = "SELECT * FROM tickets_status $where ORDER BY `sort` ASC ";
-        $result = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
-        while ($line = mysql_fetch_array($result, MYSQL_ASSOC)) {
+        $this->query = "SELECT * FROM tickets_status $where ORDER BY `sort` ASC ";
+        $result = $this->link_ticket->query($this->query);
+        while ($line = mysqli_fetch_array($result)) {
             $ticket_status_array[] = $line;
         }
         
@@ -38,9 +47,9 @@ class Tickets
     //Получение списка категорий тикетов, в качестве параметров можно указать тип $type (P - проблема (по умолчанию), I - консультация, FR - пожелание)
     public function get_category($type = "P")
     {
-        $query = "SELECT * FROM tickets_category WHERE `class` = '$type' ORDER BY `title` ASC";
-        $result = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
-        while ($line = mysql_fetch_array($result, MYSQL_ASSOC)) {
+        $this->query = "SELECT * FROM tickets_category WHERE `class` = '$type' ORDER BY `title` ASC";
+        $result = $this->link_ticket->query($this->query);
+        while ($line = mysqli_fetch_array($result)) {
             $ticket_category_array[] = $line;
         }
         // Освобождаем память от результата
@@ -58,9 +67,9 @@ class Tickets
         } else {
             $where = "";
         }
-        $query = "SELECT * FROM tickets_subcategory $where  ORDER BY `title` ASC";
-        $result = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
-        while ($line = mysql_fetch_array($result, MYSQL_ASSOC)) {
+        $this->query  = "SELECT * FROM tickets_subcategory $where  ORDER BY `title` ASC";
+        $result = $this->link_ticket->query($this->query);
+        while ($line = mysqli_fetch_array($result)) {
             $ticket_subcategory_array[] = $line;
         }
         // Освобождаем память от результата
@@ -80,7 +89,7 @@ class Tickets
     {
         $date    = date("Y-m-d H:i:s");
         $user_id = intval($_COOKIE['id']);
-        $query   = "INSERT INTO `tickets` (
+        $this->query   = "INSERT INTO `tickets` (
             `id`, 
             `robot`, 
             `class`,
@@ -104,10 +113,10 @@ class Tickets
                 '$date',
                 '$user_id', 
                 '$date');";
-        $result = mysql_query($query) or die('false');
-        $idd   = mysql_insert_id();
-        $query = "INSERT INTO `robot_log` (`id`, `robot_id`,`source`, `level`, `comment`, `ticket_id`,`update_user`, `update_date`) VALUES (NULL, $robot, 'TICKET',1, '$comment', $idd,  $user_id, '$date')";
-        $result = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
+       $result = $this->link_ticket->query($this->query);
+        $idd   = $this->link_ticket->insert_id;
+        $this->query  = "INSERT INTO `robot_log` (`id`, `robot_id`,`source`, `level`, `comment`, `ticket_id`,`update_user`, `update_date`) VALUES (NULL, $robot, 'TICKET',1, '$comment', $idd,  $user_id, '$date')";
+        $result = $this->link_ticket->query($this->query);
         // Освобождаем память от результата
         // mysql_free_result($result);
         return $result;
@@ -116,13 +125,12 @@ class Tickets
     //Получение информации о тикете по ID
     public function info($id)
     {
-        $query = "SELECT * FROM tickets WHERE id='$id'";
-        $result = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
-        while ($line = mysql_fetch_array($result, MYSQL_ASSOC)) {
+        $this->query = "SELECT * FROM tickets WHERE id='$id'";
+        $result = $this->link_ticket->query($this->query);
+        while ($line = mysqli_fetch_array($result)) {
             $ticket_array[] = $line;
         }
-        // Освобождаем память от результата
-        mysql_free_result($result);
+
         if (isset($ticket_array))
             return $ticket_array['0'];
     }
@@ -130,13 +138,12 @@ class Tickets
     //Получение списка комментариев тикета, в качестве параметра ID тикета
     public function get_comments($id)
     {
-        $query = "SELECT * FROM tickets_comments WHERE `ticket` =  $id ORDER BY `update_date` DESC";
-        $result = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
-        while ($line = mysql_fetch_array($result, MYSQL_ASSOC)) {
+        $this->query = "SELECT * FROM tickets_comments WHERE `ticket` =  $id ORDER BY `update_date` DESC";
+        $result = $this->link_ticket->query($this->query);
+        while ($line = mysqli_fetch_array($result)) {
             $ticket_comments[] = $line;
         }
-        // Освобождаем память от результата
-        // mysql_free_result($result);
+
         if (isset($ticket_comments))
             return $ticket_comments;
     }
@@ -144,13 +151,12 @@ class Tickets
     //Получение информации о категории тикета по ее ID
     public function get_info_category($id)
     {
-        $query = "SELECT * FROM tickets_category WHERE id='$id'";
-        $result = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
-        while ($line = mysql_fetch_array($result, MYSQL_ASSOC)) {
+        $this->query = "SELECT * FROM tickets_category WHERE id='$id'";
+        $result = $this->link_ticket->query($this->query);
+        while ($line = mysqli_fetch_array($result)) {
             $category_array[] = $line;
         }
-        // Освобождаем память от результата
-        mysql_free_result($result);
+
         if (isset($category_array))
             return $category_array['0'];
     }
@@ -158,13 +164,12 @@ class Tickets
     //Получение информации о подкатегории тикета по ее ID
     public function get_info_subcategory($id)
     {
-        $query = "SELECT * FROM tickets_subcategory WHERE id='$id'";
-        $result = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
-        while ($line = mysql_fetch_array($result, MYSQL_ASSOC)) {
+        $this->query = "SELECT * FROM tickets_subcategory WHERE id='$id'";
+        $result = $this->link_ticket->query($this->query);
+        while ($line = mysqli_fetch_array($result)) {
             $subcategory_array[] = $line;
         }
-        // Освобождаем память от результата
-        mysql_free_result($result);
+
         if (isset($subcategory_array))
             return $subcategory_array['0'];
     }
@@ -172,13 +177,12 @@ class Tickets
     //Получение информации о статусе тикета по его ID
     public function get_info_status($id)
     {
-        $query = "SELECT * FROM tickets_status WHERE id='$id'";
-        $result = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
-        while ($line = mysql_fetch_array($result, MYSQL_ASSOC)) {
+        $this->query = "SELECT * FROM tickets_status WHERE id='$id'";
+        $result = $this->link_ticket->query($this->query);
+        while ($line = mysqli_fetch_array($result)) {
             $status_array[] = $line;
         }
-        // Освобождаем память от результата
-        mysql_free_result($result);
+
         if (isset($status_array))
             return $status_array['0'];
     }
@@ -191,7 +195,7 @@ class Tickets
     {
         $date    = date("Y-m-d H:i:s");
         $user_id = intval($_COOKIE['id']);
-        $query   = "INSERT INTO `tickets_comments` (
+        $this->query = "INSERT INTO `tickets_comments` (
             `id`, 
             `ticket`, 
             `comment`, 
@@ -202,10 +206,10 @@ class Tickets
                 '$comment', 
                 $user_id, 
                 '$date');";
-        $result = mysql_query($query) or die('false');
-        $idd   = mysql_insert_id();
-        $query = "UPDATE `tickets` SET  `update_user` = $user_id, `update_date` = '$date' WHERE `id` = $ticket";
-        $result = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
+       $result = $this->link_ticket->query($this->query);
+        $idd   = $this->link_ticket->insert_id;
+        $this->query = "UPDATE `tickets` SET  `update_user` = $user_id, `update_date` = '$date' WHERE `id` = $ticket";
+        $result = $this->link_ticket->query($this->query);
         //echo $query;
         return $result;
     }
@@ -251,10 +255,10 @@ class Tickets
         if ($class != "") {
             $where .= " AND `class` = '$class' ";
         }
-        $query = "SELECT * FROM tickets WHERE `id` > 0 $where ORDER BY `$sortBy` $sortDir";
+        $this->query = "SELECT * FROM tickets WHERE `id` > 0 $where ORDER BY `$sortBy` $sortDir";
         //echo $query."<br>";
-        $result = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
-        while ($line = mysql_fetch_array($result, MYSQL_ASSOC)) {
+        $result = $this->link_ticket->query($this->query);
+        while ($line = mysqli_fetch_array($result)) {
             $ticket_array[] = $line;
         }
         // Освобождаем память от результата
@@ -279,11 +283,11 @@ class Tickets
         if ($status != 0) {
             $where .= "AND `status` = $status ";
         }
-        $query_kanban = "SELECT * FROM tickets WHERE `id` > 0 $where ORDER BY `$sortBy` $sortDir";
+        $this->query = "SELECT * FROM tickets WHERE `id` > 0 $where ORDER BY `$sortBy` $sortDir";
         //echo $query_kanban;
-        $result_kanban = mysql_query($query_kanban) or die('Запрос не удался: ' . mysql_error());
+        $result = $this->link_ticket->query($this->query);
         $i = 0;
-        while ($line_kanban = mysql_fetch_array($result_kanban, MYSQL_ASSOC)) {
+        while ($line_kanban = mysqli_fetch_array($result)) {
             $i++;
             $ticket_array[$i]['id']          = $line_kanban['id'];
             // $ticket_array[]['robot_version'] = $line['id'];
@@ -322,33 +326,33 @@ class Tickets
         $date    = date("Y-m-d H:i:s");
         $user_id = intval($_COOKIE['id']);
         if ($status == 3) {
-            $query = "UPDATE `tickets` SET `status` = '$status', `inwork` = '$date', `update_user` = $user_id, `update_date` = '$date' WHERE `id` = $id";
+            $this->query = "UPDATE `tickets` SET `status` = '$status', `inwork` = '$date', `update_user` = $user_id, `update_date` = '$date' WHERE `id` = $id";
         } else {
-            $query = "UPDATE `tickets` SET `status` = '$status', `update_user` = $user_id, `update_date` = '$date' WHERE `id` = $id";
+            $this->query = "UPDATE `tickets` SET `status` = '$status', `update_user` = $user_id, `update_date` = '$date' WHERE `id` = $id";
         }
         //echo $query;
         // $query = "UPDATE `tickets` SET `status` = '$status', `update_user` = $user_id, `update_date` = '$date' WHERE `id` = $id";
-        $result = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
-        $query = "SELECT * FROM `tickets_status` WHERE `id` = $id";
-        $result = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
-        while ($line = mysql_fetch_array($result, MYSQL_ASSOC)) {
+        $result = $this->link_ticket->query($this->query);
+        $this->query = "SELECT * FROM `tickets_status` WHERE `id` = $id";
+        $result = $this->link_ticket->query($this->query);
+        while ($line = mysqli_fetch_array($result)) {
             $status_array[] = $line;
         }
         if (isset($status_array)) {
             $status_str = $status_array[0]['title'];
             $color      = $status_array[0]['color'];
         }
-        $query = "SELECT * FROM `tickets` WHERE `id` = $id";
-        $result = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
-        while ($line = mysql_fetch_array($result, MYSQL_ASSOC)) {
+        $this->query = "SELECT * FROM `tickets` WHERE `id` = $id";
+        $result = $this->link_ticket->query($this->query);
+        while ($line = mysqli_fetch_array($result)) {
             $tickets_array[] = $line;
         }
         $robot   = $tickets_array[0]['robot'];
         $idd     = $tickets_array[0]['id'];
         $comment = $tickets_array[0]['description'];
         $status  = $tickets_array[0]['status'];
-        $query   = "INSERT INTO `robot_log` (`id`, `robot_id`,  `source`, `level`, `comment`, `ticket_id`,`update_user`, `update_date`) VALUES (NULL, $robot,  'TICKET', $status, '$comment', $idd,  $user_id, '$date')";
-        $result = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
+        $this->query = "INSERT INTO `robot_log` (`id`, `robot_id`,  `source`, `level`, `comment`, `ticket_id`,`update_user`, `update_date`) VALUES (NULL, $robot,  'TICKET', $status, '$comment', $idd,  $user_id, '$date')";
+        $result = $this->link_ticket->query($this->query);
         //echo $query;
         // Освобождаем память от результата
         // mysql_free_result($result);
@@ -363,30 +367,29 @@ class Tickets
     {
         $date    = date("Y-m-d H:i:s");
         $user_id = intval($_COOKIE['id']);
-        $query   = "UPDATE `tickets` SET `status` = '3', `inwork` = '$date',`result_description` = '$result', `update_user` = $user_id, `update_date` = '$date' WHERE `id` = $id";
-        echo $query;
+        $this->query = "UPDATE `tickets` SET `status` = '3', `inwork` = '$date',`result_description` = '$result', `update_user` = $user_id, `update_date` = '$date' WHERE `id` = $id";
         // $query = "UPDATE `tickets` SET `status` = '$status', `update_user` = $user_id, `update_date` = '$date' WHERE `id` = $id";
-        $result = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
-        $query = "SELECT * FROM `tickets_status` WHERE `id` = $id";
-        $result = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
-        while ($line = mysql_fetch_array($result, MYSQL_ASSOC)) {
+        $result = $this->link_ticket->query($this->query);
+        $this->query = "SELECT * FROM `tickets_status` WHERE `id` = $id";
+        $result = $this->link_ticket->query($this->query);
+        while ($line = mysqli_fetch_array($result)) {
             $status_array[] = $line;
         }
         if (isset($status_array)) {
             $status_str = $status_array[0]['title'];
             $color      = $status_array[0]['color'];
         }
-        $query = "SELECT * FROM `tickets` WHERE `id` = $id";
-        $result = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
-        while ($line = mysql_fetch_array($result, MYSQL_ASSOC)) {
+        $this->query = "SELECT * FROM `tickets` WHERE `id` = $id";
+        $result = $this->link_ticket->query($this->query);
+        while ($line = mysqli_fetch_array($result)) {
             $tickets_array[] = $line;
         }
         $robot   = $tickets_array[0]['robot'];
         $idd     = $tickets_array[0]['id'];
         $comment = $tickets_array[0]['description'];
         $status  = $tickets_array[0]['status'];
-        $query   = "INSERT INTO `robot_log` (`id`, `robot_id`,  `source`, `level`, `comment`, `ticket_id`,`update_user`, `update_date`) VALUES (NULL, $robot,  'TICKET', $status, '$comment', $idd,  $user_id, '$date')";
-        $result = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
+        $this->query = "INSERT INTO `robot_log` (`id`, `robot_id`,  `source`, `level`, `comment`, `ticket_id`,`update_user`, `update_date`) VALUES (NULL, $robot,  'TICKET', $status, '$comment', $idd,  $user_id, '$date')";
+        $result = $this->link_ticket->query($this->query);
         //echo $query;
         // Освобождаем память от результата
         // mysql_free_result($result);
@@ -401,30 +404,30 @@ class Tickets
         $date    = date("Y-m-d H:i:s");
         $user_id = intval($_COOKIE['id']);
         $newDate = date("Y-m-d", strtotime($date_finish));
-        $query   = "UPDATE `tickets` SET `status` = '4', `finish_date` = '$newDate', `update_user` = $user_id, `update_date` = '$date' WHERE `id` = $id";
-        echo $query;
+        $this->query = "UPDATE `tickets` SET `status` = '4', `finish_date` = '$newDate', `update_user` = $user_id, `update_date` = '$date' WHERE `id` = $id";
+
         // $query = "UPDATE `tickets` SET `status` = '$status', `update_user` = $user_id, `update_date` = '$date' WHERE `id` = $id";
-        $result = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
-        $query = "SELECT * FROM `tickets_status` WHERE `id` = $id";
-        $result = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
-        while ($line = mysql_fetch_array($result, MYSQL_ASSOC)) {
+        $result = $this->link_ticket->query($this->query);
+        $this->query = "SELECT * FROM `tickets_status` WHERE `id` = $id";
+        $result = $this->link_ticket->query($this->query);
+        while ($line = mysqli_fetch_array($result)) {
             $status_array[] = $line;
         }
         if (isset($status_array)) {
             $status_str = $status_array[0]['title'];
             $color      = $status_array[0]['color'];
         }
-        $query = "SELECT * FROM `tickets` WHERE `id` = $id";
-        $result = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
-        while ($line = mysql_fetch_array($result, MYSQL_ASSOC)) {
+        $this->query = "SELECT * FROM `tickets` WHERE `id` = $id";
+        $result = $this->link_ticket->query($this->query);
+        while ($line = mysqli_fetch_array($result)) {
             $tickets_array[] = $line;
         }
         $robot   = $tickets_array[0]['robot'];
         $idd     = $tickets_array[0]['id'];
         $comment = $tickets_array[0]['description'];
         $status  = $tickets_array[0]['status'];
-        $query   = "INSERT INTO `robot_log` (`id`, `robot_id`,  `source`, `level`, `comment`, `ticket_id`,`update_user`, `update_date`) VALUES (NULL, $robot,  'TICKET', $status, '$comment', $idd,  $user_id, '$date')";
-        $result = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
+        $this->query = "INSERT INTO `robot_log` (`id`, `robot_id`,  `source`, `level`, `comment`, `ticket_id`,`update_user`, `update_date`) VALUES (NULL, $robot,  'TICKET', $status, '$comment', $idd,  $user_id, '$date')";
+        $result = $this->link_ticket->query($this->query);
         //echo $query;
         // Освобождаем память от результата
         // mysql_free_result($result);
@@ -438,15 +441,15 @@ class Tickets
     {
         $date    = date("Y-m-d H:i:s");
         $user_id = intval($_COOKIE['id']);
-        $query   = "SELECT assign_time FROM `tickets` WHERE `id` = $id";
-        $result = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
+        $this->query = "SELECT assign_time FROM `tickets` WHERE `id` = $id";
+        $result = $this->link_ticket->query($this->query);
         $line        = mysql_fetch_array($result, MYSQL_ASSOC);
         $assign_time = $line['assign_time'];
         if ($assign_time == "0000-00-00 00:00:00") {
             $assign_time = $date;
         }
-        $query = "UPDATE `tickets` SET `assign` = '$assign',`assign_time` = '$assign_time', `update_user` = $user_id, `update_date` = '$date' WHERE `id` = $id";
-        $result = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
+        $this->query = "UPDATE `tickets` SET `assign` = '$assign',`assign_time` = '$assign_time', `update_user` = $user_id, `update_date` = '$date' WHERE `id` = $id";
+        $result = $this->link_ticket->query($this->query);
         //echo $query;
         // Освобождаем память от результата
         // mysql_free_result($result);
@@ -462,9 +465,9 @@ class Tickets
     {
         $date    = date("Y-m-d H:i:s");
         $user_id = intval($_COOKIE['id']);
-        $query   = "INSERT INTO `tickets_category` (`id`, `title`, `class`) VALUES (NULL, '$title', '$cat_class');";
-        $result = mysql_query($query) or die('false');
-        $idd = mysql_insert_id();
+        $this->query = "INSERT INTO `tickets_category` (`id`, `title`, `class`) VALUES (NULL, '$title', '$cat_class');";
+        $result = $this->link_ticket->query($this->query);
+        $idd = $this->link_ticket->insert_id;
         return $idd;
     }
     
@@ -475,9 +478,9 @@ class Tickets
     {
         $date    = date("Y-m-d H:i:s");
         $user_id = intval($_COOKIE['id']);
-        $query   = "INSERT INTO `tickets_subcategory` (`id`, `category`, `title`) VALUES (NULL, $id, '$title');";
-        $result = mysql_query($query) or die('false');
-        $idd = mysql_insert_id();
+        $this->query = "INSERT INTO `tickets_subcategory` (`id`, `category`, `title`) VALUES (NULL, $id, '$title');";
+        $result = $this->link_ticket->query($this->query);
+        $idd = $this->link_ticket->insert_id;
         return $idd;
     }
     
@@ -490,8 +493,8 @@ class Tickets
     {
         $date    = date("Y-m-d H:i:s");
         $user_id = intval($_COOKIE['id']);
-        $query   = "UPDATE `tickets` SET `category` = $category,`subcategory` = $subcategory, `description` = '$description', `update_user` = $user_id, `update_date` = '$date' WHERE `id` = $id";
-        $result = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
+        $this->query = "UPDATE `tickets` SET `category` = $category,`subcategory` = $subcategory, `description` = '$description', `update_user` = $user_id, `update_date` = '$date' WHERE `id` = $id";
+        $result = $this->link_ticket->query($this->query);
         return $result;
     }
     
@@ -501,8 +504,8 @@ class Tickets
     {
         $date    = date("Y-m-d H:i:s");
         $user_id = intval($_COOKIE['id']);
-        $query   = "UPDATE `tickets` SET `status` = 6, `update_user` = $user_id, `update_date` = '$date' WHERE `status` = $id";
-        $result = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
+        $this->query = "UPDATE `tickets` SET `status` = 6, `update_user` = $user_id, `update_date` = '$date' WHERE `status` = $id";
+        $result = $this->link_ticket->query($this->query);
         return $result;
     }
     
@@ -513,17 +516,17 @@ class Tickets
     function write_stat($total_robots, $open_tickets, $robot_problem)
     {
         $date  = date("Y-m-d H:i:s");
-        $query = "INSERT INTO `tickets_stat` (`date`, `problem_robots`, `open_tickets`, `count_robots`) VALUES ('$date', '$robot_problem', '$open_tickets', '$total_robots');";
-        $result = mysql_query($query) or die('false');
+        $this->query = "INSERT INTO `tickets_stat` (`date`, `problem_robots`, `open_tickets`, `count_robots`) VALUES ('$date', '$robot_problem', '$open_tickets', '$total_robots');";
+        $result = $this->link_ticket->query($this->query);
         return $result;
     }
     
     //херня какая то непомню зачем
     function get_tickets_live()
     {
-        $query = "SELECT * from ticket_log WHERE id_row=( SELECT max(id_row) FROM ticket_log )";
-        $result = mysql_query($query) or die('false');
-        $line = mysql_fetch_array($result, MYSQL_ASSOC);
+        $this->query = "SELECT * from ticket_log WHERE id_row=( SELECT max(id_row) FROM ticket_log )";
+       $result = $this->link_ticket->query($this->query);
+        $line = mysqli_fetch_array($result);
         return $line['id_row'];
         //echo "11";
     }
