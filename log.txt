@@ -1,0 +1,2952 @@
+action => zabbix
+host => promobotv4_0091
+type => 0
+time => 14:13:58
+problem => /etc/passwd has been changed on robot
+total_uptime => 15 days, 03:47:34
+type_message => Disaster
+id => 7856340
+status => PROBLEM
+action => zabbix
+host => promobotv4_0074
+type => 0
+time => 14:21:46
+problem => Servo.Node restarted > 100. Count = 4212
+total_uptime => 17 days, 10:01:01
+type_message => Disaster
+id => 7856424
+status => PROBLEM
+action => zabbix
+host => promobotv4_0080
+type => 0
+time => 13:09:17
+problem => Display. voltage = 11.813, current = 0.0014
+total_uptime => 29 days, 20:21:16
+type_message => Disaster
+id => 7855114
+status => OK
+action => zabbix
+host => promobotv4_0074
+type => 0
+time => 14:21:46
+problem => Servo.Node restarted > 100. Count = 4212
+total_uptime => 17 days, 10:30:01
+type_message => Disaster
+id => 7856424
+status => OK
+action => zabbix
+host => promobotv4_0074
+type => 0
+time => 14:54:06
+problem => Servo.Motor issue on servo 31
+total_uptime => 17 days, 10:30:01
+type_message => Disaster
+id => 7856906
+status => PROBLEM
+action => zabbix
+host => promobotv4_0074
+type => 0
+time => 14:54:06
+problem => Servo.Motor issue on servo 35
+total_uptime => 17 days, 10:30:01
+type_message => Disaster
+id => 7856907
+status => PROBLEM
+action => zabbix
+host => promobotv4_0074
+type => 0
+time => 14:55:08
+problem => Servo.Motor issue on servo 34
+total_uptime => 17 days, 10:30:01
+type_message => Disaster
+id => 7856953
+status => PROBLEM
+action => zabbix
+host => promobotv4_0074
+type => 0
+time => 14:55:39
+problem => Servo.Motor issue on servo 42
+total_uptime => 17 days, 10:30:01
+type_message => Disaster
+id => 7856962
+status => PROBLEM
+action => zabbix
+host => promobotv4_0167
+type => 0
+time => 0
+problem => Test
+total_uptime => 0
+type_message => Disaster
+id => 0
+status => 0
+client => 1
+action => zabbix
+host => promobotv4_0167
+type => 0
+time => 0
+problem => Test
+total_uptime => 0
+type_message => Disaster
+id => 0
+status => 0
+client => 1
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 16:00:12
+
+problem => Auto Mode
+
+total_uptime => 25 days, 00:58:03
+
+type_message => Information
+
+id => 7858017
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 17:13:42
+
+problem => Auto Mode
+
+total_uptime => 25 days, 02:11:03
+
+type_message => Information
+
+id => 7858955
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 17:15:06
+
+problem => Charging
+
+total_uptime => 25 days, 02:12:02
+
+type_message => Information
+
+id => 7858977
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 17:40:42
+
+problem => Auto Mode
+
+total_uptime => 25 days, 02:37:02
+
+type_message => Information
+
+id => 7859254
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 19:30:09
+
+problem => Auto Mode
+
+total_uptime => 25 days, 04:27:03
+
+type_message => Information
+
+id => 7860510
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 19:33:07
+
+problem => Charging
+
+total_uptime => 25 days, 04:30:03
+
+type_message => Information
+
+id => 7860534
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 22:00:11
+
+problem => Auto Mode
+
+total_uptime => 25 days, 06:57:02
+
+type_message => Information
+
+id => 7861864
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 22:36:48
+
+problem => Auto Mode
+
+total_uptime => 25 days, 07:34:02
+
+type_message => Information
+
+id => 7862179
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 22:39:05
+
+problem => Charging
+
+total_uptime => 25 days, 07:36:03
+
+type_message => Information
+
+id => 7862195
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 01:05:11
+
+problem => Robot has disconnected from the network 5 minutes ago (is offline now)
+
+total_uptime => 25 days, 09:57:02
+
+type_message => Information
+
+id => 7863340
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 09:01:33
+
+problem => Robot has just been power on
+
+total_uptime => 25 days, 09:57:02
+
+type_message => Information
+
+id => 7866959
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 09:03:29
+
+problem => Red Button has been pressed
+
+total_uptime => 25 days, 09:59:30
+
+type_message => Warning
+
+id => 7867008
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 01:05:11
+
+problem => Robot has disconnected from the network 5 minutes ago (is offline now)
+
+total_uptime => 26 days, 00:39:06
+
+type_message => Information
+
+id => 7878404
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 09:01:12
+
+problem => Robot has just been power on
+
+total_uptime => 26 days, 00:39:06
+
+type_message => Information
+
+id => 7881876
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 14:30:20
+
+problem => Ranges.US ID 13 = 0
+
+total_uptime => 26 days, 04:50:46
+
+type_message => Disaster
+
+id => 7887276
+
+status => PROBLEM
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 14:30:20
+
+problem => Ranges.US ID 9 = 0
+
+total_uptime => 26 days, 04:50:46
+
+type_message => Disaster
+
+id => 7887277
+
+status => PROBLEM
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 14:30:20
+
+problem => Ranges.US ID 12 = 0
+
+total_uptime => 26 days, 04:50:46
+
+type_message => Disaster
+
+id => 7887278
+
+status => PROBLEM
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 14:30:20
+
+problem => Ranges.US ID 11 = 0
+
+total_uptime => 26 days, 04:50:46
+
+type_message => Disaster
+
+id => 7887279
+
+status => PROBLEM
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 14:30:20
+
+problem => Ranges.US ID 10 = 0
+
+total_uptime => 26 days, 04:50:46
+
+type_message => Disaster
+
+id => 7887280
+
+status => PROBLEM
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 14:30:22
+
+problem => Ranges.TOF. ID 10 = 0
+
+total_uptime => 26 days, 04:50:46
+
+type_message => Disaster
+
+id => 7887282
+
+status => PROBLEM
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 14:30:22
+
+problem => Ranges.TOF. ID 11 = 0
+
+total_uptime => 26 days, 04:50:46
+
+type_message => Disaster
+
+id => 7887283
+
+status => PROBLEM
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 14:30:22
+
+problem => Ranges.TOF. ID 12 = 0
+
+total_uptime => 26 days, 04:50:46
+
+type_message => Disaster
+
+id => 7887284
+
+status => PROBLEM
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 15:06:20
+
+problem => Ranges.TOF. ID 9 = 0
+
+total_uptime => 26 days, 05:26:46
+
+type_message => Disaster
+
+id => 7887806
+
+status => PROBLEM
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 15:06:20
+
+problem => Ranges.TOF. ID 8 = 0
+
+total_uptime => 26 days, 05:26:46
+
+type_message => Disaster
+
+id => 7887807
+
+status => PROBLEM
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 15:06:18
+
+problem => Ranges.US ID 7 = 0
+
+total_uptime => 26 days, 05:26:46
+
+type_message => Disaster
+
+id => 7887800
+
+status => PROBLEM
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 15:06:18
+
+problem => Ranges.US ID 6 = 0
+
+total_uptime => 26 days, 05:26:46
+
+type_message => Disaster
+
+id => 7887801
+
+status => PROBLEM
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 15:06:18
+
+problem => Ranges.US ID 8 = 0
+
+total_uptime => 26 days, 05:26:46
+
+type_message => Disaster
+
+id => 7887802
+
+status => PROBLEM
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 15:06:20
+
+problem => Ranges.TOF. ID 6 = 0
+
+total_uptime => 26 days, 05:26:46
+
+type_message => Disaster
+
+id => 7887808
+
+status => PROBLEM
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 15:06:18
+
+problem => Ranges.US ID 5 = 0
+
+total_uptime => 26 days, 05:26:46
+
+type_message => Disaster
+
+id => 7887803
+
+status => PROBLEM
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 15:06:20
+
+problem => Ranges.TOF. ID 5 = 0
+
+total_uptime => 26 days, 05:26:46
+
+type_message => Disaster
+
+id => 7887809
+
+status => PROBLEM
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 15:06:18
+
+problem => Ranges.US ID 4 = 0
+
+total_uptime => 26 days, 05:26:46
+
+type_message => Disaster
+
+id => 7887804
+
+status => PROBLEM
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 15:06:20
+
+problem => Ranges.TOF. ID 7 = 0
+
+total_uptime => 26 days, 05:26:46
+
+type_message => Disaster
+
+id => 7887810
+
+status => PROBLEM
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 15:28:06
+
+problem => USB.Web-camera not found
+
+total_uptime => 26 days, 05:48:46
+
+type_message => Disaster
+
+id => 7888204
+
+status => PROBLEM
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 15:06:20
+
+problem => Ranges.TOF. ID 9 = 0
+
+total_uptime => 26 days, 06:02:45
+
+type_message => Disaster
+
+id => 7887806
+
+status => OK
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 15:06:20
+
+problem => Ranges.TOF. ID 8 = 0
+
+total_uptime => 26 days, 06:02:45
+
+type_message => Disaster
+
+id => 7887807
+
+status => OK
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 15:06:20
+
+problem => Ranges.TOF. ID 6 = 0
+
+total_uptime => 26 days, 06:02:45
+
+type_message => Disaster
+
+id => 7887808
+
+status => OK
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 15:06:20
+
+problem => Ranges.TOF. ID 5 = 0
+
+total_uptime => 26 days, 06:02:45
+
+type_message => Disaster
+
+id => 7887809
+
+status => OK
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 15:06:20
+
+problem => Ranges.TOF. ID 7 = 0
+
+total_uptime => 26 days, 06:02:45
+
+type_message => Disaster
+
+id => 7887810
+
+status => OK
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 15:06:18
+
+problem => Ranges.US ID 7 = 0
+
+total_uptime => 26 days, 06:05:46
+
+type_message => Disaster
+
+id => 7887800
+
+status => OK
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 15:06:18
+
+problem => Ranges.US ID 6 = 0
+
+total_uptime => 26 days, 06:05:46
+
+type_message => Disaster
+
+id => 7887801
+
+status => OK
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 15:06:18
+
+problem => Ranges.US ID 8 = 0
+
+total_uptime => 26 days, 06:05:46
+
+type_message => Disaster
+
+id => 7887802
+
+status => OK
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 15:06:18
+
+problem => Ranges.US ID 5 = 0
+
+total_uptime => 26 days, 06:05:46
+
+type_message => Disaster
+
+id => 7887803
+
+status => OK
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 15:06:18
+
+problem => Ranges.US ID 4 = 0
+
+total_uptime => 26 days, 06:05:46
+
+type_message => Disaster
+
+id => 7887804
+
+status => OK
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 15:28:06
+
+problem => USB.Web-camera not found
+
+total_uptime => 26 days, 06:08:45
+
+type_message => Disaster
+
+id => 7888204
+
+status => OK
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 15:52:18
+
+problem => Robot has been shutdown
+
+total_uptime => 26 days, 06:12:46
+
+type_message => Information
+
+id => 7888566
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 15:55:53
+
+problem => Robot has just been power on
+
+total_uptime => 26 days, 06:12:46
+
+type_message => Information
+
+id => 7888613
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 15:56:48
+
+problem => Ranges.Parktronic ID 16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1, not found
+
+total_uptime => 26 days, 06:15:01
+
+type_message => Disaster
+
+id => 7888623
+
+status => PROBLEM
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 14:30:20
+
+problem => Ranges.US ID 13 = 0
+
+total_uptime => 26 days, 06:15:01
+
+type_message => Disaster
+
+id => 7887276
+
+status => OK
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 14:30:22
+
+problem => Ranges.TOF. ID 10 = 0
+
+total_uptime => 26 days, 06:15:01
+
+type_message => Disaster
+
+id => 7887282
+
+status => OK
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 14:30:20
+
+problem => Ranges.US ID 9 = 0
+
+total_uptime => 26 days, 06:15:01
+
+type_message => Disaster
+
+id => 7887277
+
+status => OK
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 14:30:20
+
+problem => Ranges.US ID 12 = 0
+
+total_uptime => 26 days, 06:15:01
+
+type_message => Disaster
+
+id => 7887278
+
+status => OK
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 14:30:20
+
+problem => Ranges.US ID 11 = 0
+
+total_uptime => 26 days, 06:15:01
+
+type_message => Disaster
+
+id => 7887279
+
+status => OK
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 14:30:20
+
+problem => Ranges.US ID 10 = 0
+
+total_uptime => 26 days, 06:15:01
+
+type_message => Disaster
+
+id => 7887280
+
+status => OK
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 14:30:22
+
+problem => Ranges.TOF. ID 11 = 0
+
+total_uptime => 26 days, 06:15:01
+
+type_message => Disaster
+
+id => 7887283
+
+status => OK
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 14:30:22
+
+problem => Ranges.TOF. ID 12 = 0
+
+total_uptime => 26 days, 06:15:01
+
+type_message => Disaster
+
+id => 7887284
+
+status => OK
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 16:36:06
+
+problem => Charging
+
+total_uptime => 26 days, 06:54:01
+
+type_message => Information
+
+id => 7889147
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 16:40:45
+
+problem => Robot has been shutdown
+
+total_uptime => 26 days, 06:58:01
+
+type_message => Information
+
+id => 7889220
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 16:45:12
+
+problem => Robot has just been power on
+
+total_uptime => 26 days, 06:58:01
+
+type_message => Information
+
+id => 7889263
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 15:56:48
+
+problem => Ranges.Parktronic ID 16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1, not found
+
+total_uptime => 26 days, 06:58:01
+
+type_message => Disaster
+
+id => 7888623
+
+status => OK
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 16:49:52
+
+problem => Robot has just been power on
+
+total_uptime => 26 days, 06:15:29
+
+type_message => Information
+
+id => 7889314
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 16:55:52
+
+problem => Robot has just been power on
+
+total_uptime => 26 days, 06:15:48
+
+type_message => Information
+
+id => 7889400
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 16:57:12
+
+problem => Charging
+
+total_uptime => 26 days, 06:16:02
+
+type_message => Information
+
+id => 7889416
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 18:02:27
+
+problem => Auto Mode
+
+total_uptime => 26 days, 07:21:01
+
+type_message => Information
+
+id => 7890044
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 18:06:06
+
+problem => Charging
+
+total_uptime => 26 days, 07:25:01
+
+type_message => Information
+
+id => 7890075
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 18:17:01
+
+problem => Auto Mode
+
+total_uptime => 26 days, 06:16:46
+
+type_message => Information
+
+id => 7890180
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 18:20:02
+
+problem => Auto Mode
+
+total_uptime => 26 days, 06:19:46
+
+type_message => Information
+
+id => 7890218
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 18:27:04
+
+problem => Auto Mode
+
+total_uptime => 26 days, 06:26:45
+
+type_message => Information
+
+id => 7890276
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 18:33:06
+
+problem => Charging
+
+total_uptime => 26 days, 06:32:46
+
+type_message => Information
+
+id => 7890313
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 18:34:35
+
+problem => Auto Mode
+
+total_uptime => 26 days, 06:33:45
+
+type_message => Information
+
+id => 7890327
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 18:36:05
+
+problem => Auto Mode
+
+total_uptime => 26 days, 06:35:46
+
+type_message => Information
+
+id => 7890340
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 18:40:06
+
+problem => Auto Mode
+
+total_uptime => 26 days, 06:39:46
+
+type_message => Information
+
+id => 7890402
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 18:42:05
+
+problem => Charging
+
+total_uptime => 26 days, 06:41:45
+
+type_message => Information
+
+id => 7890420
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 18:42:25
+
+problem => Robot has been shutdown
+
+total_uptime => 26 days, 06:41:45
+
+type_message => Information
+
+id => 7890429
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 18:47:13
+
+problem => Auto Mode
+
+total_uptime => 26 days, 06:41:45
+
+type_message => Information
+
+id => 7890490
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 18:47:13
+
+problem => Robot has just been power on
+
+total_uptime => 26 days, 06:41:45
+
+type_message => Information
+
+id => 7890489
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 18:53:15
+
+problem => Auto Mode
+
+total_uptime => 26 days, 06:49:40
+
+type_message => Information
+
+id => 7890541
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 18:56:16
+
+problem => Auto Mode
+
+total_uptime => 26 days, 06:52:40
+
+type_message => Information
+
+id => 7890561
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 19:01:18
+
+problem => Auto Mode
+
+total_uptime => 26 days, 06:57:39
+
+type_message => Information
+
+id => 7890592
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 19:04:20
+
+problem => Auto Mode
+
+total_uptime => 26 days, 07:00:39
+
+type_message => Information
+
+id => 7890619
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 19:07:52
+
+problem => Auto Mode
+
+total_uptime => 26 days, 07:04:40
+
+type_message => Information
+
+id => 7890643
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 19:09:07
+
+problem => Charging
+
+total_uptime => 26 days, 07:05:39
+
+type_message => Information
+
+id => 7890650
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 19:09:22
+
+problem => Auto Mode
+
+total_uptime => 26 days, 07:05:39
+
+type_message => Information
+
+id => 7890653
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 19:13:54
+
+problem => Auto Mode
+
+total_uptime => 26 days, 07:10:39
+
+type_message => Information
+
+id => 7890702
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 19:15:07
+
+problem => Charging
+
+total_uptime => 26 days, 07:11:39
+
+type_message => Information
+
+id => 7890711
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 19:16:25
+
+problem => Auto Mode
+
+total_uptime => 26 days, 07:12:40
+
+type_message => Information
+
+id => 7890718
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 19:20:26
+
+problem => Auto Mode
+
+total_uptime => 26 days, 07:16:40
+
+type_message => Information
+
+id => 7890743
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 19:21:57
+
+problem => Auto Mode
+
+total_uptime => 26 days, 07:18:40
+
+type_message => Information
+
+id => 7890751
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 19:30:28
+
+problem => Auto Mode
+
+total_uptime => 26 days, 07:26:40
+
+type_message => Information
+
+id => 7890815
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 19:33:07
+
+problem => Charging
+
+total_uptime => 26 days, 07:29:40
+
+type_message => Information
+
+id => 7890831
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 22:00:16
+
+problem => Auto Mode
+
+total_uptime => 26 days, 08:37:18
+
+type_message => Information
+
+id => 7891754
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 00:30:23
+
+problem => Auto Mode
+
+total_uptime => 26 days, 11:07:18
+
+type_message => Information
+
+id => 7892679
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 00:33:06
+
+problem => Charging
+
+total_uptime => 26 days, 11:10:18
+
+type_message => Information
+
+id => 7892694
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 01:05:11
+
+problem => Robot has disconnected from the network 5 minutes ago (is offline now)
+
+total_uptime => 26 days, 11:37:18
+
+type_message => Information
+
+id => 7892851
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 09:02:12
+
+problem => Robot has just been power on
+
+total_uptime => 26 days, 11:37:18
+
+type_message => Information
+
+id => 7895479
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 10:00:28
+
+problem => Auto Mode
+
+total_uptime => 26 days, 12:36:43
+
+type_message => Information
+
+id => 7895882
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 13:30:12
+
+problem => Auto Mode
+
+total_uptime => 26 days, 14:36:30
+
+type_message => Information
+
+id => 7897937
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 13:33:07
+
+problem => Charging
+
+total_uptime => 26 days, 14:39:30
+
+type_message => Information
+
+id => 7897966
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 16:00:10
+
+problem => Auto Mode
+
+total_uptime => 26 days, 17:06:31
+
+type_message => Information
+
+id => 7899262
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 19:30:31
+
+problem => Auto Mode
+
+total_uptime => 26 days, 20:36:31
+
+type_message => Information
+
+id => 7900960
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 19:33:06
+
+problem => Charging
+
+total_uptime => 26 days, 20:39:31
+
+type_message => Information
+
+id => 7900981
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 22:00:18
+
+problem => Auto Mode
+
+total_uptime => 26 days, 23:06:31
+
+type_message => Information
+
+id => 7901800
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 00:30:18
+
+problem => Auto Mode
+
+total_uptime => 27 days, 01:36:31
+
+type_message => Information
+
+id => 7902410
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 00:33:05
+
+problem => Charging
+
+total_uptime => 27 days, 01:39:31
+
+type_message => Information
+
+id => 7902421
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 01:05:11
+
+problem => Robot has disconnected from the network 5 minutes ago (is offline now)
+
+total_uptime => 27 days, 02:06:31
+
+type_message => Information
+
+id => 7902514
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 09:02:32
+
+problem => Robot has just been power on
+
+total_uptime => 27 days, 02:06:31
+
+type_message => Information
+
+id => 7903942
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 09:03:25
+
+problem => Red Button has been pressed
+
+total_uptime => 27 days, 02:08:53
+
+type_message => Warning
+
+id => 7903952
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 12:55:55
+
+problem => Auto Mode
+
+total_uptime => 27 days, 04:31:02
+
+type_message => Information
+
+id => 7905898
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 13:30:32
+
+problem => Auto Mode
+
+total_uptime => 27 days, 05:05:02
+
+type_message => Information
+
+id => 7906111
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 13:33:06
+
+problem => Charging
+
+total_uptime => 27 days, 05:08:02
+
+type_message => Information
+
+id => 7906121
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 13:45:03
+
+problem => Auto Mode
+
+total_uptime => 27 days, 05:20:01
+
+type_message => Information
+
+id => 7906203
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 14:31:10
+
+problem => Auto Mode
+
+total_uptime => 27 days, 06:06:02
+
+type_message => Information
+
+id => 7906436
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 14:33:04
+
+problem => Charging
+
+total_uptime => 27 days, 06:08:02
+
+type_message => Information
+
+id => 7906445
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 14:34:33
+
+problem => Robot has just been power on
+
+total_uptime => 27 days, 06:08:02
+
+type_message => Information
+
+id => 7906453
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 14:36:10
+
+problem => Charging
+
+total_uptime => 27 days, 06:10:34
+
+type_message => Information
+
+id => 7906472
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 16:00:01
+
+problem => Auto Mode
+
+total_uptime => 27 days, 07:34:34
+
+type_message => Information
+
+id => 7906778
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 19:30:18
+
+problem => Auto Mode
+
+total_uptime => 27 days, 09:23:41
+
+type_message => Information
+
+id => 7907707
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 19:33:07
+
+problem => Charging
+
+total_uptime => 27 days, 09:26:40
+
+type_message => Information
+
+id => 7907731
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 22:00:03
+
+problem => Auto Mode
+
+total_uptime => 27 days, 11:53:40
+
+type_message => Information
+
+id => 7908304
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 00:30:36
+
+problem => Auto Mode
+
+total_uptime => 27 days, 14:23:40
+
+type_message => Information
+
+id => 7908877
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 00:33:06
+
+problem => Charging
+
+total_uptime => 27 days, 14:26:41
+
+type_message => Information
+
+id => 7908883
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 01:05:11
+
+problem => Robot has disconnected from the network 5 minutes ago (is offline now)
+
+total_uptime => 27 days, 14:53:40
+
+type_message => Information
+
+id => 7908968
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 09:01:32
+
+problem => Robot has just been power on
+
+total_uptime => 27 days, 14:53:40
+
+type_message => Information
+
+id => 7920381
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 09:21:06
+
+problem => Charging
+
+total_uptime => 27 days, 15:14:05
+
+type_message => Information
+
+id => 7920510
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 10:00:01
+
+problem => Auto Mode
+
+total_uptime => 27 days, 15:53:04
+
+type_message => Information
+
+id => 7920769
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 13:30:26
+
+problem => Auto Mode
+
+total_uptime => 27 days, 17:40:19
+
+type_message => Information
+
+id => 7933035
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 13:33:08
+
+problem => Charging
+
+total_uptime => 27 days, 17:43:19
+
+type_message => Information
+
+id => 7933062
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 16:00:30
+
+problem => Auto Mode
+
+total_uptime => 27 days, 20:10:20
+
+type_message => Information
+
+id => 7935190
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 19:30:35
+
+problem => Auto Mode
+
+total_uptime => 27 days, 23:40:19
+
+type_message => Information
+
+id => 7937706
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 19:33:06
+
+problem => Charging
+
+total_uptime => 27 days, 23:43:20
+
+type_message => Information
+
+id => 7937724
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 22:00:13
+
+problem => Auto Mode
+
+total_uptime => 28 days, 02:10:19
+
+type_message => Information
+
+id => 7939106
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 00:30:23
+
+problem => Auto Mode
+
+total_uptime => 28 days, 04:40:20
+
+type_message => Information
+
+id => 7940742
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 00:33:07
+
+problem => Charging
+
+total_uptime => 28 days, 04:43:19
+
+type_message => Information
+
+id => 7940767
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 01:05:11
+
+problem => Robot has disconnected from the network 5 minutes ago (is offline now)
+
+total_uptime => 28 days, 05:10:20
+
+type_message => Information
+
+id => 7941084
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 09:01:12
+
+problem => Robot has just been power on
+
+total_uptime => 28 days, 05:10:20
+
+type_message => Information
+
+id => 7946087
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 10:00:03
+
+problem => Auto Mode
+
+total_uptime => 28 days, 06:09:39
+
+type_message => Information
+
+id => 7946720
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 11:17:11
+
+problem => Robot has disconnected from the network 5 minutes ago (is offline now)
+
+total_uptime => 28 days, 05:32:15
+
+type_message => Information
+
+id => 7947690
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 18:44:00
+
+problem => Auto Mode
+
+total_uptime => 28 days, 05:32:15
+
+type_message => Information
+
+id => 7951286
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 19:30:18
+
+problem => Auto Mode
+
+total_uptime => 28 days, 13:51:16
+
+type_message => Information
+
+id => 7951876
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 19:33:07
+
+problem => Charging
+
+total_uptime => 28 days, 13:54:16
+
+type_message => Information
+
+id => 7951929
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 22:00:09
+
+problem => Auto Mode
+
+total_uptime => 28 days, 16:21:16
+
+type_message => Information
+
+id => 7953031
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 00:30:22
+
+problem => Auto Mode
+
+total_uptime => 28 days, 18:51:15
+
+type_message => Information
+
+id => 7953935
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 00:33:06
+
+problem => Charging
+
+total_uptime => 28 days, 18:54:15
+
+type_message => Information
+
+id => 7953947
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 01:05:11
+
+problem => Robot has disconnected from the network 5 minutes ago (is offline now)
+
+total_uptime => 28 days, 19:21:15
+
+type_message => Information
+
+id => 7954082
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 09:02:12
+
+problem => Robot has just been power on
+
+total_uptime => 28 days, 19:21:15
+
+type_message => Information
+
+id => 7956476
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 10:00:00
+
+problem => Auto Mode
+
+total_uptime => 28 days, 20:20:35
+
+type_message => Information
+
+id => 7956882
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 13:30:23
+
+problem => Auto Mode
+
+total_uptime => 28 days, 21:57:31
+
+type_message => Information
+
+id => 7959588
+
+status => PROBLEM
+
+client => 1
+
+action => zabbix
+
+host => promobotv4_0167
+
+type => 0
+
+time => 13:33:06
+
+problem => Charging
+
+total_uptime => 28 days, 22:00:31
+
+type_message => Information
+
+id => 7959625
+
+status => PROBLEM
+
+client => 1
+
