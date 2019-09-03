@@ -5,6 +5,7 @@ class Tickets
     private $robot;
     private $link_ticket;
     private $query;
+    private $pdo;
     /**
      * @var string
      */
@@ -13,15 +14,13 @@ class Tickets
     public function __construct()
     {
         global $database_server, $database_user, $database_password, $dbase;
-        $this->link_ticket = mysqli_connect($database_server, $database_user, $database_password, $dbase);
-        if ( $this->link_ticket->connect_errno) {
-            echo "Извините, возникла проблема на сайте";
-            echo "Ошибка: Не удалась создать соединение с базой MySQL и вот почему: \n";
-            echo "Номер ошибки: " .  $this->link_ticket->connect_errno . "\n";
-            echo "Ошибка: " .  $this->link_ticket->connect_error . "\n";
-            exit;
-        }
-
+        $dsn = "mysql:host=$database_server;dbname=$dbase;charset=utf8";
+        $opt = [
+            PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            PDO::ATTR_EMULATE_PREPARES   => false,
+        ];
+        $this->pdo = new PDO($dsn, $database_user, $database_password, $opt);
         //Подключение внешних классов
         $this->robot = new Robots;
         $this->user  = new User;
@@ -35,8 +34,8 @@ class Tickets
             $where = 'WHERE `id` !=6';
         }
         $this->query = "SELECT * FROM tickets_status $where ORDER BY `sort` ASC ";
-        $result = $this->link_ticket->query($this->query);
-        while ($line = mysqli_fetch_array($result)) {
+        $result = $this->pdo->query($this->query);
+        while ($line = $result->fetch()) {
             $ticket_status_array[] = $line;
         }
         
@@ -48,13 +47,11 @@ class Tickets
     public function get_category($type = "P")
     {
         $this->query = "SELECT * FROM tickets_category WHERE `class` = '$type' ORDER BY `title` ASC";
-        $result = $this->link_ticket->query($this->query);
-        while ($line = mysqli_fetch_array($result)) {
+        $result = $this->pdo->query($this->query);
+        while ($line = $result->fetch()) {
             $ticket_category_array[] = $line;
         }
-        // Освобождаем память от результата
-        // mysql_free_result($result);
-        // Закрываем соединение
+
         if (isset($ticket_category_array))
             return $ticket_category_array;
     }
@@ -68,12 +65,11 @@ class Tickets
             $where = "";
         }
         $this->query  = "SELECT * FROM tickets_subcategory $where  ORDER BY `title` ASC";
-        $result = $this->link_ticket->query($this->query);
-        while ($line = mysqli_fetch_array($result)) {
+        $result = $this->pdo->query($this->query);
+        while ($line = $result->fetch()) {
             $ticket_subcategory_array[] = $line;
         }
-        // Освобождаем память от результата
-        // mysql_free_result($result);
+
         if (isset($ticket_subcategory_array))
             return $ticket_subcategory_array;
     }
@@ -113,12 +109,12 @@ class Tickets
                 '$date',
                 '$user_id', 
                 '$date');";
-       $result = $this->link_ticket->query($this->query);
-        $idd   = $this->link_ticket->insert_id;
+        $result = $this->pdo->query($this->query);
+        $idd   = $this->pdo->lastInsertId();
+
         $this->query  = "INSERT INTO `robot_log` (`id`, `robot_id`,`source`, `level`, `comment`, `ticket_id`,`update_user`, `update_date`) VALUES (NULL, $robot, 'TICKET',1, '$comment', $idd,  $user_id, '$date')";
-        $result = $this->link_ticket->query($this->query);
-        // Освобождаем память от результата
-        // mysql_free_result($result);
+        $result = $this->pdo->query($this->query);
+
         return $result;
     }
     
@@ -126,8 +122,8 @@ class Tickets
     public function info($id)
     {
         $this->query = "SELECT * FROM tickets WHERE id='$id'";
-        $result = $this->link_ticket->query($this->query);
-        while ($line = mysqli_fetch_array($result)) {
+        $result = $this->pdo->query($this->query);
+        while ($line = $result->fetch()) {
             $ticket_array[] = $line;
         }
 
@@ -139,8 +135,8 @@ class Tickets
     public function get_comments($id)
     {
         $this->query = "SELECT * FROM tickets_comments WHERE `ticket` =  $id ORDER BY `update_date` DESC";
-        $result = $this->link_ticket->query($this->query);
-        while ($line = mysqli_fetch_array($result)) {
+        $result = $this->pdo->query($this->query);
+        while ($line = $result->fetch()) {
             $ticket_comments[] = $line;
         }
 
@@ -152,8 +148,8 @@ class Tickets
     public function get_info_category($id)
     {
         $this->query = "SELECT * FROM tickets_category WHERE id='$id'";
-        $result = $this->link_ticket->query($this->query);
-        while ($line = mysqli_fetch_array($result)) {
+        $result = $this->pdo->query($this->query);
+        while ($line = $result->fetch()) {
             $category_array[] = $line;
         }
 
@@ -165,8 +161,8 @@ class Tickets
     public function get_info_subcategory($id)
     {
         $this->query = "SELECT * FROM tickets_subcategory WHERE id='$id'";
-        $result = $this->link_ticket->query($this->query);
-        while ($line = mysqli_fetch_array($result)) {
+        $result = $this->pdo->query($this->query);
+        while ($line = $result->fetch()) {
             $subcategory_array[] = $line;
         }
 
@@ -178,8 +174,8 @@ class Tickets
     public function get_info_status($id)
     {
         $this->query = "SELECT * FROM tickets_status WHERE id='$id'";
-        $result = $this->link_ticket->query($this->query);
-        while ($line = mysqli_fetch_array($result)) {
+        $result = $this->pdo->query($this->query);
+        while ($line = $result->fetch()) {
             $status_array[] = $line;
         }
 
@@ -206,10 +202,10 @@ class Tickets
                 '$comment', 
                 $user_id, 
                 '$date');";
-       $result = $this->link_ticket->query($this->query);
-        $idd   = $this->link_ticket->insert_id;
+       $result = $this->pdo->query($this->query);
+        $idd   = $this->pdo->lastInsertId();
         $this->query = "UPDATE `tickets` SET  `update_user` = $user_id, `update_date` = '$date' WHERE `id` = $ticket";
-        $result = $this->link_ticket->query($this->query);
+        $result = $this->pdo->query($this->query);
         //echo $query;
         return $result;
     }
@@ -257,12 +253,11 @@ class Tickets
         }
         $this->query = "SELECT * FROM tickets WHERE `id` > 0 $where ORDER BY `$sortBy` $sortDir";
         //echo $query."<br>";
-        $result = $this->link_ticket->query($this->query);
-        while ($line = mysqli_fetch_array($result)) {
+        $result = $this->pdo->query($this->query);
+        while ($line = $result->fetch()) {
             $ticket_array[] = $line;
         }
-        // Освобождаем память от результата
-        // mysql_free_result($result);
+
         if (isset($ticket_array))
             return $ticket_array;
     }
@@ -285,9 +280,9 @@ class Tickets
         }
         $this->query = "SELECT * FROM tickets WHERE `id` > 0 $where ORDER BY `$sortBy` $sortDir";
         //echo $query_kanban;
-        $result = $this->link_ticket->query($this->query);
+        $result = $this->pdo->query($this->query);
         $i = 0;
-        while ($line_kanban = mysqli_fetch_array($result)) {
+        while ($line_kanban = $result->fetch()) {
             $i++;
             $ticket_array[$i]['id']          = $line_kanban['id'];
             // $ticket_array[]['robot_version'] = $line['id'];
@@ -311,9 +306,7 @@ class Tickets
             $ticket_commets                  = $this->get_comments($line_kanban['id']);
             $ticket_array[$i]['comments']    = count($ticket_commets);
         }
-        // Освобождаем память от результата
-        // mysql_free_result($result);
-        // Закрываем соединение
+
         if (isset($ticket_array))
             return $ticket_array;
     }
@@ -332,10 +325,10 @@ class Tickets
         }
         //echo $query;
         // $query = "UPDATE `tickets` SET `status` = '$status', `update_user` = $user_id, `update_date` = '$date' WHERE `id` = $id";
-        $result = $this->link_ticket->query($this->query);
+        $result = $this->pdo->query($this->query);
         $this->query = "SELECT * FROM `tickets_status` WHERE `id` = $id";
-        $result = $this->link_ticket->query($this->query);
-        while ($line = mysqli_fetch_array($result)) {
+        $result = $this->pdo->query($this->query);
+        while ($line = $result->fetch()) {
             $status_array[] = $line;
         }
         if (isset($status_array)) {
@@ -343,8 +336,8 @@ class Tickets
             $color      = $status_array[0]['color'];
         }
         $this->query = "SELECT * FROM `tickets` WHERE `id` = $id";
-        $result = $this->link_ticket->query($this->query);
-        while ($line = mysqli_fetch_array($result)) {
+        $result = $this->pdo->query($this->query);
+        while ($line = $result->fetch()) {
             $tickets_array[] = $line;
         }
         $robot   = $tickets_array[0]['robot'];
@@ -352,10 +345,8 @@ class Tickets
         $comment = $tickets_array[0]['description'];
         $status  = $tickets_array[0]['status'];
         $this->query = "INSERT INTO `robot_log` (`id`, `robot_id`,  `source`, `level`, `comment`, `ticket_id`,`update_user`, `update_date`) VALUES (NULL, $robot,  'TICKET', $status, '$comment', $idd,  $user_id, '$date')";
-        $result = $this->link_ticket->query($this->query);
-        //echo $query;
-        // Освобождаем память от результата
-        // mysql_free_result($result);
+        $result = $this->pdo->query($this->query);
+
         return $result;
     }
     
@@ -369,10 +360,10 @@ class Tickets
         $user_id = intval($_COOKIE['id']);
         $this->query = "UPDATE `tickets` SET `status` = '3', `inwork` = '$date',`result_description` = '$result', `update_user` = $user_id, `update_date` = '$date' WHERE `id` = $id";
         // $query = "UPDATE `tickets` SET `status` = '$status', `update_user` = $user_id, `update_date` = '$date' WHERE `id` = $id";
-        $result = $this->link_ticket->query($this->query);
+        $result = $this->pdo->query($this->query);
         $this->query = "SELECT * FROM `tickets_status` WHERE `id` = $id";
-        $result = $this->link_ticket->query($this->query);
-        while ($line = mysqli_fetch_array($result)) {
+        $result = $this->pdo->query($this->query);
+        while ($line = $result->fetch()) {
             $status_array[] = $line;
         }
         if (isset($status_array)) {
@@ -380,8 +371,8 @@ class Tickets
             $color      = $status_array[0]['color'];
         }
         $this->query = "SELECT * FROM `tickets` WHERE `id` = $id";
-        $result = $this->link_ticket->query($this->query);
-        while ($line = mysqli_fetch_array($result)) {
+        $result = $this->pdo->query($this->query);
+        while ($line = $result->fetch()) {
             $tickets_array[] = $line;
         }
         $robot   = $tickets_array[0]['robot'];
@@ -389,10 +380,8 @@ class Tickets
         $comment = $tickets_array[0]['description'];
         $status  = $tickets_array[0]['status'];
         $this->query = "INSERT INTO `robot_log` (`id`, `robot_id`,  `source`, `level`, `comment`, `ticket_id`,`update_user`, `update_date`) VALUES (NULL, $robot,  'TICKET', $status, '$comment', $idd,  $user_id, '$date')";
-        $result = $this->link_ticket->query($this->query);
-        //echo $query;
-        // Освобождаем память от результата
-        // mysql_free_result($result);
+        $result = $this->pdo->query($this->query);
+
         return $result;
     }
     
@@ -407,10 +396,10 @@ class Tickets
         $this->query = "UPDATE `tickets` SET `status` = '4', `finish_date` = '$newDate', `update_user` = $user_id, `update_date` = '$date' WHERE `id` = $id";
 
         // $query = "UPDATE `tickets` SET `status` = '$status', `update_user` = $user_id, `update_date` = '$date' WHERE `id` = $id";
-        $result = $this->link_ticket->query($this->query);
+        $result = $this->pdo->query($this->query);
         $this->query = "SELECT * FROM `tickets_status` WHERE `id` = $id";
-        $result = $this->link_ticket->query($this->query);
-        while ($line = mysqli_fetch_array($result)) {
+        $result = $this->pdo->query($this->query);
+        while ($line = $result->fetch()) {
             $status_array[] = $line;
         }
         if (isset($status_array)) {
@@ -418,8 +407,8 @@ class Tickets
             $color      = $status_array[0]['color'];
         }
         $this->query = "SELECT * FROM `tickets` WHERE `id` = $id";
-        $result = $this->link_ticket->query($this->query);
-        while ($line = mysqli_fetch_array($result)) {
+        $result = $this->pdo->query($this->query);
+        while ($line = $result->fetch()) {
             $tickets_array[] = $line;
         }
         $robot   = $tickets_array[0]['robot'];
@@ -427,10 +416,8 @@ class Tickets
         $comment = $tickets_array[0]['description'];
         $status  = $tickets_array[0]['status'];
         $this->query = "INSERT INTO `robot_log` (`id`, `robot_id`,  `source`, `level`, `comment`, `ticket_id`,`update_user`, `update_date`) VALUES (NULL, $robot,  'TICKET', $status, '$comment', $idd,  $user_id, '$date')";
-        $result = $this->link_ticket->query($this->query);
-        //echo $query;
-        // Освобождаем память от результата
-        // mysql_free_result($result);
+        $result = $this->pdo->query($this->query);
+
         return $result;
     }
     
@@ -442,18 +429,14 @@ class Tickets
         $date    = date("Y-m-d H:i:s");
         $user_id = intval($_COOKIE['id']);
         $this->query = "SELECT assign_time FROM `tickets` WHERE `id` = $id";
-        $result = $this->link_ticket->query($this->query);
-        $line        = mysql_fetch_array($result, MYSQL_ASSOC);
+        $result = $this->pdo->query($this->query);
+        $line        = $result->fetch();
         $assign_time = $line['assign_time'];
         if ($assign_time == "0000-00-00 00:00:00") {
             $assign_time = $date;
         }
         $this->query = "UPDATE `tickets` SET `assign` = '$assign',`assign_time` = '$assign_time', `update_user` = $user_id, `update_date` = '$date' WHERE `id` = $id";
-        $result = $this->link_ticket->query($this->query);
-        //echo $query;
-        // Освобождаем память от результата
-        // mysql_free_result($result);
-        // Закрываем соединение
+        $result = $this->pdo->query($this->query);
         return $result;
     }
     
@@ -466,7 +449,7 @@ class Tickets
         $date    = date("Y-m-d H:i:s");
         $user_id = intval($_COOKIE['id']);
         $this->query = "INSERT INTO `tickets_category` (`id`, `title`, `class`) VALUES (NULL, '$title', '$cat_class');";
-        $result = $this->link_ticket->query($this->query);
+        $result = $this->pdo->query($this->query);
         $idd = $this->link_ticket->insert_id;
         return $idd;
     }
@@ -479,8 +462,8 @@ class Tickets
         $date    = date("Y-m-d H:i:s");
         $user_id = intval($_COOKIE['id']);
         $this->query = "INSERT INTO `tickets_subcategory` (`id`, `category`, `title`) VALUES (NULL, $id, '$title');";
-        $result = $this->link_ticket->query($this->query);
-        $idd = $this->link_ticket->insert_id;
+        $result = $this->pdo->query($this->query);
+        $idd = $this->pdo->lastInsertId();;
         return $idd;
     }
     
@@ -494,7 +477,7 @@ class Tickets
         $date    = date("Y-m-d H:i:s");
         $user_id = intval($_COOKIE['id']);
         $this->query = "UPDATE `tickets` SET `category` = $category,`subcategory` = $subcategory, `description` = '$description', `update_user` = $user_id, `update_date` = '$date' WHERE `id` = $id";
-        $result = $this->link_ticket->query($this->query);
+        $result = $this->pdo->query($this->query);
         return $result;
     }
     
@@ -505,7 +488,7 @@ class Tickets
         $date    = date("Y-m-d H:i:s");
         $user_id = intval($_COOKIE['id']);
         $this->query = "UPDATE `tickets` SET `status` = 6, `update_user` = $user_id, `update_date` = '$date' WHERE `status` = $id";
-        $result = $this->link_ticket->query($this->query);
+        $result = $this->pdo->query($this->query);
         return $result;
     }
     
@@ -517,7 +500,7 @@ class Tickets
     {
         $date  = date("Y-m-d H:i:s");
         $this->query = "INSERT INTO `tickets_stat` (`date`, `problem_robots`, `open_tickets`, `count_robots`) VALUES ('$date', '$robot_problem', '$open_tickets', '$total_robots');";
-        $result = $this->link_ticket->query($this->query);
+        $result = $this->pdo->query($this->query);
         return $result;
     }
     
@@ -525,17 +508,14 @@ class Tickets
     function get_tickets_live()
     {
         $this->query = "SELECT * from ticket_log WHERE id_row=( SELECT max(id_row) FROM ticket_log )";
-       $result = $this->link_ticket->query($this->query);
-        $line = mysqli_fetch_array($result);
+       $result = $this->pdo->query($this->query);
+        $line = $result->fetch();
         return $line['id_row'];
         //echo "11";
     }
     function __destruct()
     {
-        // echo "ticket - ";
-        // print_r($this ->link_ticket);
-        // echo "<br>";
-        // mysql_close($this ->link_ticket);
+
     }
 }
 $tickets = new Tickets;
