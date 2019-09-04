@@ -39,7 +39,7 @@ class Dashboard
             return count($robots_array);
     }
 
-    public function getDefectSumm()
+    public function getDefectSummCurent()
     {
         $month =  date("m",strtotime("now"));
         $year =  date("Y",strtotime("now"));
@@ -52,6 +52,57 @@ class Dashboard
         }
         return $summ;
     }
+
+    public function getDefectSummLast()
+    {
+        $month =  date("m",strtotime("-1 Months"));
+        $year =  date("Y",strtotime("-1 Months"));
+        $totalMonth = "$year-$month-01 00:00:00";
+        $this->query = "SELECT * FROM `writeoff` WHERE `category` LIKE '%Брак%' AND `update_date` > '$totalMonth'";
+        $result = $this->pdo->query($this->query);
+        $summ = 0;
+        while ($line = $result->fetch()) {
+            $summ += $line['total_price'];
+        }
+        return $summ;
+    }
+
+    public function getServiceSummCurent()
+    {
+        $month =  date("m",strtotime("now"));
+        $year =  date("Y",strtotime("now"));
+        $totalMonth = "$year-$month-01 00:00:00";
+        $this->query = "SELECT * FROM `writeoff` WHERE `category` LIKE '%Сервис%' AND `update_date` > '$totalMonth'";
+        $result = $this->pdo->query($this->query);
+        $summ = 0;
+        while ($line = $result->fetch()) {
+            $summ += $line['total_price'];
+        }
+        return $summ;
+    }
+
+    public function getServiceSummLast()
+    {
+        $month =  date("m",strtotime("-1 Months"));
+        $year =  date("Y",strtotime("-1 Months"));
+        $totalMonth = "$year-$month-01 00:00:00";
+        $this->query = "SELECT * FROM `writeoff` WHERE `category` LIKE '%Сервис%' AND `update_date` > '$totalMonth'";
+        $result = $this->pdo->query($this->query);
+        $summ = 0;
+        while ($line = $result->fetch()) {
+            $summ += $line['total_price'];
+        }
+        return $summ;
+    }
+
+    public function getSumWarehouse() {
+        $this->query = "SELECT SUM(price*total) FROM `pos_items`";
+        $result = $this->pdo->query($this->query);
+        $line = $result->fetch();
+        $sum = $line['SUM(price*total)'];
+        return $sum;
+    }
+
 
 
 

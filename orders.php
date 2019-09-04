@@ -69,6 +69,7 @@ include 'include/class.inc.php';
                   <th>Стоимость, руб</th>
                   <th>Статус</th>
                   <th>Просрок, дней</th>
+                  <th>Оплата</th>
                   <th>Ответственный</th>
                   <th></th>
                   <th></th>
@@ -109,6 +110,7 @@ include 'include/class.inc.php';
                         $provider = $position->get_info_pos_provider($pos['order_provider']);
                         $auto="";
                         if ($pos['auto']) {$auto="<small class='label pull-right bg-blue'>Auto</small>";}
+                        $checkPayment = ($pos['order_payment']==true) ? 'checked' : '';
                        echo "
                     <tr >
                     
@@ -122,10 +124,14 @@ include 'include/class.inc.php';
                         <td>".$pos['order_completion']."</td>
                         <td>".number_format($pos['order_price'], 2, ',', ' ')."</td>
                         <td>".$pos['order_status']."</td>
-                        <td>".$pos['order_prosecution']."</td>
-                        <td>".$user_info['user_name']."</td>
+                        <td>".$pos['order_prosecution']. "</td>
+                       
+                        <td><div style=\"text-align: center;\"><input type='checkbox' id='" .$pos['order_id']."' class='payment' ".$checkPayment." ></div></td>
+                         <td>".$user_info['user_name']."</td>
+                         
                         <td><i class='fa fa-2x fa-copy' style='cursor: pointer;' id='".$pos['order_id']."'></i></td>
                         <td><i class='fa fa-2x fa-pencil' style='cursor: pointer;' id='".$pos['order_id']."'></i></td>
+                       
                        
                     </tr>
                        

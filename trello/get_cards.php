@@ -13,9 +13,12 @@ $output = curl_exec($ch);
 curl_close($ch);      
 
 $users = json_decode($output, true);
+//print_r($users);
 
-foreach ($users as $keyUser => $valueUser) {
-    $userID = $valueUser['id'];
+$userArr = ['55793c298cf2763e9412a9ba', '5d22bcd268801436f33aab72', '5d240c5861a8013810222dd5'];
+
+foreach ($userArr as $userID ) {
+    //$userID = $valueUser['id'];
     $request = "https://api.trello.com/1/members/$userID/cards?filter=visible&key=$key&token=$token";
     $ch = curl_init(); 
     curl_setopt($ch, CURLOPT_URL, $request); 
@@ -24,6 +27,8 @@ foreach ($users as $keyUser => $valueUser) {
     curl_close($ch);
     //echo $output;
     $cards = json_decode($output, true);
+
+    print_r($cards);
     
     echo "<b>".$valueUser['fullName']."</b><br>";
     foreach ($cards as $keyCard => $valueCard) {

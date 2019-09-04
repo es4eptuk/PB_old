@@ -36,10 +36,18 @@ include 'page/dashboard.php';
 
            <?
                $robotsComplete = $dashboard->getRobotCompleteCount();
-               echo "Количество готовых роботов: ".$robotsComplete."<br>";
+               echo "Количество готовых роботов: <b>".$robotsComplete."</b><br>";
 
-               $defectSumm = $dashboard->getDefectSumm();
-               echo "Количество брака: ".$defectSumm."<br>";
+               $defectSummCurrent = number_format($dashboard->getDefectSummCurent(), 2, ',', ' ');
+               $defectSummLast = number_format($dashboard->getDefectSummLast(), 2, ',', ' ');
+               echo "Количество брака за текущий месяц, сумма: <b>".$defectSummCurrent."</b> руб. <i>(в прошлом месяце $defectSummLast руб.)</i><br>";
+
+               $serviceSummCurrent = number_format($dashboard->getServiceSummCurent(), 2, ',', ' ');
+               $serviceSummLast = number_format($dashboard->getServiceSummLast(), 2, ',', ' ');
+               echo "Затраты на сервис за текущий месяц , сумма: <b>".$serviceSummCurrent."</b> руб. <i>(в прошлом месяце $serviceSummLast руб.)</i><br>";
+
+              $warehouseSum = number_format($dashboard->getSumWarehouse(), 2, ',', ' ');
+              echo "Объем склада деталей, сумма: <b>".$warehouseSum."</b> руб.<br>";
 
            ?>
                

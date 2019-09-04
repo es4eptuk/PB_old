@@ -1039,7 +1039,7 @@ class Position
         if ($version != 0) {
             $where .= " AND pos_kit_items.version=$version";
         }
-        $query = "SELECT pos_items.id, pos_items.title, pos_items.category, pos_items.vendor_code,SUM(pos_kit_items.count), pos_kit_items.version, pos_items.total, pos_items.subcategory, pos_items.provider, pos_items.price, pos_items.summary, pos_items.assembly , pos_items.min_balance FROM pos_kit_items JOIN pos_items ON pos_kit_items.id_pos = pos_items.id WHERE (pos_kit_items.id_pos = 627 OR pos_kit_items.id_pos = 628)  AND pos_kit_items.delete = 0 $where GROUP BY pos_kit_items.id_pos ";
+        $query = "SELECT pos_items.id, pos_items.title, pos_items.category, pos_items.vendor_code,SUM(pos_kit_items.count), pos_kit_items.version, pos_items.total, pos_items.subcategory, pos_items.provider, pos_items.price, pos_items.summary, pos_items.assembly , pos_items.min_balance FROM pos_kit_items JOIN pos_items ON pos_kit_items.id_pos = pos_items.id WHERE pos_kit_items.id_pos >0  AND pos_kit_items.delete = 0 $where GROUP BY pos_kit_items.id_pos LIMIT 20";
         $result = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
         while ($line = mysql_fetch_array($result, MYSQL_ASSOC)) {
             $id = $line['id'];
