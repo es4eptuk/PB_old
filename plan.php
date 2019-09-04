@@ -187,9 +187,9 @@ if (isset($_GET['status'])) $id_status = $_GET['status'];
                         //echo $pos['id']." get_operation_assembly - ";
                         //print_r($need_pos_a);
                         //echo "<br>";
-                       //echo $pos['id']." get_operation - ";
-                       // print_r($need_pos_o);
-                       // echo "<br>";
+                        //echo $pos['id']." get_operation - ";
+                        // print_r($need_pos_o);
+                        // echo "<br>";
                         
                        
                         if (isset($need_pos_o)) {

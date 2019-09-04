@@ -27,6 +27,11 @@ class Tickets
     }
     
     //Получение списка возможных статусов тикетов
+
+    /**
+     * @param int $id
+     * @return array
+     */
     public function get_status($id = 999)
     {
         $where = "";
@@ -44,6 +49,11 @@ class Tickets
     }
     
     //Получение списка категорий тикетов, в качестве параметров можно указать тип $type (P - проблема (по умолчанию), I - консультация, FR - пожелание)
+
+    /**
+     * @param string $type
+     * @return array
+     */
     public function get_category($type = "P")
     {
         $this->query = "SELECT * FROM tickets_category WHERE `class` = '$type' ORDER BY `title` ASC";
@@ -57,6 +67,11 @@ class Tickets
     }
     
     //Получение списка подкатегорий тикетов
+
+    /**
+     * @param $category
+     * @return array
+     */
     public function get_subcategory($category)
     {
         if ($category != 0) {
@@ -81,6 +96,15 @@ class Tickets
     // $subcategory - подкатегория тикета
     // $status - статус тикета
     // $comment - описание проблемы
+    /**
+     * @param $robot
+     * @param $class
+     * @param $category
+     * @param $subcategory
+     * @param $status
+     * @param $comment
+     * @return false|PDOStatement
+     */
     function add($robot, $class, $category, $subcategory, $status, $comment)
     {
         $date    = date("Y-m-d H:i:s");
@@ -119,6 +143,11 @@ class Tickets
     }
     
     //Получение информации о тикете по ID
+
+    /**
+     * @param $id
+     * @return mixed
+     */
     public function info($id)
     {
         $this->query = "SELECT * FROM tickets WHERE id='$id'";
@@ -132,6 +161,11 @@ class Tickets
     }
     
     //Получение списка комментариев тикета, в качестве параметра ID тикета
+
+    /**
+     * @param $id
+     * @return array
+     */
     public function get_comments($id)
     {
         $this->query = "SELECT * FROM tickets_comments WHERE `ticket` =  $id ORDER BY `update_date` DESC";
@@ -202,7 +236,7 @@ class Tickets
                 '$comment', 
                 $user_id, 
                 '$date');";
-       $result = $this->pdo->query($this->query);
+        $result = $this->pdo->query($this->query);
         $idd   = $this->pdo->lastInsertId();
         $this->query = "UPDATE `tickets` SET  `update_user` = $user_id, `update_date` = '$date' WHERE `id` = $ticket";
         $result = $this->pdo->query($this->query);
