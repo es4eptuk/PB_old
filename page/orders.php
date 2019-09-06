@@ -600,6 +600,12 @@ class Orders
         
        
     }
+
+    function setPaymentStatus($id, $value) {
+        $query = "UPDATE `orders` SET `order_payment` = $value WHERE `order_id` = $id";
+        $result = mysql_query($query) or die(mysql_error());
+        return $result;
+    }
    
     function __destruct()
     {

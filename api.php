@@ -337,6 +337,9 @@ if (isset($_POST['action'])) {
     if ($_POST['action'] == "del_contragent") {
         echo json_encode($position->del_provider($_POST['id']), JSON_UNESCAPED_UNICODE);
     }
+    if ($_POST['action'] == "setPaymentStatus") {
+        echo json_encode($orders->setPaymentStatus($_POST['id'],$_POST['value']), JSON_UNESCAPED_UNICODE);
+    }
 }
 if (isset($_GET['action'])) {
     //поиск позиций

@@ -296,6 +296,39 @@ paramStorage = localStorage;
         $("#show_all").submit();
         
     });
+
+$('.payment').change(function() {
+    var id =  $(this).attr("id");
+    //var returnVal = confirm("Вы уверены что хотите изменить статус оплаты?");
+    var returnVal = true;
+    var val;
+    if(this.checked) {
+       val = 1;
+    } else {
+       val = 0;
+    }
+
+    if (returnVal) {
+        $.post("./api.php", {
+            action: "setPaymentStatus",
+            id: id,
+            value: val
+        })
+            .done(function (data) {
+                if (data == "false") {
+                    alert("Data Loaded: " + data);
+                } else {
+                }
+            });
+    } else {
+        return false;
+    }
+
+
+    console.log(returnVal);
+    console.log(id);
+
+});
  
   $('#orders').DataTable({
        "iDisplayLength": 100,

@@ -46,8 +46,11 @@ include 'page/dashboard.php';
                $serviceSummLast = number_format($dashboard->getServiceSummLast(), 2, ',', ' ');
                echo "Затраты на сервис за текущий месяц , сумма: <b>".$serviceSummCurrent."</b> руб. <i>(в прошлом месяце $serviceSummLast руб.)</i><br>";
 
-              $warehouseSum = number_format($dashboard->getSumWarehouse(), 2, ',', ' ');
-              echo "Объем склада деталей, сумма: <b>".$warehouseSum."</b> руб.<br>";
+               $warehouseSum = number_format($dashboard->getSumWarehouse(), 2, ',', ' ');
+               echo "Объем склада деталей, сумма: <b>".$warehouseSum."</b> руб.<br>";
+
+               $debetSum = number_format($dashboard->getSumDebet(), 2, ',', ' ');
+               echo "Дебиторская задолженность, сумма: <b>".$debetSum."</b> руб.<br>";
 
            ?>
                

@@ -103,6 +103,15 @@ class Dashboard
         return $sum;
     }
 
+    public function getSumDebet() {
+        $this->query = "SELECT SUM(order_price) FROM `orders` WHERE `order_payment` = 0";
+        $result = $this->pdo->query($this->query);
+        $line = $result->fetch();
+        $sum = $line['SUM(order_price)'];
+        return $sum;
+    }
+
+
 
 
 
