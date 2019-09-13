@@ -49,8 +49,18 @@ include 'page/dashboard.php';
                $warehouseSum = number_format($dashboard->getSumWarehouse(), 2, ',', ' ');
                echo "Объем склада деталей, сумма: <b>".$warehouseSum."</b> руб.<br>";
 
-               $debetSum = number_format($dashboard->getSumDebet(), 2, ',', ' ');
-               echo "Дебиторская задолженность, сумма: <b>".$debetSum."</b> руб.<br>";
+
+               echo "Кредиторская задолженность, сумма: <br>";
+               $creditSum = $dashboard->getSumDebet();
+               $creditSumAll = 0;
+               //print_r($creditSum);
+              foreach ($creditSum as &$value) {
+                  $date       = new DateTime($value['order_delivery']);
+                  $date = $date->format('d.m.Y');
+                    echo "<i style=\"margin-left: 40px\">".$date."</i> - <b>". number_format($value['SUM(order_price)'], 2, ',', ' ')."</b><br>";
+                    $creditSumAll += $value['SUM(order_price)'];
+              }
+           echo "<i style=\"margin-left: 40px\">Итого:</i> <b>". number_format($creditSumAll, 2, ',', ' ')."</b>";
 
            ?>
                

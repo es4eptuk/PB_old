@@ -30,7 +30,7 @@ class Dashboard
     public function getRobotCompleteCount()
     {
 
-        $this->query = "SELECT robots.id, robots.version, robots.number FROM `robots` JOIN `check` ON robots.id = check.robot WHERE robots.progress != 100 AND robots.delete = 0 AND check.id_check = 132 AND check.check = 1";
+        $this->query = "SELECT robots.id, robots.version, robots.number FROM `robots` JOIN `check` ON robots.id = check.robot WHERE robots.progress != 100 AND robots.delete = 0 AND check.id_check = 72 AND check.check = 1";
         $result = $this->pdo->query($this->query);
         while ($line = $result->fetch()) {
             $robots_array[] = $line;
@@ -104,11 +104,13 @@ class Dashboard
     }
 
     public function getSumDebet() {
-        $this->query = "SELECT SUM(order_price) FROM `orders` WHERE `order_payment` = 0";
+        $this->query = "SELECT order_delivery, SUM(order_price) FROM `orders` WHERE `order_payment` = 0  AND order_price != 0  GROUP BY order_delivery";
         $result = $this->pdo->query($this->query);
-        $line = $result->fetch();
-        $sum = $line['SUM(order_price)'];
-        return $sum;
+
+        while ($line = $result->fetch()) {
+            $arr_date[] = $line;
+        }
+        return $arr_date;
     }
 
 
