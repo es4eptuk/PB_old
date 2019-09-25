@@ -520,10 +520,13 @@ class Checks
      function add_option_check ($id, $robot, $value) {
           $date    = date("Y-m-d H:i:s");
         $user_id = intval($_COOKIE['id']);
-       $query = "SELECT * FROM `robot_options_checks` JOIN robot_options ON robot_options_checks.id_option = robot_options.id_option WHERE robot_options_checks.id_option = $id";
+       $query = "SELECT robot_options_checks.check_id, robot_options_checks.id_option, robot_options_checks.check_title, robot_options_checks.check_category, robot_options_checks.id_kit, robot_options.id_option, robot_options.version, robot_options.title    FROM `robot_options_checks` JOIN robot_options ON robot_options_checks.id_option = robot_options.id_option WHERE robot_options_checks.id_option = $id";
+       echo $query;
        $result = mysql_query($query) or die($query);
         while ($line = mysql_fetch_array($result, MYSQL_ASSOC)) {
+            print_r($line);
             $operation = $line['check_title'];
+           // echo $line['id_kit'];
             $kit = $line['id_kit'];
             $category = $line['check_category'];
             $option = $line['id_option'];
@@ -532,7 +535,7 @@ class Checks
             if ($value==1) {
             $query2 = "INSERT INTO `check` (`id_check`, `robot`, `operation`, `category`, `group`, `check`, `comment`, `sort`, `option`, `id_kit`) VALUES ('0', $robot, '$operation', $category, '0', '0', '', '0', $option, $kit)";    
             $result2 = mysql_query($query2) or die('Запрос не удался: ' . mysql_error());
-            
+            //echo $query2;
             if ($result2) {
                 $comment = "Добавлена опция ".$title;
                  $query_log = 'INSERT INTO `robot_log` (`id`, `robot_id`,`source`, `level`, `comment`, `update_user`, `update_date`) VALUES (NULL, ' . $robot . ', "PRODUCTION", "INFO", "' . $comment . '", ' . $user_id . ', "' . $date . '")';

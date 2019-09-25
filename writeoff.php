@@ -31,6 +31,10 @@ include 'include/class.inc.php';
           <div class="box">
            
             <!-- /.box-header -->
+
+              <div class="box-header">
+                  <a href="./add_writeoff.php" class="btn btn-primary" >Добавить списание</a>
+              </div>
             <div class="box-body">
              
                 

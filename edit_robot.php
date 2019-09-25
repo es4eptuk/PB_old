@@ -396,7 +396,7 @@ var category1 = "---";
     }
     
      $.post( "./api.php", { 
-        action: "add_option_check", 
+        action: "add_option_check",
         robot: robot,
         id: id,
         value: val
@@ -405,7 +405,6 @@ var category1 = "---";
               if (data=="false") {alert( "Data Loaded: " + data ); }
               else {
                 //window.location.href = "./robots.php";
-               
               }
           });
     

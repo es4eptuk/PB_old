@@ -41,7 +41,7 @@ include 'include/class.inc.php';
 											<option value="Содержание офиса">Содержание офиса</option>
 											<option value="Давальческие материалы">Давальческие материалы</option>
 											<option value="Возврат поставщику">Возврат поставщику</option>
-											
+                                            <option value="Покраска/Покрытие">Покраска/Покрытие</option>
 										</select>
 									</div>
 								   
@@ -56,7 +56,6 @@ include 'include/class.inc.php';
 											                    foreach ($arr as &$provider) {
 											                       echo "
 											                       <option value='".$provider['id']."'>".$provider['title'].", ".$provider['type']."</option>
-											                       
 											                       ";
 											                    }
 											                   
@@ -260,7 +259,7 @@ $("#listPos").on("click", ".fa-remove", function() {
  $( "#category" )
   .change(function () {
      var title = $(this).val(); 
-     if (title == "Возврат поставщику") {
+     if (title == "Возврат поставщику" || title == "Покраска/Покрытие" ) {
          $('#prvd').show();
      } else {
          $('#prvd').hide(); 

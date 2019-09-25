@@ -209,7 +209,7 @@ class Robots
 			}
 
 
-		if ($type == 0)
+		if ($type == 0 && $client!=1)
 			{
 		
 			$query = "SELECT * FROM `tickets` WHERE `description` LIKE '%$problem%' AND `robot` = $robot_id AND ( `status` != 6 OR `status` != 3) AND `date_create` >= date_sub(now(), INTERVAL 1 HOUR)";

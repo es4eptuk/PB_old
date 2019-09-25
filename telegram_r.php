@@ -6,34 +6,43 @@ require_once __DIR__ . "/vendor/autoload.php";
    
     
 
-   $telegram = new Api('828383903:AAFJ5LQrGxt1qfTrqlv-TO_tLaFUj2UzjBg'); //Устанавливаем токен, полученный у BotFather
-   $result = $telegram -> getWebhookUpdates(); //Передаем в переменную $result полную информацию о сообщении пользователя
-    
+    $telegram = new Api('828383903:AAFJ5LQrGxt1qfTrqlv-TO_tLaFUj2UzjBg'); //Устанавливаем токен, полученный у BotFather
+    $result = $telegram -> getWebhookUpdates(); //Передаем в переменную $result полную информацию о сообщении пользователя
+    $log = serialize($result);
+    $telegramAPI->writeLog($log);
+
    // $telegram->addCommand(Telegram\Bot\Commands\HelpCommand::class);
     // $telegram->addCommand(Telegram\Bot\Commands\StartCommand::class);
     //$telegram->commandsHandler(true);
     
     $text = mb_strtolower($result["message"]["text"]); //Текст сообщения
     
-    $chat_id = $result["message"]["chat"]["id"]; //Уникальный идентификатор пользователя
+    $chat_id = $result["message"]["chat"]["id"]; //Уникальный идентификатор чата
     $name = $result["message"]["from"]["username"]; //Юзернейм пользователя
     $user_id = $result["message"]["from"]["id"]; //Юзернейм пользователя
     $message_id = $result["message"]["message_id"]; //Юзернейм пользователя
    // $keyboard_start_ru = [["Создать обращение"],["Информация по роботу"],["Документация"]]; //Клавиатура
     $keyboard_lang_en = [["Русский"],["English"]]; //Клавиатура
-    
-    
-    
+
     
     $keyboard_start_en = [["Robot Information"],["Documentation"]]; //Клавиатура
     $keyboard_start_ru = [["Информация по роботам"],["Документация"]]; //Клавиатура
     
     $keyboard_doc_ru = [["Инструкция по Promobot V4"],["Инструкция по лингвистической базе Promobot"],["Сервис Motion Studio"],["Сервис телеприсутствия"],["Назад"]]; //Клавиатура
     $keyboard_doc_en = [["Instructions for Promobot V4"],["Instructions on the linguistic database Promobot"],["Motion Studio Service"],["Telepresence Service"],["Back"]]; //Клавиатура
-    $string = json_encode($result["message"]["message_id"]);
+    $string = json_encode($result["message"]);
+    $titleChat = $result["message"]["chat"]["title"];
     //$telegram->sendMessage([ 'chat_id' => $chat_id, 'text' => $string ]);
+    if(isset($result["message"]['new_chat_member'])) {$telegramAPI->sendHello($chat_id);}
+    if(isset($result["message"]['audio']) || isset($result["message"]['document']) || isset($result["message"]['photo']) || isset($result["message"]['video']) || isset($result["message"]['sticker']) || isset($result["message"]['voice']) || isset($result["message"]['sticker'])) $text = "Media";
     if($text){
-         if ($text == "/start") {
+        $param['chatid'] = $chat_id;
+        $param['author'] = $user_id;
+        $param['title'] = $titleChat;
+        $param['message'] = $text;
+        $telegramAPI->writeMessageDb($param);
+
+        if ($text == "/start") {
             $reply = "Hello! Choose your language: ";
             $reply_markup = $telegram->replyKeyboardMarkup(['keyboard' => $keyboard_lang_en, 'resize_keyboard' => true, 'one_time_keyboard' => true , 'selective' => true]);
             $telegram->sendMessage([ 'chat_id' => $chat_id, 'text' => $reply, 'reply_markup' => $reply_markup, 'reply_to_message_id' => $message_id]);

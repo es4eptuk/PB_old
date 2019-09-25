@@ -17,7 +17,6 @@ include 'include/class.inc.php';
     <section class="content-header">
       <h1>
        Роботы
-        
       </h1>
       
     </section>

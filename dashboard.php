@@ -30,8 +30,11 @@ include 'page/dashboard.php';
     <section class="content">
       <div class="row">
         <div class="col-xs-12">
-          <div class="box">
+            <div class="box">
             <!-- /.box-header -->
+              <div class="box-header with-border">
+                  <h3 class="box-title">Финансы</h3>
+              </div>
             <div class="box-body table-responsive">
 
            <?
@@ -69,6 +72,43 @@ include 'page/dashboard.php';
             </div>
             <!-- /.box-body -->
           </div>
+            <div class="box">
+                <!-- /.box-header -->
+                <div class="box-header with-border">
+                    <h3 class="box-title">Техническая поддержка</h3>
+                </div>
+                <div class="box-body table-responsive">
+
+
+                    <?
+
+                    echo "Скорость ответа: <br>";
+                    $countAnswers01 = $dashboard->getCountAnswers(0,1);
+                    echo "<i style=\"margin-left: 40px\">До 1 минуты: </i><b>".$countAnswers01."</b><br>";
+
+                    $countAnswers12 = $dashboard->getCountAnswers(1,2);
+                    echo "<i style=\"margin-left: 40px\">От 1 до 2 минут: </i><b>".$countAnswers12."</b><br>";
+
+                    $countAnswers23 = $dashboard->getCountAnswers(2,3);
+                    echo "<i style=\"margin-left: 40px\">От 2 до 3 минут: </i><b>".$countAnswers23."</b><br>";
+
+                    $countAnswers35 = $dashboard->getCountAnswers(3,5);
+                    echo "<i style=\"margin-left: 40px\">От 3 до 5 минут:</i> <b>".$countAnswers35."</b><br>";
+
+                    $countAnswers15 = $dashboard->getCountAnswers(15,999999);
+                    echo "<i style=\"margin-left: 40px\">Больее 15 минут: </i><b>".$countAnswers15."</b><br>";
+
+                    $countViolation = $dashboard->getViolation();
+                    echo "Количество нарушений: <b>".$countViolation."</b><br>";
+
+
+                    ?>
+
+
+
+                </div>
+                <!-- /.box-body -->
+            </div>
           <!-- /.box -->
         </div>
         <!-- /.col -->

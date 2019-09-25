@@ -35,13 +35,19 @@ class Writeoff {
             if (isset($writeoff_arr['0']['2']))  {$check = $writeoff_arr['0']['2'];}
             if (isset($writeoff_arr['0']['3']))  {$robot = $writeoff_arr['0']['3'];}
             
-              if ($category=="Возврат поставщику") {
+            if ($category=="Возврат поставщику" ) {
                   $writeoff_arr['0']['0'] = 999;
                   $writeoff_arr['0']['1'] = $provider;
                   $json = json_encode($writeoff_arr);
                   $this -> orders -> add_order($json,0,1);
-                 
              }
+
+            if ( $category=="Покраска/Покрытие") {
+                $writeoff_arr['0']['0'] = 998;
+                $writeoff_arr['0']['1'] = $provider;
+                $json = json_encode($writeoff_arr);
+                $this -> orders -> add_order($json,0,1);
+            }
             
             array_shift($writeoff_arr);
             
@@ -55,8 +61,7 @@ class Writeoff {
              }
              
            
-             
-            
+
             $query = "INSERT INTO `writeoff` (`id`, `category`, `description`,`total_price`,`check`,`robot`, `update_date`, `update_user`) VALUES (NULL, '$category','$description','$total_price','$check','$robot', '$date', $user_id)";
             $result = mysql_query($query) or die($query);
             
@@ -104,7 +109,8 @@ class Writeoff {
      function get_writeoff() {
     	
     
-        $query = "SELECT * FROM writeoff ORDER BY `update_date` ASC";
+        $query = "SELECT * FROM writeoff ORDER BY `update_date` DESC LIMIT 50";
+        //echo $query;
         $result = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
         
         while( $line = mysql_fetch_array($result, MYSQL_ASSOC)){

@@ -113,6 +113,28 @@ class Dashboard
         return $arr_date;
     }
 
+    public function getCountAnswers($minMinutes=0, $maxMinutes = 1) {
+        $month =  date("m",strtotime("now"));
+        $year =  date("Y",strtotime("now"));
+        $totalMonth = "$year-$month-01 00:00:00";
+        $this->query = "SELECT COUNT(*) FROM `bot_message` WHERE `createDate` >= '$totalMonth' AND `responseMinutes` <= $maxMinutes AND `responseMinutes` >= $minMinutes AND `isNight` = 0 AND `isEmployee` = 1 AND `chatId` != -399291922";
+        //echo  $this->query;
+        $result = $this->pdo->query($this->query);
+        $countAnswers = $result->fetchColumn();
+        return $countAnswers;
+    }
+
+    public function getViolation() {
+        $month =  date("m",strtotime("now"));
+        $year =  date("Y",strtotime("now"));
+        $totalMonth = "$year-$month-01 00:00:00";
+        $this->query = "SELECT COUNT(*) FROM `bot_message` WHERE `createDate` >= '$totalMonth' AND `violation` = 1  AND `chatId` != -399291922";
+        //echo  $this->query;
+        $result = $this->pdo->query($this->query);
+        $countViolation = $result->fetchColumn();
+        return $countViolation;
+    }
+
 
 
 

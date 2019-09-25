@@ -117,7 +117,7 @@ class Admissions
     }
     function get_admission($admiss_category)
     {
-        $query = "SELECT * FROM admissions WHERE category='$admiss_category' ORDER BY id DESC";
+        $query = "SELECT * FROM admissions WHERE category='$admiss_category' ORDER BY id DESC LIMIT 50";
         $result = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
         while ($line = mysql_fetch_array($result, MYSQL_ASSOC)) {
             $admiss_array[] = $line;
