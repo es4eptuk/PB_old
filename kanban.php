@@ -21,12 +21,12 @@ $arr = $robots->get_robots();
                 $remont_tickets = 0;
                 $process_tickets = 0;
                 $unAsighned_tickets = 0;
-                
-                foreach ($arr_tickets as &$ticket) {
+
+foreach ($arr_tickets as &$ticket) {
                     $ticket_status = $ticket['status'];
                     $ticket_robot = $ticket['robot'];
                     $ticket_assign = $ticket['assign'];
-                    
+
                     if ($ticket_status==3 || $ticket_status==6) {
                        // if(isset($finish[$ticket_robot])) {$finish[$ticket_robot]}
                         $finish[$ticket_robot] = isset($finish[$ticket_robot] ) + 1;
@@ -57,10 +57,17 @@ $arr = $robots->get_robots();
                     }
 
                      if ($ticket_assign==0 and ($ticket_status==1 || $ticket_status==2 || $ticket_status==4 || $ticket_status==5 )) {
-                       $unAsighned[$ticket_robot] = isset($unAsighned[$ticket_robot] ) + 1;
-                       $unAsighned_tickets++;
-                    }
+
+
+                         //если по ключу массив пустой, задаем ему 0
+                         if (isset($unAsighned[$ticket_robot]) == false) {
+                             $unAsighned[$ticket_robot] = 0;
+                         }
+                         $unAsighned[$ticket_robot] ++ ;
+                         $unAsighned_tickets++;
+                     }
                 }
+//                print_r($unAsighned);
                 //print_r($finish);
                 //print_r($inprocess);
 ?>
@@ -177,9 +184,12 @@ $arr = $robots->get_robots();
                       <div class="robots" style="display: none">
                           <ul>
                               <?
+//                              print_r($unAsighned);
+//                              $count = 0;
                               foreach ($unAsighned as $key => $value) {
                                   $robot_info = $robots->get_info_robot($key);
                                   $number = $robot_info['version'].".".$robot_info['number'];
+//                                  $count++;
                                   echo "<li><a href='./robot_card.php?id=".$key."'>".$number." (".$value.")</a></li>";
                               }
                               ?>
