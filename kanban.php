@@ -25,7 +25,7 @@ $arr = $robots->get_robots();
                 foreach ($arr_tickets as &$ticket) {
                     $ticket_status = $ticket['status'];
                     $ticket_robot = $ticket['robot'];
-                    $ticket_assingn = $ticket['assign'];
+                    $ticket_assign = $ticket['assign'];
                     
                     if ($ticket_status==3 || $ticket_status==6) {
                        // if(isset($finish[$ticket_robot])) {$finish[$ticket_robot]}
@@ -56,7 +56,7 @@ $arr = $robots->get_robots();
                        $wait[$ticket_robot] = isset($wait[$ticket_robot] ) + 1;
                     }
 
-                     if ($ticket_assingn==0 and ($ticket_status==1 || $ticket_status==2 || $ticket_status==4 || $ticket_status==5 )) {
+                     if ($ticket_assign==0 and ($ticket_status==1 || $ticket_status==2 || $ticket_status==4 || $ticket_status==5 )) {
                        $unAsighned[$ticket_robot] = isset($unAsighned[$ticket_robot] ) + 1;
                        $unAsighned_tickets++;
                     }
@@ -171,21 +171,21 @@ $arr = $robots->get_robots();
                    </div>
                 </td>
               </tr>
-               <tr>
-                <th>Не назначенных:</th>
-                <td class="dop"><? echo $unAsighned_tickets;?> <i class="fa fa-fw fa-plus-circle pull-right text-green" style="cursor: pointer;"></i>
-                 <div class="robots" style="display: none">
-                    <ul>
-                    <? 
-                     foreach ($process as $key => $value) {
-                         $robot_info = $robots->get_info_robot($key);
-                         $number = $robot_info['version'].".".$robot_info['number'];
-                         echo "<li><a href='./robot_card.php?id=".$key."'>".$number." (".$value.")</a></li>";
-                     }
-                    ?>
-                  </ul>  
-                   </div> 
-                </td>
+              <tr>
+                  <th>Не назначенных</th>
+                  <td class="dop"><? echo $unAsighned_tickets;?> <i class="fa fa-fw fa-plus-circle pull-right text-green" style="cursor: pointer;"></i>
+                      <div class="robots" style="display: none">
+                          <ul>
+                              <?
+                              foreach ($unAsighned as $key => $value) {
+                                  $robot_info = $robots->get_info_robot($key);
+                                  $number = $robot_info['version'].".".$robot_info['number'];
+                                  echo "<li><a href='./robot_card.php?id=".$key."'>".$number." (".$value.")</a></li>";
+                              }
+                              ?>
+                          </ul>
+                      </div>
+                  </td>
               </tr>
               <tr>
             </tbody></table>
