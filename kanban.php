@@ -165,6 +165,7 @@ foreach ($arr_tickets as &$ticket) {
                          $number = $robot_info['version'].".".$robot_info['number'];
                          $inprocess_sort[$count]['number'] = $robot_info['version'].".".$robot_info['number'];
                          $inprocess_sort[$count]['id'] = $key;
+                         $inprocess_sort[$count]['sum'] = $value;
                          $count++;
                      }
                      
@@ -175,7 +176,7 @@ foreach ($arr_tickets as &$ticket) {
                         
                       usort($inprocess_sort, "cmp");
                        foreach ($inprocess_sort as $key => $value) {
-                         echo "<li><a href='./robot_card.php?id=".$value['id']."'  >".$value['number']."</a></li>";
+                         echo "<li><a href='./robot_card.php?id=".$value['id']."'  >".$value['number']." (".$value['sum'].")</a></li>";
                      }
                     ?>
                   </ul>   
