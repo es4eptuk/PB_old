@@ -28,12 +28,24 @@ foreach ($arr_tickets as &$ticket) {
                     $ticket_assign = $ticket['assign'];
 
                     if ($ticket_status==3 || $ticket_status==6) {
-                       // if(isset($finish[$ticket_robot])) {$finish[$ticket_robot]}
-                        $finish[$ticket_robot] = isset($finish[$ticket_robot] ) + 1;
+//                        $finish[$ticket_robot] = isset($finish[$ticket_robot] ) + 1;
+
+                        //если по ключу массив пустой, задаем ему 0
+                        if (isset($finish[$ticket_robot]) == false) {
+                            $finish[$ticket_robot] = 0;
+                        }
+                        $finish[$ticket_robot] ++ ;
+
                     } 
                     
                     if ($ticket_status==1 || $ticket_status==2 || $ticket_status==4 || $ticket_status==5) {
-                       $inprocess[$ticket_robot] = isset($inprocess[$ticket_robot] ) + 1;
+//                       $inprocess[$ticket_robot] = isset($inprocess[$ticket_robot] ) + 1;
+
+                        if (isset($inprocess[$ticket_robot]) == false) {
+                            $inprocess[$ticket_robot] = 0;
+                        }
+                        $inprocess[$ticket_robot] ++ ;
+
                        $open_tickets++;
                     }
                     
@@ -46,14 +58,27 @@ foreach ($arr_tickets as &$ticket) {
                     }
                     
                     if ($ticket_status==2) {
-                       $process[$ticket_robot] = isset($process[$ticket_robot] ) + 1;
+//                       $process[$ticket_robot] = isset($process[$ticket_robot] ) + 1;
+
+                        //если по ключу массив пустой, задаем ему 0
+                        if (isset($process[$ticket_robot]) == false) {
+                            $process[$ticket_robot] = 0;
+                        }
+                        $process[$ticket_robot] ++ ;
+
                        $process_tickets++;
                        
                     }
                     
                     
                      if ($ticket_status==7 ) {
-                       $wait[$ticket_robot] = isset($wait[$ticket_robot] ) + 1;
+//                       $wait[$ticket_robot] = isset($wait[$ticket_robot] ) + 1;
+
+                         //если по ключу массив пустой, задаем ему 0
+                         if (isset($wait[$ticket_robot]) == false) {
+                             $wait[$ticket_robot] = 0;
+                         }
+                         $wait[$ticket_robot] ++ ;
                     }
 
                      if ($ticket_assign==0 and ($ticket_status==1 || $ticket_status==2 || $ticket_status==4 || $ticket_status==5 )) {
