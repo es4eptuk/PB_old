@@ -21,6 +21,10 @@ $arr = $robots->get_robots();
                 $remont_tickets = 0;
                 $process_tickets = 0;
                 $unAssigned_tickets = 0;
+                $assign_Dima = 0;
+                $assign_Danil = 0;
+                $assign_Eldar = 0;
+
 
 foreach ($arr_tickets as &$ticket) {
                     $ticket_status = $ticket['status'];
@@ -73,7 +77,7 @@ foreach ($arr_tickets as &$ticket) {
                         $remont_tickets++;
                     }
 
-    if ($ticket_status==2) {
+                    if ($ticket_status==2) {
 //                       $process[$ticket_robot] = isset($process[$ticket_robot] ) + 1;
 
                         //если по ключу массив пустой, задаем ему 0
@@ -107,7 +111,30 @@ foreach ($arr_tickets as &$ticket) {
                          $unAssigned[$ticket_robot] ++ ;
                          $unAssigned_tickets++;
                      }
-                }
+
+
+                     //назначенные диме
+                    if ($ticket_assign==31 and ($ticket_status==1 || $ticket_status==2 || $ticket_status==4 || $ticket_status==5 )) {
+
+                        $assign_Dima++;
+                    }
+
+
+
+                     //назначенные дане
+                    if ($ticket_assign==32 and ($ticket_status==1 || $ticket_status==2 || $ticket_status==4 || $ticket_status==5 )) {
+
+                        $assign_Danil++;
+                    }
+
+
+                     //назначенные эдьдару
+                    if ($ticket_assign==44 and ($ticket_status==1 || $ticket_status==2 || $ticket_status==4 || $ticket_status==5 )) {
+
+                        $assign_Eldar++;
+                    }
+
+}
 //                print_r($unAsighned);
                 //print_r($finish);
                 //print_r($inprocess);
@@ -237,6 +264,21 @@ foreach ($arr_tickets as &$ticket) {
                               ?>
                           </ul>
                       </div>
+                  </td>
+              </tr>
+              <tr>
+                  <th>Назначенных Диме</th>
+                  <td class="dop"><? echo $assign_Dima;?>
+                  </td>
+              </tr>
+              <tr>
+                  <th>Назначенных Данилу</th>
+                  <td class="dop"><? echo $assign_Danil;?>
+                  </td>
+              </tr>
+              <tr>
+                  <th>Назначенных Эльдару</th>
+                  <td class="dop"><? echo $assign_Eldar;?>
                   </td>
               </tr>
               <tr>
