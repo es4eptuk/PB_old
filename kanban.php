@@ -14,13 +14,13 @@ $arr = $robots->get_robots();
                 $inprocess = array();
                 $remont = array();
                 $process = array();
-                $unAsighned = array();
+                $unAssigned = array();
                 $wait = array();
                 $robot_problem = 0;
                 $open_tickets = 0;
                 $remont_tickets = 0;
                 $process_tickets = 0;
-                $unAsighned_tickets = 0;
+                $unAssigned_tickets = 0;
 
 foreach ($arr_tickets as &$ticket) {
                     $ticket_status = $ticket['status'];
@@ -50,14 +50,30 @@ foreach ($arr_tickets as &$ticket) {
                     }
                     
                     if ($ticket_status==4) {
-                       $remont[$ticket_robot]['count'] = isset($remont[$ticket_robot] ) + 1;
+//                       $remont[$ticket_robot]['count'] = isset($remont[$ticket_robot] ) + 1;
+
+                        //если по ключу массив пустой, задаем ему 0
+                        if (isset($remont[$ticket_robot]['count']) == false) {
+                            $remont[$ticket_robot]['count'] = 0;
+                        }
+
+
+                        $remont[$ticket_robot]['count'] ++ ;
+
+
+                        if (isset($remont[$ticket_robot]['date']) == false) {
+                            $remont[$ticket_robot]['date'] = "";
+                        }
+
                         $date_finish = new DateTime($ticket['finish_date']);
-                       $remont[$ticket_robot]['date'] = $date_finish->format('d.m.Y');
-                       $remont_tickets++;
-                       
+
+                        $remont[$ticket_robot]['date'] = $date_finish->format('d.m.Y');
+
+
+                        $remont_tickets++;
                     }
-                    
-                    if ($ticket_status==2) {
+
+    if ($ticket_status==2) {
 //                       $process[$ticket_robot] = isset($process[$ticket_robot] ) + 1;
 
                         //если по ключу массив пустой, задаем ему 0
@@ -85,11 +101,11 @@ foreach ($arr_tickets as &$ticket) {
 
 
                          //если по ключу массив пустой, задаем ему 0
-                         if (isset($unAsighned[$ticket_robot]) == false) {
-                             $unAsighned[$ticket_robot] = 0;
+                         if (isset($unAssigned[$ticket_robot]) == false) {
+                             $unAssigned[$ticket_robot] = 0;
                          }
-                         $unAsighned[$ticket_robot] ++ ;
-                         $unAsighned_tickets++;
+                         $unAssigned[$ticket_robot] ++ ;
+                         $unAssigned_tickets++;
                      }
                 }
 //                print_r($unAsighned);
@@ -184,7 +200,7 @@ foreach ($arr_tickets as &$ticket) {
               </tr>
               <tr>
                 <th>Ожидают ремонта:</th>
-                <td class="dop"> <? echo count($remont);?> <i class="fa fa-fw fa-plus-circle pull-right text-green" style="cursor: pointer;"></i>
+                <td class="dop"> <? echo $remont_tickets;?> <i class="fa fa-fw fa-plus-circle pull-right text-green" style="cursor: pointer;"></i>
                 <div class="robots" style="display: none">
                     <ul>
                     <? 
@@ -205,13 +221,13 @@ foreach ($arr_tickets as &$ticket) {
               </tr>
               <tr>
                   <th>Не назначенных</th>
-                  <td class="dop"><? echo $unAsighned_tickets;?> <i class="fa fa-fw fa-plus-circle pull-right text-green" style="cursor: pointer;"></i>
+                  <td class="dop"><? echo $unAssigned_tickets;?> <i class="fa fa-fw fa-plus-circle pull-right text-green" style="cursor: pointer;"></i>
                       <div class="robots" style="display: none">
                           <ul>
                               <?
 //                              print_r($unAsighned);
 //                              $count = 0;
-                              foreach ($unAsighned as $key => $value) {
+                              foreach ($unAssigned as $key => $value) {
                                   $robot_info = $robots->get_info_robot($key);
                                   $number = $robot_info['version'].".".$robot_info['number'];
 //                                  $count++;
