@@ -269,8 +269,11 @@ foreach ($arr_tickets as &$ticket) {
                          $robot_info = $robots->get_info_robot($key);
                          $number = $robot_info['version'].".".$robot_info['number'];
                          $date_color = "";
-                         if ($value['date']==date("d.m.Y")) {
+                         if ($value['date'] == date("d.m.Y")) {
                              $date_color = "text-yellow";
+                         }
+                         if ($value['date'] < date("d.m.Y")) {
+                             $date_color = "text-red";
                          }
                          echo "<li><a href='./robot_card.php?id=".$key."'>".$number." (".$value['count'].")</a> - <span class='".$date_color."'>".$value['date']."</span></li>";
                      }
