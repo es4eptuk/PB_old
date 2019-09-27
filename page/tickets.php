@@ -256,10 +256,10 @@ class Tickets
     // $problem - только закрытые тикеты (1 или 0)
     // $connect - только активные тикеты (1 или 0)
     
-    public function get_tickets($robot = 0, $user = 0, $status = 0, $sortBy = "update_date", $sortDir = "DESC", $sourceDate = 0, $date_min = 0, $date_max = 0, $class = "", $problem = 0, $connect = 0)
+    public function get_tickets($robot = 0, $user = NULL, $status = 0, $sortBy = "update_date", $sortDir = "DESC", $sourceDate = 0, $date_min = 0, $date_max = 0, $class = "", $problem = 0, $connect = 0)
     {
         $where = '';
-        if (isset($_GET['user']) && $_GET['user'] != 0) {
+        if (isset($_GET['user']) && $_GET['user'] !== NULL) {
             $user = $_GET['user'];
             $where .= " AND `assign` = $user ";
         }
