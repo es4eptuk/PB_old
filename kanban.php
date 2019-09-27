@@ -14,53 +14,128 @@ $arr = $robots->get_robots();
                 $inprocess = array();
                 $remont = array();
                 $process = array();
-                $unAsighned = array();
+                $unAssigned = array();
                 $wait = array();
                 $robot_problem = 0;
                 $open_tickets = 0;
                 $remont_tickets = 0;
                 $process_tickets = 0;
-                $unAsighned_tickets = 0;
-                
-                foreach ($arr_tickets as &$ticket) {
+                $unAssigned_tickets = 0;
+                $assign_Dima = 0;
+                $assign_Danil = 0;
+                $assign_Eldar = 0;
+
+
+foreach ($arr_tickets as &$ticket) {
                     $ticket_status = $ticket['status'];
                     $ticket_robot = $ticket['robot'];
                     $ticket_assign = $ticket['assign'];
-                    
+
                     if ($ticket_status==3 || $ticket_status==6) {
-                       // if(isset($finish[$ticket_robot])) {$finish[$ticket_robot]}
-                        $finish[$ticket_robot] = isset($finish[$ticket_robot] ) + 1;
+//                        $finish[$ticket_robot] = isset($finish[$ticket_robot] ) + 1;
+
+                        //если по ключу массив пустой, задаем ему 0
+                        if (isset($finish[$ticket_robot]) == false) {
+                            $finish[$ticket_robot] = 0;
+                        }
+                        $finish[$ticket_robot] ++ ;
+
                     } 
                     
                     if ($ticket_status==1 || $ticket_status==2 || $ticket_status==4 || $ticket_status==5) {
-                       $inprocess[$ticket_robot] = isset($inprocess[$ticket_robot] ) + 1;
+//                       $inprocess[$ticket_robot] = isset($inprocess[$ticket_robot] ) + 1;
+
+                        if (isset($inprocess[$ticket_robot]) == false) {
+                            $inprocess[$ticket_robot] = 0;
+                        }
+                        $inprocess[$ticket_robot] ++ ;
+
                        $open_tickets++;
                     }
                     
                     if ($ticket_status==4) {
-                       $remont[$ticket_robot]['count'] = isset($remont[$ticket_robot] ) + 1;
+//                       $remont[$ticket_robot]['count'] = isset($remont[$ticket_robot] ) + 1;
+
+                        //если по ключу массив пустой, задаем ему 0
+                        if (isset($remont[$ticket_robot]['count']) == false) {
+                            $remont[$ticket_robot]['count'] = 0;
+                        }
+
+
+                        $remont[$ticket_robot]['count'] ++ ;
+
+
+                        if (isset($remont[$ticket_robot]['date']) == false) {
+                            $remont[$ticket_robot]['date'] = "";
+                        }
+
                         $date_finish = new DateTime($ticket['finish_date']);
-                       $remont[$ticket_robot]['date'] = $date_finish->format('d.m.Y');
-                       $remont_tickets++;
-                       
+
+                        $remont[$ticket_robot]['date'] = $date_finish->format('d.m.Y');
+
+
+                        $remont_tickets++;
                     }
-                    
+
                     if ($ticket_status==2) {
-                       $process[$ticket_robot] = isset($process[$ticket_robot] ) + 1;
+//                       $process[$ticket_robot] = isset($process[$ticket_robot] ) + 1;
+
+                        //если по ключу массив пустой, задаем ему 0
+                        if (isset($process[$ticket_robot]) == false) {
+                            $process[$ticket_robot] = 0;
+                        }
+                        $process[$ticket_robot] ++ ;
+
                        $process_tickets++;
                        
                     }
                     
                     
                      if ($ticket_status==7 ) {
-                       $wait[$ticket_robot] = isset($wait[$ticket_robot] ) + 1;
+//                       $wait[$ticket_robot] = isset($wait[$ticket_robot] ) + 1;
+
+                         //если по ключу массив пустой, задаем ему 0
+                         if (isset($wait[$ticket_robot]) == false) {
+                             $wait[$ticket_robot] = 0;
+                         }
+                         $wait[$ticket_robot] ++ ;
                     }
 
                      if ($ticket_assign==0 and ($ticket_status==1 || $ticket_status==2 || $ticket_status==4 || $ticket_status==5 )) {
-                       $unAsighned[$ticket_robot] = isset($unAsighned[$ticket_robot] ) + 1;
-                       $unAsighned_tickets++;
+
+
+                         //если по ключу массив пустой, задаем ему 0
+                         if (isset($unAssigned[$ticket_robot]) == false) {
+                             $unAssigned[$ticket_robot] = 0;
+                         }
+                         $unAssigned[$ticket_robot] ++ ;
+                         $unAssigned_tickets++;
+                     }
+
+
+                     //назначенные диме
+                    if ($ticket_assign==31 and ($ticket_status==1 || $ticket_status==2 || $ticket_status==4 || $ticket_status==5 )) {
+
+                        $assign_Dima++;
                     }
-                }
+
+
+
+                     //назначенные дане
+                    if ($ticket_assign==32 and ($ticket_status==1 || $ticket_status==2 || $ticket_status==4 || $ticket_status==5 )) {
+
+                        $assign_Danil++;
+                    }
+
+
+                     //назначенные эдьдару
+                    if ($ticket_assign==44 and ($ticket_status==1 || $ticket_status==2 || $ticket_status==4 || $ticket_status==5 )) {
+
+                        $assign_Eldar++;
+                    }
+
+}
+//                print_r($unAsighned);
                 //print_r($finish);
                 //print_r($inprocess);
 ?>
@@ -117,6 +192,7 @@ $arr = $robots->get_robots();
                          $number = $robot_info['version'].".".$robot_info['number'];
                          $inprocess_sort[$count]['number'] = $robot_info['version'].".".$robot_info['number'];
                          $inprocess_sort[$count]['id'] = $key;
+                         $inprocess_sort[$count]['sum'] = $value;
                          $count++;
                      }
                      
@@ -127,7 +203,7 @@ $arr = $robots->get_robots();
                         
                       usort($inprocess_sort, "cmp");
                        foreach ($inprocess_sort as $key => $value) {
-                         echo "<li><a href='./robot_card.php?id=".$value['id']."'  >".$value['number']."</a></li>";
+                         echo "<li><a href='./robot_card.php?id=".$value['id']."'  >".$value['number']." (".$value['sum'].")</a></li>";
                      }
                     ?>
                   </ul>   
@@ -152,7 +228,7 @@ $arr = $robots->get_robots();
               </tr>
               <tr>
                 <th>Ожидают ремонта:</th>
-                <td class="dop"> <? echo count($remont);?> <i class="fa fa-fw fa-plus-circle pull-right text-green" style="cursor: pointer;"></i>
+                <td class="dop"> <? echo $remont_tickets;?> <i class="fa fa-fw fa-plus-circle pull-right text-green" style="cursor: pointer;"></i>
                 <div class="robots" style="display: none">
                     <ul>
                     <? 
@@ -173,18 +249,36 @@ $arr = $robots->get_robots();
               </tr>
               <tr>
                   <th>Не назначенных</th>
-                  <td class="dop"><? echo $unAsighned_tickets;?> <i class="fa fa-fw fa-plus-circle pull-right text-green" style="cursor: pointer;"></i>
+                  <td class="dop"><? echo $unAssigned_tickets;?> <i class="fa fa-fw fa-plus-circle pull-right text-green" style="cursor: pointer;"></i>
                       <div class="robots" style="display: none">
                           <ul>
                               <?
-                              foreach ($unAsighned as $key => $value) {
+//                              print_r($unAsighned);
+//                              $count = 0;
+                              foreach ($unAssigned as $key => $value) {
                                   $robot_info = $robots->get_info_robot($key);
                                   $number = $robot_info['version'].".".$robot_info['number'];
+//                                  $count++;
                                   echo "<li><a href='./robot_card.php?id=".$key."'>".$number." (".$value.")</a></li>";
                               }
                               ?>
                           </ul>
                       </div>
+                  </td>
+              </tr>
+              <tr>
+                  <th>Назначенных Диме</th>
+                  <td class="dop"><? echo $assign_Dima;?>
+                  </td>
+              </tr>
+              <tr>
+                  <th>Назначенных Данилу</th>
+                  <td class="dop"><? echo $assign_Danil;?>
+                  </td>
+              </tr>
+              <tr>
+                  <th>Назначенных Эльдару</th>
+                  <td class="dop"><? echo $assign_Eldar;?>
                   </td>
               </tr>
               <tr>
