@@ -1,6 +1,14 @@
 <?php 
 include 'include/class.inc.php';
 
+
+function print_r2($val)
+{
+    echo '<pre>';
+    print_r($val);
+    echo '</pre>';
+}
+
 //$robot_info = $robots->get_info_robot($_GET['id']);
 //$robot_number = $robot_info['number'];
 //$robot_name= $robot_info['name'];
@@ -24,7 +32,9 @@ $arr = $robots->get_robots();
                 $assign_Dima = 0;
                 $assign_Danil = 0;
                 $assign_Eldar = 0;
+                $currentDate = date('d.m.Y');
 
+//                print_r2($arr_tickets[0]);
 
 foreach ($arr_tickets as &$ticket) {
                     $ticket_status = $ticket['status'];
@@ -116,7 +126,15 @@ foreach ($arr_tickets as &$ticket) {
                      //назначенные диме
                     if ($ticket_assign==31 and ($ticket_status==1 || $ticket_status==2 || $ticket_status==4 || $ticket_status==5 )) {
 
-                        $assign_Dima++;
+
+                        $date_finish = new DateTime($ticket['finish_date']);
+                        $date_finish_formatted = $date_finish->format('d.m.Y');
+
+
+                        if($date_finish_formatted === $currentDate){
+                            $assign_Dima++;
+                        }
+
                     }
 
 
@@ -124,14 +142,28 @@ foreach ($arr_tickets as &$ticket) {
                      //назначенные дане
                     if ($ticket_assign==32 and ($ticket_status==1 || $ticket_status==2 || $ticket_status==4 || $ticket_status==5 )) {
 
-                        $assign_Danil++;
+
+                        $date_finish = new DateTime($ticket['finish_date']);
+                        $date_finish_formatted = $date_finish->format('d.m.Y');
+
+
+                        if($date_finish_formatted === $currentDate){
+                            $assign_Danil++;
+                        }
+
                     }
 
 
                      //назначенные эдьдару
                     if ($ticket_assign==44 and ($ticket_status==1 || $ticket_status==2 || $ticket_status==4 || $ticket_status==5 )) {
 
-                        $assign_Eldar++;
+                        $date_finish = new DateTime($ticket['finish_date']);
+                        $date_finish_formatted = $date_finish->format('d.m.Y');
+
+
+                        if($date_finish_formatted === $currentDate){
+                            $assign_Eldar++;
+                        }
                     }
 
 }
