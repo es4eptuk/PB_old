@@ -269,10 +269,10 @@ foreach ($arr_tickets as &$ticket) {
                          $robot_info = $robots->get_info_robot($key);
                          $number = $robot_info['version'].".".$robot_info['number'];
                          $date_color = "";
-                         if ($value['date'] == date("d.m.Y")) {
+                         if (strtotime($value['date']) == strtotime(date("d.m.Y"))) {
                              $date_color = "text-yellow";
                          }
-                         if ($value['date'] < date("d.m.Y")) {
+                         if ( strtotime($value['date'])  < strtotime(date("d.m.Y")) ) {
                              $date_color = "text-red";
                          }
                          echo "<li><a href='./robot_card.php?id=".$key."'>".$number." (".$value['count'].")</a> - <span class='".$date_color."'>".$value['date']."</span></li>";
@@ -916,7 +916,7 @@ var id_s = 0;
             var subcategory = $("#"+id).find(".subcategory").text();
             var ticket_class = $("#"+id).find(".ticket_class").text();
             console.log(ticket_class);
-             if ((subcategory==0 || subcategory=="" || subcategory==null) && status!=2 ) {
+             if ((subcategory==0 || subcategory=="" || subcategory==null) && (status!=2 && status!=4)) {
                 if (ticket_class=="P"){
                 //$("#ticket_status option[value='0']").attr("selected","selected");
                 alert("Не заполнена подкатегория!");
