@@ -721,7 +721,7 @@ $( "#ticket_status" )
     var subcategory = $('#subcategory').val();
     var ticket_class_2 = $('#ticket_class_2').text(); 
     console.log(ticket_class_2);
-    if (subcategory==0 || subcategory=="" || subcategory==null) {
+    if ((subcategory==0 || subcategory=="" || subcategory==null) && (status!=2 && status!=4)) {
         
         if (ticket_class_2=="P") {
         alert("Не заполнена подкатегория!");
