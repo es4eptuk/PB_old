@@ -22,6 +22,7 @@ $robot_id= $robot_info['id'];
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
+          <?php echo "<a href=\"./kanban.php\"><i class=\"fa fa-long-arrow-left\"></i> KANBAN</a>";?>
        Promobot <?php echo $robot_version.".".$robot_number; ?>
         
       </h1>
