@@ -34,6 +34,8 @@ $arr = $robots->get_robots();
                 $assign_Eldar = 0;
                 $currentDate = date('d.m.Y');
 
+
+
 //                print_r2($arr_tickets[0]);
 
 foreach ($arr_tickets as &$ticket) {
@@ -583,7 +585,7 @@ foreach ($arr_tickets as &$ticket) {
                             $date_finish = new DateTime($ticket['finish_date']);
                             $str_date_finish = 'Ремонт назначен на <b>'.$date_finish->format('d.m.Y').'</b><br><br>';}
                             $out .= '
-                        <div class="box box-solid" style="background-color: #f9f9f9;" id="'.$ticket['id'].'">
+                        <div class="box box-solid" style="background-color: #f9f9f9;" id="'.$ticket['id'].'" data-robot="'.$ticket['robot'].'">
                                     <div class="box-body">
                                       <b>'.$username_assign.'</b> <span class="pull-right text-muted">'.$robot_version.'.'.$robot_number.' </span></br>
                                       <b><a href="./ticket.php?id='.$ticket['id'].'"><span class="ticket_class">'.$ticket_class.'</span>-'.$ticket['id'].' '.$ticket_category.':<span class="subcategory"> '.$ticket_subcategory.'</span></a></b> 
@@ -687,12 +689,36 @@ foreach ($arr_tickets as &$ticket) {
   </div>
 </div>
 
+    <!-- Модальное add_comment -->
+    <div class="modal fade" id="add_comment" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Опишите причину переноса карточки</h5>
+                    <!--<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>-->
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Комментарий:</label>
+                        <textarea class="form-control" rows="5" id="comment"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+<!--                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>-->
+                    <button type="button" class="btn btn-primary" id="btn_add_comment">Добавить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
 <div class="modal fade" id="add_date" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLongTitle">Укажите дату решения проблемы</h5>
+        <h5 class="modal-title" id="exampleModalLongTitle">Укажите дату назначенного ремонта</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -705,7 +731,7 @@ foreach ($arr_tickets as &$ticket) {
                   <div class="input-group-addon">
                     <i class="fa fa-calendar"></i>
                   </div>
-                  <input type="text" class="form-control pull-right" id="datepicker">
+                  <input type="text" class="form-control pull-right" id="datepicker" value = <?php echo $currentDate ?>>
                 </div>
                 <!-- /.input group -->
               </div>
@@ -732,14 +758,39 @@ foreach ($arr_tickets as &$ticket) {
     <script src="../../bower_components/select2/dist/js/select2.full.min.js"></script>
 <script>
 
- //Date picker
+    //get today in correct format
+    var today = new Date();
+    var dd = today.getDate();
+
+    var mm = today.getMonth()+1;
+    var yyyy = today.getFullYear();
+    if(dd<10)
+    {
+        dd='0'+dd;
+    }
+
+    if(mm<10)
+    {
+        mm='0'+mm;
+    }
+    today = dd+'.'+mm+'.'+yyyy;
+    // console.log(today);
+
+
+    //Date picker
     $('#datepicker').datepicker({
-      format: 'dd.mm.yyyy',
-      autoclose: true
-    })
-var ticket_count = 0;   
+        format: 'dd.mm.yyyy',
+        startDate: today,
+        todayHighlight: true,
+        endDate: '',
+        autoclose: true
+    });
+
+
+    var ticket_count = 0;
 var ticket_count_old = 0;  
 var id_s = 0;
+var robot_t = 0;
  $( "#btn_add_reuslt" ).click(function() {
      
      var id = id_s;
@@ -759,14 +810,50 @@ var id_s = 0;
           });
      
  });
- 
+
+// кнопка добавить комментарий
+ $( "#btn_add_comment" ).click(function() {
+
+
+     var robot = robot_t;
+     var id = id_s;
+     var comment = $('#comment').val();
+
+     $.post( "./api.php", {
+         action: "ticket_add_comment",
+         robot: robot,
+         id: id,
+         comment: comment
+     } )
+         .done(function( data ) {
+             if (data=="false") {alert( "Data Loaded: " + data ); }
+             else {
+                 window.location.reload(true);
+
+             }
+         });
+     console.log(robot);
+     console.log(id);
+     console.log(comment);
+ });
+
+
  $( "#btn_add_date" ).click(function() {
-     
+
      var id = id_s;
      var date = $('#datepicker').val();
-     
-      $.post( "./api.php", { 
-                    action: "ticket_add_date", 
+
+/*     if (typeof date !== 'undefined') {
+         console.log('задана');
+         console.log(date);
+
+     }else {
+         console.log('не задана');
+     }*/
+
+
+      $.post( "./api.php", {
+                    action: "ticket_add_date",
                     id: id,
                     date: date
                 } )
@@ -774,22 +861,22 @@ var id_s = 0;
               if (data=="false") {alert( "Data Loaded: " + data ); }
               else {
                 window.location.reload(true);
-                
+
               }
           });
-     
+
  });
- 
+
   $( ".sort" ).click(function() {
-      
+
      var sortBy = $(this).data( "sortby" );
      var sortDir = $(this).data( "sortdir" );
      var statusId = $(this).data( "status" );
      $("#"+statusId).empty();
      $("#overlay"+statusId).append('<div class="overlay"><i class="fa fa-refresh fa-spin"></i></div>');
-     
-      $.post( "./api.php", { 
-                    action: "ticket_get", 
+
+      $.post( "./api.php", {
+                    action: "ticket_get",
                     robot: 0,
                     user:0,
                     status: statusId,
@@ -801,7 +888,7 @@ var id_s = 0;
                       //window.location.reload(true);
                       $.each(tickets, function( index, value ) {
                           console.log(statusId);
-                          $("#"+statusId).append(' <div class="box box-solid" style="background-color: #f9f9f9;" id="'+value['id']+'"> \
+                          $("#"+statusId).append(' <div class="box box-solid" style="background-color: #f9f9f9;" id="'+value['id']+'" data-robot="'+value['robot']+'"> \
                                     <div class="box-body"> \
                                     <b>'+value['assign']+'</b> <span class="pull-right text-muted">'+value['robot']+'</span></br> \
                                       <b><a href="./ticket.php?id='+value['id']+'">'+value['class']+'-'+value['id']+' '+value['category']+': '+value['subcategory']+'</a></b> \
@@ -813,15 +900,15 @@ var id_s = 0;
                             $("#overlay"+statusId).find(".overlay").remove();
                           console.log(value);
                         });
-                      
-                     
+
+
                   });
-                  
-     
-     
-     
+
+
+
+
  });
- 
+
   $( ".arhiv" ).click(function() {
       
      var statusId = $(this).data( "status" );
@@ -908,14 +995,22 @@ var id_s = 0;
     
     $( ".sortable" ).sortable({
         stop: function( event, ui ) {
+            var out = ui;
             var id = ui['item'][0]['id'];
             var status = ui['item'][0]['parentElement']['id'];
-            console.log(ui);
+            var robot = ui['item'][0]['dataset']['robot'];
+            // console.log(ui['item'][0]);
             console.log(id);
-            console.log(status);
+            console.log(robot);
+            console.log(out);
+
+            // var robot = $("#"+id).find(".robot").text();
             var subcategory = $("#"+id).find(".subcategory").text();
             var ticket_class = $("#"+id).find(".ticket_class").text();
-            console.log(ticket_class);
+            // console.log(ticket_class);
+            // console.log(robot);
+
+
              if ((subcategory==0 || subcategory=="" || subcategory==null) && (status!=2 && status!=4)) {
                 if (ticket_class=="P"){
                 //$("#ticket_status option[value='0']").attr("selected","selected");
@@ -923,7 +1018,13 @@ var id_s = 0;
                 return false;
                 }
             }
-            
+
+            if (status == 2 || status == 5 || status == 7) {
+                $('#add_comment').modal('show');
+                robot_t = robot;
+                id_s = id;
+            }
+
             
            if (status==3) {
                     $('#add_result').modal('show');
