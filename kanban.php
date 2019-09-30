@@ -196,13 +196,13 @@ foreach ($arr_tickets as &$ticket) {
 
     <!-- Main content -->
     <section class="content">
-     
+
       <div class="box box-info">
             <div class="box-header">
               <h3 class="box-title">Статистика</h3>
             </div>
             <div class="box-body">
-             
+
              <div class="col-xs-6">
           <p class="lead">На сегодня <? echo date("d.m.Y"); ?></p>
 
@@ -218,8 +218,8 @@ foreach ($arr_tickets as &$ticket) {
                 <td class="dop"><? echo count($inprocess);?> <i class="fa fa-fw fa-plus-circle pull-right text-green" style="cursor: pointer;"></i>
                 <div class="robots" style="display: none">
                     <ul>
-                    
-                    <? 
+
+                    <?
                     $count = 0;
                      foreach ($inprocess as $key => $value) {
                          $robot_info = $robots->get_info_robot($key);
@@ -229,18 +229,18 @@ foreach ($arr_tickets as &$ticket) {
                          $inprocess_sort[$count]['sum'] = $value;
                          $count++;
                      }
-                     
+
                      function cmp($a, $b)
                         {
                             return strcmp($a["number"], $b["number"]);
                         }
-                        
+
                       usort($inprocess_sort, "cmp");
                        foreach ($inprocess_sort as $key => $value) {
                          echo "<li><a href='./robot_card.php?id=".$value['id']."'  >".$value['number']." (".$value['sum'].")</a></li>";
                      }
                     ?>
-                  </ul>   
+                  </ul>
                   </div>
                 </td>
               </tr>
@@ -249,15 +249,15 @@ foreach ($arr_tickets as &$ticket) {
                 <td class="dop"><? echo $process_tickets;?> <i class="fa fa-fw fa-plus-circle pull-right text-green" style="cursor: pointer;"></i>
                  <div class="robots" style="display: none">
                     <ul>
-                    <? 
+                    <?
                      foreach ($process as $key => $value) {
                          $robot_info = $robots->get_info_robot($key);
                          $number = $robot_info['version'].".".$robot_info['number'];
                          echo "<li><a href='./robot_card.php?id=".$key."'>".$number." (".$value.")</a></li>";
                      }
                     ?>
-                  </ul>  
-                   </div> 
+                  </ul>
+                   </div>
                 </td>
               </tr>
               <tr>
@@ -265,7 +265,7 @@ foreach ($arr_tickets as &$ticket) {
                 <td class="dop"> <? echo $remont_tickets;?> <i class="fa fa-fw fa-plus-circle pull-right text-green" style="cursor: pointer;"></i>
                 <div class="robots" style="display: none">
                     <ul>
-                    <? 
+                    <?
                     //print_r($remont);
                      foreach ($remont as $key => $value) {
                          $robot_info = $robots->get_info_robot($key);
@@ -280,7 +280,7 @@ foreach ($arr_tickets as &$ticket) {
                          echo "<li><a href='./robot_card.php?id=".$key."'>".$number." (".$value['count'].")</a> - <span class='".$date_color."'>".$value['date']."</span></li>";
                      }
                     ?>
-                  </ul>  
+                  </ul>
                    </div>
                 </td>
               </tr>
@@ -323,76 +323,95 @@ foreach ($arr_tickets as &$ticket) {
           </div>
         </div>
         <div class="col-xs-6">
-         <p class="lead">За вчера</p>
-<? 
- $date_min = date("Y-m-d", strtotime("yesterday"));
- $date_max = date("Y-m-d");
- 
- $date_minPr = date("Y-m-d", time() - 86400*1);
- $date_maxPr = date("Y-m-d", time() - 86400*1);
- 
- $countNew24Pr = 0;
- $countNew24 = 0;
- $countResh24 = 0;
- $arr_new24 = $tickets->get_tickets(0,0,0,"update_date","DESC","date_create",$date_min,$date_max,"P");
- //print_r($arr_new24);
-   if (isset($arr_new24)){
-  
-  foreach ($arr_new24 as &$value) {
-        $arr_new24_sort[] = $value['robot'];
-        //echo $value['robot']." ";
-    }
-   $arr_new24_sort =  array_unique($arr_new24_sort);
-  
-   $countNew24 = count($arr_new24_sort);
-  }
- 
- 
- $arr_new24Pr = $tickets->get_tickets(0,0,0,"update_date","DESC","date_create",$date_minPr,$date_maxPr,"P");
- 
-  if (isset($arr_new24Pr)){
-  
-  foreach ($arr_new24Pr as &$value) {
-        $arr_new24Pr_sort[] = $value['robot'];
-        //echo $value['robot']." ";
-    }
-   $arr_new24Pr_sort =  array_unique($arr_new24Pr_sort);
-   $countNew24Pr = count($arr_new24Pr_sort);
-  }
-  
+            <p class="lead">За вчера</p>
+            <?
+             $date_min = date("Y-m-d", strtotime("yesterday"));
+             $date_max = date("Y-m-d");
+
+             $date_minPr = date("Y-m-d", time() - 86400*1);
+             $date_maxPr = date("Y-m-d", time() - 86400*1);
+             $date_Today = date("Y-m-d");
+//             echo $date_minPr . PHP_EOL;
+//             echo $date_Today . PHP_EOL;
+
+            $countNew24Pr = 0;
+            $countNew24 = 0;
+            $countResh24 = 0;
+            $arr_new24 = $tickets->get_tickets(0,0,0,"update_date","DESC","date_create",$date_min,$date_max,"P");
+            //print_r($arr_new24);
+            if (isset($arr_new24)){
+
+                foreach ($arr_new24 as &$value) {
+                    $arr_new24_sort[] = $value['robot'];
+                    //echo $value['robot']." ";
+                }
+                $arr_new24_sort =  array_unique($arr_new24_sort);
+
+                $countNew24 = count($arr_new24_sort);
+            }
 
 
- $rNew = $countNew24-$countNew24Pr;
+             $arr_new24Pr = $tickets->get_tickets(0,0,0,"update_date","DESC","date_create",$date_minPr,$date_maxPr,"P");
+
+              if (isset($arr_new24Pr)){
+
+              foreach ($arr_new24Pr as &$value) {
+                    $arr_new24Pr_sort[] = $value['robot'];
+                    //echo $value['robot']." ";
+                }
+               $arr_new24Pr_sort =  array_unique($arr_new24Pr_sort);
+               $countNew24Pr = count($arr_new24Pr_sort);
+              }
 
 
 
- $arr_Resh24 = $tickets->get_tickets(0,0,0,"update_date","DESC","inwork",$date_minPr." 00:00:00",$date_maxPr." 23:59:59","P");
+                $rNew = $countNew24-$countNew24Pr;
+
+
+
+              $arr_Resh24 = $tickets->get_tickets(0,0,0,"update_date","DESC","inwork",$date_minPr." 00:00:00",$date_maxPr." 23:59:59","P");
  //print_r($arr_Resh24);
  if (isset($arr_Resh24)) {
   foreach ($arr_Resh24 as &$value) {
-       
-       
+
+
             $robot_info = $robots->get_info_robot($value['robot']);
             $number = $robot_info['version'].".".$robot_info['number'];
             $arrTicketRobotNoProblem[$value['robot']] = $number;
-        
+
     }
     $countResh24 = count($arr_Resh24);
    // print_r($arr_Resh24);
- }   
+ }
+
+ //решенные сегодня
+$arr_ReshToday = $tickets->get_tickets(0,0,0,"update_date","DESC","inwork",$date_Today." 00:00:00",$date_Today." 23:59:59","P");
+//print_r($arr_Resh24);
+if (isset($arr_ReshToday)) {
+    foreach ($arr_ReshToday as &$value) {
+
+
+        $robot_info = $robots->get_info_robot($value['robot']);
+        $number = $robot_info['version'].".".$robot_info['number'];
+        $arrTicketRobotNoProblemToday[$value['robot']] = $number;
+
+    }
+    $countReshToday = count($arr_ReshToday);
+    // print_r($arr_Resh24);
+}
 
  /*$arr_new24 = $tickets->get_tickets(0,0,0,"update_date","DESC","date_create",$date_min,$date_max);
  $arr_new24Pr = $tickets->get_tickets(0,0,0,"update_date","DESC","date_create",$date_minPr,$date_maxPr);
  $countNew24 = count($arr_new24);
  $countNew24Pr = count($arr_new24Pr);
- 
+
  $procNew = $countNew24Pr*100/$countNew24;
- 
+
  $arr_finish24 = $tickets->get_tickets(0,0,3,"update_date","DESC","update_date",$date_min,$date_max);
  $arr_finish24Pr = $tickets->get_tickets(0,0,3,"update_date","DESC","update_date",$date_minPr,$date_maxPr);
  $countfinish24 = count($arr_finish24);
  $countfinish24Pr = count($arr_finish24Pr);
- 
+
  $procFinish = $countfinish24Pr*100/$countfinish24;
 
 */
@@ -408,8 +427,8 @@ foreach ($arr_tickets as &$ticket) {
                 <i class="fa fa-fw fa-plus-circle pull-right text-green" style="cursor: pointer;"></i>
                 <div class="robots" style="display: none">
                     <ul>
-                    
-                    <? 
+
+                    <?
                     $count=0;
                     //print_r($remont);
                      foreach ($arr_new24_sort as $value) {
@@ -417,21 +436,21 @@ foreach ($arr_tickets as &$ticket) {
                         $number = $robot_info['version'].".".$robot_info['number'];
                         echo "<li><a href='./robot_card.php?id=".$value."'>".$number."</a></li>";
                      }
-                   
+
                     ?>
-                  </ul>  
+                  </ul>
                    </div>
-                
+
                 </td>
               </tr>
-              
+
               <tr>
                 <th style="width:50%">Исправленных роботов:</th>
                 <td class="dop"><? echo $countResh24 ;
                 ?> <i class="fa fa-fw fa-plus-circle pull-right text-green" style="cursor: pointer;"></i>
                  <div class="robots" style="display: none">
                     <ul>
-                    <? 
+                    <?
                     //print_r($remont);
                     if (isset($arrTicketRobotNoProblem)) {
                      foreach ($arrTicketRobotNoProblem as $key => $value) {
@@ -439,23 +458,52 @@ foreach ($arr_tickets as &$ticket) {
                      }
                     }
                     ?>
-                  </ul>  
+                  </ul>
                    </div>
-                
-                
+
+
                 </td>
               </tr>
-              
-             
-             
+
+
+
             </tbody></table>
           </div>
         </div>
-              
+
+<!--solved today-->
+        <div class="col-xs-6">
+            <p class="lead">За сегодня</p>
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <th style="width:50%">Исправленных роботов:</th>
+                        <td class="dop"><? echo $countReshToday ;
+                            ?> <i class="fa fa-fw fa-plus-circle pull-right text-green" style="cursor: pointer;"></i>
+                            <div class="robots" style="display: none">
+                                <ul>
+                                    <?
+                                    //print_r($remont);
+                                    if (isset($arrTicketRobotNoProblemToday)) {
+                                        foreach ($arrTicketRobotNoProblemToday as $key => $value) {
+                                            echo "<li><a href='./robot_card.php?id=".$key."'>".$value."</a></li>";
+                                        }
+                                    }
+                                    ?>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+
+
             </div>
             <!-- /.box-body -->
           </div>
-        
+
         <div class="box box-default">
         <div class="box-header with-border">
           <h3 class="box-title">Фильтр</h3>
@@ -975,15 +1023,19 @@ var robot_t = 0;
        "iDisplayLength": 100,
         "order": [[ 0, "desc" ]]
     } );
+
+
+
+    //Что это?
+    <?php
     
-    <?php 
-    
-    if ($userdata['user_id']==29) {
+    /*if ($userdata['user_id']==29) {
     echo "
     //setTimeout(function() {window.location.reload();}, 20000);
     
     ";
-    }
+    }*/
+
     ?>
  
  $( document ).ready(function() {
