@@ -473,7 +473,7 @@ foreach ($arr_tickets as &$ticket) {
                 <select class="form-control select3" style="width: 100%;" id="filter_user">
                     <option value="0">Выберите исполнителя</option>
                     <?php 
-											                   $arr_user = $user->get_users(0);
+											                   $arr_user = $user->get_users(4);
 											                //echo $ticket_assign_id;
 											                    foreach ($arr_user as &$user_assign) {
 											                       
@@ -719,9 +719,9 @@ foreach ($arr_tickets as &$ticket) {
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLongTitle">Укажите дату назначенного ремонта</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+       <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
-        </button>
+        </button>-->
       </div>
       <div class="modal-body">
        <div class="form-group">
@@ -737,7 +737,7 @@ foreach ($arr_tickets as &$ticket) {
               </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+<!--        <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>-->
         <button type="button" class="btn btn-primary" id="btn_add_date">Сохранить</button>
       </div>
     </div>
@@ -819,22 +819,30 @@ var robot_t = 0;
      var id = id_s;
      var comment = $('#comment').val();
 
-     $.post( "./api.php", {
-         action: "ticket_add_comment",
-         robot: robot,
-         id: id,
-         comment: comment
-     } )
-         .done(function( data ) {
-             if (data=="false") {alert( "Data Loaded: " + data ); }
-             else {
-                 window.location.reload(true);
+     if (comment === ''){
+         console.log("пустая строка");
+         alert("заполни комментАААААриЙ");
+     } else {
 
-             }
-         });
-     console.log(robot);
-     console.log(id);
-     console.log(comment);
+         $.post("./api.php", {
+             action: "ticket_add_comment",
+             robot: robot,
+             id: id,
+             comment: comment
+         })
+             .done(function (data) {
+                 if (data == "false") {
+                     alert("Data Loaded: " + data);
+                 } else {
+                     window.location.reload(true);
+
+                 }
+             });
+
+     }
+     // console.log(robot);
+     // console.log(id);
+     // console.log(comment);
  });
 
 
@@ -1020,19 +1028,19 @@ var robot_t = 0;
             }
 
             if (status == 2 || status == 5 || status == 7) {
-                $('#add_comment').modal('show');
+                $('#add_comment').modal({backdrop: 'static', keyboard: false, show: true});
                 robot_t = robot;
                 id_s = id;
             }
 
             
            if (status==3) {
-                    $('#add_result').modal('show');
+                    $('#add_result').modal({backdrop: 'static', keyboard: false, show: true});
                     id_s = id;
                 }
                 
              if (status==4) {
-                    $('#add_date').modal('show');
+                    $('#add_date').modal({backdrop: 'static', keyboard: false, show: true});
                     id_s = id;
                 }     
                 
