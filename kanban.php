@@ -781,6 +781,48 @@ foreach ($arr_tickets as &$ticket) {
     </div>
 
 
+    <!--    модальное assign-->
+    <div class="modal fade" id="assign" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Опишите причину переноса карточки</h5>
+                    <!--<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>-->
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <select class="form-control" id="ticket_assign">
+                            <option value="0">Не назначен</option>
+                            <?php
+                            $user_info = $user->get_info_user($ticket_info['assign']);
+                            $ticket_assign_id = $user_info['user_id'];
+
+                            $arr_user = $user->get_users(4);
+                            //echo $ticket_assign_id;
+                            foreach ($arr_user as &$user_assign) {
+
+                                if ($user_assign['user_id']==$ticket_assign_id) {$selected = "selected";} else {$selected = "";}
+                                echo "
+											                       <option value='".$user_assign['user_id']."' ".$selected.">".$user_assign['user_name']."</option>
+											                       
+											                       ";
+                            }
+
+                            ?>
+
+
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
     <div class="modal fade" id="add_date" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
          aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
@@ -906,11 +948,7 @@ foreach ($arr_tickets as &$ticket) {
 
                     }
                 });
-
         }
-        // console.log(robot);
-        // console.log(id);
-        // console.log(comment);
     });
 
 
@@ -937,7 +975,11 @@ foreach ($arr_tickets as &$ticket) {
                 if (data == "false") {
                     alert("Data Loaded: " + data);
                 } else {
-                    window.location.reload(true);
+                    $('#add_date').modal('hide');
+                    $('#assign').modal({backdrop: 'static', keyboard: false, show: true});
+                    id_s = id;
+
+                    // window.location.reload(true);
 
                 }
             });
@@ -1003,6 +1045,28 @@ foreach ($arr_tickets as &$ticket) {
 
 
     });
+
+    $( "#ticket_assign" )
+        .change(function () {
+            var id = id_s;
+            var assign = $('#ticket_assign').val();
+
+            $.post( "./api.php", {
+                action: "ticket_change_assign",
+                id: id,
+                assign: assign
+
+            } )
+                .done(function( data ) {
+                    if (data=="false") {alert( "Data Loaded: " + data ); }
+                    else {
+                        window.location.reload(true);
+
+                    }
+                });
+
+
+        });
 
 
     // $('.comment').validator();
@@ -1084,7 +1148,7 @@ foreach ($arr_tickets as &$ticket) {
                 // console.log(robot);
 
 
-                if ((subcategory == 0 || subcategory == "" || subcategory == null) && (status != 2 && status != 4)) {
+                if ((subcategory == 0 || subcategory == "" || subcategory == null) && (status != 2 && status != 4 && status !=1)) {
                     if (ticket_class == "P") {
                         //$("#ticket_status option[value='0']").attr("selected","selected");
                         alert("Не заполнена подкатегория!");
@@ -1107,6 +1171,8 @@ foreach ($arr_tickets as &$ticket) {
                 if (status == 4) {
                     $('#add_date').modal({backdrop: 'static', keyboard: false, show: true});
                     id_s = id;
+                    // $('#assign').modal({backdrop: 'static', keyboard: false, show: true});
+
                 }
 
 
