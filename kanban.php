@@ -1,7 +1,7 @@
 <?php
 include 'include/class.inc.php';
 
-
+//debug helper output
 function print_r2($val)
 {
     echo '<pre>';
@@ -9,30 +9,32 @@ function print_r2($val)
     echo '</pre>';
 }
 
-//$robot_info = $robots->get_info_robot($_GET['id']);
-//$robot_number = $robot_info['number'];
-//$robot_name= $robot_info['name'];
-//$robot_id= $robot_info['id'];
 
 $arr = $robots->get_robots();
 //$paramRobot = (isset($_GET['robot']) ? $_GET['robot'] : 0);
 
 $arr_tickets = $tickets->get_tickets();
 $finish = array();
-$inprocess = array();
-$remont = array();
+$inProcess = array();
+$awaitingRepair = array();
 $process = array();
 $unAssigned = array();
 $wait = array();
 $robot_problem = 0;
 $open_tickets = 0;
-$remont_tickets = 0;
+$awaitingRepair_tickets = 0;
 $process_tickets = 0;
 $unAssigned_tickets = 0;
 $assign_Dima = 0;
 $assign_Danil = 0;
 $assign_Eldar = 0;
 $currentDate = date('d.m.Y');
+$date_Today = date("Y-m-d");
+
+//считаем созданные сегодня
+$ticketsTodayArr = $tickets->get_tickets(0, null, 0, 'update_date', 'DESC', 'date_create', $date_Today . " 00:00:00", $date_Today . " 23:59:59");
+$ticketsToday = count($ticketsTodayArr);
+
 
 
 //                print_r2($arr_tickets[0]);
@@ -56,10 +58,10 @@ foreach ($arr_tickets as &$ticket) {
     if ($ticket_status == 1 || $ticket_status == 2 || $ticket_status == 4 || $ticket_status == 5) {
 //                       $inprocess[$ticket_robot] = isset($inprocess[$ticket_robot] ) + 1;
 
-        if (isset($inprocess[$ticket_robot]) == false) {
-            $inprocess[$ticket_robot] = 0;
+        if (isset($inProcess[$ticket_robot]) == false) {
+            $inProcess[$ticket_robot] = 0;
         }
-        $inprocess[$ticket_robot]++;
+        $inProcess[$ticket_robot]++;
 
         $open_tickets++;
     }
@@ -68,24 +70,24 @@ foreach ($arr_tickets as &$ticket) {
 //                       $remont[$ticket_robot]['count'] = isset($remont[$ticket_robot] ) + 1;
 
         //если по ключу массив пустой, задаем ему 0
-        if (isset($remont[$ticket_robot]['count']) == false) {
-            $remont[$ticket_robot]['count'] = 0;
+        if (isset($awaitingRepair[$ticket_robot]['count']) == false) {
+            $awaitingRepair[$ticket_robot]['count'] = 0;
         }
 
 
-        $remont[$ticket_robot]['count']++;
+        $awaitingRepair[$ticket_robot]['count']++;
 
 
-        if (isset($remont[$ticket_robot]['date']) == false) {
-            $remont[$ticket_robot]['date'] = "";
+        if (isset($awaitingRepair[$ticket_robot]['date']) == false) {
+            $awaitingRepair[$ticket_robot]['date'] = "";
         }
 
         $date_finish = new DateTime($ticket['finish_date']);
 
-        $remont[$ticket_robot]['date'] = $date_finish->format('d.m.Y');
+        $awaitingRepair[$ticket_robot]['date'] = $date_finish->format('d.m.Y');
 
 
-        $remont_tickets++;
+        $awaitingRepair_tickets++;
     }
 
     if ($ticket_status == 2) {
@@ -208,13 +210,18 @@ foreach ($arr_tickets as &$ticket) {
                             <table class="table">
                                 <tbody>
                                 <tr>
+                                    <th style="width:50%">Созданных тикетов:</th>
+                                    <td><? echo $ticketsToday; ?>
+                                    </td>
+                                </tr>
+                                <tr>
                                     <th style="width:50%">Открытых тикетов:</th>
-                                    <td><? echo array_sum($inprocess); ?>
+                                    <td><? echo array_sum($inProcess); ?>
                                     </td>
                                 </tr>
                                 <tr>
                                     <th>Проблемных роботов:</th>
-                                    <td class="dop"><? echo count($inprocess); ?> <i
+                                    <td class="dop"><? echo count($inProcess); ?> <i
                                                 class="fa fa-fw fa-plus-circle pull-right text-green"
                                                 style="cursor: pointer;"></i>
                                         <div class="robots" style="display: none">
@@ -222,7 +229,7 @@ foreach ($arr_tickets as &$ticket) {
 
                                                 <?
                                                 $count = 0;
-                                                foreach ($inprocess as $key => $value) {
+                                                foreach ($inProcess as $key => $value) {
                                                     $robot_info = $robots->get_info_robot($key);
                                                     $number = $robot_info['version'] . "." . $robot_info['number'];
                                                     $inprocess_sort[$count]['number'] = $robot_info['version'] . "." . $robot_info['number'];
@@ -265,14 +272,14 @@ foreach ($arr_tickets as &$ticket) {
                                 </tr>
                                 <tr>
                                     <th>Ожидают ремонта:</th>
-                                    <td class="dop"> <? echo $remont_tickets; ?> <i
+                                    <td class="dop"> <? echo $awaitingRepair_tickets; ?> <i
                                                 class="fa fa-fw fa-plus-circle pull-right text-green"
                                                 style="cursor: pointer;"></i>
                                         <div class="robots" style="display: none">
                                             <ul>
                                                 <?
                                                 //print_r($remont);
-                                                foreach ($remont as $key => $value) {
+                                                foreach ($awaitingRepair as $key => $value) {
                                                     $robot_info = $robots->get_info_robot($key);
                                                     $number = $robot_info['version'] . "." . $robot_info['number'];
                                                     $date_color = "";
