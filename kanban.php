@@ -232,9 +232,11 @@ foreach ($arr_tickets as &$ticket) {
                                                 foreach ($inProcess as $key => $value) {
                                                     $robot_info = $robots->get_info_robot($key);
                                                     $number = $robot_info['version'] . "." . $robot_info['number'];
+                                                    $name = $robot_info['name'];
                                                     $inprocess_sort[$count]['number'] = $robot_info['version'] . "." . $robot_info['number'];
                                                     $inprocess_sort[$count]['id'] = $key;
                                                     $inprocess_sort[$count]['sum'] = $value;
+                                                    $inprocess_sort[$count]['name'] = $name;
                                                     $count++;
                                                 }
 
@@ -252,6 +254,8 @@ foreach ($arr_tickets as &$ticket) {
                                         </div>
                                     </td>
                                 </tr>
+<!--                                --><?//print_r($robot_info);?>
+
                                 <tr>
                                     <th>В процессе решения:</th>
                                     <td class="dop"><? echo $process_tickets; ?> <i
@@ -564,16 +568,16 @@ foreach ($arr_tickets as &$ticket) {
                                 <select class="form-control select3" style="width: 100%;" id="filter_robot">
                                     <option value="0">Выберите робота</option>
                                     <?
-                                    $arr_robots = $robots->get_robots();
-
-                                    if (isset($arr_robots)) {
-                                        foreach ($arr_robots as &$robot) {
-                                            if ($robot['progress'] == 100) {
-
-                                                echo ' <option value="' . $robot['id'] . '">' . $robot['version'] . '.' . $robot['number'] . '(' . $robot['name'] . ')</option>';
+//                                    $arr_robots = $robots->get_robots();
+//                                    print_r2($inprocess_sort);
 
 
-                                            }
+                                    if (isset($inprocess_sort)) {
+                                        foreach ($inprocess_sort as &$robot) {
+
+                                                echo '<option value="' . $robot['id'] . '"> ' . $robot['number'] . '( ' . $robot['name'] . ')'.'</option>';
+
+
                                         }
                                     }
 
