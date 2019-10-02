@@ -918,8 +918,8 @@ foreach ($arr_tickets as &$ticket) {
                 if (data == "false") {
                     alert("Data Loaded: " + data);
                 } else {
+                    $("#btn_add_reuslt").hide();
                     window.location.reload(true);
-
                 }
             });
 
@@ -937,6 +937,7 @@ foreach ($arr_tickets as &$ticket) {
             console.log("пустая строка");
             alert("заполни комментАААААриЙ");
         } else {
+            $("#btn_add_comment").hide();
 
             $.post("./api.php", {
                 action: "ticket_add_comment",
@@ -949,7 +950,6 @@ foreach ($arr_tickets as &$ticket) {
                         alert("Data Loaded: " + data);
                     } else {
                         window.location.reload(true);
-
                     }
                 });
         }
@@ -979,6 +979,7 @@ foreach ($arr_tickets as &$ticket) {
                 if (data == "false") {
                     alert("Data Loaded: " + data);
                 } else {
+                    $("#btn_add_date").hide();
                     $('#add_date').modal('hide');
                     $('#assign').modal({backdrop: 'static', keyboard: false, show: true});
                     id_s = id;
