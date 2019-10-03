@@ -78,46 +78,159 @@ include 'page/dashboard.php';
                     <h3 class="box-title">Техническая поддержка</h3>
                 </div>
                 <div class="box-body table-responsive">
-
-
-                    <?
+                    <? $date_Today = date("Y-m-d");
                     $date_Today = date("Y-m-d");
                     $date_Yesterday = date("Y-m-d",strtotime('-1 days'));
 
                     $totalAnswers = $dashboard->getCountAnswers(0, 999999);
+                    $totalAnswersToday = $dashboard->getCountAnswers(0, 999999, $date_Today . " 00:00:00", $date_Today . " 23:59:59");
+                    $totalAnswersYesterday = $dashboard->getCountAnswers(0, 999999,$date_Yesterday . " 00:00:00",  $date_Yesterday. " 23:59:59");
+
+                    $countAnswers01 = $dashboard->getCountAnswers(0,1);
+                    $countAnswers01Today = $dashboard->getCountAnswers(0,1, $date_Today . " 00:00:00", $date_Today . " 23:59:59");
+                    $countAnswers01Yesterday = $dashboard->getCountAnswers(0,1,$date_Yesterday . " 00:00:00",  $date_Yesterday. " 23:59:59");
+
+                    $countAnswers12 = $dashboard->getCountAnswers(1,2);
+                    $countAnswers12Today = $dashboard->getCountAnswers(1,2, $date_Today . " 00:00:00", $date_Today . " 23:59:59");
+                    $countAnswers12Yesterday = $dashboard->getCountAnswers(1,2,$date_Yesterday . " 00:00:00",  $date_Yesterday. " 23:59:59");
+
+                    $countAnswers23 = $dashboard->getCountAnswers(2,3);
+                    $countAnswers23Today = $dashboard->getCountAnswers(2,3, $date_Today . " 00:00:00", $date_Today . " 23:59:59");
+                    $countAnswers23Yesterday = $dashboard->getCountAnswers(2,3,$date_Yesterday . " 00:00:00",  $date_Yesterday. " 23:59:59");
+
+                    $countAnswers35 = $dashboard->getCountAnswers(3,5);
+                    $countAnswers35Today = $dashboard->getCountAnswers(3,5, $date_Today . " 00:00:00", $date_Today . " 23:59:59");
+                    $countAnswers35Yesterday = $dashboard->getCountAnswers(3,5,$date_Yesterday . " 00:00:00",  $date_Yesterday. " 23:59:59");
+
+                    $countAnswers15 = $dashboard->getCountAnswers(15,999999);
+                    $countAnswers15Today = $dashboard->getCountAnswers(15,999999, $date_Today . " 00:00:00", $date_Today . " 23:59:59");
+                    $countAnswers15Yesterday = $dashboard->getCountAnswers(15,999999,$date_Yesterday . " 00:00:00",  $date_Yesterday. " 23:59:59");
+
+
+
+                    $countViolation = $dashboard->getViolation();
+                    $countViolationToday = $dashboard->getViolation($date_Today . " 00:00:00", $date_Today . " 23:59:59");
+                    $countViolationYesterday = $dashboard->getViolation($date_Yesterday . " 00:00:00",  $date_Yesterday. " 23:59:59");
+                    ?>
+                    <h4>Нарушения:</h4>
+                    <table class="table table-striped w-auto">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">За месяц</th>
+                                <th scope="col">За сегодня</th>
+                                <th scope="col">За вчера</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <th scope="row">Количество</th>
+                            <td><?php echo "<b>".$countViolation." (". round(($countViolation/$totalAnswers)*100, 2) ."%)" . "</b>" ?></td>
+                            <td><?php echo "<b>".$countViolationToday." (". round(($countViolationToday/$totalAnswersToday)*100, 2) ."%)" . "</b>" ?></td>
+                            <td><?php echo "<b>".$countViolationYesterday." (". round(($countViolationYesterday/$totalAnswersYesterday)*100, 2) ."%)" . "</b>" ?></td>
+
+                        </tr>
+                        </tbody>
+                    </table>
+
+
+                    <br>
+                    <h4>Скорость ответа:</h4>
+
+                    <table class="table table-striped w-auto">
+                        <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">За месяц</th>
+                            <th scope="col">За сегодня</th>
+                            <th scope="col">За вчера</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <th scope="row">До 1 минуты:</th>
+                            <td><?php echo "<b>".$countAnswers01." (". round(($countAnswers01/$totalAnswers)*100, 2) ."%)" . "</b>" ?></td>
+                            <td><?php echo "<b>".$countAnswers01Today." (". round(($countAnswers01Today/$totalAnswersToday)*100, 2) ."%)" . "</b>" ?></td>
+                            <td><?php echo "<b>".$countAnswers01Yesterday." (". round(($countAnswers01Yesterday/$totalAnswersYesterday)*100, 2) ."%)" . "</b>" ?></td>
+
+                        </tr>
+                        <tr>
+                            <th scope="row">От 1 до 2 минут:</th>
+                            <td><?php echo "<b>".$countAnswers12." (". round(($countAnswers12/$totalAnswers)*100, 2) ."%)" . "</b>" ?></td>
+                            <td><?php echo "<b>".$countAnswers12Today." (". round(($countAnswers12Today/$totalAnswersToday)*100, 2) ."%)" . "</b>" ?></td>
+                            <td><?php echo "<b>".$countAnswers12Yesterday." (". round(($countAnswers12Yesterday/$totalAnswersYesterday)*100, 2) ."%)" . "</b>" ?></td>
+
+                        </tr>
+                        <tr>
+                            <th scope="row">От 2 до 3 минут:</th>
+                            <td><?php echo "<b>".$countAnswers23." (". round(($countAnswers23/$totalAnswers)*100, 2) ."%)" . "</b>" ?></td>
+                            <td><?php echo "<b>".$countAnswers23Today." (". round(($countAnswers23Today/$totalAnswersToday)*100, 2) ."%)" . "</b>" ?></td>
+                            <td><?php echo "<b>".$countAnswers23Yesterday." (". round(($countAnswers23Yesterday/$totalAnswersYesterday)*100, 2) ."%)" . "</b>" ?></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">От 3 до 5 минут:</th>
+                            <td><?php echo "<b>".$countAnswers35." (". round(($countAnswers35/$totalAnswers)*100, 2) ."%)" . "</b>" ?></td>
+                            <td><?php echo "<b>".$countAnswers35Today." (". round(($countAnswers35Today/$totalAnswersToday)*100, 2) ."%)" . "</b>" ?></td>
+                            <td><?php echo "<b>".$countAnswers35Yesterday." (". round(($countAnswers35Yesterday/$totalAnswersYesterday)*100, 2) ."%)" . "</b>" ?></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Более 15 минут:</th>
+                            <td><?php echo "<b>".$countAnswers15." (". round(($countAnswers15/$totalAnswers)*100, 2) ."%)" . "</b>" ?></td>
+                            <td><?php echo "<b>".$countAnswers15Today." (". round(($countAnswers15Today/$totalAnswersToday)*100, 2) ."%)" . "</b>" ?></td>
+                            <td><?php echo "<b>".$countAnswers15Yesterday." (". round(($countAnswers15Yesterday/$totalAnswersYesterday)*100, 2) ."%)" . "</b>" ?></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Всего ответов</th>
+                            <td><?php echo "<b>".$totalAnswers . "</b>" ?></td>
+                            <td><?php echo "<b>".$totalAnswersToday . "</b>" ?></td>
+                            <td><?php echo "<b>".$totalAnswersYesterday . "</b>" ?></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                   <!-- --><?/*
+                    $date_Today = date("Y-m-d");
+                    $date_Yesterday = date("Y-m-d",strtotime('-1 days'));
+
+                    $totalAnswers = $dashboard->getCountAnswers(0, 999999);
+
+                    $countAnswers01 = $dashboard->getCountAnswers(0,1);
+                    $countAnswers12 = $dashboard->getCountAnswers(1,2);
+                    $countAnswers23 = $dashboard->getCountAnswers(2,3);
+                    $countAnswers35 = $dashboard->getCountAnswers(3,5);
+                    $countAnswers15 = $dashboard->getCountAnswers(15,999999);
+
+                    $countViolation = $dashboard->getViolation();
+                    $countViolationToday = $dashboard->getViolation($date_Today . " 00:00:00", $date_Today . " 23:59:49");
+                    $countViolationYesterday = $dashboard->getViolation($date_Yesterday . " 00:00:00",  $date_Yesterday. " 23:59:49");
+
+                    echo "Количество нарушений за месяц: <b>".$countViolation." (". round(($countViolation/$totalAnswers)*100, 2) ."%)" . "</b><br>";
+
                     echo "Всего ответов: <b>" . $totalAnswers . "</b><br>";
 
                     echo "Скорость ответа: <br>";
-                    $countAnswers01 = $dashboard->getCountAnswers(0,1);
                     echo "<i style=\"margin-left: 40px\">До 1 минуты: </i><b>".$countAnswers01." (". round(($countAnswers01/$totalAnswers)*100, 2) ."%)" . "</b><br>";
 
-                    $countAnswers12 = $dashboard->getCountAnswers(1,2);
                     echo "<i style=\"margin-left: 40px\">От 1 до 2 минут: </i><b>".$countAnswers12." (". round(($countAnswers12/$totalAnswers)*100, 2) ."%)" . "</b><br>";
 
-                    $countAnswers23 = $dashboard->getCountAnswers(2,3);
                     echo "<i style=\"margin-left: 40px\">От 2 до 3 минут: </i><b>".$countAnswers23." (". round(($countAnswers23/$totalAnswers)*100, 2) ."%)" . "</b><br>";
 
-                    $countAnswers35 = $dashboard->getCountAnswers(3,5);
                     echo "<i style=\"margin-left: 40px\">От 3 до 5 минут:</i> <b>".$countAnswers35." (". round(($countAnswers35/$totalAnswers)*100, 2) ."%)" . "</b><br>";
 
-                    $countAnswers15 = $dashboard->getCountAnswers(15,999999);
                     echo "<i style=\"margin-left: 40px\">Больее 15 минут: </i><b>".$countAnswers15." (". round(($countAnswers15/$totalAnswers)*100, 2) ."%)" . "</b><br>";
 
-                    $countViolation = $dashboard->getViolation();
-                    echo "Количество нарушений за месяц: <b>".$countViolation." (". round(($countViolation/$totalAnswers)*100, 2) ."%)" . "</b><br>";
 
-                    $countViolation = $dashboard->getViolation($date_Today . " 00:00:00", $date_Today . " 23:59:49");
-                    echo "Количество нарушений сегодня: <b>".$countViolation."</b><br>";
 
-                    $countViolation = $dashboard->getViolation($date_Yesterday . " 00:00:00",  $date_Yesterday. " 23:59:49");
-                    echo "Количество нарушений за вчера: <b>".$countViolation."</b><br>";
+                    echo "Количество нарушений сегодня: <b>".$countViolationToday."</b><br>";
+
+                    echo "Количество нарушений за вчера: <b>".$countViolationYesterday."</b><br>";
 
 //                    echo $date_Today;
 //                    echo $date_Yesterday;
 
                     //                    $totalAnswers = $countAnswers01 + $countAnswers12 + $countAnswers23 +$countAnswers35 + $countAnswers15;
 
-                    ?>
+                    */?>
 
 
 
