@@ -125,7 +125,16 @@ class Dashboard
     }*/
 
 
-
+    /**
+     * @param int $minMinutes
+     * @param int $maxMinutes
+     * @param string $dateMin
+     * @param string $dateMax
+     * Отображает кол-во ответов за промежуток дат,
+     * с заданным интервалом времени ответа.
+     * Без указания даты, за текущий месяц
+     * @return mixed
+     */
     public function getCountAnswers($minMinutes=0, $maxMinutes = 1, $dateMin = "", $dateMax = "") {
         if ((isset($dateMin) and $dateMin != null) and (isset($dateMax) and $dateMax != null)) {
             $this->query = "SELECT COUNT(*) FROM `bot_message` 
