@@ -136,6 +136,21 @@ class Dashboard
     }
 
 
+    public function getViolationTest($date = "") {
+        $totalMonth = "";
+        if (isset($date) && $date != null) {
+            $totalMonth = $date;
+        } else {
+            $month = date("m", strtotime("now"));
+            $year = date("Y", strtotime("now"));
+            $totalMonth = "$year-$month-01 00:00:00";
+        }
+        $this->query = "SELECT COUNT(*) FROM `bot_message` WHERE `createDate` >= '$totalMonth' AND `violation` = 1  AND `chatId` != -399291922";
+        $result = $this->pdo->query($this->query);
+        $countViolation = $result->fetchColumn();
+        return $countViolation;
+    }
+
 
 
 
