@@ -81,8 +81,8 @@ include 'page/dashboard.php';
 
 
                     <?
-                    $date_Today = date("Y-m-d") . " 00:00:00";
-                    $date_Yesterday = date("Y-m-d",strtotime('-1 days')) . " 00:00:00";
+                    $date_Today = date("Y-m-d");
+                    $date_Yesterday = date("Y-m-d",strtotime('-1 days'));
 
                     $totalAnswers = $dashboard->getCountAnswers(0, 999999);
                     echo "Всего ответов: <b>" . $totalAnswers . "</b><br>";
@@ -103,13 +103,13 @@ include 'page/dashboard.php';
                     $countAnswers15 = $dashboard->getCountAnswers(15,999999);
                     echo "<i style=\"margin-left: 40px\">Больее 15 минут: </i><b>".$countAnswers15." (". round(($countAnswers15/$totalAnswers)*100, 2) ."%)" . "</b><br>";
 
-                    $countViolation = $dashboard->getViolationTest();
+                    $countViolation = $dashboard->getViolation();
                     echo "Количество нарушений за месяц: <b>".$countViolation." (". round(($countViolation/$totalAnswers)*100, 2) ."%)" . "</b><br>";
 
-                    $countViolation = $dashboard->getViolationTest("$date_Today");
+                    $countViolation = $dashboard->getViolation($date_Today . " 00:00:00", $date_Today . " 23:59:49");
                     echo "Количество нарушений сегодня: <b>".$countViolation."</b><br>";
 
-                    $countViolation = $dashboard->getViolationTest("$date_Yesterday");
+                    $countViolation = $dashboard->getViolation($date_Yesterday . " 00:00:00",  $date_Yesterday. " 23:59:49");
                     echo "Количество нарушений за вчера: <b>".$countViolation."</b><br>";
 
 //                    echo $date_Today;
