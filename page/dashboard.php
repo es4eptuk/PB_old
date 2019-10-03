@@ -135,9 +135,14 @@ class Dashboard
         return $countViolation;
     }
 
-
+    //@todo переделать для промежутка дат
+    /**
+     * @param string $date
+     * @example 2019-10-03 00:00:00
+     * Отображает кол-во нарушений за дату >= указанной
+     * @return mixed
+     */
     public function getViolationTest($date = "") {
-        $totalMonth = "";
         if (isset($date) && $date != null) {
             $totalMonth = $date;
         } else {
