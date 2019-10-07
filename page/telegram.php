@@ -151,7 +151,7 @@ class TelegramAPI {
         $workPeriodStart = "09:00:00";
         $workPeriodStop = "21:00:00";
         $workPeriodStartWeekend = "12:00:00";
-        $workPeriodStopWeekend = "22:00:00";
+        $workPeriodStopWeekend = "21:00:00";
         $workPeriodStartDateTime = strtotime(date('Y-m-d')  ." ". $workPeriodStart);
         $workPeriodStopDateTime = strtotime(date('Y-m-d')  ." ". $workPeriodStop);
         $workPeriodStartWeekendDateTime = strtotime(date('Y-m-d')  ." ". $workPeriodStartWeekend);
