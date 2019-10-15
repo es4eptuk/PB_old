@@ -7,7 +7,7 @@ include 'page/dashboard.php';
 ?>
 
 <?php include 'template/head.html' ?>
-
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0/dist/Chart.min.js"></script>
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
 
@@ -78,39 +78,106 @@ include 'page/dashboard.php';
                             <h3 class="box-title">Техническая поддержка</h3>
                         </div>
                         <div class="box-body table-responsive">
-                            <? $date_Today = date("Y-m-d");
+                            <?
+
+                            $labels = [];
+
+                            $date_begin =  date("Y-m-d", strtotime('-7 days'));
+                            $date_end = date("Y-m-d");
+
+                            $period = new DatePeriod(
+                                new DateTime("$date_begin"),
+                                new DateInterval('P1D'),
+                                new DateTime("$date_end")
+                            );
+
+                            foreach ($period as $date) {
+                                $date_formated = $date->format("Y-m-d D");
+                                array_push($labels,$date_formated);
+                            }
+
+
+
                             $date_Today = date("Y-m-d");
-                            $date_Yesterday = date("Y-m-d",strtotime('-1 days'));
+                            $date_1 = date("Y-m-d",strtotime('-1 days'));
+                            $date_2 = date("Y-m-d",strtotime('-2 days'));
+                            $date_3 = date("Y-m-d",strtotime('-3 days'));
+                            $date_4 = date("Y-m-d",strtotime('-4 days'));
+                            $date_5 = date("Y-m-d",strtotime('-5 days'));
+                            $date_6 = date("Y-m-d",strtotime('-6 days'));
+                            $date_7 = date("Y-m-d",strtotime('-7 days'));
 
                             $totalAnswers = $dashboard->getCountAnswers(0, 999999);
                             $totalAnswersToday = $dashboard->getCountAnswers(0, 999999, $date_Today . " 00:00:00", $date_Today . " 23:59:59");
-                            $totalAnswersYesterday = $dashboard->getCountAnswers(0, 999999,$date_Yesterday . " 00:00:00",  $date_Yesterday. " 23:59:59");
+                            $totalAnswers_1 = $dashboard->getCountAnswers(0, 999999,$date_1 . " 00:00:00",  $date_1. " 23:59:59");
+                            $totalAnswers_2 = $dashboard->getCountAnswers(0, 999999,$date_2 . " 00:00:00",  $date_2. " 23:59:59");
+                            $totalAnswers_3 = $dashboard->getCountAnswers(0, 999999,$date_3 . " 00:00:00",  $date_3. " 23:59:59");
+                            $totalAnswers_4 = $dashboard->getCountAnswers(0, 999999,$date_4 . " 00:00:00",  $date_4. " 23:59:59");
+                            $totalAnswers_5 = $dashboard->getCountAnswers(0, 999999,$date_5 . " 00:00:00",  $date_5. " 23:59:59");
+                            $totalAnswers_6 = $dashboard->getCountAnswers(0, 999999,$date_6 . " 00:00:00",  $date_6. " 23:59:59");
+                            $totalAnswers_7 = $dashboard->getCountAnswers(0, 999999,$date_7 . " 00:00:00",  $date_7. " 23:59:59");
 
                             $countAnswers01 = $dashboard->getCountAnswers(0,1);
                             $countAnswers01Today = $dashboard->getCountAnswers(0,1, $date_Today . " 00:00:00", $date_Today . " 23:59:59");
-                            $countAnswers01Yesterday = $dashboard->getCountAnswers(0,1,$date_Yesterday . " 00:00:00",  $date_Yesterday. " 23:59:59");
+                            $countAnswers01_1 = $dashboard->getCountAnswers(0,1,$date_1 . " 00:00:00",  $date_1. " 23:59:59");
+                            $countAnswers01_2 = $dashboard->getCountAnswers(0,1,$date_2 . " 00:00:00",  $date_2. " 23:59:59");
+                            $countAnswers01_3 = $dashboard->getCountAnswers(0,1,$date_3 . " 00:00:00",  $date_3. " 23:59:59");
+                            $countAnswers01_4 = $dashboard->getCountAnswers(0,1,$date_4 . " 00:00:00",  $date_4. " 23:59:59");
+                            $countAnswers01_5 = $dashboard->getCountAnswers(0,1,$date_5 . " 00:00:00",  $date_5. " 23:59:59");
+                            $countAnswers01_6 = $dashboard->getCountAnswers(0,1,$date_6 . " 00:00:00",  $date_6. " 23:59:59");
+                            $countAnswers01_7 = $dashboard->getCountAnswers(0,1,$date_7 . " 00:00:00",  $date_7. " 23:59:59");
 
                             $countAnswers12 = $dashboard->getCountAnswers(1,2);
                             $countAnswers12Today = $dashboard->getCountAnswers(1,2, $date_Today . " 00:00:00", $date_Today . " 23:59:59");
-                            $countAnswers12Yesterday = $dashboard->getCountAnswers(1,2,$date_Yesterday . " 00:00:00",  $date_Yesterday. " 23:59:59");
+                            $countAnswers12_1 = $dashboard->getCountAnswers(1,2,$date_1 . " 00:00:00",  $date_1. " 23:59:59");
+                            $countAnswers12_2 = $dashboard->getCountAnswers(1,2,$date_2 . " 00:00:00",  $date_2. " 23:59:59");
+                            $countAnswers12_3 = $dashboard->getCountAnswers(1,2,$date_3 . " 00:00:00",  $date_3. " 23:59:59");
+                            $countAnswers12_4 = $dashboard->getCountAnswers(1,2,$date_4 . " 00:00:00",  $date_4. " 23:59:59");
+                            $countAnswers12_5 = $dashboard->getCountAnswers(1,2,$date_5 . " 00:00:00",  $date_5. " 23:59:59");
+                            $countAnswers12_6 = $dashboard->getCountAnswers(1,2,$date_6 . " 00:00:00",  $date_6. " 23:59:59");
+                            $countAnswers12_7 = $dashboard->getCountAnswers(1,2,$date_7 . " 00:00:00",  $date_7. " 23:59:59");
 
                             $countAnswers23 = $dashboard->getCountAnswers(2,3);
                             $countAnswers23Today = $dashboard->getCountAnswers(2,3, $date_Today . " 00:00:00", $date_Today . " 23:59:59");
-                            $countAnswers23Yesterday = $dashboard->getCountAnswers(2,3,$date_Yesterday . " 00:00:00",  $date_Yesterday. " 23:59:59");
+                            $countAnswers23_1 = $dashboard->getCountAnswers(2,3,$date_1 . " 00:00:00",  $date_1. " 23:59:59");
+                            $countAnswers23_2 = $dashboard->getCountAnswers(2,3,$date_2 . " 00:00:00",  $date_2. " 23:59:59");
+                            $countAnswers23_3 = $dashboard->getCountAnswers(2,3,$date_3 . " 00:00:00",  $date_3. " 23:59:59");
+                            $countAnswers23_4 = $dashboard->getCountAnswers(2,3,$date_4 . " 00:00:00",  $date_4. " 23:59:59");
+                            $countAnswers23_5 = $dashboard->getCountAnswers(2,3,$date_5 . " 00:00:00",  $date_5. " 23:59:59");
+                            $countAnswers23_6 = $dashboard->getCountAnswers(2,3,$date_6 . " 00:00:00",  $date_6. " 23:59:59");
+                            $countAnswers23_7 = $dashboard->getCountAnswers(2,3,$date_7 . " 00:00:00",  $date_7. " 23:59:59");
 
                             $countAnswers35 = $dashboard->getCountAnswers(3,5);
                             $countAnswers35Today = $dashboard->getCountAnswers(3,5, $date_Today . " 00:00:00", $date_Today . " 23:59:59");
-                            $countAnswers35Yesterday = $dashboard->getCountAnswers(3,5,$date_Yesterday . " 00:00:00",  $date_Yesterday. " 23:59:59");
+                            $countAnswers35_1 = $dashboard->getCountAnswers(3,5,$date_1 . " 00:00:00",  $date_1. " 23:59:59");
+                            $countAnswers35_2 = $dashboard->getCountAnswers(3,5,$date_2 . " 00:00:00",  $date_2. " 23:59:59");
+                            $countAnswers35_3 = $dashboard->getCountAnswers(3,5,$date_3 . " 00:00:00",  $date_3. " 23:59:59");
+                            $countAnswers35_4 = $dashboard->getCountAnswers(3,5,$date_4 . " 00:00:00",  $date_4. " 23:59:59");
+                            $countAnswers35_5 = $dashboard->getCountAnswers(3,5,$date_5 . " 00:00:00",  $date_5. " 23:59:59");
+                            $countAnswers35_6 = $dashboard->getCountAnswers(3,5,$date_6 . " 00:00:00",  $date_6. " 23:59:59");
+                            $countAnswers35_7 = $dashboard->getCountAnswers(3,5,$date_7 . " 00:00:00",  $date_7. " 23:59:59");
 
                             $countAnswers15 = $dashboard->getCountAnswers(15,999999);
                             $countAnswers15Today = $dashboard->getCountAnswers(15,999999, $date_Today . " 00:00:00", $date_Today . " 23:59:59");
-                            $countAnswers15Yesterday = $dashboard->getCountAnswers(15,999999,$date_Yesterday . " 00:00:00",  $date_Yesterday. " 23:59:59");
+                            $countAnswers15_1 = $dashboard->getCountAnswers(15,999999,$date_1 . " 00:00:00",  $date_1. " 23:59:59");
+                            $countAnswers15_2 = $dashboard->getCountAnswers(15,999999,$date_2 . " 00:00:00",  $date_2. " 23:59:59");
+                            $countAnswers15_3 = $dashboard->getCountAnswers(15,999999,$date_3 . " 00:00:00",  $date_3. " 23:59:59");
+                            $countAnswers15_4 = $dashboard->getCountAnswers(15,999999,$date_4 . " 00:00:00",  $date_4. " 23:59:59");
+                            $countAnswers15_5 = $dashboard->getCountAnswers(15,999999,$date_5 . " 00:00:00",  $date_5. " 23:59:59");
+                            $countAnswers15_6 = $dashboard->getCountAnswers(15,999999,$date_6 . " 00:00:00",  $date_6. " 23:59:59");
+                            $countAnswers15_7 = $dashboard->getCountAnswers(15,999999,$date_7 . " 00:00:00",  $date_7. " 23:59:59");
 
 
 
                             $countViolation = $dashboard->getViolation();
                             $countViolationToday = $dashboard->getViolation($date_Today . " 00:00:00", $date_Today . " 23:59:59");
-                            $countViolationYesterday = $dashboard->getViolation($date_Yesterday . " 00:00:00",  $date_Yesterday. " 23:59:59");
+                            $countViolation_1 = $dashboard->getViolation($date_1 . " 00:00:00",  $date_1. " 23:59:59");
+                            $countViolation_2 = $dashboard->getViolation($date_2 . " 00:00:00",  $date_2. " 23:59:59");
+                            $countViolation_3 = $dashboard->getViolation($date_3 . " 00:00:00",  $date_3. " 23:59:59");
+                            $countViolation_4 = $dashboard->getViolation($date_4 . " 00:00:00",  $date_4. " 23:59:59");
+                            $countViolation_5 = $dashboard->getViolation($date_5 . " 00:00:00",  $date_5. " 23:59:59");
+                            $countViolation_6 = $dashboard->getViolation($date_6 . " 00:00:00",  $date_6. " 23:59:59");
+                            $countViolation_7 = $dashboard->getViolation($date_7 . " 00:00:00",  $date_7. " 23:59:59");
                             ?>
                             <h4>Нарушения:</h4>
                             <table class="table table-striped w-auto">
@@ -127,7 +194,7 @@ include 'page/dashboard.php';
                                     <th scope="row">Количество</th>
                                     <td><?php echo "<b>".$countViolation." (". round(($countViolation/$totalAnswers)*100, 2) ."%)" . "</b>" ?></td>
                                     <td><?php echo "<b>".$countViolationToday." (". round(($countViolationToday/$totalAnswersToday)*100, 2) ."%)" . "</b>" ?></td>
-                                    <td><?php echo "<b>".$countViolationYesterday." (". round(($countViolationYesterday/$totalAnswersYesterday)*100, 2) ."%)" . "</b>" ?></td>
+                                    <td><?php echo "<b>".$countViolation_1." (". round(($countViolation_1/$totalAnswers_1)*100, 2) ."%)" . "</b>" ?></td>
 
                                 </tr>
                                 </tbody>
@@ -151,39 +218,39 @@ include 'page/dashboard.php';
                                     <th scope="row">До 1 минуты:</th>
                                     <td><?php echo "<b>".$countAnswers01." (". round(($countAnswers01/$totalAnswers)*100, 2) ."%)" . "</b>" ?></td>
                                     <td><?php echo "<b>".$countAnswers01Today." (". round(($countAnswers01Today/$totalAnswersToday)*100, 2) ."%)" . "</b>" ?></td>
-                                    <td><?php echo "<b>".$countAnswers01Yesterday." (". round(($countAnswers01Yesterday/$totalAnswersYesterday)*100, 2) ."%)" . "</b>" ?></td>
+                                    <td><?php echo "<b>".$countAnswers01_1." (". round(($countAnswers01_1/$totalAnswers_1)*100, 2) ."%)" . "</b>" ?></td>
 
                                 </tr>
                                 <tr>
                                     <th scope="row">От 1 до 2 минут:</th>
                                     <td><?php echo "<b>".$countAnswers12." (". round(($countAnswers12/$totalAnswers)*100, 2) ."%)" . "</b>" ?></td>
                                     <td><?php echo "<b>".$countAnswers12Today." (". round(($countAnswers12Today/$totalAnswersToday)*100, 2) ."%)" . "</b>" ?></td>
-                                    <td><?php echo "<b>".$countAnswers12Yesterday." (". round(($countAnswers12Yesterday/$totalAnswersYesterday)*100, 2) ."%)" . "</b>" ?></td>
+                                    <td><?php echo "<b>".$countAnswers12_1." (". round(($countAnswers12_1/$totalAnswers_1)*100, 2) ."%)" . "</b>" ?></td>
 
                                 </tr>
                                 <tr>
                                     <th scope="row">От 2 до 3 минут:</th>
                                     <td><?php echo "<b>".$countAnswers23." (". round(($countAnswers23/$totalAnswers)*100, 2) ."%)" . "</b>" ?></td>
                                     <td><?php echo "<b>".$countAnswers23Today." (". round(($countAnswers23Today/$totalAnswersToday)*100, 2) ."%)" . "</b>" ?></td>
-                                    <td><?php echo "<b>".$countAnswers23Yesterday." (". round(($countAnswers23Yesterday/$totalAnswersYesterday)*100, 2) ."%)" . "</b>" ?></td>
+                                    <td><?php echo "<b>".$countAnswers23_1." (". round(($countAnswers23_1/$totalAnswers_1)*100, 2) ."%)" . "</b>" ?></td>
                                 </tr>
                                 <tr>
                                     <th scope="row">От 3 до 5 минут:</th>
                                     <td><?php echo "<b>".$countAnswers35." (". round(($countAnswers35/$totalAnswers)*100, 2) ."%)" . "</b>" ?></td>
                                     <td><?php echo "<b>".$countAnswers35Today." (". round(($countAnswers35Today/$totalAnswersToday)*100, 2) ."%)" . "</b>" ?></td>
-                                    <td><?php echo "<b>".$countAnswers35Yesterday." (". round(($countAnswers35Yesterday/$totalAnswersYesterday)*100, 2) ."%)" . "</b>" ?></td>
+                                    <td><?php echo "<b>".$countAnswers35_1." (". round(($countAnswers35_1/$totalAnswers_1)*100, 2) ."%)" . "</b>" ?></td>
                                 </tr>
                                 <tr>
                                     <th scope="row">Более 15 минут:</th>
                                     <td><?php echo "<b>".$countAnswers15." (". round(($countAnswers15/$totalAnswers)*100, 2) ."%)" . "</b>" ?></td>
                                     <td><?php echo "<b>".$countAnswers15Today." (". round(($countAnswers15Today/$totalAnswersToday)*100, 2) ."%)" . "</b>" ?></td>
-                                    <td><?php echo "<b>".$countAnswers15Yesterday." (". round(($countAnswers15Yesterday/$totalAnswersYesterday)*100, 2) ."%)" . "</b>" ?></td>
+                                    <td><?php echo "<b>".$countAnswers15_1." (". round(($countAnswers15_1/$totalAnswers_1)*100, 2) ."%)" . "</b>" ?></td>
                                 </tr>
                                 <tr>
                                     <th scope="row">Всего ответов</th>
                                     <td><?php echo "<b>".$totalAnswers . "</b>" ?></td>
                                     <td><?php echo "<b>".$totalAnswersToday . "</b>" ?></td>
-                                    <td><?php echo "<b>".$totalAnswersYesterday . "</b>" ?></td>
+                                    <td><?php echo "<b>".$totalAnswers_1 . "</b>" ?></td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -240,9 +307,22 @@ include 'page/dashboard.php';
                 <!-- /.box -->
             </div>
             <!-- /.col -->
+            <div class="box">
+                <!-- AREA CHART -->
+                <canvas id="myChart"></canvas>
+            </div>
+
     </div>
     <!-- /.row -->
     </section>
+
+
+
+
+
+
+
+
     <!-- /.content -->
 </div>
 <!-- /.content-wrapper -->
@@ -255,9 +335,102 @@ include 'page/dashboard.php';
 
 <?php include "./template/scripts.html";?>
 
-<script>
 
+
+
+
+<script>
+    var ctx = document.getElementById('myChart').getContext('2d');
+    var myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ["<? echo $labels[0] ?>", "<? echo $labels[1] ?>", "<? echo $labels[2] ?>", "<? echo $labels[3] ?>", "<? echo $labels[4] ?>", "<? echo $labels[5] ?>", "<? echo $labels[6] ?>"],
+            datasets: [{
+                label: 'До 1 минуты',
+                data: [<? echo "$countAnswers01_7, $countAnswers01_6, $countAnswers01_5, $countAnswers01_4, $countAnswers01_3, $countAnswers01_2, $countAnswers01_1"?>],
+                backgroundColor: [
+                    'rgba(51, 153, 0, 1)'
+                ],
+                borderColor: [
+                    'rgba(51, 153, 0, 1)'
+                ],
+                borderWidth: 1,
+                fill: false
+            }, {
+                label: 'От 1 до 2 минут',
+                data: [<? echo "$countAnswers12_7, $countAnswers12_6, $countAnswers12_5, $countAnswers12_4, $countAnswers12_3, $countAnswers12_2, $countAnswers12_1"?>],
+                backgroundColor: [
+                    'rgba(153, 204, 51, 1)'
+                ],
+                borderColor: [
+                    'rgba(153, 204, 51, 1)',
+                ],
+                borderWidth: 1,
+                fill: false
+            }, {
+                label: 'От 2 до 3 минут',
+                data: [<? echo "$countAnswers23_7, $countAnswers23_6, $countAnswers23_5, $countAnswers23_4, $countAnswers23_3, $countAnswers23_2, $countAnswers23_1"?>],
+                backgroundColor: [
+                    'rgba(255, 204, 0, 1)'
+                ],
+                borderColor: [
+                    'rgba(255, 204, 0, 1)',
+                ],
+                borderWidth: 1,
+                fill: false
+            }, {
+                label: 'От 3 до 5 минут',
+                data: [<? echo "$countAnswers35_7, $countAnswers35_6, $countAnswers35_5, $countAnswers35_4, $countAnswers35_3, $countAnswers35_2, $countAnswers35_1"?>],
+                backgroundColor: [
+                    'rgba(255, 153, 102, 1)'
+                ],
+                borderColor: [
+                    'rgba(255, 153, 102, 1)',
+                ],
+                borderWidth: 1,
+                fill: false
+            },{
+                label: 'Более 15 минут',
+                data: [<? echo "$countAnswers15_7, $countAnswers15_6, $countAnswers15_5, $countAnswers15_4, $countAnswers15_3, $countAnswers15_2, $countAnswers15_1"?>],
+                backgroundColor: [
+                    'rgba(204,51,0,1)'
+                ],
+                borderColor: [
+                    'rgba(204,51,0,1)',
+                ],
+                borderWidth: 2,
+                fill: false
+            }, {
+                label: 'Всего ответов',
+                data: [<? echo "$totalAnswers_7, $totalAnswers_6, $totalAnswers_5, $totalAnswers_4, $totalAnswers_3, $totalAnswers_2, $totalAnswers_1"?>],
+                backgroundColor: [
+                    'rgba(34,45,50,1)'
+                ],
+                borderColor: [
+                    'rgba(34,45,50,1)',
+                ],
+                borderWidth: 2,
+                fill: false
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            },
+            title: {
+                display: true,
+                text: "Предыдущие 7 дней",
+                fontSize: 18
+            }
+        }
+    });
 
 </script>
+
+
 </body>
 </html>
