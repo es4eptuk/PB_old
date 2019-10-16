@@ -434,6 +434,9 @@ include 'page/dashboard.php';
             },
             legend: {
                 position: 'right'
+            },
+            tooltips: {
+                mode: 'index'
             }
         }
     });
