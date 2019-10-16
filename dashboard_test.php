@@ -119,8 +119,6 @@ include 'page/dashboard.php';
                             }
                             $totalAnswers_arr_str = implode(",", $totalAnswers_arr);
 
-
-                            //old
                             $totalAnswers = $dashboard->getCountAnswers(0, 999999);
 
 
@@ -132,7 +130,6 @@ include 'page/dashboard.php';
                             }
                             $countAnswers01_arr_str = implode(",", $countAnswers01_arr);
 
-                            //old
                             $countAnswers01 = $dashboard->getCountAnswers(0,1);
 
 
@@ -154,7 +151,6 @@ include 'page/dashboard.php';
                                 $countAnswers23_arr[] = $dashboard->getCountAnswers(2, 3,$value . " 00:00:00",  $value. " 23:59:59");
                             }
                             $countAnswers23_arr_str = implode(",", $countAnswers23_arr);
-
 
                             $countAnswers23 = $dashboard->getCountAnswers(2,3);
 
@@ -391,7 +387,7 @@ include 'page/dashboard.php';
                     'rgba(204,51,0,1)',
                 ],
                 borderWidth: 3,
-                fill: false
+                fill: true
             }]
         },
         options: {
@@ -406,6 +402,9 @@ include 'page/dashboard.php';
                 display: true,
                 text: "31 день включая сегодня",
                 fontSize: 25
+            },
+            legend: {
+                position: 'right'
             }
         }
     });
