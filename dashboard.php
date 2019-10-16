@@ -321,7 +321,11 @@ include 'page/dashboard.php';
                     'rgba(51, 153, 0, 1)'
                 ],
                 borderWidth: 1,
-                fill: false
+                fill: false,
+                pointHitRadius: 30,
+                pointHoverRadius: 10,
+                pointBackgroundColor: 'rgba(51, 153, 0, 1)',
+
             }, {
                 label: 'От 1 до 2 минут',
                 data: [<? echo "$countAnswers12_arr_str" ?>],
@@ -332,7 +336,11 @@ include 'page/dashboard.php';
                     'rgba(153, 204, 51, 1)',
                 ],
                 borderWidth: 1,
-                fill: false
+                fill: false,
+                pointHitRadius: 30,
+                pointHoverRadius: 10,
+                pointBackgroundColor: 'rgba(153, 204, 51, 1)',
+
             }, {
                 label: 'От 2 до 3 минут',
                 data: [<? echo "$countAnswers23_arr_str" ?>],
@@ -343,7 +351,11 @@ include 'page/dashboard.php';
                     'rgba(255, 204, 0, 1)',
                 ],
                 borderWidth: 1,
-                fill: false
+                fill: false,
+                pointHitRadius: 30,
+                pointHoverRadius: 10,
+                pointBackgroundColor: 'rgba(255, 204, 0, 1)',
+
             }, {
                 label: 'От 3 до 5 минут',
                 data: [<? echo "$countAnswers35_arr_str" ?>],
@@ -354,8 +366,12 @@ include 'page/dashboard.php';
                     'rgba(255, 153, 102, 1)',
                 ],
                 borderWidth: 1,
-                fill: false
-            },{
+                fill: false,
+                pointHitRadius: 30,
+                pointHoverRadius: 10,
+                pointBackgroundColor: 'rgba(255, 153, 102, 1)',
+
+            }, {
                 label: 'Более 15 минут',
                 data: [<? echo "$countAnswers15_arr_str" ?>],
                 backgroundColor: [
@@ -365,18 +381,10 @@ include 'page/dashboard.php';
                     'rgb(204,92,7)',
                 ],
                 borderWidth: 1,
-                fill: false
-            }, {
-                label: 'Всего ответов',
-                data: [<? echo "$totalAnswers_arr_str" ?>],
-                backgroundColor: [
-                    'rgba(34,45,50,1)'
-                ],
-                borderColor: [
-                    'rgba(34,45,50,1)',
-                ],
-                borderWidth: 2,
-                fill: false
+                fill: false,
+                pointHitRadius: 30,
+                pointHoverRadius: 10,
+                pointBackgroundColor: 'rgb(204,92,7)',
             }, {
                 label: 'НАРУШЕНИЯ',
                 data: [<? echo "$countViolation_arr_str" ?>],
@@ -387,7 +395,28 @@ include 'page/dashboard.php';
                     'rgba(204,51,0,1)',
                 ],
                 borderWidth: 3,
-                fill: true
+                fill: true,
+                pointHitRadius: 30,
+                pointHoverRadius: 10,
+                pointBackgroundColor: 'rgba(204,51,0,1)',
+
+            }, {
+                label: 'Всего ответов',
+                data: [<? echo "$totalAnswers_arr_str" ?>],
+                backgroundColor: [
+                    'rgba(34,45,50,1)'
+                ],
+                borderColor: [
+                    'rgba(34,45,50,1)',
+                ],
+                borderWidth: 2,
+                fill: false,
+                pointBackgroundColor: 'rgba(34,45,50,1)',
+                pointRadius: 5,
+                pointHoverRadius: 10,
+                pointHitRadius: 30,
+                pointBorderWidth: 2,
+                pointStyle: 'rectRounded'
             }]
         },
         options: {
