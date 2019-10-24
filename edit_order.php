@@ -219,10 +219,12 @@ $order_date = $order_date->format('d.m.Y');
                                     //print_r($arr_pos);
                                 foreach ($arr_pos as &$value) { 
                                     $date = new DateTime($value['pos_date']);
-
                                     $pos_date = $date->format('d.m.Y');
+                                    $color = "";
+                                    if ($value['pos_count'] > $value['pos_count_finish'])  $color = "background-color: #f5c5dd;";
+
                                 echo '   
-                                    <tr> 
+                                    <tr style="'.$color.'"> 
                         <td>'.$value['id'].'</td> 
                         <td>'.$value['vendor_code'].'</td> 
                         <td>'.$value['title'].'</td> 
@@ -383,21 +385,21 @@ var category1 = "---";
                         <td>'+pos_info['id']+'</td> \
                         <td>'+pos_info['vendor_code']+'</td> \
                         <td>'+pos_info['title']+'</td> \
-                        <td class="quant"><span>1</span><input type="text" class="form-control quant_inp"  style="position: relative; top: -20px; width: 55px; text-align: center;" placeholder="1"></td> \
-                        <td>0</td> \
-                        <td class="price">'+pos_info['price']+'</td> \
-                        <td class="sum">'+pos_info['price']+'</td> \
-                        <td><div class="input-group date" style="width: 135px;"> \
-                          <div class="input-group-addon"> \
-                            <i class="fa fa-calendar"></i> \
-                          </div> \
-                          <span>00.00.0000</span><input type="text" class="form-control pull-right date_inp" style="position: relative; top: -20px;  text-align: center;" placeholder="00.00.0000"> \
-                        </div></td> \
-                        <td><i class="fa fa-2x fa-remove" style="cursor: pointer;"></i></td> \
-                        </tr>');
-                        $('#search_pos').val(""); 
-       
-                  });
+  <td class="quant"><span>1</span><input type="text" class="form-control quant_inp"  style="position: relative; top: -20px; width: 55px; text-align: center;" placeholder="1"></td> \
+  <td>0</td> \
+  <td class="price">'+pos_info['price']+'</td> \
+  <td class="sum">'+pos_info['price']+'</td> \
+  <td><div class="input-group date" style="width: 135px;"> \
+  <div class="input-group-addon"> \
+  <i class="fa fa-calendar"></i> \
+  </div> \
+  <span>00.00.0000</span><input type="text" class="form-control pull-right date_inp" style="position: relative; top: -20px;  text-align: center;" placeholder="00.00.0000"> \
+  </div></td> \
+  <td><i class="fa fa-2x fa-remove" style="cursor: pointer;"></i></td> \
+  </tr>');
+      $('#search_pos').val("");
+
+  });
         
         
         //arr_ids.push([arr_str[0], arr_str[1]]);

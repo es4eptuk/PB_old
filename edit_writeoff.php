@@ -36,7 +36,7 @@ $writeoff_user_id = $writeoff1['update_user'];
 							    
 							     <div class="form-group">
 										<label>Категория</label> <select class="form-control" id="category" name="category" required="required" >
-											<? $arr = ["Модернизация","Брак","Сервис","Производство","Разработка","Давальческие материалы","Возврат поставщику"]; 
+											<? $arr = ["Модернизация","Брак","Сервис","Производство","Разработка","Давальческие материалы","Возврат поставщику","Покраска/Покрытие"];
 											foreach ($arr as &$value) {
                                                if ($writeoff_category == $value) {
                                                    echo '<option value="'.$value.'" selected>'.$value.'</option>';

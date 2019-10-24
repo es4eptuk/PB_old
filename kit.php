@@ -53,13 +53,11 @@ include 'include/class.inc.php';
               <table id="items" class="table table-bordered table-striped">
                 <thead>
                 <tr>
-                 
                   <th>ID</th>
                   <th>Категория</th>
                   <th>Версия</th>
                   <th>Название</th>
                   <th>Привязка</th>
-                 
                    <th></th>
                 </tr>
                 </thead>

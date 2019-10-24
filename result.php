@@ -3,7 +3,7 @@ include 'include/class.inc.php';
 $id_pos = 125;
 //$pos_assambly = $position->get_pos_in_assembly($id_pos);
 
-$query = "SELECT robots.id FROM `check` INNER JOIN robots ON check.robot = robots.id WHERE check.update_date >= '2019-05-01 00:00:00' AND id_check = 105";
+$query = "SELECT robots.id FROM `check` INNER JOIN robots ON check.robot = robots.id WHERE check.update_date >= '2019-07-01 00:00:00' AND id_check = 105";
 $result = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
 echo "<table border=1>";
 while ($line = mysql_fetch_array($result, MYSQL_ASSOC)) {

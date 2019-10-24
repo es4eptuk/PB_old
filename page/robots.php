@@ -582,7 +582,7 @@ class Robots
        return $result;
     }
     
-    function get_robot_options($robot)
+    function get_robot_options($robot = 0)
     {
        $query = "SELECT * FROM `robot_options`";
        $result = mysql_query($query) or die('Запрос не удался: ' . mysql_error());

@@ -39,12 +39,12 @@ include 'include/class.inc.php';
                                       <select class="form-control" name="version" placeholder="Веберите версию" id="version" required="required">
                                      <? 
                                      
-                                     $versions = Array(2,4);
+                                     $versions = $position->get_equipment();
                                      
                                      foreach ($versions as &$version) {
 											                      
 											                       echo "
-											                       <option value='".$version."'>".$version."</option>
+											                       <option value='".$version['id']."'>".$version['title']."</option>
 											                       
 											                       ";
 											                    }

@@ -211,14 +211,7 @@ include 'include/class.inc.php';
                     <option value="german">Немецкий</option>
                   </select>
                 </div>
-                
-                <div class="form-group">
-                  <label>Язык инструкции</label>
-                  <select class="form-control" name="language_doc" id="language_doc">
-                    <option value="russian">Русский</option>
-                    <option value="english">Английский</option>
-                  </select>
-                </div>
+
                 
                  <div class="form-group">
                   <label>Напряжение зарядной станции</label>
@@ -232,58 +225,26 @@ include 'include/class.inc.php';
                 
                 <div class="form-group">
                     <label for="exampleInputFile">Комплектация</label>
-                    
-                  <div class="checkbox">
-                    <label>
-                      <input type="checkbox" id="photo">
-                      Фотопринтер
-                    </label>
-                  </div>
 
-                  <div class="checkbox">
-                    <label>
-                      <input type="checkbox" id="termo">
-                      Чековый принтер
-                    </label>
-                  </div>
 
-                  <div class="checkbox">
+                    <?
+                    $options = $robots->get_robot_options();
+
+                    foreach ($options as &$value) {
+                        $check = ($value['check'] ==1) ? "checked" : "";
+                        echo '<div class="checkbox">
                     <label>
-                      <input type="checkbox"  id="dispenser">
-                      Диспенсер
+                      <input type="checkbox" class="check" id="'.$value['id'].'"  '.$check.' name="options" value=  '.$value['id'].'>
+                      '.$value['title'].'
                     </label>
-                  </div>
-                  
-                  <div class="checkbox">
-                    <label>
-                      <input type="checkbox" id="terminal">
-                      Подготовка под терминал
-                    </label>
-                  </div>
-                  
-                  <div class="checkbox">
-                    <label>
-                      <input type="checkbox" id="kaznachey">
-                      Казначей
-                    </label>
-                  </div>
-                  
+                  </div>';
+                    }
+
+                    ?>
                  
                   
                   
-                  <div class="checkbox">
-                    <label>
-                      <input type="checkbox" id="lidar">
-                      LiDAR + IMU
-                    </label>
-                  </div>
-                  
-                  <div class="checkbox">
-                    <label>
-                      <input type="checkbox" id="other">
-                      Другое
-                    </label>
-                  </div>
+
                   
                 </div>
                 

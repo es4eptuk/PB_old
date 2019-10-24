@@ -40,14 +40,26 @@ class Writeoff {
                   $writeoff_arr['0']['1'] = $provider;
                   $json = json_encode($writeoff_arr);
                   $this -> orders -> add_order($json,0,1);
-             }
+                  $this->log->add(__METHOD__,"Добавлен новый заказ на Возврат постащику");
+            }
 
             if ( $category=="Покраска/Покрытие") {
                 $writeoff_arr['0']['0'] = 998;
                 $writeoff_arr['0']['1'] = $provider;
                 $json = json_encode($writeoff_arr);
                 $this -> orders -> add_order($json,0,1);
+                $this->log->add(__METHOD__,"Добавлен новый заказ на Покраска/Покрытие");
             }
+
+            if ( $category=="Сварка/Зенковка") {
+                $writeoff_arr['0']['0'] = 997;
+                $writeoff_arr['0']['1'] = $provider;
+                $json = json_encode($writeoff_arr);
+                $this -> orders -> add_order($json,0,1);
+                $this->log->add(__METHOD__,"Добавлен новый заказ на Сварка/Зенковка");
+            }
+
+
             
             array_shift($writeoff_arr);
             
@@ -109,7 +121,7 @@ class Writeoff {
      function get_writeoff() {
     	
     
-        $query = "SELECT * FROM writeoff ORDER BY `update_date` DESC LIMIT 50";
+        $query = "SELECT * FROM writeoff ORDER BY `update_date` DESC LIMIT 1000";
         //echo $query;
         $result = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
         

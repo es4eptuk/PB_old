@@ -43,9 +43,20 @@ include 'include/class.inc.php';
                         <span class="sr-only">Toggle Dropdown</span>
                       </button>
                       <ul class="dropdown-menu" role="menu">
-                        <li><a href="checks.php?id=<?php echo $_GET['id'];?>&version=2">В2</a></li>
-                        <li><a href="checks.php?id=<?php echo $_GET['id'];?>&version=4">В4</a></li>
-                       
+
+                          <?
+
+                          $versions = $position->get_equipment();
+
+                          foreach ($versions as &$version) {
+
+                              echo '<li><a href="checks.php?id='.$_GET['id'].'&version='.$version["id"].'">'.$version["title"].'</a></li>';
+                          }
+
+
+
+
+                          ?>
                       </ul>
                     </div>
                
@@ -150,8 +161,22 @@ include 'include/class.inc.php';
                 <div class="form-group">
                   <label>Версия робота</label>
                   <select class="form-control" name="group" placeholder="Веберите версию" id="version" required="required">
-                  <option value="4">4</option>
-                  <option value="2">2</option>
+                      <?
+
+                      $versions = $position->get_equipment();
+
+                      foreach ($versions as &$version) {
+
+                          echo "
+											                       <option value='".$version['id']."'>".$version['title']."</option>
+											                       
+											                       ";
+                      }
+
+
+
+
+                      ?>
                   </select>
                 </div>
 
@@ -215,8 +240,19 @@ include 'include/class.inc.php';
              <div class="form-group">
                   <label>Версия робота</label>
                   <select class="form-control" name="version" placeholder="Веберите версию" id="version_edit" required="required">
-                  <option value="4">4</option>
-                  <option value="2">2</option>
+                      <?
+
+                      $versions = $position->get_equipment();
+
+                      foreach ($versions as &$version) {
+
+                          echo "<option value='".$version['id']."'>".$version['title']."</option>";
+                      }
+
+
+
+
+                      ?>
                   </select>
                 </div>
                 
@@ -298,7 +334,7 @@ $( ".fa-remove" ).click(function() {
                     version: version
                         } )
                   .done(function( data ) {
-                    //window.location.href = "./checks.php?id="+id_cat;  
+                    window.location.href = "./checks.php?id="+id_cat+"&version="+version;
                     return false;
                   });
                    
@@ -381,7 +417,7 @@ $( ".fa-remove" ).click(function() {
           .done(function( data ) {
               if (data=="false") {alert( "Data Loaded: " + data ); }
               else {
-                window.location.href = "./checks.php?id="+category;  
+                window.location.href = "./checks.php?id="+category+"&version="+version;
               }
           });
     

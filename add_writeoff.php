@@ -38,10 +38,12 @@ include 'include/class.inc.php';
 											<option value="Сервис">Сервис</option>
 											<option value="Разработка">Разработка</option>
 											<option value="Продажа">Продажа</option>
+                                            <option value="Маркетинг">Маркетинг</option>
 											<option value="Содержание офиса">Содержание офиса</option>
 											<option value="Давальческие материалы">Давальческие материалы</option>
 											<option value="Возврат поставщику">Возврат поставщику</option>
                                             <option value="Покраска/Покрытие">Покраска/Покрытие</option>
+                                            <option value="Сварка/Зенковка">Сварка/Зенковка</option>
 										</select>
 									</div>
 								   

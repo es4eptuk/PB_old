@@ -46,9 +46,22 @@ $current_month = date('m');
 								     <div class="form-group">
                                       <label>Версия робота</label>
                                       <select class="form-control" name="version" id="version" required="required">
-                                        <option value="">Не выбрано</option>
-                                        <option value="2">2</option>
-                                        <option value="4">4</option>
+                                          <?
+
+                                          $versions = $position->get_equipment();
+
+                                          foreach ($versions as &$version) {
+
+                                              echo "
+											                       <option value='".$version['id']."'>".$version['title']."</option>
+											                       
+											                       ";
+                                          }
+
+
+
+
+                                          ?>
                                       </select>
                                     </div>
 									

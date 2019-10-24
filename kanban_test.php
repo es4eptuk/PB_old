@@ -22,7 +22,6 @@ include 'include/class.inc.php';
     <section class="content-header">
       <h1>
        KANBAN
-        
       </h1>
       
     </section>

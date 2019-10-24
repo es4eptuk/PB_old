@@ -1,6 +1,14 @@
 <?php 
 include 'include/class.inc.php';
 
+
+function print_r2($val)
+{
+    echo '<pre>';
+    print_r($val);
+    echo '</pre>';
+}
+
 //$robot_info = $robots->get_info_robot($_GET['id']);
 //$robot_number = $robot_info['number'];
 //$robot_name= $robot_info['name'];
@@ -24,7 +32,9 @@ $arr = $robots->get_robots();
                 $assign_Dima = 0;
                 $assign_Danil = 0;
                 $assign_Eldar = 0;
+                $currentDate = date('d.m.Y');
 
+//                print_r2($arr_tickets[0]);
 
 foreach ($arr_tickets as &$ticket) {
                     $ticket_status = $ticket['status'];
@@ -116,7 +126,15 @@ foreach ($arr_tickets as &$ticket) {
                      //назначенные диме
                     if ($ticket_assign==31 and ($ticket_status==1 || $ticket_status==2 || $ticket_status==4 || $ticket_status==5 )) {
 
-                        $assign_Dima++;
+
+                        $date_finish = new DateTime($ticket['finish_date']);
+                        $date_finish_formatted = $date_finish->format('d.m.Y');
+
+
+                        if($date_finish_formatted === $currentDate){
+                            $assign_Dima++;
+                        }
+
                     }
 
 
@@ -124,14 +142,28 @@ foreach ($arr_tickets as &$ticket) {
                      //назначенные дане
                     if ($ticket_assign==32 and ($ticket_status==1 || $ticket_status==2 || $ticket_status==4 || $ticket_status==5 )) {
 
-                        $assign_Danil++;
+
+                        $date_finish = new DateTime($ticket['finish_date']);
+                        $date_finish_formatted = $date_finish->format('d.m.Y');
+
+
+                        if($date_finish_formatted === $currentDate){
+                            $assign_Danil++;
+                        }
+
                     }
 
 
                      //назначенные эдьдару
                     if ($ticket_assign==44 and ($ticket_status==1 || $ticket_status==2 || $ticket_status==4 || $ticket_status==5 )) {
 
-                        $assign_Eldar++;
+                        $date_finish = new DateTime($ticket['finish_date']);
+                        $date_finish_formatted = $date_finish->format('d.m.Y');
+
+
+                        if($date_finish_formatted === $currentDate){
+                            $assign_Eldar++;
+                        }
                     }
 
 }
@@ -237,8 +269,11 @@ foreach ($arr_tickets as &$ticket) {
                          $robot_info = $robots->get_info_robot($key);
                          $number = $robot_info['version'].".".$robot_info['number'];
                          $date_color = "";
-                         if ($value['date']==date("d.m.Y")) {
+                         if (strtotime($value['date']) == strtotime(date("d.m.Y"))) {
                              $date_color = "text-yellow";
+                         }
+                         if ( strtotime($value['date'])  < strtotime(date("d.m.Y")) ) {
+                             $date_color = "text-red";
                          }
                          echo "<li><a href='./robot_card.php?id=".$key."'>".$number." (".$value['count'].")</a> - <span class='".$date_color."'>".$value['date']."</span></li>";
                      }
@@ -548,7 +583,7 @@ foreach ($arr_tickets as &$ticket) {
                             $date_finish = new DateTime($ticket['finish_date']);
                             $str_date_finish = 'Ремонт назначен на <b>'.$date_finish->format('d.m.Y').'</b><br><br>';}
                             $out .= '
-                        <div class="box box-solid" style="background-color: #f9f9f9;" id="'.$ticket['id'].'">
+                        <div class="box box-solid" style="background-color: #f9f9f9;" id="'.$ticket['id'].'" >
                                     <div class="box-body">
                                       <b>'.$username_assign.'</b> <span class="pull-right text-muted">'.$robot_version.'.'.$robot_number.' </span></br>
                                       <b><a href="./ticket.php?id='.$ticket['id'].'"><span class="ticket_class">'.$ticket_class.'</span>-'.$ticket['id'].' '.$ticket_category.':<span class="subcategory"> '.$ticket_subcategory.'</span></a></b> 
@@ -766,7 +801,7 @@ var id_s = 0;
                       //window.location.reload(true);
                       $.each(tickets, function( index, value ) {
                           console.log(statusId);
-                          $("#"+statusId).append(' <div class="box box-solid" style="background-color: #f9f9f9;" id="'+value['id']+'"> \
+                          $("#"+statusId).append(' <div class="box box-solid" style="background-color: #f9f9f9;" id="'+value['id']+'" data-robot=""> \
                                     <div class="box-body"> \
                                     <b>'+value['assign']+'</b> <span class="pull-right text-muted">'+value['robot']+'</span></br> \
                                       <b><a href="./ticket.php?id='+value['id']+'">'+value['class']+'-'+value['id']+' '+value['category']+': '+value['subcategory']+'</a></b> \
@@ -880,11 +915,11 @@ var id_s = 0;
             console.log(status);
             var subcategory = $("#"+id).find(".subcategory").text();
             var ticket_class = $("#"+id).find(".ticket_class").text();
-            console.log(ticket_class);
-             if ((subcategory==0 || subcategory=="" || subcategory==null) && status!=2 ) {
+           // console.log(status);
+             if ((subcategory==0 || subcategory=="" || subcategory==null) && (status!=4 || status!=2)) {
                 if (ticket_class=="P"){
                 //$("#ticket_status option[value='0']").attr("selected","selected");
-                alert("Не заполнена подкатегория!");
+                alert("Не заполнена подкатегория! "+status);
                 return false;
                 }
             }
