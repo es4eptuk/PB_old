@@ -113,7 +113,7 @@ class Dashboard
         return $arr_date;
     }
 
-    public function getCountAnswers($minMinutes=0, $maxMinutes = 1) {
+/*    public function getCountAnswers($minMinutes=0, $maxMinutes = 1) {
         $month =  date("m",strtotime("now"));
         $year =  date("Y",strtotime("now"));
         $totalMonth = "$year-$month-01 00:00:00";
@@ -122,9 +122,47 @@ class Dashboard
         $result = $this->pdo->query($this->query);
         $countAnswers = $result->fetchColumn();
         return $countAnswers;
+    }*/
+
+
+    /**
+     * @param int $minMinutes
+     * @param int $maxMinutes
+     * @param string $dateMin
+     * @param string $dateMax
+     * Отображает кол-во ответов за промежуток дат,
+     * с заданным интервалом времени ответа.
+     * Без указания даты, за текущий месяц
+     * @return mixed
+     */
+    public function getCountAnswers($minMinutes=0, $maxMinutes = 1, $dateMin = "", $dateMax = "") {
+        if ((isset($dateMin) and $dateMin != null) and (isset($dateMax) and $dateMax != null)) {
+            $this->query = "SELECT COUNT(*) FROM `bot_message` 
+                                    WHERE `responseMinutes` <= $maxMinutes 
+                                    AND `responseMinutes` >= $minMinutes 
+                                    AND `isNight` = 0 
+                                    AND `isEmployee` = 1 
+                                    AND `chatId` != -399291922
+                                    AND `createDate` >= '$dateMin' 
+                                    AND `createDate` <= '$dateMax'";
+
+        } else {
+            $month = date("m", strtotime("now"));
+            $year = date("Y", strtotime("now"));
+            $totalMonth = "$year-$month-01 00:00:00";
+            $this->query = "SELECT COUNT(*) FROM `bot_message` WHERE `createDate` >= '$totalMonth' AND `responseMinutes` <= $maxMinutes AND `responseMinutes` >= $minMinutes AND `isNight` = 0 AND `isEmployee` = 1 AND `chatId` != -399291922";
+        }
+        //echo  $this->query;
+        $result = $this->pdo->query($this->query);
+        $countAnswers = $result->fetchColumn();
+        return $countAnswers;
     }
 
-    public function getViolation() {
+
+
+
+
+/*    public function getViolation() {
         $month =  date("m",strtotime("now"));
         $year =  date("Y",strtotime("now"));
         $totalMonth = "$year-$month-01 00:00:00";
@@ -133,8 +171,31 @@ class Dashboard
         $result = $this->pdo->query($this->query);
         $countViolation = $result->fetchColumn();
         return $countViolation;
-    }
+    }*/
 
+
+    /**
+     * @param string $dateMin
+     * @param string $dateMax
+     * @return mixed
+     * @example 2019-10-03 00:00:00
+     * Отображает кол-во нарушений за промежуток дат,
+     * без указания даты, за текущий месяц
+     */
+    public function getViolation($dateMin = "", $dateMax = "") {
+        if ((isset($dateMin) and $dateMin != null) and (isset($dateMax) and $dateMax != null)) {
+            $this->query = "SELECT COUNT(*) FROM `bot_message` WHERE  `violation` = 1  AND `chatId` != -399291922 AND `createDate` >= '$dateMin' AND `createDate` <= '$dateMax'";
+        } else {
+            $month = date("m", strtotime("now"));
+            $year = date("Y", strtotime("now"));
+            $totalMonth = "$year-$month-01 00:00:00";
+            $this->query = "SELECT COUNT(*) FROM `bot_message` WHERE `createDate` >= '$totalMonth' AND `violation` = 1  AND `chatId` != -399291922";
+        }
+
+        $result = $this->pdo->query($this->query);
+        $countViolation = $result->fetchColumn();
+        return $countViolation;
+    }
 
 
 

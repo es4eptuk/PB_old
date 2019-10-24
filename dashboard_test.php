@@ -274,8 +274,8 @@ include 'page/dashboard.php';
             </div>
             <!-- /.col -->
             <div class="box">
-                <!-- AREA CHART -->
-                <canvas id="myChart"></canvas>
+            <!-- AREA CHART -->
+            <canvas id="myChart"></canvas>
             </div>
 
     </div>
