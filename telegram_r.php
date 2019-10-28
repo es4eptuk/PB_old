@@ -40,8 +40,9 @@ require_once __DIR__ . "/vendor/autoload.php";
         $param['author'] = $user_id;
         $param['title'] = $titleChat;
         $param['message'] = $text;
-        $telegramAPI->writeMessageDb($param);
-
+        if ($titleChat != null) {
+            $telegramAPI->writeMessageDb($param);
+        }
         if ($text == "/start") {
             $reply = "Hello! Choose your language: ";
             $reply_markup = $telegram->replyKeyboardMarkup(['keyboard' => $keyboard_lang_en, 'resize_keyboard' => true, 'one_time_keyboard' => true , 'selective' => true]);
