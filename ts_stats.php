@@ -103,7 +103,7 @@ include 'page/dashboard.php';
 
 
                             foreach ($period_second as $date) {
-                                $date_formated_second = $date->format("Y-m-d H:i:s D");
+                                $date_formated_second = $date->format("Y-m-d H:i D");
                                 $date_formated_str_second = '"'. strval($date_formated_second) .'"';
                                 array_push($labels_second, $date_formated_str_second);
                             }
@@ -530,14 +530,14 @@ include 'page/dashboard.php';
                 borderColor: [
                     'rgba(34,45,50,1)',
                 ],
-                borderWidth: 1,
+                borderWidth: 0.5,
                 fill: false,
-                pointBackgroundColor: 'rgba(34,45,50,1)',
+                pointBackgroundColor: 'rgb(255,7,17)',
                 pointRadius: 2,
                 pointHoverRadius: 5,
                 pointHitRadius: 5,
                 pointBorderWidth: 1,
-                pointStyle: 'rectRounded'
+                pointStyle: 'rectRounded',
             }]
         },
         options: {
