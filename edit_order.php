@@ -45,29 +45,21 @@ $order_date = $order_date->format('d.m.Y');
                                       <select class="form-control" name="version" id="version" required="required">
                                           
                                           <?
-                                           $array_version = [
-                                                                        "2" => "2",
-                                                                        "4" => "4"
-                                                                       
-                                                                    ];
-                                          
-                                          foreach ($array_version as $key => $value) { 
-											                      if ( $key == $order_version ) {  
-											                        
-											                       echo "
-											                       <option value='".$key."' selected>".$value."</option>
-											                       
-											                       ";
-											                      } else {
-											                          
-											                          echo "
-											                       <option value='".$key."'>".$value."</option>
-											                       
-											                       "; 
-											                          
-											                      }
-											                    }
-                                          
+
+
+                                          $versions = $position->get_equipment();
+
+                                          foreach ($versions as &$version) {
+
+                                              if ($order_version==$version['id']) {  echo "<option selected value='".$version['id']."'>".$version['title']."</option>";} else
+                                              {echo "<option  value='".$version['id']."'>".$version['title']."</option>";}
+
+
+                                          }
+
+
+
+
                                           ?>
                                       
                                       </select>

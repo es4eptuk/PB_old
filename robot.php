@@ -6,6 +6,7 @@ $robot_number = $robot_info['number'];
 $robot_name= $robot_info['name'];
 $robot_version= $robot_info['version'];
 $robot_id= $robot_info['id'];
+$robot_progress= $robot_info['progress'];
 ?>
 
 <?php include 'template/head.html' ?>
@@ -23,7 +24,6 @@ $robot_id= $robot_info['id'];
     <section class="content-header">
       <h1>
        Promobot <?php echo $robot_version.".".$robot_number; ?>
-        
       </h1>
       
     </section>
@@ -53,7 +53,16 @@ $robot_id= $robot_info['id'];
 
             <div class="info-box-content">
               <span class="info-box-text">Механика</span>
-              <span class="info-box-number"><?php echo $checks->get_progress($robot_id, 1); ?>%</span>
+              <span class="info-box-number"><?php
+                  $mh = $checks->get_progress($robot_id, 1);
+
+                  if (isset($mh)) {
+
+                      echo $mh;
+                  }
+
+
+                  ?>%</span>
 
               <div class="progress">
                 <div class="progress-bar" style="width: <?php echo $checks->get_progress($robot_id, 1); ?>%"></div>
@@ -75,7 +84,18 @@ $robot_id= $robot_info['id'];
 
             <div class="info-box-content">
               <span class="info-box-text">Аппаратка</span>
-              <span class="info-box-number"><?php echo $checks->get_progress($robot_id, 2); ?>%</span>
+              <span class="info-box-number"><?php
+
+                  $hp = $checks->get_progress($robot_id, 2);
+
+                  if (isset($hp)) {
+
+                      echo $hp;
+                  }
+
+
+
+                ?>%</span>
 
               <div class="progress">
                 <div class="progress-bar" style="width: <?php echo $checks->get_progress($robot_id, 2); ?>%"></div>
@@ -97,7 +117,21 @@ $robot_id= $robot_info['id'];
 
             <div class="info-box-content">
               <span class="info-box-text">Настройка</span>
-             <span class="info-box-number"><?php echo $checks->get_progress($robot_id, 5); ?>%</span>
+             <span class="info-box-number"><?php
+
+
+                 $hs = $checks->get_progress($robot_id, 5);
+
+                 if (isset($hs)) {
+
+                     echo $hs;
+                 }
+
+
+
+
+
+                 ?>%</span>
 
               <div class="progress">
                 <div class="progress-bar" style="width: <?php echo $checks->get_progress($robot_id, 5); ?>%"></div>
@@ -117,7 +151,21 @@ $robot_id= $robot_info['id'];
 
             <div class="info-box-content">
               <span class="info-box-text">Корпус</span>
-              <span class="info-box-number"><?php echo $checks->get_progress($robot_id, 3); ?>%</span>
+              <span class="info-box-number"><?php
+
+                  $bd = $checks->get_progress($robot_id, 3);
+
+                  if (isset($bd)) {
+
+                      echo $bd;
+                  }
+
+
+
+
+
+
+                  ?>%</span>
 
               <div class="progress">
                 <div class="progress-bar" style="width: <?php echo $checks->get_progress($robot_id, 3); ?>%"></div>
@@ -138,7 +186,19 @@ $robot_id= $robot_info['id'];
 
             <div class="info-box-content">
               <span class="info-box-text">Упаковка</span>
-             <span class="info-box-number"><?php echo $checks->get_progress($robot_id, 4); ?>%</span>
+             <span class="info-box-number"><?php
+
+                 $up = $checks->get_progress($robot_id, 4);
+
+                 if (isset($up)) {
+
+                     echo $up;
+                 }
+
+
+
+
+                 ?>%</span>
 
               <div class="progress">
                 <div class="progress-bar" style="width: <?php echo $checks->get_progress($robot_id, 4); ?>%"></div>
@@ -354,8 +414,9 @@ $robot_id= $robot_info['id'];
     
     function onRemont() {
         var isRemont = confirm("Вы действительно хотите перевести робота в ремонт? Все чек-листы будут сброшены.");
-        
-        if (isRemont) {
+        var progress = <? echo $robot_progress;?>;
+
+        if (isRemont && progress===100) {
             
            $.post( "./api.php", { 
                     action: "robot_remont", 
@@ -363,7 +424,6 @@ $robot_id= $robot_info['id'];
                         } )
                   .done(function( data ) {
                       window.location.reload(true);
-                     
                   });
             
         }

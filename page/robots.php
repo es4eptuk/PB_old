@@ -264,13 +264,17 @@ class Robots
 			}
 		  else
 			{
-			$this->telegram->sendNotify("test", $telegram_str);
+
+                if ($client==1) {
+                    $this->telegram->sendNotify("client", $telegram_str,$t_chat_id);
+                } else {
+                    $this->telegram->sendNotify("test", $telegram_str);
+                }
+
+
 			}
 			
-			if ($client==1) {
-			    //echo $t_chat_id;
-			    $this->telegram->sendNotify("client", $telegram_str,$t_chat_id);
-			}
+
 			
 		}
 
@@ -304,7 +308,7 @@ class Robots
 		if (isset($robot_array)) return $robot_array['0'];
 		}
 
-	function add_robot($number, $name, $version, $photo, $termo, $dispenser, $terminal, $kaznachey, $lidar, $other, $customer, $language_robot, $language_doc, $charger, $color, $brand, $ikp, $battery, $dop, $send,$date_start,$date_test)
+	function add_robot($number, $name, $version, $photo, $termo, $dispenser, $terminal, $kaznachey, $lidar, $other, $customer, $language_robot, $language_doc, $charger, $color, $brand, $ikp, $battery, $dop,$dop_manufactur, $send,$date_start,$date_test)
 		{
 		$date_start = new DateTime($date_start);
 		$date_start = $date_start->format('Y-m-d H:i:s');
@@ -345,6 +349,7 @@ class Robots
         `ikp`, 
         `battery`,
         `dop`, 
+        `dop_manufactur`,
         `progress`,
         `date`,
         `date_test`,
@@ -370,6 +375,7 @@ class Robots
             '$ikp',
             '$battery',
             '$dop',
+            '$dop_manufactur',
             '$progress',
             '$date_start',
             '$date_test',
@@ -380,6 +386,11 @@ class Robots
 
 		// Освобождаем память от результата
 		// mysql_free_result($result);
+        $arr_mh = Array();
+        $arr_hp = Array();
+        $arr_bd = Array();
+        $arr_up = Array();
+        $arr_hs = Array();
 
 		$query = "SELECT * FROM check_items WHERE category='1' AND version=$version ORDER BY `sort` ASC";
 		$result = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
@@ -457,7 +468,7 @@ class Robots
 		$this->sklad->set_reserv($version);
 		}
 
-	function edit_robot($id, $number, $name, $version, $options, $customer, $language_robot, $language_doc, $charger, $color, $brand, $ikp, $battery, $dop, $date_start,$date_test, $send)
+	function edit_robot($id, $number, $name, $version, $options, $customer, $language_robot, $language_doc, $charger, $color, $brand, $ikp, $battery, $dop,$dop_manufactur, $date_start,$date_test, $send)
 		{
 //	print_r($options);
 		$date_start = new DateTime($date_start);
@@ -491,6 +502,7 @@ class Robots
         `ikp` = '$ikp', 
         `battery` = '$battery', 
         `dop` = '$dop', 
+        `dop_manufactur` = '$dop_manufactur', 
         `date` = '$date_start',
         `date_test` = '$date_test',
         `update_user` = '$user_id', 

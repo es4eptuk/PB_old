@@ -6,6 +6,7 @@ $writeoff_id = $writeoff1['id'];
 $writeoff_date = $writeoff1['update_date'];
 $writeoff_category = $writeoff1['category'];
 $writeoff_description = $writeoff1['description'];
+$writeoff_price = $writeoff1['total_price'];
 $writeoff_user_id = $writeoff1['update_user'];
 ?>
 <?php include 'template/head.html' ?>
@@ -33,10 +34,10 @@ $writeoff_user_id = $writeoff1['update_user'];
 								<h3 class="box-title">Списание № <span id="writeoff_id"><?php echo $writeoff_id; ?></span></h3>
 							</div><!-- /.box-header -->
 							<div class="box-body">
-							    
+                                <b>Общая сумма списания:</b> <? echo number_format($writeoff_price, 2, ',', ' ') ; ?> <br><br>
 							     <div class="form-group">
 										<label>Категория</label> <select class="form-control" id="category" name="category" required="required" >
-											<? $arr = ["Модернизация","Брак","Сервис","Производство","Разработка","Давальческие материалы","Возврат поставщику","Покраска/Покрытие"];
+											<? $arr = ["Модернизация","Брак","Сервис","Производство","Разработка","Давальческие материалы","Возврат поставщику","Покраска/Покрытие","Не прокатило"];
 											foreach ($arr as &$value) {
                                                if ($writeoff_category == $value) {
                                                    echo '<option value="'.$value.'" selected>'.$value.'</option>';

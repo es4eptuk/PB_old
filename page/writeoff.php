@@ -24,8 +24,8 @@ class Writeoff {
         }
         
         function add_writeoff($json) {
-            $writeoff_arr = json_decode($json);
-            //print_r($writeoff_arr);
+            $writeoff_arr = json_decode($json, true);
+            print_r($writeoff_arr);
             $check = 0;
             $robot = 0;
             $category = $writeoff_arr['0']['0'];
@@ -112,20 +112,38 @@ class Writeoff {
         }
                     
         }
-           $this->mail->send('Екатерина Старцева', 'startceva@promo-bot.ru', 'Списание №'.$idd, 'Пройдите по ссылке для просмотра списания https://db.promo-bot.ru/new/edit_writeoff.php?id='.$idd);  
-           return $result;
+
+            if ( $category=="Не прокатило") {
+
+                $this->mail->send('Светлана Орлова', 's.orlova@promo-bot.ru', 'Списание на разработку №'.$idd, 'Пройдите по ссылке для просмотра списания https://db.promo-bot.ru/new/edit_writeoff.php?id='.$idd);
+
+            }
+
+
+            if ( $category=="Сервис") {
+
+                 $this->mail->send('Екатерина Старцева',  'startceva@promo-bot.ru', 'Списание №'.$idd, 'Пройдите по ссылке для просмотра списания https://db.promo-bot.ru/new/edit_writeoff.php?id='.$idd);
+
+            }
+
+
+
+
+            return $result;
+
+
             
             
         }
     
-     function get_writeoff() {
-    	
-    
-        $query = "SELECT * FROM writeoff ORDER BY `update_date` DESC LIMIT 1000";
+     function get_writeoff($robot = 0) {
+         $where = "";
+        if ($robot!=0) $where = "WHERE robot = $robot";
+        $query = "SELECT * FROM writeoff $where ORDER BY `update_date` DESC LIMIT 1000";
         //echo $query;
         $result = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
         
-        while( $line = mysql_fetch_array($result, MYSQL_ASSOC)){
+        while( $line = mysql_fetch_array($result,  MYSQL_ASSOC)){
         $orders_array[] = $line; 
         }
         
@@ -362,7 +380,20 @@ class Writeoff {
            
         
     }
-    
+
+    function get_writeoff_on_robot($robot) {
+        $writeoff_pos_arr = Array();
+        $writeoff_price = 0;
+        $writoff_robot = $this->get_writeoff($robot);
+
+        foreach ($writoff_robot as $key => $item) {
+            //$writeoff_price += $item['total_price'];
+            $pos_arr = $this->get_pos_in_writeoff($item['id']);
+            $writeoff_pos_arr = array_merge($writeoff_pos_arr, $pos_arr);
+        }
+    return $writeoff_pos_arr;
+    }
+
     function __destruct() {
        
     }

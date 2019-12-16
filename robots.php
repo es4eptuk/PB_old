@@ -167,9 +167,22 @@ include 'include/class.inc.php';
                  <div class="form-group">
                   <label>Версия</label>
                   <select class="form-control" name="version" id="version">
-                    <option value="4">4</option>
-                    <option value="3">3</option>
-                    <option value="2">2</option>
+                      <?
+
+                      $versions = $position->get_equipment();
+
+                      foreach ($versions as &$version) {
+
+                          echo "
+											                       <option value='".$version['id']."'>".$version['title']."</option>
+											                       
+											                       ";
+                      }
+
+
+
+
+                      ?>
                   </select>
                 </div>
                 
@@ -211,6 +224,15 @@ include 'include/class.inc.php';
                     <option value="german">Немецкий</option>
                   </select>
                 </div>
+
+              <div class="form-group">
+                  <label>Язык инструкции</label>
+                  <select class="form-control" name="language_doc" id="language_doc">
+                      <option value="russian">Русский</option>
+                      <option value="english">Английский</option>
+
+                  </select>
+              </div>
 
                 
                  <div class="form-group">
@@ -275,6 +297,11 @@ include 'include/class.inc.php';
                   <label>Дополнительная информация</label>
                   <input type="text" class="form-control" name="dop" id="dop">
                 </div>
+
+              <div class="form-group">
+                  <label>Информация от производства</label>
+                  <textarea rows="10" cols="45" class="form-control" name="dop_manufactur" id="dop_manufactur"></textarea>
+              </div>
                 
                 <div class="checkbox">
                     <label>
@@ -447,6 +474,9 @@ include 'include/class.inc.php';
     var ikp =  $('#ikp').val();
     var battery =  $('#battery').val();
     var dop =  $('#dop').val();
+    var dop_manufactur =  $('#dop_manufactur').val();
+
+
     var send =  $('#send').is(':checked') ? 1 : 0;
     var date = $('#datepicker').val();
     var date_test = $('#datepicker2').val();
@@ -472,6 +502,7 @@ include 'include/class.inc.php';
         ikp: ikp,
         battery: battery,
         dop: dop,
+          dop_manufactur: dop_manufactur,
         date: date,
         date_test: date_test,
         send: send
@@ -480,8 +511,7 @@ include 'include/class.inc.php';
           .done(function( data ) {
               if (data=="false") {alert( "Data Loaded: " + data ); }
               else {
-                window.location.href = "./robots.php";
-                
+                //window.location.href = "./robots.php";
               }
           });
     

@@ -606,6 +606,13 @@ class Orders
         $result = mysql_query($query) or die(mysql_error());
         return $result;
     }
+
+    function add_order_dop($json,$category,$provider) {
+
+
+
+        print_r($json);
+    }
    
     function __destruct()
     {

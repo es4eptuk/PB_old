@@ -198,7 +198,7 @@ $robot_id= $robot_info['id'];
               
              <p class="ticket_data"><? echo $ticket_description; ?></p> 
              
-             
+             Решение: <? echo $ticket_result; ?>
                  <div class="form-group ticket_edit">
                   <label>Описание</label>
                   <textarea class="form-control" rows="3" placeholder="Enter ..." id="descriprion"><? echo $ticket_description; ?></textarea>

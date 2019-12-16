@@ -48,30 +48,27 @@ $kit_version = $kit['kit_version'];
 										 <input type="text" class="form-control" name="title" required="required" id="title" value="<? echo $kit_title; ?> ">
 									</div>
 									
-									<? $versions = Array(2,4); ?>
+
 									
 									<div class="form-group">
                                       <label>Версия робота</label>
                                       <select class="form-control" name="version" placeholder="Веберите версию" id="version_edit" required="required">
-                                     <? 
-                                     foreach ($versions as &$version) {
-											                       if ( $version == $kit_version ) {
-											                          echo "
-											                       <option value='".$version."' selected>".$version."</option>
-											                       
-											                       ";  
-											                           
-											                       } else {
-											                       echo "
-											                       <option value='".$version."'>".$version."</option>
-											                       
-											                       ";
-											                    }
-											                    }
-                                     
-                                     
-                                     
-                                     ?>
+                                          <?
+
+                                          $versions = $position->get_equipment();
+
+                                          foreach ($versions as &$version) {
+
+                                              if ($kit_version==$version['id']) {  echo "<option selected value='".$version['id']."'>".$version['title']."</option>";} else
+                                              {echo "<option  value='".$version['id']."'>".$version['title']."</option>";}
+
+
+                                          }
+
+
+
+
+                                          ?>
                                       </select>
                                     </div>
 									
@@ -148,8 +145,9 @@ $kit_version = $kit['kit_version'];
                                     </table>
 									
 									<div class="box-footer">
-									    <button class="btn btn-success" onclick="history.back();" >Закрыть</button> 
-										<button class="btn btn-primary" id="save_close" type="submit">Сохранить</button> 
+                                        <button class="btn btn-primary" id="save_close" type="submit">Сохранить</button>
+                                        <button class="btn btn-primary" onclick="history.back();" >Закрыть</button>
+                                        <button class="btn btn-success" onclick="location.href = 'add_mkit.php?parent=<? echo $kit_id;?>'" href="">Добавить модернизированный комплект</button>
 										<button type="button" class="btn btn-primary btn-danger pull-right" id="delete" name="">Удалить</button>
 									</div>
 								

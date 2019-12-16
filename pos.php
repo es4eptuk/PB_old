@@ -87,17 +87,12 @@ include 'include/class.inc.php';
                           <td>".$position->get_name_subcategory($pos['subcategory'])."</td>
                           <td>".$pos['vendor_code']."</td>
                           <td>".$pos['title']."</td>
-                          
                           <td>".$pos['total']."</td>
-                         
                           <td>".$pos['min_balance']."</td>
-                         
-                          
                           <td>".$provider['title'].", ".$provider['type']."</td>
                           <td>".$pos['price']."</td>
-                         
                           <td>".$assembly_out."</td>
-                           <td>".$img."</td>
+                          <td>".$img."</td>
                           <td><i class='fa fa-2x fa-pencil' style='cursor: pointer;' id='".$pos['id']."'></i></td>
                           <td><a href='add_pos.php?title=".$pos['title']."&longtitle=".$pos['longtitle']."&category=".$_GET['id']."&subcategory=".$pos['subcategory']."&provider=".$pos['provider']."&price=".$pos['price']."'><i class='fa fa-2x fa-copy' style='cursor: pointer;' id='".$pos['id']."'></i></a></td>
                           <td><a href='pos_log.php?id=".$pos['id']."'><i class='fa fa-2x fa-list-alt'></i></a></td>

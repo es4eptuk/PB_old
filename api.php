@@ -145,6 +145,12 @@ if (isset($_POST['action'])) {
     if ($_POST['action'] == "add_order") {
         echo $orders->add_order($_POST['json'], $_POST['version']);
     }
+
+    //Создание нового заказа на сварку и зенковку
+    if ($_POST['action'] == "add_order_dop") {
+        echo $orders->add_order_dop($_POST['json'], $_POST['category'], $_POST['provider']);
+    }
+
     //Создание нового заказа
     if ($_POST['action'] == "add_order_plan") {
         echo $orders->add_order_plan($_POST['arr_order'], $_POST['month']);
@@ -201,7 +207,7 @@ if (isset($_POST['action'])) {
         echo json_encode($orders->del_order($_POST['id']), JSON_UNESCAPED_UNICODE);
     }
     //Добавление поступления
-    if ($_POST['actin'] == "add_admission") {
+    if ($_POST['action'] == "add_admission") {
         echo json_encode($admission->add_admission($_POST['order_id'], $_POST['json'], $_POST['category'], $_POST['provider']), JSON_UNESCAPED_UNICODE);
     }
     //Получение списка групп чек листа  
@@ -238,12 +244,12 @@ if (isset($_POST['action'])) {
     //добавление робота
     if ($_POST['action'] == "add_robot") {
         //echo $_POST['number'];
-        echo json_encode($robots->add_robot($_POST['number'], $_POST['name'], $_POST['version'], $_POST['photo'], $_POST['termo'], $_POST['dispenser'], $_POST['terminal'], $_POST['kaznachey'], $_POST['lidar'], $_POST['other'], $_POST['customer'], $_POST['language_robot'], $_POST['language_doc'], $_POST['charger'], $_POST['color'], $_POST['brand'], $_POST['ikp'], $_POST['battery'], $_POST['dop'], $_POST['send'], $_POST['date'], $_POST['date_test']), JSON_UNESCAPED_UNICODE);
+        echo json_encode($robots->add_robot($_POST['number'], $_POST['name'], $_POST['version'], $_POST['photo'], $_POST['termo'], $_POST['dispenser'], $_POST['terminal'], $_POST['kaznachey'], $_POST['lidar'], $_POST['other'], $_POST['customer'], $_POST['language_robot'], $_POST['language_doc'], $_POST['charger'], $_POST['color'], $_POST['brand'], $_POST['ikp'], $_POST['battery'], $_POST['dop'], $_POST['dop_manufactur'], $_POST['send'], $_POST['date'], $_POST['date_test']), JSON_UNESCAPED_UNICODE);
     }
     //редактирование робота
     if ($_POST['action'] == "edit_robot") {
         //echo $_POST['number'];
-        echo json_encode($robots->edit_robot($_POST['id'], $_POST['number'], $_POST['name'], $_POST['version'], $_POST['options'], $_POST['customer'], $_POST['language_robot'], $_POST['language_doc'], $_POST['charger'], $_POST['color'], $_POST['brand'], $_POST['ikp'], $_POST['battery'], $_POST['dop'], $_POST['date'], $_POST['date_test'], $_POST['send']), JSON_UNESCAPED_UNICODE);
+        echo json_encode($robots->edit_robot($_POST['id'], $_POST['number'], $_POST['name'], $_POST['version'], $_POST['options'], $_POST['customer'], $_POST['language_robot'], $_POST['language_doc'], $_POST['charger'], $_POST['color'], $_POST['brand'], $_POST['ikp'], $_POST['battery'], $_POST['dop'],  $_POST['dop_manufactur'], $_POST['date'], $_POST['date_test'], $_POST['send']), JSON_UNESCAPED_UNICODE);
     }
     //редактирование робота
     if ($_POST['action'] == "edit_option") {

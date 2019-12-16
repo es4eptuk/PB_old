@@ -104,7 +104,7 @@ class Dashboard
     }
 
     public function getSumDebet() {
-        $this->query = "SELECT order_delivery, SUM(order_price) FROM `orders` WHERE `order_payment` = 0  AND order_price != 0  GROUP BY order_delivery";
+        $this->query = "SELECT order_delivery, SUM(order_price) FROM `orders` WHERE `order_payment` = 0  AND order_price != 0  AND order_category < 900 GROUP BY order_delivery";
         $result = $this->pdo->query($this->query);
 
         while ($line = $result->fetch()) {

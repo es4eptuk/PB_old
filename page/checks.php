@@ -6,6 +6,7 @@ class Checks
     private $sklad;
     private $link_check;
     public $auth;
+    private $mail;
     function __construct()
     {
         global $database_server, $database_user, $database_password, $dbase;
@@ -16,6 +17,7 @@ class Checks
         $this->telegram = new TelegramAPI;
         $this->robot    = new Robots;
         $this->sklad    = new Position;
+        $this -> mail = new Mail;
         //$this -> robot = new Robots;
     }
     function get_checks_in_cat($category, $version = 4)
@@ -130,6 +132,7 @@ class Checks
         if (isset($checks_array))
             return $checks_array;
     }
+
     function add_check_on_robot($id_row, $robot, $id, $value, $number, $remont, $kit)
     {
         $date    = date("Y-m-d H:i:s");
@@ -162,6 +165,7 @@ class Checks
             $comment      = " Робот  #" . $number . "(" . $robot_name . ") готовится к отправке";
             $telegram_str = $icon . $comment;
             $this->telegram->sendNotify("sale", $telegram_str);
+
         }
         if (($id == 105 || $id == 314) && $value == 1) {
             $query = "SELECT * FROM robots WHERE id='$robot'";
@@ -193,6 +197,8 @@ class Checks
             $comment      = " Робот  #" . $number . "(" . $robot_name . ") упакован и готов к отправке";
             $telegram_str = $icon . $comment;
             $this->telegram->sendNotify("sale", $telegram_str);
+            $this->mail->send('Екатерина Старцева',  'cto@promo-bot.ru', 'Списание на робота '.$number . "(" . $robot_name . ")", 'Пройдите по ссылке для просмотра списания https://db.promo-bot.ru/new/edit_writeoff_on_robot.php?id='.$robot);
+
         }
         $query = "SELECT * FROM robots WHERE id='$robot'";
         $result = mysql_query($query) or die('Запрос не удался: ' . mysql_error());

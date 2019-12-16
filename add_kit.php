@@ -239,7 +239,7 @@ $("#listPos").on("click", ".fa-remove", function() {
     var version =  $("#version").val();
   
     var TableArray = [];
-        TableArray.push([title,category,version]);
+        TableArray.push([title,category,version,0]);
         
         $("#listPos tr").each(function() {
             var arrayOfThisRow = [];

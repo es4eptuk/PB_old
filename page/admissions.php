@@ -3,6 +3,8 @@ class Admissions
 {
     private $link_admis;
     private $log;
+    private $orders;
+    private $writeoff;
     function __construct()
     {
         global $database_server, $database_user, $database_password, $dbase;
@@ -11,20 +13,69 @@ class Admissions
         //echo 'Соединение успешно установлено';
         mysql_select_db($dbase) or die('Не удалось выбрать базу данных');
         $this->log = new Log;
+        $this -> orders = new Orders;
+        $this -> writeoff = new Writeoff;
     }
     function add_admission($order_id, $json, $category, $provider)
     {
+        //echo $order_id;
         $pos_arr  = json_decode($json);
+        //print_r($pos_arr);
         $p_finish = 0;
         $p_admis  = 0;
         $date     = date("Y-m-d H:i:s");
         $user_id  = intval($_COOKIE['id']);
+
+        $current_month = date('m');
+        $current_year = date('y');
+        $tmp_date = "25.".$current_month.".".$current_year;
+
+        $order_date =  date('d.m.Y',strtotime("$tmp_date +1 month"));
+
+        $order_date = new DateTime($order_date);
+        $order_date = $order_date->format('Y-m-d H:i:s');
+$i = 0;
         foreach ($pos_arr as &$value) {
+
             $pos_id       = $value['0'];
             $count_pos    = $value['3'];
             $finish_pos   = $value['4'];
             $admis_pos    = $value['5'];
             $return_pos   = $value['6'];
+            $painting   = $value['7'];
+            $drilling   = $value['8'];
+            $order_paint['0']['0'] = 998;
+            $order_drill['0']['0'] = 997;
+
+            $order_paint['0']['1'] = 49;
+            $order_drill['0']['1'] = 49;
+
+
+            if($painting>0) {
+                $order_paint[$pos_id]['0'] = $pos_id;
+                $order_paint[$pos_id]['1'] = $value['1'];
+                $order_paint[$pos_id]['2'] = $value['2'];
+                $order_paint[$pos_id]['3'] = $painting;
+                $order_paint[$pos_id]['4'] = 0;
+                $order_paint[$pos_id]['5'] = 0;
+                $order_paint[$pos_id]['6'] = $order_date;
+            }
+
+
+
+            if($drilling>0) {
+                $order_drill[$pos_id]['0'] = $pos_id;
+                $order_drill[$pos_id]['1'] = $value['1'];
+                $order_drill[$pos_id]['2'] = $value['2'];
+                $order_drill[$pos_id]['3'] = $drilling;
+                $order_drill[$pos_id]['4'] = 0;
+                $order_drill[$pos_id]['5'] = 0;
+                $order_drill[$pos_id]['6'] = $order_date;
+            }
+
+
+
+
             $total_finish = $finish_pos + $admis_pos;
             $p_finish     = $p_finish + $count_pos;
             $p_admis      = $p_admis + $total_finish;
@@ -44,6 +95,7 @@ class Admissions
             $new_total = $count_total + $admis_pos;
             //echo $new_total."\n";
             $query     = "UPDATE `pos_items` SET `total` = '$new_total', `update_date` = '$date' WHERE `id` = '$pos_id'";
+            //echo $query;
             $result = mysql_query($query) or die(mysql_error());
             if ($result && $admis_pos != 0) {
                 $param['id']    = $pos_id;
@@ -54,13 +106,37 @@ class Admissions
             }
             //echo "1";
             //echo $total_finish." ";
+           // echo $order_id;
             if ($order_id != 0) {
                 $return_pos = $return_pos - $admis_pos;
                 $query      = "UPDATE IGNORE `orders_items` SET `pos_count_finish` = $total_finish,`pos_return` = $return_pos WHERE `order_id` = $order_id AND `pos_id` = $pos_id";
                 echo $query;
-                $result = mysql_query($query) or die(mysql_error());
+               $result = mysql_query($query) or die(mysql_error());
             }
         }
+
+        print_r($order_paint);
+        print_r($order_drill);
+
+        if (count($order_paint) > 1 )  {
+            $this->orders->add_order(json_encode($order_paint),0,true);
+            $order_paint['0']['0'] = "Склад";
+            $order_paint['0']['1'] = "Списание на покраску";
+            $order_paint['0']['4'] = 49;
+            $this->writeoff->add_writeoff(json_encode($order_paint));
+        }
+
+        if (count($order_drill) > 1 ) {
+            $this->orders->add_order(json_encode($order_drill),0,true);
+            $order_drill['0']['0'] = "Склад";
+            $order_drill['0']['1'] = "Списание на сварку/зенковку";
+            $order_drill['0']['4'] = 49;
+            $this->writeoff->add_writeoff(json_encode($order_drill));
+        }
+
+
+
+
         unset($pos_array);
         if ($order_id != 0) {
             echo "Total: " . array_sum($arr_finish) . " из " . count($pos_arr) . " ";
@@ -113,7 +189,9 @@ class Admissions
         if ($result) {
             $this->log->add(__METHOD__, "Добавление нового поступления №$idd");
         }
-        return $result;
+
+
+        return 1;
     }
     function get_admission($admiss_category)
     {
@@ -122,7 +200,7 @@ class Admissions
         while ($line = mysql_fetch_array($result, MYSQL_ASSOC)) {
             $admiss_array[] = $line;
         }
-        // Освобождаем память от результата
+        // Jcdj,j;lftv gfvznm jn htpekmnfnf
         // mysql_free_result($result);
         if (isset($admiss_array))
             return $admiss_array;

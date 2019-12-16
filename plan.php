@@ -156,7 +156,6 @@ if (isset($_GET['status'])) $id_status = $_GET['status'];
                        if($pos['assembly']!= 0) {
                         $idd = $pos['id'];
                         $arr_pos_assembly = $position->get_pos_in_assembly($pos['assembly']);
-                       // print_r($arr_pos_assembly);
                           foreach ($arr_pos_assembly as &$pos_ass) {
                               $iddd = $pos_ass['id_pos'];
                               $arr_pos[$iddd]['id'] = $iddd;
@@ -184,7 +183,7 @@ if (isset($_GET['status'])) $id_status = $_GET['status'];
                    //print_r($arr_pos);
                  // print_r( $plan->get_operation(75));
                     foreach ($arr_pos as &$pos) {
-                        echo "<br>".$pos['title']."<br>";
+                        //echo $pos['title']."<br>";
                         $total = $pos['total'];
                         //echo $pos['inassembly'];
                         
@@ -195,14 +194,14 @@ if (isset($_GET['status'])) $id_status = $_GET['status'];
                         $need_pos_o = $plan->get_operation($pos['id']);
                         //echo $pos['id']." get_operation_assembly - ";
                         //print_r($need_pos_a);
-                       // echo "<br>";
+                        //echo "<br>";
                         //echo $pos['id']." get_operation - ";
-                        //print_r($need_pos_o);
+                        // print_r($need_pos_o);
                         // echo "<br>";
                         
                        
                         if (isset($need_pos_o)) {
-                           // echo "--1--";
+                            //echo "--1--";
                          foreach ($need_pos_o as $arr_m => $mon) {
                              if (isset($need_pos_a[$arr_m]['count'])) {
                                  
@@ -221,16 +220,14 @@ if (isset($_GET['status'])) $id_status = $_GET['status'];
                           $need_pos = $need_pos_a;
                            
                         } else {
-                             //echo "--2--";
+                            // echo "--2--";
                             if(isset($need_pos_a)) {
-                            //echo "--3--";
+                           //echo "--2--";
                             foreach ($need_pos_a as $arr_m => $mon) {
                              if (isset($need_pos_o[$arr_m]['count'])) {
                                  $need_pos_o[$arr_m]['count'] +=  $mon['count'];
-                                 //echo "--4--";
                              } else {
-                                 $need_pos_o[$arr_m]['count'] =  $mon['count'];
-                                 //echo "--5--";
+                                 $need_pos_o[$arr_m]['count'] =  $mon['count']; 
                              }
                                  
                              foreach ($mon['robots'] as $robot) {
@@ -244,7 +241,7 @@ if (isset($_GET['status'])) $id_status = $_GET['status'];
                         } 
                         
                          
-                        // print_r($need_pos);
+                         //print_r($need_pos);
                        // echo "<br><br>";
                      //echo "<br>---------------<br><br>";
                        
@@ -283,7 +280,7 @@ if (isset($_GET['status'])) $id_status = $_GET['status'];
                         $prev = 0;
                         
                         $arr_pos_edit[$pos['id']]['count'][$pos['version']] = 0;
-                        print_r($arr_pos_edit);
+                        
                         //echo  $arr_pos_edit[$pos['pos_id']]['count'][$pos['equipment_id']];
                         foreach ($arr_robot as $key_r => $value_r) {
                              //echo "$key_r<br>";
@@ -298,25 +295,26 @@ if (isset($_GET['status'])) $id_status = $_GET['status'];
                             
                             if(!isset($arr_pos_edit[$pos['id']]['month'][$key_r]['need'])) $arr_pos_edit[$pos['id']]['month'][$key_r]['need'] = 0;
                             $need = 0;
-                            //print_r($value_r);
                             foreach ($value_r as $key_m => $value_m) {
-                               // if (isset($arr_pos_edit[$pos['id']]['count'][$key_m])) {
+                                if (isset($arr_pos_edit[$pos['id']]['count'][$key_m])) {
                                     
-                                    echo "Месяц - ".$key_r." | ";
-                                    echo "Версия - ".$key_m." | ";
-                                    echo "Количесвто - ".$value_m." | ";
-                                    if (!isset($need_pos[$key_r]['count']) || $need_pos[$key_r]['count'] < 0) {$need_pos[$key_r]['count'] = 0; echo "ZERO";}
+                                    //echo "Месяц - ".$key_r." | ";
+                                    //echo "Версия - ".$key_m." | ";
+                                   // echo "Количесвто - ".$value_m." | ";
+                                    if (!isset($need_pos[$key_r]['count']) || $need_pos[$key_r]['count'] < 0) $need_pos[$key_r]['count'] = 0;
                                     $need += $need_pos[$key_r]['count'];  
-                                    echo $need." - ";
+                                    
+                                    
+                                   
                                     $arr_pos_edit[$pos['id']]['month'][$key_r]['need'] = $need_pos[$key_r]['count'];
                                     if (!isset($need_pos[$key_r]['robots'])) $need_pos[$key_r]['robots'] = "";
                                     $arr_pos_edit[$pos['id']]['month'][$key_r]['robots'] = $need_pos[$key_r]['robots'];
                                     //echo $arr_pos_edit[$pos['pos_id']]['month'][$key_r]['need'];
                                     //echo "Итог - ".$need." <br> ";
                                     //echo $arr_pos_edit[$pos['pos_id']]['count'][$key_m];
-                              //  } else {echo 222;}
+                                }
                             }
-                            echo "<br>";
+                            
                             $count_month = $need;
                             $total = $total - $count_month;
                             

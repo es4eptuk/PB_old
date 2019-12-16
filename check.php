@@ -7,9 +7,9 @@ $robot_version = $robot_info['version'];
 $robot_name= $robot_info['name'];
 $robot_id= $robot_info['id'];
 $robot_remont= $robot_info['remont'];
-$finish_mh = $checks->get_progress($robot_id, 1);
-$finish_hp = $checks->get_progress($robot_id, 2);
-$finish_hs = $checks->get_progress($robot_id, 5);
+//$finish_mh = $checks->get_progress($robot_id, 1);
+//$finish_hp = $checks->get_progress($robot_id, 2);
+//$finish_hs = $checks->get_progress($robot_id, 5);
 $category_id = $_GET['category'];
 
 
@@ -376,9 +376,7 @@ $('.comment').submit(function(){
 
   $(".check").change(function() {
       var category = <?php echo $category_id; ?> ;
-      var finish_hs = <?php echo $finish_hs; ?> ;
-      var finish_hp = <?php echo $finish_hp; ?> ;
-      var finish_mh = <?php echo $finish_mh; ?> ;
+
       
       //if (category == 4 && (finish_hs!=100  ||  finish_mh!=100 || finish_hp!=100 )) {alert("Не выполнены все операции в предыдущих отделах!"); $(this).prop( "checked", false ); return false;}
      

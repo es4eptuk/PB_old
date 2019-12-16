@@ -152,10 +152,7 @@ $( "#order" )
             .done(function( data ) {  
                  console.log(data);
                  var obj = jQuery.parseJSON(data);
-                 
-                 
                  $.each( obj, function( key, value ) {
-                      
                        $('#listPos tbody').append('<tr> \
                         <td>'+value['id']+'</td> \
                         <td>'+value['vendor_code']+'</td> \
@@ -165,14 +162,8 @@ $( "#order" )
                         <td class="quant"><span>0</span><input type="text" class="form-control quant_inp"  style="position: relative; top: -20px; width: 55px; text-align: center;" placeholder="0"></td> \
                         <td class="quant"><span>0</span><input type="text" class="form-control quant_inp"  style="position: relative; top: -20px; width: 55px; text-align: center;" placeholder="0"></td> \
                         </tr>');
-                      
                     });
-                                     
-                 
-                
             });
-
-
  });
  
  $("#save_close").click(function() {
@@ -269,7 +260,6 @@ $("#listPos").on("keyup", ".quant_inp", function() {
  			provider : provider
  		}).done(function(data) {
  			console.log(data);
- 			
  			window.location.href = "./add_admission.php";
  		});
        }
@@ -313,13 +303,8 @@ $("#listPos").on("keyup", ".quant_inp", function() {
                         $('#search_pos').val(""); 
        
                   });
-        
-        
-        //arr_ids.push([arr_str[0], arr_str[1]]);
-        
-        return false;  
+        return false;
   });    
-
 	</script>
 </body>
 </html>

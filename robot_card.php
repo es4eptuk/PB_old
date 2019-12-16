@@ -6,6 +6,7 @@ $robot_number =  $num = str_pad( $robot_info['number'], 4, "0", STR_PAD_LEFT);
 $robot_name= $robot_info['name'];
 $robot_version= $robot_info['version'];
 $robot_id= $robot_info['id'];
+$robot_dop_manufactur= $robot_info['dop_manufactur'];
 ?>
 
 <?php include 'template/head.html' ?>
@@ -58,6 +59,9 @@ $robot_id= $robot_info['id'];
             <!-- form start -->
             <form role="form" class="comment">
               <div class="box-body">
+
+                  <i><? echo $robot_dop_manufactur; ?></i>
+
                     <div class="form-group">
                   <label>Класс обращения </label>
                   <select class="form-control" id="ticket_class" required="required">

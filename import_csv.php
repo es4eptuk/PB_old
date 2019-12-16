@@ -66,8 +66,8 @@ foreach ($objPHPExcel->getWorksheetIterator() as $worksheet) {
         $price = 0;
         //echo $val." <br> ";
         $date    = date("Y-m-d H:i:s");
-        $query = "INSERT INTO `pos_items` (`id`, `category`, `subcategory`, `title`, `vendor_code`, `provider`, `price`, `longtitle`, `version`, `quant_robot`, `total`, `reserv`, `assembly`, `summary`, `apply`, `ow`, `min_balance`, `img`, `update_date`, `update_user`) VALUES (NULL, '1', $cat, '$title', '$art', '', '$price', '', '', '', '', '', '0', '', '', '', '', '', '$date', '14');";
-       // $result = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
+        $query = "UPDATE `promobot_db2`.`pos_items` SET `longtitle` = '$longtitle' WHERE `pos_items`.`title` LIKE '$title'";
+        // $result = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
 
         echo $query."<br> ";
        

@@ -12,6 +12,7 @@ include 'include/class.inc.php';
 	$provider_name = $position->get_info_pos_provider($provider_id);
 
 		$provider_name = 	$provider_name['title'];
+
 ?>
 
 <!DOCTYPE html>
@@ -74,6 +75,13 @@ include 'include/class.inc.php';
                                       <th>Заказанное количество</th>
                                       <th>Отгружено</th>
                                       <th>Поступление</th>
+                                        <th>  </th>
+                                        <? if ($provider_id==49 || $provider_id==1) {
+
+                                            echo " <th>Покраска</th>";
+                                            echo " <th>Сварка/Зенковка</th>";
+                                        } ?>
+
                                     </tr>
                                    
                                    <?php 
@@ -82,26 +90,31 @@ include 'include/class.inc.php';
                                 foreach ($arr_pos as &$value) { 
                                     $date = new DateTime($value['pos_date']);
                                     $pos_date = $date->format('d.m.Y');
-                                echo '   
-                                    <tr> 
-                        <td>'.$value['id'].'</td> 
-                        <td>'.$value['vendor_code'].'</td> 
-                        <td>'.$value['title'].'</td> 
-                        <td class="quant">'.$value['pos_count'].'</td> 
-                        <td class="finish">'.$value['pos_count_finish'].'</td> 
-                        <td class="quant"><span>0</span><input type="text" class="form-control quant_inp"  style="position: relative; top: -20px; width: 55px; text-align: center;" placeholder="0"></td> 
-                         
-                        </tr>
-                        ';
+                                    echo '   
+                                        <tr class="table_tr"> 
+                            <td>'.$value['id'].'</td> 
+                            <td>'.$value['vendor_code'].'</td> 
+                            <td>'.$value['title'].'</td> 
+                            <td class="quant tot">'.$value['pos_count'].'</td> 
+                            <td class="finish">'.$value['pos_count_finish'].'</td> 
+                            <td class="quant inp_tot"><span>0</span><input type="text" class="form-control quant_inp"  style="position: relative; top: -20px; width: 55px; text-align: center;" placeholder="0"></td> 
+                            <td></td>
+                             ';
+                                    if ($provider_id==49 || $provider_id==1) {
+                                        echo '   <td class="quant"><span>0</span><input type="text" class="form-control quant_inp"  style="position: relative; top: -20px; width: 55px; text-align: center;" placeholder="0" id="quant_'.$value['id'].'"></td> ';
+                                        echo '   <td class="quant"><span>0</span><input type="text" class="form-control quant_inp"  style="position: relative; top: -20px; width: 55px; text-align: center;" placeholder="0" id="quant_'.$value['id'].'"></td> ';
+                                    }
+
+                       echo '</tr>' ;
                                 }
-                                    
                                     ?>
                                     
                                     </tbody>
                                     </table>
 									
 									<div class="box-footer">
-										<button class="btn btn-primary" id="save_close" >Сохранить и закрыть</button> 
+                                        <button class="btn btn-primary" id="auto" >Автозаполнение</button>
+                                        <button class="btn btn-primary" id="save_close" >Сохранить и закрыть</button>
 										<button class="btn btn-primary" id="save_new" >Сохранить и создать новое поступление</button>
 									</div>
 								</form>
@@ -137,7 +150,21 @@ var category_data = [];
  	save_new();
  	return false;
  });
- 
+
+
+    $("#auto").click(function() {
+
+        $( ".table_tr" ).each(function( index ) {
+           var val = $( this ).find(".tot").text();
+           $( this ).find(".inp_tot span").text(val);
+            $( this ).find(".inp_tot .quant_inp").val(val);
+
+
+           console.log(val);
+        });
+
+        return false;
+    });
 
 $("#listPos").on("keyup", ".quant_inp, .date_inp", function() {
      var val = $( this ).val();
@@ -184,7 +211,6 @@ $("#listPos").on("keyup", ".quant_inp", function() {
  			provider : provider
  		}).done(function(data) {
  			console.log(data);
- 			
  			window.location.href = "./admissions.php?id="+ category;
  		});
        }

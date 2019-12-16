@@ -161,7 +161,7 @@ $result = mysql_query($query) or die('Запрос не удался: ' . mysql_
             $cnt = 0;
          foreach ($kit_array as $value) {
             $id = $value['id_kit'];
-            $query = "SELECT robots.version, robots.number, robots.date, check.operation FROM `check` JOIN robots ON check.robot = robots.id WHERE `id_kit` = $id AND `check` = 0 AND robots.delete = 0 AND robots.progress != 100 ORDER BY `robots`.`date` ASC";
+            $query = "SELECT robots.version, robots.number, robots.date,  robots.remont, check.operation FROM `check` JOIN robots ON check.robot = robots.id WHERE `id_kit` = $id AND `check` = 0 AND robots.remont = 0 AND robots.delete = 0 AND robots.progress != 100 ORDER BY `robots`.`date` ASC";
             //echo $query."<br><br>";
             $result = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
 
@@ -227,7 +227,7 @@ foreach ($assembly_array as $value) {
             $cnt = 0;
          foreach ($kit_array as $value) {
             $id = $value['id_kit'];
-            $query = "SELECT robots.version, robots.number, robots.date, check.operation FROM `check` JOIN robots ON check.robot = robots.id WHERE `id_kit` = $id AND `check` = 0 AND robots.delete = 0 AND robots.progress != 100 ORDER BY `robots`.`date` ASC";
+            $query = "SELECT robots.version, robots.number, robots.date, robots.remont, check.operation FROM `check` JOIN robots ON check.robot = robots.id WHERE `id_kit` = $id AND `check` = 0 AND robots.remont = 0 AND robots.delete = 0 AND robots.progress != 100 ORDER BY `robots`.`date` ASC";
             //echo $query."<br><br>";
             $result = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
 

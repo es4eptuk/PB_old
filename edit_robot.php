@@ -15,6 +15,7 @@ $robot_brand = $robot_info['brand'];
 $robot_ikp = $robot_info['ikp'];
 $robot_battery = $robot_info['battery'];
 $robot_dop = $robot_info['dop'];
+$robot_dop_manufactur = $robot_info['dop_manufactur'];
 $robot_photo = $robot_info['photo'];
 $robot_termo = $robot_info['termo'];
 $robot_dispenser = $robot_info['dispenser'];
@@ -270,6 +271,12 @@ $robot_test = $robot_test->format('d.m.Y');
                   <label>Дополнительная информация</label>
                   <input type="text" class="form-control" name="dop" id="dop" value="<? echo $robot_dop ?>">
                 </div>
+
+
+                                <div class="form-group">
+                                    <label>Информация от производства</label>
+                                    <textarea rows="5" cols="45" class="form-control" name="dop_manufactur" id="dop_manufactur"><? echo $robot_dop_manufactur ?></textarea>
+                                </div>
                 
                 <div class="checkbox">
                     <label>
@@ -475,7 +482,9 @@ var category1 = "---";
     var brand =  $('#brand').val();
     var ikp =  $('#ikp').val();
     var battery =  $('#battery').val();
-    var dop =  $('#dop').val();
+      var dop =  $('#dop').val();
+      var dop_manufactur =  $('#dop_manufactur').val();
+
     var date = $('#datepicker').val();
     var date_test = $('#datepicker2').val();
     var send =  $('#send').is(':checked') ? 1 : 0;
@@ -504,6 +513,7 @@ var category1 = "---";
         ikp: ikp,
         battery: battery,
         dop: dop,
+          dop_manufactur: dop_manufactur,
         date: date,
         date_test: date_test,
         send: send

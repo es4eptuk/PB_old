@@ -342,24 +342,29 @@ class Position
     }
     function set_reserv($version)
     {
+
         $arr_pos = $this->get_pos_in_equipment($version);
+
+        if (isset($arr_pos)){
         foreach ($arr_pos as &$value) {
             $pos_id = $value['pos_id'];
-            $count  = $value['count'];
-            $query  = "UPDATE `pos_items` SET `reserv` = reserv+$count WHERE `id` = $pos_id";
+            $count = $value['count'];
+            $query = "UPDATE `pos_items` SET `reserv` = reserv+$count WHERE `id` = $pos_id";
             $result = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
             if ($result && $count != 0) {
-                $param['id']    = $pos_id;
-                $param['type']  = "reserv";
+                $param['id'] = $pos_id;
+                $param['type'] = "reserv";
                 $param['count'] = $count;
                 $param['title'] = "Постановка в резерв";
                 $this->add_log($param);
-                
-                
-                
+
+
             }
         }
+
+
         return $result;
+    }
     }
     function unset_reserv($version)
     {
@@ -836,8 +841,9 @@ class Position
         $title         = $kit_arr['0']['0'];
         $category         = $kit_arr['0']['1'];
         $version         = $kit_arr['0']['2'];
+        $parent         = $kit_arr['0']['3'];
         array_shift($kit_arr);
-        $query = "INSERT INTO `pos_kit` (`id_kit`, `kit_title`, `kit_category`, `version`, `update_user`, `update_date`) VALUES (NULL, '$title', '$category', '$version', $user_id, '$date')";
+        $query = "INSERT INTO `pos_kit` (`id_kit`,`parent_kit`, `kit_title`, `kit_category`, `version`, `update_user`, `update_date`) VALUES (NULL, '$parent','$title', '$category', '$version', $user_id, '$date')";
         $result = mysql_query($query) or die($query);
  
         $idd = mysql_insert_id();
@@ -1043,7 +1049,7 @@ class Position
         if ($positive != 0) {
             $where .= " AND pos_kit_items.count>0";
         }
-        $query = "SELECT pos_items.id, pos_items.title, pos_items.category, pos_items.vendor_code,SUM(pos_kit_items.count), pos_kit_items.version, pos_items.total, pos_items.subcategory, pos_items.provider, pos_items.price, pos_items.summary, pos_items.assembly , pos_items.min_balance FROM pos_kit_items JOIN pos_items ON pos_kit_items.id_pos = pos_items.id WHERE pos_kit_items.id_pos  = 80   AND pos_kit_items.delete = 0 $where GROUP BY pos_kit_items.id_pos ";
+        $query = "SELECT pos_items.id, pos_items.title, pos_items.category, pos_items.vendor_code,SUM(pos_kit_items.count), pos_kit_items.version, pos_items.total, pos_items.subcategory, pos_items.provider, pos_items.price, pos_items.summary, pos_items.assembly , pos_items.min_balance FROM pos_kit_items JOIN pos_items ON pos_kit_items.id_pos = pos_items.id WHERE pos_kit_items.id_pos  > 0   AND pos_kit_items.delete = 0 $where GROUP BY pos_kit_items.id_pos ";
         $result = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
         while ($line = mysql_fetch_array($result, MYSQL_ASSOC)) {
             $id = $line['id'];

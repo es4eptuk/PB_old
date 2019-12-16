@@ -54,8 +54,8 @@ include 'include/class.inc.php';
                 </thead>
                 <tbody>
                 <?php 
-                
-                $arr = $writeoff->get_writeoff();
+                if (isset($_GET['robot'])) {$robot= $_GET['robot'];} else {$robot = 0;}
+                $arr = $writeoff->get_writeoff($robot);
                 
                 if (isset($arr)) {
                 foreach ($arr as &$pos) {
