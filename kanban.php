@@ -464,7 +464,7 @@ foreach ($arr_tickets as &$ticket) {
 
                                 <tr>
                                     <th style="width:50%">Исправленных роботов:</th>
-                                    <td class="dop"><? echo $countResh24;
+                                    <td class="dop"><? echo count($arrTicketRobotNoProblem);
                                         ?> <i class="fa fa-fw fa-plus-circle pull-right text-green"
                                               style="cursor: pointer;"></i>
                                         <div class="robots" style="display: none">
@@ -497,7 +497,7 @@ foreach ($arr_tickets as &$ticket) {
                             <tbody>
                             <tr>
                                 <th style="width:50%">Исправленных роботов:</th>
-                                <td class="dop"><? echo $countReshToday;
+                                <td class="dop"><? echo count($arrTicketRobotNoProblemToday);
                                     ?> <i class="fa fa-fw fa-plus-circle pull-right text-green"
                                           style="cursor: pointer;"></i>
                                     <div class="robots" style="display: none">

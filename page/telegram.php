@@ -75,6 +75,7 @@ class TelegramAPI {
         $log = serialize($param);
         //$this->writeLog($log);
         $responseMinutes = 0;
+        $responseSeconds = 0;
         $chatId = $param['chatid'];
         $author = $param['author'];
         $user = $this->userIsEmployee($author);
@@ -97,6 +98,7 @@ class TelegramAPI {
                 $d2_ts = strtotime($line['createDate']);
                 $seconds = abs($d1_ts - $d2_ts);
                 $responseMinutes = floor($seconds / 60);
+                $responseSeconds = floor($seconds);
             }
         }
         if($isEmployee){
@@ -108,7 +110,7 @@ class TelegramAPI {
         $isWeekend = $this->isWeekend($curDateStr);
         $isHoliday = $this->isHolidays($curDateStr);
         $isNight = $this->isNight($date);
-        $this->query  = "INSERT INTO `bot_message` (`id`, `chatId`,  `author`, `chatTitle`, `isEmployee`, `userId`, `message`, `createDate`,`responseMinutes`,`isWeekend`,`isHoliday`,`isNight`,`notification`,`violation`) VALUES (NULL, '$chatId', '$author', '$title','$isEmployee', '$userId', $message, '$date',$responseMinutes,'$isWeekend','$isHoliday','$isNight', '$setNotify', 0)";
+        $this->query  = "INSERT INTO `bot_message` (`id`, `chatId`,  `author`, `chatTitle`, `isEmployee`, `userId`, `message`, `createDate`,`responseMinutes`, `responseSeconds`,`isWeekend`,`isHoliday`,`isNight`,`notification`,`violation`) VALUES (NULL, '$chatId', '$author', '$title','$isEmployee', '$userId', $message, '$date',$responseMinutes,$responseSeconds,'$isWeekend','$isHoliday','$isNight', '$setNotify', 0)";
         $this->sendNotify('client', $this->query,  123622748);
 
         $result = $this->pdo->query($this->query);

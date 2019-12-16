@@ -33,48 +33,6 @@ include 'page/dashboard.php';
                     <div class="box">
                         <!-- /.box-header -->
                         <div class="box-header with-border">
-                            <h3 class="box-title">Финансы</h3>
-                        </div>
-                        <div class="box-body table-responsive">
-
-                            <?
-                            $robotsComplete = $dashboard->getRobotCompleteCount();
-                            echo "Количество готовых роботов: <b>".$robotsComplete."</b><br>";
-
-                            $defectSummCurrent = number_format($dashboard->getDefectSummCurent(), 2, ',', ' ');
-                            $defectSummLast = number_format($dashboard->getDefectSummLast(), 2, ',', ' ');
-                            echo "Количество брака за текущий месяц, сумма: <b>".$defectSummCurrent."</b> руб. <i>(в прошлом месяце $defectSummLast руб.)</i><br>";
-
-                            $serviceSummCurrent = number_format($dashboard->getServiceSummCurent(), 2, ',', ' ');
-                            $serviceSummLast = number_format($dashboard->getServiceSummLast(), 2, ',', ' ');
-                            echo "Затраты на сервис за текущий месяц , сумма: <b>".$serviceSummCurrent."</b> руб. <i>(в прошлом месяце $serviceSummLast руб.)</i><br>";
-
-                            $warehouseSum = number_format($dashboard->getSumWarehouse(), 2, ',', ' ');
-                            echo "Объем склада деталей, сумма: <b>".$warehouseSum."</b> руб.<br>";
-
-
-                            echo "Кредиторская задолженность, сумма: <br>";
-                            $creditSum = $dashboard->getSumDebet();
-                            $creditSumAll = 0;
-                            //print_r($creditSum);
-                            foreach ($creditSum as &$value) {
-                                $date       = new DateTime($value['order_delivery']);
-                                $date = $date->format('d.m.Y');
-                                echo "<i style=\"margin-left: 40px\">".$date."</i> - <b>". number_format($value['SUM(order_price)'], 2, ',', ' ')."</b><br>";
-                                $creditSumAll += $value['SUM(order_price)'];
-                            }
-                            echo "<i style=\"margin-left: 40px\">Итого:</i> <b>". number_format($creditSumAll, 2, ',', ' ')."</b>";
-
-                            ?>
-
-
-
-                        </div>
-                        <!-- /.box-body -->
-                    </div>
-                    <div class="box">
-                        <!-- /.box-header -->
-                        <div class="box-header with-border">
                             <h3 class="box-title">Техническая поддержка</h3>
                         </div>
                         <div class="box-body table-responsive">
@@ -88,20 +46,20 @@ include 'page/dashboard.php';
                             }
 
 
-/*                            $date_begin_T =  date("Y-m-d H:i:s", strtotime('-30 days'));
-                            $date_end_T = date("Y-m-d H:i:s", strtotime('+1 day'));
+                            /*                            $date_begin_T =  date("Y-m-d H:i:s", strtotime('-30 days'));
+                                                        $date_end_T = date("Y-m-d H:i:s", strtotime('+1 day'));
 
-                            $period_T = new DatePeriod(
-                                new DateTime("$date_begin_T"),
-                                new DateInterval('PT1H'),
-                                new DateTime("$date_end_T")
-                            );
+                                                        $period_T = new DatePeriod(
+                                                            new DateTime("$date_begin_T"),
+                                                            new DateInterval('PT1H'),
+                                                            new DateTime("$date_end_T")
+                                                        );
 
-                            $date_hour = array();
-                            while (strtotime($date_begin_T) <= strtotime($date_end_T)) {
-                                echo "$date_begin_T\n";
-                                $date_begin_T = date("Y-m-d H:i:s", strtotime("+1 hour", strtotime($date_begin_T)));
-                            }*/
+                                                        $date_hour = array();
+                                                        while (strtotime($date_begin_T) <= strtotime($date_end_T)) {
+                                                            echo "$date_begin_T\n";
+                                                            $date_begin_T = date("Y-m-d H:i:s", strtotime("+1 hour", strtotime($date_begin_T)));
+                                                        }*/
 
 
 
@@ -124,12 +82,12 @@ include 'page/dashboard.php';
 
                             }
 
-//                            print_r2($date_arr);
+                            //                            print_r2($date_arr);
 
                             //разворачиваем массив в обратном порядке для графика
                             $date_arr_reversed_second = array_reverse($date_arr_second);
 
-//                            print_r2($date_arr_reversed);
+                            //                            print_r2($date_arr_reversed);
 
                             //формируем labels для графика
                             $labels_second = [];
@@ -145,12 +103,12 @@ include 'page/dashboard.php';
 
 
                             foreach ($period_second as $date) {
-                                $date_formated_second = $date->format("Y-m-d H:i:s D");
+                                $date_formated_second = $date->format("Y-m-d H:i D");
                                 $date_formated_str_second = '"'. strval($date_formated_second) .'"';
                                 array_push($labels_second, $date_formated_str_second);
                             }
 
-//                            print_r2($labels);
+                            //                            print_r2($labels);
                             $labels_str_second = implode(",", $labels_second);
 
 
@@ -163,7 +121,7 @@ include 'page/dashboard.php';
                                 $totalAnswers_arr_second[] = $dashboard->getCountAnswers(0, 999999, "$dateMin",  "$dateMax");
                             }
 
-//                            print_r2($totalAnswers_arr);
+                            //                            print_r2($totalAnswers_arr);
                             $totalAnswers_arr_str_second = implode(",", $totalAnswers_arr_second);
 
 
@@ -572,14 +530,14 @@ include 'page/dashboard.php';
                 borderColor: [
                     'rgba(34,45,50,1)',
                 ],
-                borderWidth: 1,
+                borderWidth: 0.5,
                 fill: false,
-                pointBackgroundColor: 'rgba(34,45,50,1)',
+                pointBackgroundColor: 'rgb(255,7,17)',
                 pointRadius: 2,
                 pointHoverRadius: 5,
                 pointHitRadius: 5,
                 pointBorderWidth: 1,
-                pointStyle: 'rectRounded'
+                pointStyle: 'rectRounded',
             }]
         },
         options: {
