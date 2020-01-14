@@ -375,13 +375,11 @@ $('.comment').submit(function(){
 
 
   $(".check").change(function() {
+      $(".check").prop('disabled', true);
       var category = <?php echo $category_id; ?> ;
 
-      
       //if (category == 4 && (finish_hs!=100  ||  finish_mh!=100 || finish_hp!=100 )) {alert("Не выполнены все операции в предыдущих отделах!"); $(this).prop( "checked", false ); return false;}
      
-      
-      
     var id = $(this).attr("id");
     var kit =  $(this).data('kit');
     var id_row =  $(this).data('id_row');
@@ -410,7 +408,7 @@ $('.comment').submit(function(){
               if (data=="false") {alert( "Data Loaded: " + data ); }
               else {
                 //window.location.href = "./robots.php";
-               
+                  $(".check").prop('disabled', false);
               }
           });
 });

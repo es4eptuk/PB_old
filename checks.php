@@ -278,8 +278,12 @@ include 'include/class.inc.php';
                    ?>
                   </select>
                 </div>
-                
-                
+
+          <p class="text-muted well well-sm no-shadow" style="margin-top: 10px;">
+              ⚠️ Имеются связанные комплекты:
+
+
+          </p>
                 <div id="update"></div>
                 
                 <div class="box-footer">

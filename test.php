@@ -22,8 +22,11 @@ while( $line = mysql_fetch_array($result, MYSQL_ASSOC)){
     echo $line['id_kit']." ";
 
 
-    $position->set_writeoff_kit(4,$robot_number,$line['id_kit'],$line['id_check'],$robot_id);
+    //$position->set_writeoff_kit(4,$robot_number,$line['id_kit'],$line['id_check'],$robot_id);
 }
+
+$mail->send('Екатерина Старцева',  'cto@promo-bot.ru', 'Списание на робота ', 'Пройдите по ссылке для просмотра списания https://db.promo-bot.ru/new/edit_writeoff_on_robot.php?id=');
+
 
 ?>
 

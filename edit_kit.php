@@ -45,7 +45,7 @@ $kit_version = $kit['kit_version'];
 									
 									<div class="form-group">
 										<label>Название</label> 
-										 <input type="text" class="form-control" name="title" required="required" id="title" value="<? echo $kit_title; ?> ">
+										 <input type="text" class="form-control" name="title" required="required" id="title" value="<? echo $kit_title; ?>">
 									</div>
 									
 
@@ -132,7 +132,7 @@ $kit_version = $kit['kit_version'];
                          <td>'.$value['id_pos'].'</td>
                         <td>'.$vendor_code.'</td> 
                         <td>'.$title.'</td> 
-                        <td class="quant"><span style="position: absolute;">'.$value['count'].'</span><input type="text" class="form-control quant_inp"  style="position: relative; height: 20px; width: 55px; text-align: center;" placeholder="'.$value['count'].'" value="'.$value['count'].'"></td> 
+                        <td class="quant"><span style="position: absolute;">'.$value['count'].'</span><input type="text" class="form-control quant_inp"  style="position: relative; height: 20px; width: 75px; text-align: center;" placeholder="'.$value['count'].'" value="'.$value['count'].'"></td> 
                        
                         <td><i class="fa fa-2x fa-remove" style="cursor: pointer;" id="'.$value['id_row'].'"></i></td> 
                         </tr>

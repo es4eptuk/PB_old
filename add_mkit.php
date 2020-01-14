@@ -45,7 +45,7 @@ $kit_version = $kit['kit_version'];
 
                             <div class="form-group">
                                 <label>Название</label>
-                                <input type="text" class="form-control" name="title" required="required" id="title" value="<? echo $kit_title; ?> ">
+                                <input type="text" class="form-control" name="title" required="required" id="title" value="<? echo $kit_title." (модернизированный)"; ?> ">
                             </div>
 
 
@@ -127,7 +127,7 @@ $kit_version = $kit['kit_version'];
                                     $vendor_code = $value['vendor_code'];
 
                                     echo '   
-                                    <tr> 
+                                    <tr id="tr_'.$value['id_row'].'"> 
                         <td>'.$value['id_row'].'</td>
                         
                         <td>'.$vendor_code.'</td> 
@@ -224,7 +224,6 @@ $kit_version = $kit['kit_version'];
                         <td><i class="fa fa-2x fa-remove" style="cursor: pointer;"></i></td> \
                         </tr>');
                     $('#search_pos').val("");
-
                 });
 
 
@@ -259,8 +258,8 @@ $kit_version = $kit['kit_version'];
                 id: <? echo $kit_id; ?>,
                 id_row: id
             }).done(function(data) {
-
-                window.location.reload(true);
+                $("#tr_"+id).remove();
+                //window.location.reload(true);
 
 
             });
@@ -301,7 +300,7 @@ $kit_version = $kit['kit_version'];
                     json: JsonString
                 }).done(function(data) {
                     console.log(data);
-                    window.location.href = "./kit.php";
+                   // window.location.href = "./kit.php";
                 });
             }
 

@@ -959,7 +959,10 @@ class Position
             $where .= " AND pos_kit_items.id_kit='$id'";
         }
         $query = "SELECT pos_kit_items.id_row, pos_kit_items.id_kit, pos_kit_items.id_pos, pos_items.title, pos_items.vendor_code, pos_kit_items.count, pos_items.total, pos_items.reserv, pos_items.subcategory, pos_items.price FROM `pos_kit_items` INNER JOIN pos_items ON pos_items.id = pos_kit_items.id_pos WHERE pos_kit_items.id_row >0 $where";
+        //echo $query;
         $result = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
+
+
         while ($line = mysql_fetch_array($result, MYSQL_ASSOC)) {
             $kit_array[] = $line;
         }
