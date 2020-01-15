@@ -227,7 +227,7 @@ class Robots
 				$date = date("Y-m-d H:i:s");
 				$user_id = 33;
 				
-				if ($status!="OK") {
+				if ($status!="OK" and preg_match("(2048|640|136|138)", "$problem") != true) {
 				$query = "INSERT INTO `tickets` (
                                                 `id`, 
                                                 `robot`, 
