@@ -1,39 +1,39 @@
-<?php 
-class TelegramAPI { 
+<?php
+class TelegramAPI {
     public $token;
     public $chatID_manafacture;
     public $chatID_tehpod;
     public $chatID_sale;
     private $query;
     private $pdo;
-   
+
     function __construct()
-        {
-         $this -> token = "583056708:AAFzy7OX6VwV9SFllhMW9pUeY50MwAU89QI"; 
-         $this -> token_support = "828383903:AAFJ5LQrGxt1qfTrqlv-TO_tLaFUj2UzjBg";
-         $this -> chatID_manafacture = -249207066;
-         $this -> chatID_tehpod = -232413504;
-         $this -> chatID_sale = -240222867;
-         $this -> chatID_test = -278080358;
+    {
+        $this -> token = "583056708:AAFzy7OX6VwV9SFllhMW9pUeY50MwAU89QI";
+        $this -> token_support = "828383903:AAFJ5LQrGxt1qfTrqlv-TO_tLaFUj2UzjBg";
+        $this -> chatID_manafacture = -249207066;
+        $this -> chatID_tehpod = -232413504;
+        $this -> chatID_sale = -1001461923634;
+        $this -> chatID_test = -278080358;
 
 
-            global $database_server, $database_user, $database_password, $dbase;
-            $dsn = "mysql:host=$database_server;dbname=$dbase;charset=utf8";
-            $opt = [
-                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-                PDO::ATTR_EMULATE_PREPARES => false,
-            ];
-            $this->pdo = new PDO($dsn, $database_user, $database_password, $opt);
+        global $database_server, $database_user, $database_password, $dbase;
+        $dsn = "mysql:host=$database_server;dbname=$dbase;charset=utf8";
+        $opt = [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            PDO::ATTR_EMULATE_PREPARES => false,
+        ];
+        $this->pdo = new PDO($dsn, $database_user, $database_password, $opt);
 
-        }
-   
+    }
+
     public function sendNotify($departament,$message,$t_chat_id=0)
     {
-       
+
         $botToken = $this ->token;
         if ($t_chat_id!=0) {$botToken =$this ->token_support; }
-        
+
         switch ($departament) {
             case "manafacture":
                 $chatId= $this -> chatID_manafacture;
@@ -49,17 +49,17 @@ class TelegramAPI {
                 break;
             case "client":
                 $chatId=  $t_chat_id;
-                break;    
+                break;
         }
-        
+
         $website="https://api.telegram.org/bot".$botToken;
-         //Receiver Chat Id 
+        //Receiver Chat Id
         $params=[
             'chat_id'=>$chatId,
             'text'=>$message,
             'parse_mode'=>'HTML'
         ];
-       // print_r($params);
+        // print_r($params);
         $ch = curl_init($website . '/sendMessage');
         curl_setopt($ch, CURLOPT_HEADER, false);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -217,9 +217,8 @@ class TelegramAPI {
 
 
     public function sendHello($chat_id) {
-       $str = "Thank you for contacting Promobot Tech Support team. We are happy to help you with any robot-related issues you may be experiencing. Our working hours are <b>(GMT+5) 9am - 9 pm (weekdays) and 12 noon - 9pm (weekends). If you contact us outside of the normal business hours, we will get back to you as soon as possible.</b> Рады приветствовать вас в чате <b>технической</b> поддержки компании Промобот. Тут вы можете задавать вопросы связанные с <b>работой робота</b>. Мы постараемся оперативно их решать в <b>часы работы</b> службы. <b>(Будние дни с 7:00 до 19:00 МСК, Выходные дни с 10:00 до 19:00) МСК</b>.";
-
-       $this->sendNotify('client', $str,  $chat_id);
+        $str = "Welcome to Promobot <b>technical</b> support chat! Feel free to ask any questions about robot. We are working 7 day's on week. <b>MON to FRI 9:00 am to 9:00 pm, SAT - SUN 12 :00 am to 9:00 pm. GMT +5</b>Рады приветствовать вас в чате <b>технической</b> поддержки компании Промобот. Тут вы можете задавать вопросы связанные с <b>работой робота</b>. Мы постараемся оперативно их решать в <b>часы работы</b> службы. <b>(Будние дни с 7:00 до 19:00 МСК, Выходные дни с 10:00 до 19:00) МСК</b>.";
+        $this->sendNotify('client', $str,  $chat_id);
     }
 
     public function writeLog($str) {
@@ -229,4 +228,4 @@ class TelegramAPI {
     }
 }
 
-$telegramAPI = new TelegramAPI; 
+$telegramAPI = new TelegramAPI;
