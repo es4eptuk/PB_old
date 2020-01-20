@@ -254,10 +254,10 @@ class Robots
                                                     '$date')";
                     $result = mysql_query($query) or die('false');
                 }
-                if ($client!=1) {$this->telegram->sendNotify("tehpod", $telegram_str." - ".$status);}
+                if ($client!=1 and preg_match("(2048|640|136|138)", "$problem") != true) {$this->telegram->sendNotify("tehpod", $telegram_str." - ".$status);}
 
             } else {
-                if ($status=="OK" and preg_match("(2048|640|136|138)", "$problem") != true ) {
+                if ($status=="OK" and preg_match("(2048|640|136|138)", "$problem") != true) {
                     if ($client!=1) {$this->telegram->sendNotify("tehpod", $telegram_str." - ".$status);}
                 }
             }
