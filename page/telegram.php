@@ -217,7 +217,7 @@ class TelegramAPI {
 
 
     public function sendHello($chat_id) {
-        $str = "Welcome to Promobot <b>technical</b> support chat! Feel free to ask any questions about robot. We are working 7 day's on week. <b>MON to FRI 9:00 am to 9:00 pm, SAT - SUN 12 :00 am to 9:00 pm. GMT +5</b>Рады приветствовать вас в чате <b>технической</b> поддержки компании Промобот. Тут вы можете задавать вопросы связанные с <b>работой робота</b>. Мы постараемся оперативно их решать в <b>часы работы</b> службы. <b>(Будние дни с 7:00 до 19:00 МСК, Выходные дни с 10:00 до 19:00) МСК</b>.";
+        $str = "Thank you for contacting Promobot Tech Support team. We are happy to help you with any robot-related issues you may be experiencing. Our working hours are <b>(GMT+5) 9am - 9 pm (weekdays) and 12 noon - 9pm (weekends). If you contact us outside of the normal business hours, we will get back to you as soon as possible.</b> Рады приветствовать вас в чате <b>технической</b> поддержки компании Промобот. Тут вы можете задавать вопросы связанные с <b>работой робота</b>. Мы постараемся оперативно их решать в <b>часы работы</b> службы. <b>(Будние дни с 7:00 до 19:00 МСК, Выходные дни с 10:00 до 19:00) МСК</b>.";
         $this->sendNotify('client', $str,  $chat_id);
     }
 
