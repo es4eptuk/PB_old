@@ -1,13 +1,18 @@
 <?php
 class OneC
 {
-    private $link_1c;
+    private $query;
+    private $pdo;
     function __construct()
     {
         global $database_server, $database_user, $database_password, $dbase;
-        $this->link_1c = mysql_connect($database_server, $database_user, $database_password) or die('Не удалось соединиться: ' . mysql_error());
-        mysql_set_charset('utf8', $this->link_1c);
-        mysql_select_db($dbase) or die('Не удалось выбрать базу данных');
+        $dsn = "mysql:host=$database_server;dbname=$dbase;charset=utf8";
+        $opt = [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            PDO::ATTR_EMULATE_PREPARES => false,
+        ];
+        $this->pdo = new PDO($dsn, $database_user, $database_password, $opt);
     }
     function add_PP($data)
     {
@@ -70,7 +75,7 @@ class OneC
                 '$description'
                 )";
         // echo $query."<br>";        
-        $result = mysql_query($query) or die(mysql_error());
+        $result = $this->pdo->query($query);
         return $result;
     }
     function add_VP($data)
@@ -108,7 +113,7 @@ class OneC
                 '$description'
                 )";
         // echo $query."<br>";        
-        $result = mysql_query($query) or die(mysql_error());
+        $result = $this->pdo->query($query);
         return $result;
     }
     function get_PP($param)
@@ -142,15 +147,12 @@ class OneC
                 $where .= " AND 1c_PP.description = '$purpose'";
             }
         }
-        // $query = "SELECT number, date, contragent, summ, description FROM `1c_PP` WHERE `id` > 0".$where." ORDER BY `number` ASC";
         $query = "SELECT * FROM 1c_PP WHERE 1c_PP.id > 0 " . $where . " ORDER BY `number` ASC";
         //echo $query;
-        $result = mysql_query($query) or die(mysql_error());
-        while ($line = mysql_fetch_array($result, MYSQL_ASSOC)) {
+        $result = $this->pdo->query($query);
+        while ($line = $result->fetch()) {
             $PP_array[] = $line;
         }
-        // Освобождаем память от результата
-        mysql_free_result($result);
         if (isset($PP_array))
             return $PP_array;
     }
@@ -178,28 +180,24 @@ class OneC
             $where .= " AND `category` = '$category'";
         }
         $query = "SELECT * FROM `1c_income` WHERE `id` > 0" . $where . " ORDER BY `date` ASC";
-        //echo $query;
-        $result = mysql_query($query) or die(mysql_error());
-        while ($line = mysql_fetch_array($result, MYSQL_ASSOC)) {
+        $result = $this->pdo->query($query);
+        while ($line = $result->fetch()) {
             $cat                 = $this->get_info_income_cat($line['category']);
             $line['category']    = $cat['category_title'];
             $line['category_id'] = $cat['id'];
             $income_array[]      = $line;
         }
-        // Освобождаем память от результата
-        mysql_free_result($result);
         if (isset($income_array))
             return $income_array;
     }
     function get_cat_income()
     {
         $query = "SELECT * FROM 1c_income_category ";
-        $result = mysql_query($query) or die(mysql_error());
-        while ($line = mysql_fetch_array($result, MYSQL_ASSOC)) {
+        $result = $this->pdo->query($query);
+        while ($line = $result->fetch()) {
             $cat_array[] = $line;
         }
         // Освобождаем память от результата
-        mysql_free_result($result);
         if (isset($cat_array))
             return $cat_array;
     }
@@ -211,13 +209,10 @@ class OneC
             $where .= " AND 1c_PP_subcategory.group = 1";
         }
         $query = "SELECT description FROM 1c_PP group by 1 order by description ASC";
-        echo $query;
-        $result = mysql_query($query) or die(mysql_error());
-        while ($line = mysql_fetch_array($result, MYSQL_ASSOC)) {
+        $result = $this->pdo->query($query);
+        while ($line = $result->fetch()) {
             $cat_array[] = $line;
         }
-        // Освобождаем память от результата
-        mysql_free_result($result);
         if (isset($cat_array))
             return $cat_array;
     }
@@ -238,12 +233,10 @@ class OneC
             $where .= " AND `date` <= '$endDate'";
         }
         $query = "SELECT category, SUM(summ) FROM 1c_income WHERE `id`>0 $where GROUP BY category";
-        $result = mysql_query($query) or die(mysql_error());
-        while ($line = mysql_fetch_array($result, MYSQL_ASSOC)) {
+        $result = $this->pdo->query($query);
+        while ($line = $result->fetch()) {
             $cat_array[] = $line;
         }
-        // Освобождаем память от результата
-        mysql_free_result($result);
         if (isset($cat_array))
             return $cat_array;
     }
@@ -264,12 +257,10 @@ class OneC
             $where .= " AND `date` <= '$endDate'";
         }
         $query = "SELECT description, SUM(summ) FROM 1c_PP WHERE `id`>0 $where GROUP BY description";
-        $result = mysql_query($query) or die(mysql_error());
-        while ($line = mysql_fetch_array($result, MYSQL_ASSOC)) {
+        $result = $this->pdo->query($query);
+        while ($line = $result->fetch()) {
             $cat_array[] = $line;
         }
-        // Освобождаем память от результата
-        mysql_free_result($result);
         if (isset($cat_array))
             return $cat_array;
     }
@@ -293,17 +284,15 @@ class OneC
             $where .= " AND `description` = '$purpose'";
         }
         $query = "SELECT SUM(summ) FROM 1c_PP WHERE `id`>0 $where ";
-        $result = mysql_query($query) or die(mysql_error());
-        $line = mysql_fetch_array($result, MYSQL_ASSOC);
-        // Освобождаем память от результата
-        mysql_free_result($result);
+        $result = $this->pdo->query($query);
+        $line = $result->fetch();
         return $line['SUM(summ)'];
     }
     function get_info_income_cat($id)
     {
         $query = "SELECT * FROM 1c_income_category WHERE id='$id'";
-        $result = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
-        while ($line = mysql_fetch_array($result, MYSQL_ASSOC)) {
+        $result = $this->pdo->query($query);
+        while ($line = $result->fetch()) {
             $cat_array[] = $line;
         }
         // Освобождаем память от результата
@@ -314,43 +303,39 @@ class OneC
     function get_cost_category()
     {
         $query = "SELECT * FROM 1c_PP_category";
-        $result = mysql_query($query) or die(mysql_error());
-        while ($line = mysql_fetch_array($result, MYSQL_ASSOC)) {
+        $result = $this->pdo->query($query);
+        while ($line = $result->fetch()) {
             $cat_array[] = $line;
         }
-        // Освобождаем память от результата
-        mysql_free_result($result);
         if (isset($cat_array))
             return $cat_array;
     }
     function get_cost_subcategory($id)
     {
         $query = "SELECT * FROM 1c_PP_subcategory WHERE category_id = $id";
-        $result = mysql_query($query) or die(mysql_error());
-        while ($line = mysql_fetch_array($result, MYSQL_ASSOC)) {
+        $result = $this->pdo->query($query);
+        while ($line = $result->fetch()) {
             $cat_array[] = $line;
         }
-        // Освобождаем память от результата
-        mysql_free_result($result);
         if (isset($cat_array))
             return $cat_array;
     }
     function add_cost_category($title)
     {
-        $date    = date("Y-m-d H:i:s");
-        $user_id = intval($_COOKIE['id']);
+        //$date    = date("Y-m-d H:i:s");
+        //$user_id = intval($_COOKIE['id']);
         $query   = "INSERT INTO `1c_PP_category` (`id`, `category_title`) VALUES (NULL, '$title');";
-        $result = mysql_query($query) or die($query);
-        $idd = mysql_insert_id();
+        $result = $this->pdo->query($query);
+        $idd = $this->pdo->lastInsertId();
         return $idd;
     }
     function add_cost_subcategory($id, $title)
     {
-        $date    = date("Y-m-d H:i:s");
-        $user_id = intval($_COOKIE['id']);
+        //$date    = date("Y-m-d H:i:s");
+        //$user_id = intval($_COOKIE['id']);
         $query   = "INSERT INTO `1c_PP_subcategory` (`id`,  `category_id`,`subcategory_title`) VALUES (NULL, $id, '$title');";
-        $result = mysql_query($query) or die($query);
-        $idd = mysql_insert_id();
+        $result = $this->pdo->query($query);
+        $idd = $this->pdo->lastInsertId();
         return $idd;
     }
     function add_income_category($title)
@@ -358,14 +343,14 @@ class OneC
         $date    = date("Y-m-d H:i:s");
         $user_id = intval($_COOKIE['id']);
         $query   = "INSERT INTO `1c_income_category` (`id`, `category_title`) VALUES (NULL, '$title');";
-        $result = mysql_query($query) or die($query);
-        $idd = mysql_insert_id();
+        $result = $this->pdo->query($query);
+        $idd = $this->pdo->lastInsertId();
         return $idd;
     }
     function change_income_cat($id, $value)
     {
         $query = "UPDATE `1c_income` SET `category` = $value WHERE `id` = $id";
-        $result = mysql_query($query) or die($query);
+        $result = $this->pdo->query($query);
         return $result;
     }
     function __destruct()
