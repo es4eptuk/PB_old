@@ -1,15 +1,19 @@
 <?php
 class Orders
 {
-    private $link_order;
-     private $log;
+    private $query;
+    private $pdo;
+    private $log;
     function __construct()
     {
         global $database_server, $database_user, $database_password, $dbase;
-        $this->link_order = mysql_connect($database_server, $database_user, $database_password) or die('Не удалось соединиться: ' . mysql_error());
-        mysql_set_charset('utf8', $this->link_order);
-        //echo 'Соединение успешно установлено';
-        mysql_select_db($dbase) or die('Не удалось выбрать базу данных');
+        $dsn = "mysql:host=$database_server;dbname=$dbase;charset=utf8";
+        $opt = [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            PDO::ATTR_EMULATE_PREPARES => false,
+        ];
+        $this->pdo = new PDO($dsn, $database_user, $database_password, $opt);
         $this -> log = new Log;
         //$this -> robot = new Robots;
     }
@@ -83,11 +87,8 @@ class Orders
                 '$user_id',
                 '$date'
                 );";
-        $result = mysql_query($query) or die('false');
-        
-       
-        
-        $idd = mysql_insert_id();
+        $result = $this->pdo->query($query);
+        $idd = $this->pdo->lastInsertId();
         
          if ($result) {
              $this->log->add(__METHOD__,"Добавлен новый заказ №$idd");
@@ -111,7 +112,7 @@ class Orders
             $objPHPExcel = new PHPExcel();
             $objRichText = new PHPExcel_RichText();
               // Set properties
-              $objPHPExcel->getProperties()->setCreator("SAMPLE1");
+            $objPHPExcel->getProperties()->setCreator("SAMPLE1");
               $objPHPExcel->getProperties()->setLastModifiedBy("SAMPLE1");
               $objPHPExcel->getProperties()->setTitle("SAMPLE1");
               $objPHPExcel->getProperties()->setSubject("SAMPLE1");
@@ -125,12 +126,11 @@ class Orders
               $cell_name="";
               
               $query = "SELECT * FROM pos_provider WHERE id='$provider'";
-                $result = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
-                while ($line = mysql_fetch_array($result, MYSQL_ASSOC)) {
+             $result = $this->pdo->query($query);
+             while ($line = $result->fetch()) {
                     $provider_array[] = $line;
                 }
-                // Освобождаем память от результата
-                mysql_free_result($result);
+
                 if (isset($provider_array))
                     $provider =  $provider_array['0']['type']." ".$provider_array['0']['title'];
               
@@ -149,7 +149,7 @@ class Orders
               $objPHPExcel->getActiveSheet()->setCellValue("D4", 'Количество');
               $objPHPExcel->getActiveSheet()->getStyle("D4")->getFont()->setBold(true);
               $objPHPExcel->getActiveSheet()->setCellValue("E4", 'Дата');
-              $objPHPExcel->getActiveSheet()->getStyle("E4")->getFont()->setBold(true);
+            $objPHPExcel->getActiveSheet()->getStyle("E4")->getFont()->setBold(true);
             $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setAutoSize(true);
             $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setAutoSize(true);
             $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setAutoSize(true);
@@ -207,8 +207,7 @@ class Orders
                     '$count', 
                     '$price', 
                     '$date_r');";
-            $result = mysql_query($query) or die('false');
-            //echo $query;
+             $result = $this->pdo->query($query);
              if ($auto) {
                $count_row++;
                $objPHPExcel->getActiveSheet()->setCellValue("A".$count_row, $cnt);
@@ -248,13 +247,12 @@ class Orders
     
     function get_orders_pos($pos)
     {
-        $query = "SELECT * FROM orders WHERE pos_id='$pos' ORDER BY `order_delivery` ASC";
-        $result = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
-        while ($line = mysql_fetch_array($result, MYSQL_ASSOC)) {
+        $query = "SELECT * FROM orders WHERE `pos_id`='$pos' ORDER BY `order_delivery` ASC";
+        $result = $this->pdo->query($query);
+        while ($line = $result->fetch()) {
             $orders_array[] = $line;
         }
-        // Освобождаем память от результата
-        // mysql_free_result($result);
+
         if (isset($orders_array))
             return $orders_array;
     }
@@ -271,18 +269,12 @@ class Orders
              $query = "SELECT * FROM orders INNER JOIN pos_provider ON orders.order_provider = pos_provider.id WHERE orders.order_category = '$order_category' ".$where." ORDER BY `order_delivery` ASC"; 
         }
         
-      //echo $query;
-      
-        //$query = "SELECT * FROM orders WHERE order_category='$order_category' ".$where." ORDER BY `order_delivery` ASC";
-        $result = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
-        while ($line = mysql_fetch_array($result, MYSQL_ASSOC)) {
+        $result = $this->pdo->query($query);
+        while ($line = $result->fetch()) {
             $date = new DateTime($line['order_delivery']);
             $line['order_delivery'] = $date->format('d.n.Y');
             $orders_array[] = $line;
         }
-        // Освобождаем память от результата
-        // mysql_free_result($result);
-        // Закрываем соединение
         if (isset($orders_array))
             return $orders_array;
     }
@@ -290,12 +282,10 @@ class Orders
     function get_info_order($id)
     {
         $query = "SELECT * FROM orders WHERE order_id='$id'";
-        $result = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
-        while ($line = mysql_fetch_array($result, MYSQL_ASSOC)) {
+        $result = $this->pdo->query($query);
+        while ($line = $result->fetch()) {
             $order_array[] = $line;
         }
-        // Освобождаем память от результата
-        mysql_free_result($result);
         if (isset($order_array))
             return $order_array['0'];
     }
@@ -332,7 +322,7 @@ class Orders
         $date    = date("Y-m-d H:i:s");
         $user_id = intval($_COOKIE['id']);
         $query   = "DELETE FROM `orders_items` WHERE `order_id`=$id";
-        $result = mysql_query($query) or die($query);
+        $result = $this->pdo->query($query);
         $p_finish = 0;
         $p_admis  = 0;
         
@@ -380,7 +370,7 @@ class Orders
                     '$finish_pos',
                     '$price', 
                     '$date_r');";
-            $result = mysql_query($query) or die('false');
+            $result = $this->pdo->query($query);
         }
         
         
@@ -409,8 +399,7 @@ class Orders
         }
         echo $percent;
         $query = "UPDATE `orders` SET `order_prosecution`= $prosecution, `order_status` = $status,  `order_completion` = $percent,`order_prosecution` = $prosecution, `order_price` = '$sum',`order_category` = '$category', `order_delivery` = '$max_date', `order_provider` = '$provider',`order_status` = '$status',`order_responsible` = '$responsible', `version` = '$version', `update_date` = '$date' , `update_user` = '$user_id' WHERE `order_id` = $id;";
-        //echo $query;
-        $result = mysql_query($query) or die($query);
+        $result = $this->pdo->query($query);
         
         if ($result) {
              $this->log->add(__METHOD__,"Редактирование заказа №$id");
@@ -424,18 +413,13 @@ class Orders
     function get_pos_in_order($id)
     {
         $query = "SELECT pos_items.id, pos_items.vendor_code, pos_items.price, pos_items.title, orders_items.pos_count, orders_items.pos_date, orders_items.pos_count_finish, orders_items.pos_return   FROM orders_items JOIN pos_items ON orders_items.pos_id = pos_items.id WHERE order_id=$id";
-        $result = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
-        while ($line = mysql_fetch_array($result, MYSQL_ASSOC)) {
-          
-            
+        $result = $this->pdo->query($query);
+        while ($line = $result->fetch()) {
             if($line['pos_date'] == '0000-00-00 00:00:00'){
             $line['pos_date'] = '2019-01-01 00:00:00';
             }
-            
               $pos_array[] = $line;
         }
-        // Освобождаем память от результата
-        mysql_free_result($result);
         if (isset($pos_array))
             return $pos_array;
     }
@@ -445,18 +429,15 @@ class Orders
         $date    = date("Y-m-d H:i:s");
         $user_id = intval($_COOKIE['id']);
         $query   = "DELETE FROM `orders` WHERE `order_id` = $id";
-        $result = mysql_query($query) or die(mysql_error());
-        
-        
+        $result = $this->pdo->query($query);
+
         if ($result) {
              $this->log->add(__METHOD__,"Удаление заказа №$id");
         }
         
         
         $query = "DELETE FROM `orders_items` WHERE `order_id` = $id";
-        $result = mysql_query($query) or die(mysql_error());
-        // Освобождаем память от результата
-        // mysql_free_result($result);
+        $result = $this->pdo->query($query);
         return $result;
     }
     
@@ -488,8 +469,7 @@ class Orders
         }
         //echo $date;
         $query = "UPDATE `orders` SET `order_prosecution`= $prosecution, `order_status` = $status,  `order_completion` = $percent,`order_prosecution` = $prosecution, `order_price` = '$sum',`order_category` = '$category', `order_delivery` = '$max_date', `order_provider` = '$provider',`order_status` = '$status',`order_responsible` = '$responsible', `update_date` = '$date' , `update_user` = '$user_id' WHERE `orders`.`id` = $id;";
-        //echo $query;
-        $result = mysql_query($query) or die(mysql_error());
+        $result = $this->pdo->query($query);
         
         
         if ($result) {
@@ -500,14 +480,11 @@ class Orders
     }
     
     function orderDate($id) {
-         $query = "SELECT * FROM `orders_items` WHERE `pos_id` = $id AND pos_count_finish<pos_count ORDER BY `orders_items`.`pos_date` ASC";
-         $result = mysql_query($query) or die(mysql_error());
-        
-        while ($line = mysql_fetch_array($result, MYSQL_ASSOC)) {
+        $query = "SELECT * FROM `orders_items` WHERE `pos_id` = $id AND pos_count_finish<pos_count ORDER BY `orders_items`.`pos_date` ASC";
+        $result = $this->pdo->query($query);
+        while ($line = $result->fetch()) {
             $pos_array[] = $line;
         }
-        // Освобождаем память от результата
-        mysql_free_result($result);
         if (isset($pos_array)) {
             $date = new DateTime($pos_array[0]['pos_date']);
             return $date->format('d.m.Y');
@@ -519,14 +496,12 @@ class Orders
     
     
       function orderDateStr($id) {
-         $query = "SELECT * FROM `orders_items` WHERE `pos_id` = $id AND pos_count_finish<pos_count ORDER BY `orders_items`.`pos_date` ASC";
-         $result = mysql_query($query) or die(mysql_error());
-        
-        while ($line = mysql_fetch_array($result, MYSQL_ASSOC)) {
+        $query = "SELECT * FROM `orders_items` WHERE `pos_id` = $id AND pos_count_finish<pos_count ORDER BY `orders_items`.`pos_date` ASC";
+        $result = $this->pdo->query($query);
+        while ($line = $result->fetch()) {
             $pos_array[] = $line;
         }
-        // Освобождаем память от результата
-        mysql_free_result($result);
+
         if (isset($pos_array)) {
             $date = new DateTime($pos_array[0]['pos_date']);
             $count = $pos_array[0]['pos_count'] - $pos_array[0]['pos_count_finish'];
@@ -603,14 +578,11 @@ class Orders
 
     function setPaymentStatus($id, $value) {
         $query = "UPDATE `orders` SET `order_payment` = $value WHERE `order_id` = $id";
-        $result = mysql_query($query) or die(mysql_error());
+        $result = $this->pdo->query($query);
         return $result;
     }
 
     function add_order_dop($json,$category,$provider) {
-
-
-
         print_r($json);
     }
    

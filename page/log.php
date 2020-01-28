@@ -1,7 +1,8 @@
 <?php
 class Log
 {
-    private $link_log;
+    private $query;
+    private $pdo;
     function __construct()
     {
         global $database_server, $database_user, $database_password, $dbase;
@@ -24,7 +25,7 @@ class Log
     function get_all()
     {
         $query = "SELECT * FROM `system_log`";
-        $result = $this->pdo->query($this->query);
+        $result = $this->pdo->query($query);
         while ($line = $result->fetch()) {
             $log_array[] = $line;
         }
