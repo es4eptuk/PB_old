@@ -549,7 +549,7 @@ include 'include/class.inc.php';
           .done(function( data ) {
               if (data=="false") {alert( "Data Loaded: " + data ); }
               else {
-                //window.location.href = "./robots.php";
+                window.location.href = "./robots.php";
                 
               }
           });
