@@ -1,17 +1,21 @@
 <?php
 class Admissions
 {
-    private $link_admis;
+    private $query;
+    private $pdo;
     private $log;
     private $orders;
     private $writeoff;
     function __construct()
     {
         global $database_server, $database_user, $database_password, $dbase;
-        $this->link_admis = mysql_connect($database_server, $database_user, $database_password) or die('Не удалось соединиться: ' . mysql_error());
-        mysql_set_charset('utf8', $this->link_admis);
-        //echo 'Соединение успешно установлено';
-        mysql_select_db($dbase) or die('Не удалось выбрать базу данных');
+        $dsn = "mysql:host=$database_server;dbname=$dbase;charset=utf8";
+        $opt = [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            PDO::ATTR_EMULATE_PREPARES => false,
+        ];
+        $this->pdo = new PDO($dsn, $database_user, $database_password, $opt);
         $this->log = new Log;
         $this -> orders = new Orders;
         $this -> writeoff = new Writeoff;
@@ -34,7 +38,7 @@ class Admissions
 
         $order_date = new DateTime($order_date);
         $order_date = $order_date->format('Y-m-d H:i:s');
-$i = 0;
+        $i = 0;
         foreach ($pos_arr as &$value) {
 
             $pos_id       = $value['0'];
@@ -85,8 +89,8 @@ $i = 0;
                 $arr_finish[] = 0;
             }
             $query2 = "SELECT * FROM pos_items WHERE id=$pos_id";
-            $result2 = mysql_query($query2) or die(mysql_error());
-            while ($line2 = mysql_fetch_array($result2, MYSQL_ASSOC)) {
+            $result2 = $this->pdo->query($query2);
+            while ($line2 = $result2->fetch()) {
                 $pos_array2[] = $line2;
             }
             //print_r($pos_array2);
@@ -95,8 +99,7 @@ $i = 0;
             $new_total = $count_total + $admis_pos;
             //echo $new_total."\n";
             $query     = "UPDATE `pos_items` SET `total` = '$new_total', `update_date` = '$date' WHERE `id` = '$pos_id'";
-            //echo $query;
-            $result = mysql_query($query) or die(mysql_error());
+            $result = $this->pdo->query($query);
             if ($result && $admis_pos != 0) {
                 $param['id']    = $pos_id;
                 $param['type']  = "addmission";
@@ -104,19 +107,16 @@ $i = 0;
                 $param['title'] = "Поступление по заказу №$order_id";
                 $this->add_log($param);
             }
-            //echo "1";
-            //echo $total_finish." ";
-           // echo $order_id;
+
             if ($order_id != 0) {
                 $return_pos = $return_pos - $admis_pos;
                 $query      = "UPDATE IGNORE `orders_items` SET `pos_count_finish` = $total_finish,`pos_return` = $return_pos WHERE `order_id` = $order_id AND `pos_id` = $pos_id";
-                echo $query;
-               $result = mysql_query($query) or die(mysql_error());
+                $result = $this->pdo->query($query);
             }
         }
 
-        print_r($order_paint);
-        print_r($order_drill);
+        //print_r($order_paint);
+        //print_r($order_drill);
 
         if (count($order_paint) > 1 )  {
             $this->orders->add_order(json_encode($order_paint),0,true);
@@ -147,11 +147,11 @@ $i = 0;
             }
             echo $percent;
             $query = "SELECT * FROM orders WHERE order_id='$order_id'";
-            $result = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
-            while ($line = mysql_fetch_array($result, MYSQL_ASSOC)) {
+            $result = $this->pdo->query($query);
+            while ($line = $result2->fetch()) {
                 $order_array[] = $line;
             }
-            $result = mysql_query($query) or die(mysql_error());
+            $result = $this->pdo->query($query);
             if ($percent >= 100) {
                 $status = 2;
             } else {
@@ -162,9 +162,9 @@ $i = 0;
             } else {
                 $prosecution = $order_array['0']['order_prosecution'];
             }
-            $query = "UPDATE `orders` SET `order_prosecution`= $prosecution, `order_status` = $status,`order_completion` = $percent , `update_date` = '$date' WHERE `order_id` = $order_id";
-            $result = mysql_query($query) or die(mysql_error());
-        }
+            $query = "UPDATE `orders` SET `order_prosecution`= '$prosecution', `order_status` = $status,`order_completion` = $percent , `update_date` = '$date' WHERE `order_id` = $order_id";
+            $result = $this->pdo->query($query);        }
+
         $query = "INSERT INTO `admissions` (
             `id`, 
             `order_id`,
@@ -184,8 +184,8 @@ $i = 0;
                 '$user_id', 
                 '$date', 
                 '$user_id');";
-        $result = mysql_query($query) or die(mysql_error());
-        $idd = mysql_insert_id();
+        $result = $this->pdo->query($query);
+        $idd = $this->pdo->lastInsertId();
         if ($result) {
             $this->log->add(__METHOD__, "Добавление нового поступления №$idd");
         }
@@ -196,12 +196,11 @@ $i = 0;
     function get_admission($admiss_category)
     {
         $query = "SELECT * FROM admissions WHERE category='$admiss_category' ORDER BY id DESC LIMIT 50";
-        $result = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
-        while ($line = mysql_fetch_array($result, MYSQL_ASSOC)) {
+        $result = $this->pdo->query($query);
+        while ($line = $result->fetch()) {
             $admiss_array[] = $line;
         }
-        // Jcdj,j;lftv gfvznm jn htpekmnfnf
-        // mysql_free_result($result);
+
         if (isset($admiss_array))
             return $admiss_array;
     }
@@ -214,11 +213,10 @@ $i = 0;
         $date    = date("Y-m-d H:i:s");
         $user_id = intval($_COOKIE['id']);
         $query   = "SELECT * FROM `pos_items` WHERE id = $id";
-        $result = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
-        $line       = mysql_fetch_array($result, MYSQL_ASSOC);
+        $result = $this->pdo->query($query);
+        $line       = $result->fetch();
         $old_count  = $line['total'];
         $old_reserv = $line['reserv'];
-        mysql_free_result($result);
         switch ($type) {
             case "edit":
                 $title = $title . ": $old_count -> $count";
@@ -243,7 +241,7 @@ $i = 0;
                 $query = "INSERT INTO `pos_log` (`id`, `id_pos`, `new_count`, `title`, `update_date`, `update_user`) VALUES (NULL, '$id', '$old_count', '$title', '$date', '$user_id')";
                 break;
         }
-        $result = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
+        $result = $this->pdo->query($query);
     }
     function __destruct()
     {
