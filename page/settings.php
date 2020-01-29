@@ -1,24 +1,26 @@
 <?php
 class Settings
 {
-    private $link_sale;
+    private $query;
+    private $pdo;
     
     function __construct()
     {
         global $database_server, $database_user, $database_password, $dbase;
-        $this->link_settings = mysql_connect($database_server, $database_user, $database_password) or die('Не удалось соединиться: ' . mysql_error());
-        mysql_set_charset('utf8', $this->link_settings);
-        //echo 'Соединение успешно установлено';
-        mysql_select_db($dbase) or die('Не удалось выбрать базу данных');
-        //$this -> telegram = new TelegramAPI;
-        //$this -> robot = new Robots;
+        $dsn = "mysql:host=$database_server;dbname=$dbase;charset=utf8";
+        $opt = [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            PDO::ATTR_EMULATE_PREPARES => false,
+        ];
+        $this->pdo = new PDO($dsn, $database_user, $database_password, $opt);
     }
     
     function get_param($name) {
         
-        $query = "SELECT * FROM `system_settings` WHERE `name` = '$name'"; 
-        $result = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
-        while ($line = mysql_fetch_array($result, MYSQL_ASSOC)) {
+        $query = "SELECT * FROM `system_settings` WHERE `name` = '$name'";
+        $result = $this->pdo->query($query);
+        while ($line = $result->fetch()) {
             $items_array[] = $line;
         }
         
