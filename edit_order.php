@@ -161,7 +161,7 @@ $order_date = $order_date->format('d.m.Y');
 											<option>
 												Ответственный ...
 											</option><?php 
-											                  $array_users = $user->get_users();
+											                  $array_users = $user->get_users($group = 0);
 											                 
 											                    foreach ($array_users as &$user) { 
 											                      if ( $user['user_id'] == $order_responsible) {  

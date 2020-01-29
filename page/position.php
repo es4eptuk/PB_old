@@ -518,7 +518,7 @@ class Position
         return $result;
     }
     
-    function unset_writeoff_kit($version, $robot, $kit, $check,$robot) {
+    function unset_writeoff_kit($version, $number, $kit, $check, $robot) {
      $query = "SELECT id FROM `writeoff` WHERE `check` = $check AND `robot` = $robot";
      $result = $this->pdo->query($query);
      $line = $result->fetch();
@@ -627,8 +627,8 @@ class Position
     function get_equipment()
     {
         $query = "SELECT * FROM robot_equipment ORDER BY `title` DESC";
-        $result = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
-        while ($line = mysql_fetch_array($result, MYSQL_ASSOC)) {
+        $result = $this->pdo->query($query);
+        while ($line = $result->fetch()) {
             $equipment_array[] = $line;
         }
         if (isset($equipment_array))

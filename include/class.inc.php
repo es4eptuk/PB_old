@@ -1,4 +1,9 @@
 <?
+error_reporting(E_ALL);
+ini_set('display_startup_errors', 1);
+ini_set('display_errors', '1');
+
+
 include 'include/config.inc.php';
 include 'page/log.php';
 include 'page/telegram.php';
