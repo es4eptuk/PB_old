@@ -183,7 +183,7 @@ include 'include/class.inc.php';
                   <select class="form-control" name="responsible" placeholder="Веберите пользователя" id="responsible" required="required">
                    <option>Веберите пользователя...</option>
                    <?php 
-                   $arr = $user->get_users();
+                   $arr = $user->get_users($group = 0);
                 
                     foreach ($arr as &$user) {
                        echo "
