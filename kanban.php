@@ -33,7 +33,11 @@ $date_Today = date("Y-m-d");
 
 //считаем созданные сегодня
 $ticketsTodayArr = $tickets->get_tickets(0, null, 0, 'update_date', 'DESC', 'date_create', $date_Today . " 00:00:00", $date_Today . " 23:59:59");
-$ticketsToday = count($ticketsTodayArr);
+if (!isset($ticketsTodayArr))
+{$ticketsTodayArr = 0;}
+else {$ticketsToday = count($ticketsTodayArr);}
+
+
 
 
 
@@ -211,7 +215,12 @@ foreach ($arr_tickets as &$ticket) {
                                 <tbody>
                                 <tr>
                                     <th style="width:50%">Созданных тикетов:</th>
-                                    <td><? echo $ticketsToday; ?>
+                                    <td><?
+                                        if (!isset($ticketsToday))
+                                            {echo 0;}
+                                        else
+                                            {echo $ticketsToday;}
+                                        ?>
                                     </td>
                                 </tr>
                                 <tr>
@@ -464,8 +473,13 @@ foreach ($arr_tickets as &$ticket) {
 
                                 <tr>
                                     <th style="width:50%">Исправленных роботов:</th>
-                                    <td class="dop"><? echo count($arrTicketRobotNoProblem);
-                                        ?> <i class="fa fa-fw fa-plus-circle pull-right text-green"
+                                    <td class="dop">
+                                        <?
+                                            if (!isset($arrTicketRobotNoProblem))
+                                            {$arrTicketRobotNoProblem = [];}
+                                            else {echo count($arrTicketRobotNoProblem);}
+                                        ?>
+                                        <i class="fa fa-fw fa-plus-circle pull-right text-green"
                                               style="cursor: pointer;"></i>
                                         <div class="robots" style="display: none">
                                             <ul>
@@ -497,7 +511,14 @@ foreach ($arr_tickets as &$ticket) {
                             <tbody>
                             <tr>
                                 <th style="width:50%">Исправленных роботов:</th>
-                                <td class="dop"><? echo count($arrTicketRobotNoProblemToday);
+                                <td class="dop">
+                                    <?
+                                        if (!isset($arrTicketRobotNoProblemToday))
+                                        {$arrTicketRobotNoProblemToday = [];}
+                                        else {echo count($arrTicketRobotNoProblemToday);}
+
+
+                                    if (!isset($arr_comments)) {$arr_count_comments = 0;} else {$arr_count_comments = count($arr_comments);}
                                     ?> <i class="fa fa-fw fa-plus-circle pull-right text-green"
                                           style="cursor: pointer;"></i>
                                     <div class="robots" style="display: none">
@@ -644,7 +665,7 @@ foreach ($arr_tickets as &$ticket) {
                                     $ticket_class = $ticket['class'];
 
                                     $arr_comments = $tickets->get_comments($ticket['id']);
-                                    $arr_count_comments = count($arr_comments);
+                                    if (!isset($arr_comments)) {$arr_count_comments = 0;} else {$arr_count_comments = count($arr_comments);}
                                     $lng = mb_strlen($ticket_description, 'UTF-8');
                                     if ($lng > 100) {
                                         $ticket_description = mb_substr($ticket_description, 0, 100) . "...";
