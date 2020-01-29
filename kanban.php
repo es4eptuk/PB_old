@@ -497,7 +497,14 @@ foreach ($arr_tickets as &$ticket) {
                             <tbody>
                             <tr>
                                 <th style="width:50%">Исправленных роботов:</th>
-                                <td class="dop"><? echo count($arrTicketRobotNoProblemToday);
+                                <td class="dop">
+                                    <?
+                                        if (!isset($arrTicketRobotNoProblemToday))
+                                        {$arrTicketRobotNoProblemToday = [];}
+                                        else {echo count($arrTicketRobotNoProblemToday);}
+
+
+                                    if (!isset($arr_comments)) {$arr_count_comments = 0;} else {$arr_count_comments = count($arr_comments);}
                                     ?> <i class="fa fa-fw fa-plus-circle pull-right text-green"
                                           style="cursor: pointer;"></i>
                                     <div class="robots" style="display: none">
@@ -644,7 +651,7 @@ foreach ($arr_tickets as &$ticket) {
                                     $ticket_class = $ticket['class'];
 
                                     $arr_comments = $tickets->get_comments($ticket['id']);
-                                    $arr_count_comments = count($arr_comments);
+                                    if (!isset($arr_comments)) {$arr_count_comments = 0;} else {$arr_count_comments = count($arr_comments);}
                                     $lng = mb_strlen($ticket_description, 'UTF-8');
                                     if ($lng > 100) {
                                         $ticket_description = mb_substr($ticket_description, 0, 100) . "...";
