@@ -271,9 +271,13 @@ $robot_id= $robot_info['id'];
 
               <!-- Social sharing buttons -->
               <? 
-              $arr_comments = $tickets->get_comments($ticket_id); 
-              $arr_count_comments = count($arr_comments);
-              
+              $arr_comments = $tickets->get_comments($ticket_id);
+              if (!isset($arr_comments))
+              {$arr_count_comments = 0;}
+
+              else {
+                  $arr_count_comments = count($arr_comments);
+              }
               ?>
              
             </div>
