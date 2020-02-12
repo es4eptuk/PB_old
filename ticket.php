@@ -104,9 +104,8 @@ $robot_id= $robot_info['id'];
 
 
           <?php echo "<a href=\"./kanban.php\"><i class=\"fa fa-long-arrow-left\"></i> KANBAN</a>";?>
-          <?php echo "<span id='ticket_class_2'>".$ticket_class."</span>-".$ticket_id." (Promobot ".$robot_version.".".$robot_number."- ".$robot_name.")"; ?>
+          <?php echo "<span id='ticket_class_2'>".$ticket_class."</span>-".$ticket_id." (Promobot " . "<a href='./robot_card.php?id=$robot_id'>$robot_version.$robot_number</a>" ." ".$robot_name . ")"; ?>
 
-       
       </h1>
       
     </section>
