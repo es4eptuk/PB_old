@@ -608,8 +608,10 @@ $( "#btn_edit_title" ).click(function() {
                                           else {
                                               var conId =  <?php echo $ticket_id; ?>;  
                                               var conClass = "<?php echo $ticket_class; ?>";  
-                                             
-                                              comment = "Прикреплено <a href=\"ticket.php?id="+conId+"\">"+ conClass+ "-" + conId+"</a>";
+                                              var conDescription = "<?php echo $ticket_description; ?>";
+
+
+                                              comment = "Прикреплено <a href=\"ticket.php?id="+conId+"\">"+ conClass+ "-" + conId+"</a>" + " " + conDescription;
                                               console.log(comment);
                                                 $.post( "./api.php", { 
                                                     action: "ticket_add_comment", 
@@ -621,7 +623,7 @@ $( "#btn_edit_title" ).click(function() {
                                                       .done(function( data ) {
                                                           if (data=="false") {alert( "Data Loaded Comment Connect: " + data ); }
                                                           else {
-                                                            window.location.reload(true);
+                                                              window.location.reload(true);
                                                             
                                                           }
                                                       });
