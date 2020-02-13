@@ -249,8 +249,9 @@ $robot_id= $robot_info['id'];
                 <label>Тикет</label>
                 <select class="form-control select2" style="width: 100%;" id="selectConnect">
                     <option></option>
-                     <? 
-                     $arr = $tickets->get_tickets(0,0,0,"update_date","DESC",0,0,0,"P",0,1); 
+                     <?
+
+                     $arr = $tickets->get_tickets("$robot_id",0,0,"update_date","DESC",0,0,0,"P",0,1);
                   
                       foreach ($arr as &$ticket) {
 										echo "
