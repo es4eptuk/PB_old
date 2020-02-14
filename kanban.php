@@ -794,11 +794,11 @@ foreach ($arr_tickets as &$ticket) {
                 <div class="modal-body">
                     <div class="form-group">
                         <label>Комментарий:</label>
-                        <label for="comment"></label><textarea class="form-control" rows="5" id="comment"></textarea>
+                        <textarea class="form-control" rows="5" id="comment"></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+<!--                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>-->
                     <button type="button" class="btn btn-primary" id="btn_add_comment">Добавить</button>
                 </div>
             </div>
@@ -1202,7 +1202,7 @@ foreach ($arr_tickets as &$ticket) {
                 }
 
 
-                if (status == 0 || status == 6 ) {
+                if (status == 0 || status == 1 || status == 2 || status == 5 || status == 6 || status == 7) {
 
                     $.post("./api.php", {
                         action: "ticket_change_status",
