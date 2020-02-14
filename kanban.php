@@ -787,18 +787,18 @@ foreach ($arr_tickets as &$ticket) {
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLongTitle">Опишите причину переноса карточки</h5>
-                    <!--<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>-->
+<!--                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">-->
+<!--                        <span aria-hidden="true">&times;</span>-->
+<!--                    </button>-->
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
                         <label>Комментарий:</label>
-                        <textarea class="form-control" rows="5" id="comment"></textarea>
+                        <label for="comment"></label><textarea class="form-control" rows="5" id="comment"></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <!--                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>-->
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
                     <button type="button" class="btn btn-primary" id="btn_add_comment">Добавить</button>
                 </div>
             </div>
@@ -873,7 +873,7 @@ foreach ($arr_tickets as &$ticket) {
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <!--        <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>-->
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
                     <button type="button" class="btn btn-primary" id="btn_add_date">Сохранить</button>
                 </div>
             </div>
@@ -1202,7 +1202,7 @@ foreach ($arr_tickets as &$ticket) {
                 }
 
 
-                if (status == 0 || status == 1 || status == 2 || status == 5 || status == 6 || status == 7) {
+                if (status == 0 || status == 6 ) {
 
                     $.post("./api.php", {
                         action: "ticket_change_status",
