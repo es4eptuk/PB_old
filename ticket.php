@@ -104,9 +104,8 @@ $robot_id= $robot_info['id'];
 
 
           <?php echo "<a href=\"./kanban.php\"><i class=\"fa fa-long-arrow-left\"></i> KANBAN</a>";?>
-          <?php echo "<span id='ticket_class_2'>".$ticket_class."</span>-".$ticket_id." (Promobot ".$robot_version.".".$robot_number."- ".$robot_name.")"; ?>
+          <?php echo "<span id='ticket_class_2'>".$ticket_class."</span>-".$ticket_id." (Promobot " . "<a href='./robot_card.php?id=$robot_id'>$robot_version.$robot_number</a>" ." ".$robot_name . ")"; ?>
 
-       
       </h1>
       
     </section>
@@ -250,8 +249,9 @@ $robot_id= $robot_info['id'];
                 <label>Тикет</label>
                 <select class="form-control select2" style="width: 100%;" id="selectConnect">
                     <option></option>
-                     <? 
-                     $arr = $tickets->get_tickets(0,0,0,"update_date","DESC",0,0,0,"P",0,1); 
+                     <?
+
+                     $arr = $tickets->get_tickets("$robot_id",0,0,"update_date","DESC",0,0,0,"P",0,1);
                   
                       foreach ($arr as &$ticket) {
 										echo "
@@ -608,8 +608,10 @@ $( "#btn_edit_title" ).click(function() {
                                           else {
                                               var conId =  <?php echo $ticket_id; ?>;  
                                               var conClass = "<?php echo $ticket_class; ?>";  
-                                             
-                                              comment = "Прикреплено <a href=\"ticket.php?id="+conId+"\">"+ conClass+ "-" + conId+"</a>";
+                                              var conDescription = "<?php echo $ticket_description; ?>";
+
+
+                                              comment = "Прикреплено <a href=\"ticket.php?id="+conId+"\">"+ conClass+ "-" + conId+"</a>" + " " + conDescription;
                                               console.log(comment);
                                                 $.post( "./api.php", { 
                                                     action: "ticket_add_comment", 
@@ -621,7 +623,7 @@ $( "#btn_edit_title" ).click(function() {
                                                       .done(function( data ) {
                                                           if (data=="false") {alert( "Data Loaded Comment Connect: " + data ); }
                                                           else {
-                                                            window.location.reload(true);
+                                                              window.location.reload(true);
                                                             
                                                           }
                                                       });

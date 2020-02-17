@@ -274,7 +274,7 @@ class Tickets
             $where .= " AND `status` = 3 AND  `status` = 6 ";
         }
         if ($connect != 0) {
-            $where .= " AND `status` != 3 AND  `status` != 6 AND `status` != 7";
+            $where .= " AND `status` != 3 AND  `status` != 6 ";
         }
         if ($date_min != 0 && $date_max != 0) {
             $where .= " AND `$sourceDate` >= '$date_min' AND `$sourceDate` <= '$date_max' ";

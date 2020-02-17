@@ -787,9 +787,9 @@ foreach ($arr_tickets as &$ticket) {
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLongTitle">Опишите причину переноса карточки</h5>
-                    <!--<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>-->
+<!--                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">-->
+<!--                        <span aria-hidden="true">&times;</span>-->
+<!--                    </button>-->
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
@@ -798,7 +798,7 @@ foreach ($arr_tickets as &$ticket) {
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <!--                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>-->
+<!--                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>-->
                     <button type="button" class="btn btn-primary" id="btn_add_comment">Добавить</button>
                 </div>
             </div>
@@ -873,7 +873,7 @@ foreach ($arr_tickets as &$ticket) {
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <!--        <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>-->
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
                     <button type="button" class="btn btn-primary" id="btn_add_date">Сохранить</button>
                 </div>
             </div>
