@@ -67,7 +67,8 @@ include 'include/class.inc.php';
                 foreach ($arr as &$pos) {
                      $provider = $position->get_info_pos_provider($pos['provider']);
                      $real = $pos['total']-$pos['reserv'];
-                     $order_date = $orders->orderDate($pos['id']);
+
+                    //$order_date = $orders->orderDate($pos['id']);
                      $assembly_out = "";
                      if ($pos['assembly']!=0) {
                          $assembly_out = "<a href='edit_assembly.php?id=".$pos['assembly']."'><i class='fa fa-2x fa-codepen'></i></a>";

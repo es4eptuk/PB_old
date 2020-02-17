@@ -180,7 +180,7 @@ class Checks
             $telegram_str = $icon . $comment;
             $this->telegram->sendNotify("sale", $telegram_str);
         }
-        if ($id == 104 && $value == 1) {
+        if (($id == 104 || $id ==308) && $value == 1) {
             $query = "SELECT * FROM robots WHERE id='$robot'";
             $result = $this->pdo->query($query);
             while ($line = $result->fetch()) {
@@ -527,7 +527,7 @@ class Checks
             
             if ($value==1) {
             $query2 = "INSERT INTO `check` (`id_check`, `robot`, `operation`, `category`, `group`, `check`, `comment`, `sort`, `option`, `id_kit`) VALUES ('0', $robot, '$operation', $category, '0', '0', '', '0', $option, $kit)";    
-            $result2 = mysql_query($query2) or die('Запрос не удался: ' . mysql_error());
+            $result2 = $this->pdo->query($query2);
             //echo $query2;
             if ($result2) {
                 $comment = "Добавлена опция ".$title;

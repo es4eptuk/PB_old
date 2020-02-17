@@ -65,7 +65,7 @@ include 'include/class.inc.php';
                   <th style="width: 20%;">Последняя операция</th>
                   
                   <th>Начало производства</th>
-                  <th>Первый тест</th>
+
                   <th>Кем</th>
                   <th></th>
                   <th></th>
@@ -107,7 +107,7 @@ include 'include/class.inc.php';
                         <td>".$position->get_name_category($robot['stage'])."</td>
                         <td>".$robot['last_operation']."</td>
                         <td>".$robot_date->format('d.m.Y')."</td>
-                        <td>".$robot_date_test->format('d.m.Y')."</td>
+                        
                         <td>".$user_info['user_name']." </td>
                         <td><i class='fa fa-2x fa-align-justify' style='cursor: pointer;' id='".$robot['id']."'></i></td>
                         <td><a href='./edit_robot.php?id=".$robot['id']."'><i class='fa fa-2x fa-pencil' style='cursor: pointer;' id='".$robot['id']."'></i></a></td>
