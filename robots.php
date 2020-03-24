@@ -167,7 +167,7 @@ include 'include/class.inc.php';
                  <div class="form-group">
                   <label>Версия</label>
                   <select class="form-control" name="version" id="version">
-                      <?
+                      <?php
 
                       $versions = $position->get_equipment();
 
@@ -249,7 +249,7 @@ include 'include/class.inc.php';
                     <label for="exampleInputFile">Комплектация</label>
 
 
-                    <?
+                    <?php
                     $options = $robots->get_robot_options();
 
                     foreach ($options as &$value) {
@@ -317,7 +317,7 @@ include 'include/class.inc.php';
                   <div class="input-group-addon">
                     <i class="fa fa-calendar"></i>
                   </div>
-                  <input type="text" class="form-control pull-right" class="datepicker" id="datepicker" value="<? echo $robot_date->format('d.m.Y') ?>">
+                  <input type="text" class="form-control pull-right" class="datepicker" id="datepicker" value="<?php echo $robot_date->format('d.m.Y') ?>">
                 </div>
                 <!-- /.input group -->
               </div> 
@@ -329,7 +329,7 @@ include 'include/class.inc.php';
                   <div class="input-group-addon">
                     <i class="fa fa-calendar"></i>
                   </div>
-                  <input type="text" class="form-control pull-right" class="datepicker" id="datepicker2" value="<? echo $robot_date_test->format('d.m.Y') ?>">
+                  <input type="text" class="form-control pull-right" class="datepicker" id="datepicker2" value="<?php echo $robot_date_test->format('d.m.Y') ?>">
                 </div>
                 <!-- /.input group -->
               </div> 

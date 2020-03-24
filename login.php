@@ -1,4 +1,4 @@
-<?
+<?php
 include 'include/config.inc.php';
 $link=mysqli_connect($database_server , $database_user , $database_password , $dbase );
 
@@ -58,7 +58,7 @@ include 'template/head.html';
 <body class="hold-transition login-page">
 <div class="login-box">
   <div class="login-logo">
-    <a href="../../index2.html"><b>Promobot</b>DB</a>
+    <a href="../../index2.html"><b>Promobot!!!</b>DB</a>
   </div>
   <!-- /.login-logo -->
   <div class="login-box-body">

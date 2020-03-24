@@ -1,5 +1,15 @@
 <?php 
 include 'include/class.inc.php';
+
+$current_month = date('m');
+    $current_year = date('y');
+    $tmp_date = "25.".$current_month.".".$current_year;
+
+    $order_date =  date('d.m.Y',strtotime("$tmp_date +1 month"));
+
+    $order_date = new DateTime($order_date);
+    $order_date = $order_date->format('d.m.Y');
+
 ?>
 <?php include 'template/head.html' ;
 
@@ -20,7 +30,7 @@ $order_responsible = $order['order_responsible'];
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
 	<div class="wrapper">
-		<? include 'template/header.html' ?>
+		<?php include 'template/header.html' ?>
 		<!-- Left side column. contains the logo and sidebar -->
 		<?php include 'template/sidebar.html';?>
 		<div class="content-wrapper">
@@ -91,7 +101,7 @@ $order_responsible = $order['order_responsible'];
 											                   ?>
 										</select>
 									</div>
-									
+                                    <p class="p-label">Добавить позицию</p>
 								    <div class="form-group input-group" id="pos">
                                       
                                       <input type="text" class="form-control" name="pos" id="search_pos" placeholder="Введите название позиции...">
@@ -127,12 +137,15 @@ $order_responsible = $order['order_responsible'];
                         
                         <td class="price">'.$value['price'] / $value['pos_count'].'</td> 
                         <td class="sum">'.$value['price'].'</td> 
-                        <td><div class="input-group date" style="width: 135px;"> 
-                          <div class="input-group-addon"> 
-                            <i class="fa fa-calendar"></i> 
-                          </div> 
-                          <span>00.00.0000</span><input type="text" class="form-control pull-right date_inp" style="position: relative; top: -20px;  text-align: center;" placeholder="00.00.0000" value=""> 
-                        </div></td> 
+                        <td>
+                            <div class="input-group date" style="width: 135px;"> 
+                                <div class="input-group-addon"> 
+                                    <i class="fa fa-calendar"></i> 
+                                </div> 
+                                <span style="position: absolute;">'.$order_date.'</span>
+                                <input type="text" class="form-control pull-right date_inp" style="position: relative; text-align: center;" placeholder="'.$order_date.'" value="'.$order_date.'"> 
+                            </div>
+                        </td> 
                         <td><i class="fa fa-2x fa-remove" style="cursor: pointer;"></i></td> 
                         </tr>
                         ';
@@ -280,7 +293,7 @@ var category1 = "---";
                           <div class="input-group-addon"> \
                             <i class="fa fa-calendar"></i> \
                           </div> \
-                          <span>00.00.0000</span><input type="text" class="form-control pull-right date_inp" style="position: relative; top: -20px;  text-align: center;" placeholder="00.00.0000"> \
+                          <span style="position: absolute;"><?php echo $order_date; ?></span><input type="text" class="form-control pull-right date_inp" style="position: relative; text-align: center;" placeholder="<?php echo $order_date; ?>" value="<?php echo $order_date; ?>"> \
                         </div></td> \
                         <td><i class="fa fa-2x fa-remove" style="cursor: pointer;"></i></td> \
                         </tr>');

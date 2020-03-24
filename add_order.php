@@ -25,7 +25,7 @@ $current_month = date('m');
 </style>
 <body class="hold-transition skin-blue sidebar-mini">
 	<div class="wrapper">
-		<? include 'template/header.html' ?>
+		<?php include 'template/header.html' ?>
 		<!-- Left side column. contains the logo and sidebar -->
 		<?php include 'template/sidebar.html';?>
 		<div class="content-wrapper">
@@ -46,7 +46,7 @@ $current_month = date('m');
 								     <div class="form-group">
                                       <label>Версия робота</label>
                                       <select class="form-control" name="version" id="version" required="required">
-                                          <?
+                                          <?php
 
                                           $versions = $position->get_equipment();
 
@@ -99,7 +99,7 @@ $current_month = date('m');
 											                   ?>
 										</select>
 									</div>
-									
+                                    <p class="p-label">Добавить позицию</p>
 								    <div class="form-group input-group" id="pos">
                                       
                                       <input type="text" class="form-control" name="pos" id="search_pos" placeholder="Введите название позиции...">
@@ -358,7 +358,7 @@ var category1 = "---";
                           <div class="input-group-addon"> \
                             <i class="fa fa-calendar"></i> \
                           </div> \
-                          <span style="position: absolute;"><? echo $order_date; ?></span><input  type="text" class="form-control pull-right date_inp" style="position: relative;   text-align: center;" placeholder="<? echo $order_date; ?>" value="<? echo $order_date; ?>"> \
+                          <span style="position: absolute;"><?php echo $order_date; ?></span><input  type="text" class="form-control pull-right date_inp" style="position: relative;   text-align: center;" placeholder="<?php echo $order_date; ?>" value="<?php echo $order_date; ?>"> \
                         </div></td> \
                         <td><div id="icon_' + pos_info['id'] + '" class="btn_get_assembly"></div></td> \
                         <td><i class="fa fa-2x fa-remove" style="cursor: pointer;"></i></td> \

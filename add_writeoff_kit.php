@@ -10,7 +10,7 @@ include 'include/class.inc.php';
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
-    <? include 'template/header.html' ?>
+    <?php include 'template/header.html' ?>
     <!-- Left side column. contains the logo and sidebar -->
     <?php include 'template/sidebar.html';?>
     <div class="content-wrapper">
@@ -90,7 +90,7 @@ include 'include/class.inc.php';
                                         <th>Удаление</th>
                                     </tr>
 
-                                    <?
+                                    <?php
                                     if (isset($_GET['copy'])) {
                                         $id = $_GET['copy'];
 

@@ -38,11 +38,11 @@ include 'include/class.inc.php';
                 <!-- text input -->
                 <div class="form-group">
                   <label>Наименование</label>
-                  <input type="text" class="form-control" name="title" required="required" id="title" value="<? if(isset($_GET['title']))  echo $_GET['title']; ?>">
+                  <input type="text" class="form-control" name="title" required="required" id="title" value="<?php if(isset($_GET['title']))  echo $_GET['title']; ?>">
                 </div>
                 <div class="form-group">
                   <label>Описание</label>
-                  <input type="text" class="form-control" name="longtitle" id="longtitle" value="<? if(isset($_GET['longtitle']))  echo $_GET['longtitle']; ?>">
+                  <input type="text" class="form-control" name="longtitle" id="longtitle" value="<?php if(isset($_GET['longtitle']))  echo $_GET['longtitle']; ?>">
                 </div>
 
                 
@@ -100,7 +100,7 @@ include 'include/class.inc.php';
                 
                 <div class="form-group">
                   <label>Артикул</label>
-                  <?
+                  <?php
                   $gen_code = $position->generate_art();
                   $gen_code = $gen_code['max(id)'];
                   $cat = "";
@@ -127,7 +127,7 @@ include 'include/class.inc.php';
                   
                   //print_r($gen_code);
                   ?>
-                  <input type="text" class="form-control" name="vendorcode"  id="vendorcode" value="<? echo $cat."-".$gen_code; ?>">
+                  <input type="text" class="form-control" name="vendorcode"  id="vendorcode" value="<?php echo $cat."-".$gen_code; ?>">
                 </div>
                 
                  <div class="form-group">
@@ -172,7 +172,7 @@ include 'include/class.inc.php';
                 
                 <div class="form-group">
                   <label>Стоимость</label>
-                  <input type="text" class="form-control" name="price" placeholder="0.00" id="price" value="<? if(isset($_GET['price']))  echo $_GET['price']; ?>">
+                  <input type="text" class="form-control" name="price" placeholder="0.00" id="price" value="<?php if(isset($_GET['price']))  echo $_GET['price']; ?>">
                 </div>
                 
                
@@ -282,7 +282,7 @@ include 'include/class.inc.php';
   .change(function () {
     var cat = $( "#category" ).val(); 
     var version = $( this ).val();
-    var max_id = <? echo $gen_code; ?>+1;
+    var max_id = <?php echo $gen_code; ?>+1;
     var cat_str=""
     
     switch (cat) {

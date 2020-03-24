@@ -34,7 +34,7 @@ class User {
         
     }
     
-    function get_users($group) {
+    function get_users($group=0) {
         
             if($group!=0) {
                 $where = "WHERE `group` = $group";

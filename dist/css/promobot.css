@@ -5027,6 +5027,11 @@ table.text-center th {
 .pad {
   padding: 10px;
 }
+.p-label {
+  margin: 0 0 5px 0;
+  font-weight: 700;
+  cursor: default;
+}
 .margin {
   margin: 10px;
 }

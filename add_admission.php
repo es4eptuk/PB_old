@@ -10,7 +10,7 @@ include 'include/class.inc.php';
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
 	<div class="wrapper">
-		<? include 'template/header.html' ?>
+		<?php include 'template/header.html' ?>
 		<!-- Left side column. contains the logo and sidebar -->
 		<?php include 'template/sidebar.html';?>
 		<div class="content-wrapper">
@@ -52,8 +52,8 @@ include 'include/class.inc.php';
 											</option>
 										</select>
 									</div>
-									
-								   <div class="form-group input-group" id="pos">
+                                    <p class="p-label">Добавить позицию</p>
+								    <div class="form-group input-group" id="pos">
                                       
                                       <input type="text" class="form-control" name="pos" id="search_pos" placeholder="Введите название позиции...">
                                       <span class="input-group-btn">

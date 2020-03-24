@@ -18,7 +18,7 @@ $writeoff_user_id = $writeoff1['update_user'];
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
 	<div class="wrapper">
-		<? include 'template/header.html' ?>
+		<?php include 'template/header.html' ?>
 		<!-- Left side column. contains the logo and sidebar -->
 		<?php include 'template/sidebar.html';?>
 		<div class="content-wrapper">
@@ -34,10 +34,10 @@ $writeoff_user_id = $writeoff1['update_user'];
 								<h3 class="box-title">Списание № <span id="writeoff_id"><?php echo $writeoff_id; ?></span></h3>
 							</div><!-- /.box-header -->
 							<div class="box-body">
-                                <b>Общая сумма списания:</b> <? echo number_format($writeoff_price, 2, ',', ' ') ; ?> <br><br>
+                                <b>Общая сумма списания:</b> <?php echo number_format($writeoff_price, 2, ',', ' ') ; ?> <br><br>
 							     <div class="form-group">
 										<label>Категория</label> <select class="form-control" id="category" name="category" required="required" >
-											<? $arr = ["Модернизация","Брак","Сервис","Производство","Разработка","Давальческие материалы","Возврат поставщику","Покраска/Покрытие","Не прокатило"];
+											<?php $arr = ["Модернизация","Брак","Сервис","Производство","Разработка","Давальческие материалы","Возврат поставщику","Покраска/Покрытие","Не прокатило"];
 											foreach ($arr as &$value) {
                                                if ($writeoff_category == $value) {
                                                    echo '<option value="'.$value.'" selected>'.$value.'</option>';
@@ -52,11 +52,11 @@ $writeoff_user_id = $writeoff1['update_user'];
 							   
 							   	    <div class="form-group">
 										<label>Описание</label> 
-										 <input type="text" class="form-control" name="description" required="required" id="description" value="<? echo $writeoff_description; ?> ">
+										 <input type="text" class="form-control" name="description" required="required" id="description" value="<?php echo $writeoff_description; ?> ">
 									</div>
 									
-									<div class="print"><b>Категория: </b><? echo $writeoff_category;?></div>
-									<div class="print"><b>Описание: </b><? echo $writeoff_description;?></div>
+									<div class="print"><b>Категория: </b><?php echo $writeoff_category;?></div>
+									<div class="print"><b>Описание: </b><?php echo $writeoff_description;?></div>
 							   
 									<table class="table table-hover" id="listPos">
                                     <tbody><tr>
@@ -94,7 +94,7 @@ $writeoff_user_id = $writeoff1['update_user'];
                                     </table>
 									
 							
-							<? 
+							<?php 
 							if ($userdata['user_id'] == 35 || $userdata['user_id'] == 14) {
 							    echo '
 							    
@@ -237,7 +237,7 @@ $("#listPos").on("click", ".fa-remove", function() {
      var id = $(this).attr('id');
       $.post("./api.php", {
  			action: "del_pos_writeoff",
- 			id: <? echo $writeoff_id; ?>,
+ 			id: <?php echo $writeoff_id; ?>,
  			pos_id: id,
  			count: count,
  		}).done(function(data) {
@@ -253,7 +253,7 @@ $("#listPos").on("click", ".fa-remove", function() {
   function save_close() {
     $(this).prop('disabled', true);
     var id =  $("#writeoff_id").text();
-    var title =  "<? echo  $writeoff_category; ?>";
+    var title =  "<?php echo  $writeoff_category; ?>";
     var description =  $("#description").val();
    
     var TableArray = [];

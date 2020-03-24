@@ -10,7 +10,7 @@ include 'include/class.inc.php';
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
 	<div class="wrapper">
-		<? include 'template/header.html' ?>
+		<?php include 'template/header.html' ?>
 		<!-- Left side column. contains the logo and sidebar -->
 		<?php include 'template/sidebar.html';?>
 		<div class="content-wrapper">
@@ -71,7 +71,7 @@ include 'include/class.inc.php';
                                       <label>Описание</label>
                                       <textarea class="form-control" rows="3" placeholder="Укажите уточнение к списанию ..." id="description"></textarea>
                                     </div>
-									
+                                    <p class="p-label">Добавить позицию</p>
 								    <div class="form-group input-group" id="pos">
                                       
                                       <input type="text" class="form-control" name="pos" id="search_pos" placeholder="Введите название позиции...">
@@ -90,7 +90,7 @@ include 'include/class.inc.php';
                                       <th>Удаление</th>
                                     </tr>
                                    
-                                    <? 
+                                    <?php 
                                     if (isset($_GET['copy'])) {
                                         $id = $_GET['copy'];
                                         
@@ -103,11 +103,12 @@ include 'include/class.inc.php';
                                   
                                 echo '   
                                     <tr> 
-                                    <td>'.$value['id'].'</td>
+
                                     <td>'.$value['pos_id'].'</td>
                                     <td>'.$vendor_code.'</td> 
                                     <td>'.$title.'</td> 
-                                    <td class="quant"><span style="display: none;">'.$value['pos_count'].'</span><input type="text" class="form-control quant_inp"  style="position: relative; height: 20px; width: 55px; text-align: center;" placeholder="'.$value['pos_count'].'" value="'.$value['pos_count'].'"></td> 
+                                    <td class="quant"><span style="display: none;">'.$value['pos_count'].'</span><input type="text" class="form-control quant_inp"  style="position: relative; height: 20px; width: 55px; text-align: center;" placeholder="'.$value['pos_count'].'" value="'.$value['pos_count'].'"></td>
+                                    <td>'.$value['pos_price'].'</td>  
                                     <td><i class="fa fa-2x fa-remove" style="cursor: pointer;" id="'.$value['pos_id'].'" data-target="'.$value['pos_count'].'"></i></td> 
                                     </tr>
                         ';

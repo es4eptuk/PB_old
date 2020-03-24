@@ -21,7 +21,7 @@ $order_date = $order_date->format('d.m.Y');
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
 	<div class="wrapper">
-		<? include 'template/header.html' ?>
+		<?php include 'template/header.html' ?>
 		<!-- Left side column. contains the logo and sidebar -->
 		<?php include 'template/sidebar.html';?>
 		<div class="content-wrapper">
@@ -44,7 +44,7 @@ $order_date = $order_date->format('d.m.Y');
                                       <label>Версия робота</label>
                                       <select class="form-control" name="version" id="version" required="required">
                                           
-                                          <?
+                                          <?php
 
 
                                           $versions = $position->get_equipment();
@@ -120,8 +120,8 @@ $order_date = $order_date->format('d.m.Y');
 										</select>
 									
 									</div>
-										<div class="print"><b>Контрагент: </b><? echo $order_provider;?></div>
-										<div class="print"><b>Срок поставки: </b><? echo $order_date;?></div>
+										<div class="print"><b>Контрагент: </b><?php echo $order_provider;?></div>
+										<div class="print"><b>Срок поставки: </b><?php echo $order_date;?></div>
 									<div class="form-group">
 										<label>Статус </label> <select class="form-control" id="status" name="status" required="required">
 											<option>
@@ -183,10 +183,10 @@ $order_date = $order_date->format('d.m.Y');
 											                   ?>
 										</select>
 									</div>
-									
-									 
+
+                                    <p class="p-label">Добавить позицию</p>
 								    <div class="form-group input-group" id="pos">
-								        <label>Добавить позицию</label>
+
                                       <input type="text" class="form-control" name="pos" id="search_pos" placeholder="Введите название позиции...">
                                       <span class="input-group-btn">
                                           <button type="button" class="btn btn-info btn-flat" id="add">+</button>
@@ -378,6 +378,7 @@ var category1 = "---";
                         <td>'+pos_info['vendor_code']+'</td> \
                         <td>'+pos_info['title']+'</td> \
   <td class="quant"><span>1</span><input type="text" class="form-control quant_inp"  style="position: relative; top: -20px; width: 55px; text-align: center;" placeholder="1"></td> \
+  <td class="finish">0</td> \
   <td>0</td> \
   <td class="price">'+pos_info['price']+'</td> \
   <td class="sum">'+pos_info['price']+'</td> \
@@ -385,9 +386,9 @@ var category1 = "---";
   <div class="input-group-addon"> \
   <i class="fa fa-calendar"></i> \
   </div> \
-  <span>00.00.0000</span><input type="text" class="form-control pull-right date_inp" style="position: relative; top: -20px;  text-align: center;" placeholder="00.00.0000"> \
+  <span style="position: absolute;"><?php echo $order_date; ?></span><input type="text" class="form-control pull-right date_inp" style="position: relative; text-align: center;" placeholder="<?php echo $order_date; ?>" value="<?php echo $order_date; ?>"> \
   </div></td> \
-  <td><i class="fa fa-2x fa-remove" style="cursor: pointer;"></i></td> \
+  <td style="text-align: center;"><i class="fa fa-2x fa-remove" style="cursor: pointer;"></i></td> \
   </tr>');
       $('#search_pos').val("");
 
