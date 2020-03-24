@@ -1,4 +1,4 @@
-<?
+<?php
 error_reporting(E_ALL);
 ini_set('display_startup_errors', 1);
 ini_set('display_errors', '1');
@@ -24,9 +24,10 @@ $output = '';
             $pos_array[] = $line; 
             }
          
-        if (isset($pos_array)) {  
-            
+        if (isset($pos_array)) {
+
             foreach ($pos_array as $row) {
+                $row['title'] = trim($row['title']);
                 array_push($str_arr, "\"". $row['id'] ."::" . $row['vendor_code'] ."::" . $row['title'] . "\"");
             }
 
@@ -34,4 +35,3 @@ $output = '';
             echo $s;
         }
         
-        ?>

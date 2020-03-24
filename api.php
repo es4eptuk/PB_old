@@ -168,7 +168,7 @@ if (isset($_POST['action'])) {
         echo $position->add_assembly($_POST['json']);
     }
     if ($_POST['action'] == "add_kit") {
-        echo $position->add_kit($_POST['json']);
+        $position->add_kit($_POST['json']);
     }
     //Получение информации о заказе
     if ($_POST['action'] == "get_info_order") {

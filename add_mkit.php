@@ -1,4 +1,5 @@
 <?php
+
 include 'include/class.inc.php';
 
 $kit = $position->get_info_kit($_GET['parent']);
@@ -128,7 +129,7 @@ $kit_version = $kit['kit_version'];
 
                                     echo '   
                                     <tr id="tr_'.$value['id_row'].'"> 
-                        <td>'.$value['id_row'].'</td>
+                        <td>'.$value['id_pos'].'</td>
                         
                         <td>'.$vendor_code.'</td> 
                         <td>'.$title.'</td> 
@@ -216,7 +217,6 @@ $kit_version = $kit['kit_version'];
                     pos_info = jQuery.parseJSON (data1);
 
                     $('#listPos tr:first').after('<tr> \
-                        <td></td> \
                         <td>'+pos_info['id']+'</td> \
                         <td>'+pos_info['vendor_code']+'</td> \
                         <td>'+pos_info['title']+'</td> \
@@ -300,7 +300,7 @@ $kit_version = $kit['kit_version'];
                     json: JsonString
                 }).done(function(data) {
                     console.log(data);
-                   // window.location.href = "./kit.php";
+                    window.location.href = "./kit.php";
                 });
             }
 
