@@ -1,3 +1,9 @@
 # log telegram
 /log_telegram1.txt
 /log_telegram.txt
+
+# настройки бд
+/include/config.inc.php
+
+#
+/.htaccess
