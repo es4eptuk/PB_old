@@ -51,7 +51,7 @@ if(isset($_POST['submit']))
         print "Вы ввели неправильный логин/пароль";
     }
 }
-include 'template/head.html';
+include 'template/head.php';
 ?>
 
 

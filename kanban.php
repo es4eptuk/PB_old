@@ -178,14 +178,14 @@ foreach ($arr_tickets as &$ticket) {
 //print_r($inprocess);
 ?>
 
-<?php include 'template/head.html' ?>
+<?php include 'template/head.php' ?>
 
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
 
-    <?php include 'template/header.html' ?>
+    <?php include 'template/header.php' ?>
     <!-- Left side column. contains the logo and sidebar -->
-    <?php include 'template/sidebar.html'; ?>
+    <?php include 'template/sidebar.php'; ?>
 
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
@@ -208,14 +208,14 @@ foreach ($arr_tickets as &$ticket) {
                 <div class="box-body">
 
                     <div class="col-xs-6">
-                        <p class="lead">На сегодня <? echo date("d.m.Y"); ?></p>
+                        <p class="lead">На сегодня <?php echo date("d.m.Y"); ?></p>
 
                         <div class="table-responsive">
                             <table class="table">
                                 <tbody>
                                 <tr>
                                     <th style="width:50%">Созданных тикетов:</th>
-                                    <td><?
+                                    <td><?php
                                         if (!isset($ticketsToday))
                                             {echo 0;}
                                         else
@@ -225,18 +225,18 @@ foreach ($arr_tickets as &$ticket) {
                                 </tr>
                                 <tr>
                                     <th style="width:50%">Открытых тикетов:</th>
-                                    <td><? echo array_sum($inProcess); ?>
+                                    <td><?php echo array_sum($inProcess); ?>
                                     </td>
                                 </tr>
                                 <tr>
                                     <th>Проблемных роботов:</th>
-                                    <td class="dop"><? echo count($inProcess); ?> <i
+                                    <td class="dop"><?php echo count($inProcess); ?> <i
                                                 class="fa fa-fw fa-plus-circle pull-right text-green"
                                                 style="cursor: pointer;"></i>
                                         <div class="robots" style="display: none">
                                             <ul>
 
-                                                <?
+                                                <?php
                                                 $count = 0;
                                                 foreach ($inProcess as $key => $value) {
                                                     $robot_info = $robots->get_info_robot($key);
@@ -263,16 +263,16 @@ foreach ($arr_tickets as &$ticket) {
                                         </div>
                                     </td>
                                 </tr>
-<!--                                --><?//print_r($robot_info);?>
+<!--                                --><?php//print_r($robot_info);?>
 
                                 <tr>
                                     <th>В процессе решения:</th>
-                                    <td class="dop"><? echo $process_tickets; ?> <i
+                                    <td class="dop"><?php echo $process_tickets; ?> <i
                                                 class="fa fa-fw fa-plus-circle pull-right text-green"
                                                 style="cursor: pointer;"></i>
                                         <div class="robots" style="display: none">
                                             <ul>
-                                                <?
+                                                <?php
                                                 foreach ($process as $key => $value) {
                                                     $robot_info = $robots->get_info_robot($key);
                                                     $number = $robot_info['version'] . "." . $robot_info['number'];
@@ -285,12 +285,12 @@ foreach ($arr_tickets as &$ticket) {
                                 </tr>
                                 <tr>
                                     <th>Ожидают ремонта:</th>
-                                    <td class="dop"> <? echo $awaitingRepair_tickets; ?> <i
+                                    <td class="dop"> <?php echo $awaitingRepair_tickets; ?> <i
                                                 class="fa fa-fw fa-plus-circle pull-right text-green"
                                                 style="cursor: pointer;"></i>
                                         <div class="robots" style="display: none">
                                             <ul>
-                                                <?
+                                                <?php
                                                 //print_r($remont);
                                                 foreach ($awaitingRepair as $key => $value) {
                                                     $robot_info = $robots->get_info_robot($key);
@@ -311,12 +311,12 @@ foreach ($arr_tickets as &$ticket) {
                                 </tr>
                                 <tr>
                                     <th>Не назначенных</th>
-                                    <td class="dop"><? echo $unAssigned_tickets; ?> <i
+                                    <td class="dop"><?php echo $unAssigned_tickets; ?> <i
                                                 class="fa fa-fw fa-plus-circle pull-right text-green"
                                                 style="cursor: pointer;"></i>
                                         <div class="robots" style="display: none">
                                             <ul>
-                                                <?
+                                                <?php
                                                 //                              print_r($unAsighned);
                                                 //                              $count = 0;
                                                 foreach ($unAssigned as $key => $value) {
@@ -332,17 +332,17 @@ foreach ($arr_tickets as &$ticket) {
                                 </tr>
                                 <tr>
                                     <th>Назначенных Диме</th>
-                                    <td class="dop"><? echo $assign_Dima; ?>
+                                    <td class="dop"><?php echo $assign_Dima; ?>
                                     </td>
                                 </tr>
                                 <tr>
                                     <th>Назначенных Данилу</th>
-                                    <td class="dop"><? echo $assign_Danil; ?>
+                                    <td class="dop"><?php echo $assign_Danil; ?>
                                     </td>
                                 </tr>
                                 <tr>
                                     <th>Назначенных Эльдару</th>
-                                    <td class="dop"><? echo $assign_Eldar; ?>
+                                    <td class="dop"><?php echo $assign_Eldar; ?>
                                     </td>
                                 </tr>
                                 <tr>
@@ -352,7 +352,7 @@ foreach ($arr_tickets as &$ticket) {
                     </div>
                     <div class="col-xs-6">
                         <p class="lead">За вчера</p>
-                        <?
+                        <?php
                         $date_min = date("Y-m-d", strtotime("yesterday"));
                         $date_max = date("Y-m-d");
 
@@ -448,14 +448,14 @@ foreach ($arr_tickets as &$ticket) {
                                 <tbody>
                                 <tr>
                                     <th style="width:50%">Проблемных роботов:</th>
-                                    <td class="dop"><? echo $countNew24 . " (" . ($rNew < 0 ? '' : '+') . $rNew . ")";
+                                    <td class="dop"><?php echo $countNew24 . " (" . ($rNew < 0 ? '' : '+') . $rNew . ")";
                                         ?>
                                         <i class="fa fa-fw fa-plus-circle pull-right text-green"
                                            style="cursor: pointer;"></i>
                                         <div class="robots" style="display: none">
                                             <ul>
 
-                                                <?
+                                                <?php
                                                 $count = 0;
                                                 //print_r($remont);
                                                 foreach ($arr_new24_sort as $value) {
@@ -474,7 +474,7 @@ foreach ($arr_tickets as &$ticket) {
                                 <tr>
                                     <th style="width:50%">Исправленных роботов:</th>
                                     <td class="dop">
-                                        <?
+                                        <?php
                                             if (!isset($arrTicketRobotNoProblem))
                                             {$arrTicketRobotNoProblem = [];}
                                             else {echo count($arrTicketRobotNoProblem);}
@@ -483,7 +483,7 @@ foreach ($arr_tickets as &$ticket) {
                                               style="cursor: pointer;"></i>
                                         <div class="robots" style="display: none">
                                             <ul>
-                                                <?
+                                                <?php
                                                 //print_r($remont);
                                                 if (isset($arrTicketRobotNoProblem)) {
                                                     foreach ($arrTicketRobotNoProblem as $key => $value) {
@@ -512,7 +512,7 @@ foreach ($arr_tickets as &$ticket) {
                             <tr>
                                 <th style="width:50%">Исправленных роботов:</th>
                                 <td class="dop">
-                                    <?
+                                    <?php
                                         if (!isset($arrTicketRobotNoProblemToday))
                                         {$arrTicketRobotNoProblemToday = [];}
                                         else {echo count($arrTicketRobotNoProblemToday);}
@@ -523,7 +523,7 @@ foreach ($arr_tickets as &$ticket) {
                                           style="cursor: pointer;"></i>
                                     <div class="robots" style="display: none">
                                         <ul>
-                                            <?
+                                            <?php
                                             if (isset($arrTicketRobotNoProblemToday)) {
                                                 foreach ($arrTicketRobotNoProblemToday as $key => $value) {
                                                     echo "<li><a href='./robot_card.php?id=" . $key . "'>" . $value . "</a></li>";
@@ -588,7 +588,7 @@ foreach ($arr_tickets as &$ticket) {
                                 <label>Номер робота</label>
                                 <select class="form-control select3" style="width: 100%;" id="filter_robot">
                                     <option value="0">Выберите робота</option>
-                                    <?
+                                    <?php
 //                                    $arr_robots = $robots->get_robots();
 //                                    print_r2($inprocess_sort);
 
@@ -619,7 +619,7 @@ foreach ($arr_tickets as &$ticket) {
             <div class="row">
 
 
-                <?
+                <?php
                 $arr = $tickets->get_status(0);
                 if (isset($arr)) {
                     foreach ($arr as &$status) {
@@ -888,7 +888,7 @@ foreach ($arr_tickets as &$ticket) {
 </audio>
 
 <!-- ./wrapper -->
-<?php include "./template/scripts.html"; ?>
+<?php include 'template/scripts.php'; ?>
 <script src="../../bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
 <!-- Select2 -->
 <script src="../../bower_components/select2/dist/js/select2.full.min.js"></script>

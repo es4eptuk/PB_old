@@ -8,17 +8,18 @@ class Position
 
     function __construct()
     {
-        global $database_server, $database_user, $database_password, $dbase;
+        global $database_server, $database_user, $database_password, $dbase, $writeoff, $log;
         $dsn = "mysql:host=$database_server;dbname=$dbase;charset=utf8";
         $opt = [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
             PDO::ATTR_EMULATE_PREPARES => false,
+            PDO::MYSQL_ATTR_INIT_COMMAND => "SET sql_mode='';",
         ];
         $this->pdo = new PDO($dsn, $database_user, $database_password, $opt);
 
-        $this->writeoff = new Writeoff;
-        $this->log = new Log;
+        $this->writeoff = $writeoff; //new Writeoff;
+        $this->log = $log; //new Log;
     }
 
 
@@ -118,7 +119,7 @@ class Position
             return $pos_array;
     }
 
-    function get_pos_in_category($category, $subcategory = 0, $version = 0)
+    function get_pos_in_category($category, $subcategory = 0, $version = 0, $archive = 0)
     {
         $where = "";
         if ($subcategory != 0) {
@@ -127,14 +128,16 @@ class Position
         if ($version != 0) {
             $where .= " AND version = $version ";
         }
+        if ($archive == 0) {
+            $where .= " AND archive = 0 ";
+        }
         $query = "SELECT * FROM pos_items WHERE category='$category'" . $where;
         $result = $this->pdo->query($query);
         while ($line = $result->fetch()) {
             $pos_array[] = $line;
         }
 
-        if (isset($pos_array))
-            return $pos_array;
+        return (isset($pos_array)) ? $pos_array : [];
     }
     function get_name_subcategory($id)
     {
@@ -169,6 +172,7 @@ class Position
         if (isset($pos_array))
             return $pos_array['0'];
     }
+
     function get_info_pos($id)
     {
         $query = "SELECT * FROM pos_items WHERE id='$id'";
@@ -179,6 +183,7 @@ class Position
         if (isset($pos_array))
             return $pos_array['0'];
     }
+
     function add_pos($title, $longtitle, $category, $subcategory, $vendorcode, $provider, $price, $quant_robot, $quant_total)
     {
         $date    = date("Y-m-d H:i:s");
@@ -187,16 +192,16 @@ class Position
         $result = $this->pdo->query($query);
         
         if ($result) {
-             $this->log->add(__METHOD__,"Добавлена новая позиция $vendorcode $title");
+             $this->log->add(__METHOD__,"Добавлена новая позиция $vendorcode $title через перемещение");
         }
 
         return $result;
     }
-    function edit_pos($id, $title, $longtitle, $category, $subcategory, $vendorcode, $provider, $price, $quant_robot, $quant_total,$min_balance, $assembly, $summary)
+    function edit_pos($id, $title, $longtitle, $category, $subcategory, $vendorcode, $provider, $price, $quant_robot, $quant_total, $min_balance, $assembly, $summary, $archive)
     {
         $date    = date("Y-m-d H:i:s");
         $user_id = intval($_COOKIE['id']);
-        $query   = "UPDATE `pos_items` SET `title` = '$title', `longtitle` = '$longtitle',`category` = '$category',`subcategory` = '$subcategory', `provider` = '$provider', `price` = '$price',`quant_robot` = '$quant_robot', `total` = '$quant_total', `min_balance` = '$min_balance',`vendor_code` = '$vendorcode',`assembly` = '$assembly',`summary` = '$summary', `update_date` = '$date' , `update_user` = '$user_id' WHERE `pos_items`.`id` = $id;";
+        $query   = "UPDATE `pos_items` SET `title` = '$title', `longtitle` = '$longtitle', `category` = '$category', `subcategory` = '$subcategory', `provider` = '$provider', `price` = '$price', `quant_robot` = '$quant_robot', `total` = '$quant_total', `min_balance` = '$min_balance', `vendor_code` = '$vendorcode', `assembly` = '$assembly', `summary` = '$summary', `archive` = '$archive', `update_date` = '$date', `update_user` = '$user_id' WHERE `pos_items`.`id` = $id;";
         $result = $this->pdo->query($query);
         if ($result && $quant_total != 0) {
             $log_title      = "Редактирвоание информации о позиции";
@@ -334,9 +339,11 @@ class Position
         if (isset($pos_array))
             return $pos_array['0']['title'];
     }
+
     function generate_art()
     {
-        $query = "SELECT max(id) FROM `pos_items`";
+        //$query = "SELECT max(id) FROM `pos_items`";
+        $query = "SHOW TABLE STATUS LIKE 'pos_items'";
         $result = $this->pdo->query($query);
         while ($line = $result->fetch()) {
             $art_array = $line;
@@ -345,6 +352,7 @@ class Position
         if (isset($art_array))
             return $art_array;
     }
+
     function set_reserv($version)
     {
 
@@ -1030,6 +1038,7 @@ class Position
         if ($positive != 0) {
             $where .= " AND pos_kit_items.count>0";
         }
+
         $query = "SELECT pos_items.id, pos_items.title, pos_items.category, pos_items.vendor_code,SUM(pos_kit_items.count), pos_kit_items.version, pos_items.total, pos_items.subcategory, pos_items.provider, pos_items.price, pos_items.summary, pos_items.assembly , pos_items.min_balance FROM pos_kit_items JOIN pos_items ON pos_kit_items.id_pos = pos_items.id WHERE pos_kit_items.id_pos  > 0   AND pos_kit_items.delete = 0 $where GROUP BY pos_kit_items.id_pos ";
         $result = $this->pdo->query($query);
         while ($line = $result->fetch()) {
@@ -1054,9 +1063,47 @@ class Position
 
         return $result;
     }
-    
+
+    //Перемещение позиции с основного на удаленный склад
+    function to_warehouse($pos_id)
+    {
+        $pos = $this->get_info_pos($pos_id);
+        if (isset($pos)) {
+            $category = $pos['category'];
+            $subcategory = $pos['subcategory'];
+            $title = $pos['title'];
+            $vendorcode = $pos['vendor_code'];
+            $provider = $pos['provider'];
+            $price = $pos['price'];
+            $longtitle = $pos['longtitle'];
+            $version = $pos['version'];
+            $quant_robot = $pos['quant_robot'];
+            $total = $pos['total'];
+            $reserv = $pos['reserv'];
+            $assembly = $pos['assembly'];
+            $summary = $pos['summary'];
+            $apply = $pos['apply'];
+            $ow = $pos['ow'];
+            $min_balance = $pos['min_balance'];
+            $img = $pos['img'];
+            $archive = $pos['archive'];
+            $date = $pos['update_date'];
+            $user_id = $pos['update_user'];
+
+            $query   = "INSERT INTO `pos_items_warehouse` (`id`, `category`, `subcategory`,`title`, `vendor_code`, `provider`, `price`, `longtitle`, `version`, `quant_robot`, `total`, `reserv`, `assembly`, `summary`,`apply`, `ow`, `min_balance`, `img`, `archive`, `update_date`, `update_user` ) VALUES ('$pos_id', '$category', '$subcategory', '$title', '$vendorcode', '$provider', '$price', '$longtitle', '$version', '$quant_robot', '$total', '$reserv', '$assembly', '$summary', '$apply', '$ow', '$min_balance', '$img', '$archive', '$date', '$user_id')";
+            $result = $this->pdo->query($query);
+
+            if ($result) {
+                $this->del_pos($pos_id);
+                $this->log->add(__METHOD__,"Создана новая позиция на удаленном складе $vendorcode $title");
+                return true;
+            }
+        }
+
+        return null;
+    }
+
     function __destruct()
     {
     }
 }
-$position = new Position;

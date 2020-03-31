@@ -6,7 +6,7 @@ $assembly_id = $assembly['id_assembly'];
 $assembly_title = $assembly['title'];
 
 ?>
-<?php include 'template/head.html' ?>
+<?php include 'template/head.php' ?>
 
 <!DOCTYPE html>
 <html>
@@ -15,9 +15,9 @@ $assembly_title = $assembly['title'];
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
 	<div class="wrapper">
-		<? include 'template/header.html' ?>
+		<?php include 'template/header.php' ?>
 		<!-- Left side column. contains the logo and sidebar -->
-		<?php include 'template/sidebar.html';?>
+		<?php include 'template/sidebar.php';?>
 		<div class="content-wrapper">
 			<!-- Content Header (Page header) -->
 			<section class="content-header">
@@ -35,7 +35,7 @@ $assembly_title = $assembly['title'];
 									
 									<div class="form-group">
 										<label>Название</label> 
-										 <input type="text" class="form-control" name="title" required="required" id="title" value="<? echo $assembly_title; ?> ">
+										 <input type="text" class="form-control" name="title" required="required" id="title" value="<?php echo $assembly_title; ?> ">
 									</div>
 									
 									
@@ -100,7 +100,7 @@ $assembly_title = $assembly['title'];
 		<div class="control-sidebar-bg"></div>
 	</div><!-- ./wrapper -->
 	<!-- Modal -->
-	<?php include './template/scripts.html'; ?>
+	<?php include 'template/scripts.php'; ?>
 	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 
@@ -197,7 +197,7 @@ $("#listPos").on("keyup", ".quant_inp", function() {
      var id = $(this).attr('id');
       $.post("./api.php", {
  			action: "del_pos_assembly",
- 			id: <? echo $assembly_id; ?>,
+ 			id: <?php echo $assembly_id; ?>,
  			id_row: id
  		}).done(function(data) {
  			

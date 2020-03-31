@@ -11,7 +11,7 @@ class Checks
     function __construct()
     {
 
-        global $database_server, $database_user, $database_password, $dbase;
+        global $database_server, $database_user, $database_password, $dbase, $telegramAPI, $robots, $position, $mail;
         $dsn = "mysql:host=$database_server;dbname=$dbase;charset=utf8";
         $opt = [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
@@ -20,10 +20,10 @@ class Checks
         ];
         $this->pdo = new PDO($dsn, $database_user, $database_password, $opt);
 
-        $this->telegram = new TelegramAPI;
-        $this->robot    = new Robots;
-        $this->sklad    = new Position;
-        $this -> mail = new Mail;
+        $this->telegram = $telegramAPI; //new TelegramAPI;
+        $this->robot = $robots; //new Robots;
+        $this->sklad = $position; //new Position;
+        $this->mail = $mail; //new Mail;
         //$this -> robot = new Robots;
     }
     function get_checks_in_cat($category, $version = 4)
@@ -574,4 +574,3 @@ class Checks
         //mysql_close($this ->link_check);
     }
 }
-$checks = new Checks;

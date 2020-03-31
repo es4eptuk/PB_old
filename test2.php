@@ -1,4 +1,4 @@
-<?
+<?php
 include 'include/class.inc.php';
 $query = "SELECT * FROM `check_items`";
  $result = mysql_query($query) or die('Запрос не удался: ' . mysql_error());

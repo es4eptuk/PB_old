@@ -1,4 +1,4 @@
-<?
+<?php
 include 'include/class.inc.php';
 
 //$position->set_writeoff(4,'0000');

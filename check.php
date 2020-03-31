@@ -15,14 +15,14 @@ $category_id = $_GET['category'];
 
 ?>
 
-<?php include 'template/head.html' ?>
+<?php include 'template/head.php' ?>
 
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
 
- <?php include 'template/header.html' ?>
+ <?php include 'template/header.php' ?>
   <!-- Left side column. contains the logo and sidebar -->
-  <?php include 'template/sidebar.html';?>
+  <?php include 'template/sidebar.php';?>
 
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
@@ -48,7 +48,7 @@ $category_id = $_GET['category'];
             <!-- /.box-header -->
             <div class="box-body table-responsive">
                 
-                <? 
+                <?php 
                 $arr = $checks->get_checks_on_robot($_GET['category'],$robot_id);
                 $arr_option = $checks->get_checks_on_robot_option($_GET['category'],$robot_id);
                // print_r($arr_option);
@@ -147,7 +147,7 @@ $category_id = $_GET['category'];
                
                </table> <br><br>
                
-               <? 
+               <?php 
                
                 if (isset($table)) {
                
@@ -391,7 +391,7 @@ $('.comment').submit(function(){
     }
     
     var robot =  <?php echo $robot_id; ?>;
-    var remont = <? echo $robot_remont; ?>;
+    var remont = <?php echo $robot_remont; ?>;
 
       $.post( "./api.php", { 
         action: "add_check_on_robot", 

@@ -1,4 +1,4 @@
-<?
+<?php
 
 $key = "2ecc021a785866a9f027a14fd849a64d";
 $token = "af08f69820b3ec1eb3942fa859f949300dd15b72681d235983446a89ce8bbb7c";

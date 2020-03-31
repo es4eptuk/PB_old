@@ -37,4 +37,3 @@ class Settings
         // mysql_close($this ->link_order);
     }
 }
-$settings = new Settings;

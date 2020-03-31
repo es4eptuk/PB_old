@@ -1,12 +1,12 @@
 
-<?php include 'template/head.html' ?>
+<?php include 'template/head.php' ?>
 
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
 
-  <?php include 'template/header.html' ?>
+  <?php include 'template/header.php' ?>
   <!-- Left side column. contains the logo and sidebar -->
-  <?php include 'template/sidebar.html';?>
+  <?php include 'template/sidebar.php';?>
 
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">

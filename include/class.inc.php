@@ -4,22 +4,42 @@ ini_set('display_startup_errors', 1);
 ini_set('display_errors', '1');
 
 
-include 'include/config.inc.php';
-include 'page/log.php';
-include 'page/telegram.php';
-include 'page/mail.php';
-include 'page/orders.php';
-include 'page/writeoff.php';
-include 'page/position.php';
-include 'page/users.php';
-include 'page/admissions.php';
-include 'page/robots.php';
-include 'page/checks.php';
-include 'page/task.php';
-include 'page/tickets.php';
-include 'page/plan.php';
-include 'page/1c.php';
-include 'page/settings.php';
+include_once ('include/config.inc.php');
+include_once ('page/log.php');
+include_once ('page/telegram.php');
+include_once ('page/mail.php');
+include_once ('page/orders.php');
+include_once ('page/writeoff.php');
+include_once ('page/position.php');
+include_once ('page/position_warehouse.php');
+include_once ('page/users.php');
+include_once ('page/admissions.php');
+include_once ('page/robots.php');
+include_once ('page/checks.php');
+include_once ('page/task.php');
+include_once ('page/tickets.php');
+include_once ('page/plan.php');
+include_once ('page/1c.php');
+include_once ('page/settings.php');
+
+
+$log = new Log();
+$telegramAPI = new TelegramAPI();
+$mail = new Mail();
+$orders = new Orders();
+$writeoff = new Writeoff();
+$position = new Position();
+$position_warehouse = new PositionWarehouse();
+$user = new User();
+$admission = new Admissions();
+$robots = new Robots();
+$checks = new Checks();
+$task = new Task();
+$tickets = new Tickets();
+$plan = new Plan();
+$oneC = new OneC();
+$settings = new Settings();
+
 
 $i = $_SERVER['REQUEST_URI'];
 //echo $i;

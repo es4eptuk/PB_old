@@ -7,7 +7,7 @@ $option_title = $option['title'];
 $option_kit = $option['id_kit'];
 
 ?>
-<?php include 'template/head.html' ?>
+<?php include 'template/head.php' ?>
 
 <!DOCTYPE html>
 <html>
@@ -16,9 +16,9 @@ $option_kit = $option['id_kit'];
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
 	<div class="wrapper">
-		<? include 'template/header.html' ?>
+		<?php include 'template/header.php' ?>
 		<!-- Left side column. contains the logo and sidebar -->
-		<?php include 'template/sidebar.html';?>
+		<?php include 'template/sidebar.php';?>
 		<div class="content-wrapper">
 			<!-- Content Header (Page header) -->
 			<section class="content-header">
@@ -36,7 +36,7 @@ $option_kit = $option['id_kit'];
 									
 									<div class="form-group">
 										<label>Название</label> 
-										 <input type="text" class="form-control" name="title" required="required" id="title" value="<? echo $option_title; ?> ">
+										 <input type="text" class="form-control" name="title" required="required" id="title" value="<?php echo $option_title; ?> ">
 									</div>
 									
 									
@@ -57,7 +57,7 @@ $option_kit = $option['id_kit'];
 		<div class="control-sidebar-bg"></div>
 	</div><!-- ./wrapper -->
 	<!-- Modal -->
-	<?php include './template/scripts.html'; ?>
+	<?php include 'template/scripts.php'; ?>
 	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 
@@ -154,7 +154,7 @@ $("#listPos").on("keyup", ".quant_inp", function() {
      var id = $(this).attr('id');
       $.post("./api.php", {
  			action: "del_pos_option",
- 			id: <? echo $option_id; ?>,
+ 			id: <?php echo $option_id; ?>,
  			id_row: id
  		}).done(function(data) {
  			

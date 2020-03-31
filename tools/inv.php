@@ -1,5 +1,5 @@
-<?
-include '/include/class.inc.php';
+<?php
+include '../include/class.inc.php';
 
 
 $query = "SELECT robots.id FROM `check` INNER JOIN robots ON check.robot = robots.id WHERE id_check != 105";

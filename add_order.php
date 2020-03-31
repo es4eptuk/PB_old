@@ -14,7 +14,7 @@ $current_month = date('m');
 
 
 ?>
-<?php include 'template/head.html' ?>
+<?php include 'template/head.php' ?>
 
 <style>
     .assembly {
@@ -25,9 +25,9 @@ $current_month = date('m');
 </style>
 <body class="hold-transition skin-blue sidebar-mini">
 	<div class="wrapper">
-		<?php include 'template/header.html' ?>
+		<?php include 'template/header.php' ?>
 		<!-- Left side column. contains the logo and sidebar -->
-		<?php include 'template/sidebar.html';?>
+		<?php include 'template/sidebar.php';?>
 		<div class="content-wrapper">
 			<!-- Content Header (Page header) -->
 			<section class="content-header">
@@ -177,7 +177,7 @@ $current_month = date('m');
 		</div>
 	</div>
 	
-		<div aria-hidden="true" aria-labelledby="assembly" class="modal fade" id="get_assembly" role="dialog" tabindex="-1">
+    <div aria-hidden="true" aria-labelledby="assembly" class="modal fade" id="get_assembly" role="dialog" tabindex="-1">
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -185,7 +185,7 @@ $current_month = date('m');
 				</div>
 				<div class="modal-body">
 					
-					<table class="table table-striped" id="table_assembly">
+				<table class="table table-striped" id="table_assembly">
                 <thead>
                 <tr>
                   <th style="width: 10px">Id</th>
@@ -198,10 +198,7 @@ $current_month = date('m');
                 </tr>
                </thead> 
                <tbody></tbody>
-                
-                
-                
-              </table>
+               </table>
 					
 					
 				</div>
@@ -213,13 +210,31 @@ $current_month = date('m');
 	</div>
 
 	
-	<?php include './template/scripts.html'; ?>
+	<?php include 'template/scripts.php'; ?>
 	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="./bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.js"></script>
+    <script src="./bower_components/bootstrap-datepicker/dist/locales/bootstrap-datepicker.ru.min.js"></script>
     <!-- Select2 -->
-    <script src="../../bower_components/select2/dist/js/select2.full.min.js"></script>
+    <script src="./bower_components/select2/dist/js/select2.full.min.js"></script>
+
 	<script>
-var arr_assembly = [];	
+
+    //datepicker
+    $(document).on('focus',".datepicker", function(){
+        $(this).datepicker({
+            format: 'dd.mm.yyyy',
+            language: 'ru-Ru',
+            autoclose: true
+        });
+    });
+
+    function textData(data) {
+        var val = data.val();
+        data.parent().find( "span" ).text(val);
+    }
+
+var arr_assembly = [];
 $(document).ready(function() { 	
     
 $('.select2').select2();    
@@ -230,8 +245,6 @@ var arr_pos = [];
 var pos_info = [];
 var category_data = [];
 var category1 = "---";
-
-
 
  $("#save_close").click(function() {
      $(this).last().addClass( "disabled" );
@@ -346,7 +359,12 @@ var category1 = "---";
                 });
 
             }
-            var price = pos_info['price'];
+            //var price = pos_info['price'];
+            var date = $('#listPos tr:eq(1) td:eq(6) input').val();
+            if (date === undefined) {
+                date =  '<?php echo $order_date; ?>';
+            }
+            //console.log(date);
             $('#listPos tr:last').after('<tr> \
                         <td>' + pos_info['id'] + '</td> \
                         <td>' + pos_info['vendor_code'] + '</td> \
@@ -358,7 +376,7 @@ var category1 = "---";
                           <div class="input-group-addon"> \
                             <i class="fa fa-calendar"></i> \
                           </div> \
-                          <span style="position: absolute;"><?php echo $order_date; ?></span><input  type="text" class="form-control pull-right date_inp" style="position: relative;   text-align: center;" placeholder="<?php echo $order_date; ?>" value="<?php echo $order_date; ?>"> \
+                          <span style="position: absolute;">' + date + '</span><input  type="text" class="form-control pull-right date_inp datepicker" style="position: relative;   text-align: center;" placeholder="' + date + '" value="' + date + '" onchange="textData($(this))"> \
                         </div></td> \
                         <td><div id="icon_' + pos_info['id'] + '" class="btn_get_assembly"></div></td> \
                         <td><i class="fa fa-2x fa-remove" style="cursor: pointer;"></i></td> \
@@ -378,10 +396,15 @@ var category1 = "---";
 
  
  
-$("#listPos").on("keyup", ".quant_inp, .date_inp", function() {
+$("#listPos").on("keyup", ".quant_inp", function() {
      var val = $( this ).val();
      $( this ).parent().find( "span" ).text(val);
    });
+
+//$(".date_inp").change(function() {
+//    var val = $( this ).val();
+//    $( this ).parent().find( "span" ).text(val);
+//});
    
    
  $("#listPos").on("click", ".btn_get_assembly", function() {
@@ -394,7 +417,7 @@ $("#listPos").on("keyup", ".quant_inp, .date_inp", function() {
                 var def = 0;
                 def =  element['real'] - element['count'];
                 if (def > 0) { def = 0;}
-                console.log(element['real']);
+                console.log(element['pos_id']);
                 var ordered = "";
                 var idd = element['pos_id'];
                 

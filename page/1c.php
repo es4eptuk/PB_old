@@ -357,4 +357,3 @@ class OneC
     {
     }
 }
-$oneC = new OneC;

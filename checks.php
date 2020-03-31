@@ -2,14 +2,14 @@
 include 'include/class.inc.php';
 ?>
 
-<?php include 'template/head.html' ?>
+<?php include 'template/head.php' ?>
 
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
 
- <?php include 'template/header.html' ?>
+ <?php include 'template/header.php' ?>
   <!-- Left side column. contains the logo and sidebar -->
-  <?php include 'template/sidebar.html';?>
+  <?php include 'template/sidebar.php';?>
 
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
@@ -44,7 +44,7 @@ include 'include/class.inc.php';
                       </button>
                       <ul class="dropdown-menu" role="menu">
 
-                          <?
+                          <?php
 
                           $versions = $position->get_equipment();
 
@@ -161,7 +161,7 @@ include 'include/class.inc.php';
                 <div class="form-group">
                   <label>Версия робота</label>
                   <select class="form-control" name="group" placeholder="Веберите версию" id="version" required="required">
-                      <?
+                      <?php
 
                       $versions = $position->get_equipment();
 
@@ -240,7 +240,7 @@ include 'include/class.inc.php';
              <div class="form-group">
                   <label>Версия робота</label>
                   <select class="form-control" name="version" placeholder="Веберите версию" id="version_edit" required="required">
-                      <?
+                      <?php
 
                       $versions = $position->get_equipment();
 
@@ -298,7 +298,7 @@ include 'include/class.inc.php';
 </div>
 
 
-<?php include "./template/scripts.html";?>
+<?php include 'template/scripts.php';?>
 
 <!-- page script -->
 <script>

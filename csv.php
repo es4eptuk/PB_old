@@ -1,4 +1,4 @@
-<?
+<?php
 include 'include/class.inc.php';
 
 

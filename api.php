@@ -1,5 +1,5 @@
 <?php
-include 'include/class.inc.php';
+include_once('include/class.inc.php');
 //echo $_POST['action'];
 if (isset($_POST['action'])) {
     if ($_POST['action'] == "orderDate") {
@@ -109,12 +109,20 @@ if (isset($_POST['action'])) {
     if ($_POST['action'] == "get_info_pos") {
         echo json_encode($position->get_info_pos($_POST['id']), JSON_UNESCAPED_UNICODE);
     }
+    //Получение информации о позиции с удаленного склада
+    if ($_POST['action'] == "get_info_pos_warehouse") {
+        echo json_encode($position_warehouse->get_info_pos($_POST['id']), JSON_UNESCAPED_UNICODE);
+    }
     if ($_POST['action'] == "get_info_check") {
         echo json_encode($checks->get_info_check($_POST['id']), JSON_UNESCAPED_UNICODE);
     }
     //Редактирование позиции
     if ($_POST['action'] == "edit_pos") {
-        echo json_encode($position->edit_pos($_POST['id'], $_POST['title'], $_POST['longtitle'], $_POST['category'], $_POST['subcategory'], $_POST['vendorcode'], $_POST['provider'], $_POST['price'], $_POST['quant_robot'], $_POST['quant_total'], $_POST['min_balance'], $_POST['assembly'], $_POST['summary'], $_POST['file']), JSON_UNESCAPED_UNICODE);
+        echo json_encode($position->edit_pos($_POST['id'], $_POST['title'], $_POST['longtitle'], $_POST['category'], $_POST['subcategory'], $_POST['vendorcode'], $_POST['provider'], $_POST['price'], $_POST['quant_robot'], $_POST['quant_total'], $_POST['min_balance'], $_POST['assembly'], $_POST['summary'], $_POST['archive'], $_POST['file']), JSON_UNESCAPED_UNICODE);
+    }
+    //Редактирование позиции с удаленного склада
+    if ($_POST['action'] == "edit_pos_warehouse") {
+        echo json_encode($position_warehouse->edit_pos($_POST['id'], $_POST['title'], $_POST['longtitle'], $_POST['category'], $_POST['subcategory'], $_POST['vendorcode'], $_POST['provider'], $_POST['price'], $_POST['quant_robot'], $_POST['quant_total'], $_POST['min_balance'], $_POST['assembly'], $_POST['summary'], $_POST['archive'], $_POST['file']), JSON_UNESCAPED_UNICODE);
     }
     //Редактирование контрагента
     if ($_POST['action'] == "edit_provider") {
@@ -123,6 +131,18 @@ if (isset($_POST['action'])) {
     //Удаление позиции
     if ($_POST['action'] == "delete_pos") {
         echo json_encode($position->del_pos($_POST['id']), JSON_UNESCAPED_UNICODE);
+    }
+    //Удаление позиции с удаленного склада
+    if ($_POST['action'] == "delete_pos_warehouse") {
+        echo json_encode($position_warehouse->del_pos($_POST['id']), JSON_UNESCAPED_UNICODE);
+    }
+    //Перемещение позиции с основного на удаленный склад
+    if ($_POST['action'] == "to_warehouse") {
+        echo json_encode($position->to_warehouse($_POST['id']), JSON_UNESCAPED_UNICODE);
+    }
+    //Перемещение позиции с удаленного на основной склад
+    if ($_POST['action'] == "from_warehouse") {
+        echo json_encode($position_warehouse->from_warehouse($_POST['id']), JSON_UNESCAPED_UNICODE);
     }
     //Удаление робота
     if ($_POST['action'] == "delete_robot") {

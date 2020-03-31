@@ -6,7 +6,7 @@ $robot_info = $robots->get_info_robot($robot_id);
 $robot_version = $robot_info['version'];
 $robot_number = $robot_info['number'];
 ?>
-<?php include 'template/head.html' ?>
+<?php include 'template/head.php' ?>
 
 <!DOCTYPE html>
 <html>
@@ -15,9 +15,9 @@ $robot_number = $robot_info['number'];
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
-    <? include 'template/header.html' ?>
+    <?php include 'template/header.php' ?>
     <!-- Left side column. contains the logo and sidebar -->
-    <?php include 'template/sidebar.html';?>
+    <?php include 'template/sidebar.php';?>
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
         <section class="content-header">
@@ -70,8 +70,8 @@ $robot_number = $robot_info['number'];
                             </table>
 
 
-                            <?
-                            if ($userdata['user_id'] == 35 || $userdata['user_id'] == 14) {
+                            <?php
+                            if ($userdata['user_id'] == 35 || $userdata['user_id'] == 14 || $userdata['user_id'] == 75 ) {
                                 echo '
 							    
 							    	<div class="box-footer">
@@ -96,7 +96,7 @@ $robot_number = $robot_info['number'];
     <div class="control-sidebar-bg"></div>
 </div><!-- ./wrapper -->
 <!-- Modal -->
-<?php include './template/scripts.html'; ?>
+<?php include 'template/scripts.php'; ?>
 <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 
@@ -213,7 +213,7 @@ $robot_number = $robot_info['number'];
             var id = $(this).attr('id');
             $.post("./api.php", {
                 action: "del_pos_writeoff",
-                id: <? echo $writeoff_id; ?>,
+                id: <?php echo $writeoff_id; ?>,
                 pos_id: id,
                 count: count,
             }).done(function(data) {
@@ -229,7 +229,7 @@ $robot_number = $robot_info['number'];
         function save_close() {
             $(this).prop('disabled', true);
             var id =  $("#writeoff_id").text();
-            var title =  "<? echo  $writeoff_category; ?>";
+            var title =  "<?php echo  $writeoff_category; ?>";
             var description =  $("#description").val();
 
             var TableArray = [];

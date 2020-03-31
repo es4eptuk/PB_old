@@ -6,7 +6,7 @@ class Orders
     private $log;
     function __construct()
     {
-        global $database_server, $database_user, $database_password, $dbase;
+        global $database_server, $database_user, $database_password, $dbase, $log;
         $dsn = "mysql:host=$database_server;dbname=$dbase;charset=utf8";
         $opt = [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
@@ -14,7 +14,8 @@ class Orders
             PDO::ATTR_EMULATE_PREPARES => false,
         ];
         $this->pdo = new PDO($dsn, $database_user, $database_password, $opt);
-        $this -> log = new Log;
+
+        $this->log = $log; //new Log;
         //$this -> robot = new Robots;
     }
     
@@ -25,18 +26,13 @@ class Orders
         $provider  = $order_arr['0']['1'];
         array_shift($order_arr);
         $sum = 0;
-        
-        
-        
+
         foreach ($order_arr as &$value) {
-            
-           
-            
-            
             $sum        = $sum + $value['5'];
             $date       = new DateTime($value['6']);
             $date_arr[] = $date->format('Y-m-d  H:i:s');
         }
+
         $max_date  = max($date_arr);
         $min_date  = min($date_arr);
         $datetime1 = new DateTime($max_date);
@@ -50,9 +46,9 @@ class Orders
         }
         $date    = date("Y-m-d H:i:s");
         $user_id = intval($_COOKIE['id']);
-        
-        
-        
+
+
+        $auto = intval($auto);
         $query   = "INSERT INTO `orders` (
             `order_id`, 
             `order_date`, 
@@ -90,10 +86,11 @@ class Orders
         $result = $this->pdo->query($query);
         $idd = $this->pdo->lastInsertId();
         
-         if ($result) {
+        if ($result) {
              $this->log->add(__METHOD__,"Добавлен новый заказ №$idd");
         }
-        
+
+        //в автомате создает файлы
         if ($auto) {
             $date_folder= date("m.d.y"); 
             
@@ -175,7 +172,8 @@ class Orders
             $objPHPExcel->getActiveSheet()->getStyle('A4:E4')->applyFromArray($styleArray);
 
         }
-        
+
+
         $cnt = 1;
         foreach ($order_arr as &$value) {
             $pos_id      = $value['0'];
@@ -194,7 +192,9 @@ class Orders
                 `pos_subcategory`, 
                 `pos_title`, 
                 `pos_vendorcode`,
-                `pos_count`, 
+                `pos_count`,
+                `pos_count_finish`,
+                `pos_return`,                 
                 `pos_price`,
                 `pos_date`) VALUES (
                     NULL, 
@@ -204,10 +204,14 @@ class Orders
                     '$subcategory', 
                     '$title', 
                     '$vendor_code', 
-                    '$count', 
+                    '$count',
+                    '0', 
+                    '0',                    
                     '$price', 
                     '$date_r');";
              $result = $this->pdo->query($query);
+
+             //только если авто
              if ($auto) {
                $count_row++;
                $objPHPExcel->getActiveSheet()->setCellValue("A".$count_row, $cnt);
@@ -228,20 +232,20 @@ class Orders
             $cnt++;
         }
         
-        
+
          if ($auto) {
-                         // Save Excel 2007 file
-              $objWriter = new PHPExcel_Writer_Excel2007($objPHPExcel);
-              //$objWriter->save(str_replace('.php', '.xlsx', __FILE__));
-              $objWriter->save($excel_name.".xlsx");
-              $zip->addFile($excel_name.".xlsx", "Заказ_".$idd."_".str_replace(' ', '_', $provider).".xlsx");
-              $zip->close();
-              //echo "orders/".$date_folder."/orders.zip";
+            // Save Excel 2007 file
+            $objWriter = new PHPExcel_Writer_Excel2007($objPHPExcel);
+            //$objWriter->save(str_replace('.php', '.xlsx', __FILE__));
+            $objWriter->save($excel_name.".xlsx");
+            $zip->addFile($excel_name.".xlsx", "Заказ_".$idd."_".str_replace(' ', '_', $provider).".xlsx");
+            $zip->close();
+            //echo "orders/".$date_folder."/orders.zip";
          } else {
-        // Освобождаем память от результата
-        //mysql_free_result($result);
-       
-        return $result;
+            // Освобождаем память от результата
+            //mysql_free_result($result);
+
+            return true;//$result;
          }
     }
     
@@ -332,6 +336,7 @@ class Orders
             $title       = $value['2'];
             $vendor_code = $value['1'];
             $count       = $value['3'];
+            $return       = $value['5'];
             $price       = $value['7'];
             $finish_pos  = $value['4'];
             $p_finish    = $p_finish + $count;
@@ -357,6 +362,7 @@ class Orders
                 `pos_vendorcode`,
                 `pos_count`, 
                 `pos_count_finish`,
+                `pos_return`,                
                 `pos_price`,
                 `pos_date`) VALUES (
                     NULL, 
@@ -368,6 +374,7 @@ class Orders
                     '$vendor_code', 
                     '$count', 
                     '$finish_pos',
+                    '$return',
                     '$price', 
                     '$date_r');";
             $result = $this->pdo->query($query);
@@ -412,7 +419,7 @@ class Orders
     
     function get_pos_in_order($id)
     {
-        $query = "SELECT pos_items.id, pos_items.vendor_code, pos_items.price, pos_items.title, orders_items.pos_count, orders_items.pos_date, orders_items.pos_count_finish, orders_items.pos_return   FROM orders_items JOIN pos_items ON orders_items.pos_id = pos_items.id WHERE order_id=$id";
+        $query = "SELECT pos_items.id, pos_items.vendor_code, pos_items.price, pos_items.title, pos_items.assembly, orders_items.pos_count, orders_items.pos_date, orders_items.pos_count_finish, orders_items.pos_return   FROM orders_items JOIN pos_items ON orders_items.pos_id = pos_items.id WHERE order_id=$id";
         $result = $this->pdo->query($query);
         while ($line = $result->fetch()) {
             if($line['pos_date'] == '0000-00-00 00:00:00'){
@@ -495,9 +502,10 @@ class Orders
     }
     
     
-      function orderDateStr($id) {
+    function orderDateStr($id) {
         $query = "SELECT * FROM `orders_items` WHERE `pos_id` = $id AND pos_count_finish<pos_count ORDER BY `orders_items`.`pos_date` ASC";
         $result = $this->pdo->query($query);
+
         while ($line = $result->fetch()) {
             $pos_array[] = $line;
         }
@@ -594,4 +602,3 @@ class Orders
         // mysql_close($this ->link_order);
     }
 }
-$orders = new Orders;

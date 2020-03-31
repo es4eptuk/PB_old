@@ -11,10 +11,11 @@ $current_month = date('m');
     $order_date = $order_date->format('d.m.Y');
 
 ?>
-<?php include 'template/head.html' ;
+<?php include 'template/head.php' ;
 
 $id = $_GET['id'];
 $order = $orders->get_info_order($id);
+$order_version = $order['version'];
 $order_category = $order['order_category'];
 $order_provider = $order['order_provider'];
 $order_status = $order['order_status'];
@@ -30,9 +31,9 @@ $order_responsible = $order['order_responsible'];
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
 	<div class="wrapper">
-		<?php include 'template/header.html' ?>
+		<?php include 'template/header.php' ?>
 		<!-- Left side column. contains the logo and sidebar -->
-		<?php include 'template/sidebar.html';?>
+		<?php include 'template/sidebar.php';?>
 		<div class="content-wrapper">
 			<!-- Content Header (Page header) -->
 			<section class="content-header">
@@ -47,35 +48,55 @@ $order_responsible = $order['order_responsible'];
 							</div><!-- /.box-header -->
 							<div class="box-body">
 								<form data-toggle="validator" id="add_pos" name="add_pos" role="form">
-									
+
+                                    <div class="form-group">
+                                        <label>Версия робота</label>
+                                        <select class="form-control" name="version" id="version" required="required">
+                                            <?php
+                                            $versions = $position->get_equipment();
+                                            foreach ($versions as &$version) {
+                                                if ( $version['id'] == $order_version ) {
+                                                    echo "
+                                                    <option value='".$version['id']."' selected>".$version['title']."</option>
+                                                    
+                                                    ";
+                                                } else {
+                                                    echo "
+                                                    <option value='".$version['id']."'>".$version['title']."</option>
+                                                    
+                                                    ";
+                                                }
+                                            }
+                                            ?>
+                                        </select>
+                                    </div>
+
 									<div class="form-group">
-										<label>Категория</label> <select class="form-control" id="category" name="category" required="required" >
+										<label>Категория</label>
+                                        <select class="form-control" id="category" name="category" required="required" >
 											<option value="0">
 												Веберите категорию...
-											</option><?php 
-											                   $arr = $position->get_pos_category();
-											                    
-											                    foreach ($arr as &$category) {
-											                       if ( $category['id'] == $order_category ) {
-											                          echo "
-											                       <option value='".$category['id']."' selected>".$category['title']."</option>
-											                       
-											                       ";  
-											                           
-											                       } else {
-											                       echo "
-											                       <option value='".$category['id']."'>".$category['title']."</option>
-											                       
-											                       ";
-											                    }
-											                    }
-											                   
-											                   
-											                   ?>
+											</option>
+                                            <?php
+                                            $arr = $position->get_pos_category();
+                                            foreach ($arr as &$category) {
+                                               if ( $category['id'] == $order_category ) {
+                                                    echo "
+                                                    <option value='".$category['id']."' selected>".$category['title']."</option>
+                                                    
+                                                    ";
+                                               } else {
+                                                    echo "
+                                                    <option value='".$category['id']."'>".$category['title']."</option>
+                                                    
+                                                    ";
+                                               }
+                                            }
+											?>
 										</select>
 									</div>
 								    <div class="form-group">
-										<label>Контрагент <small>(<a data-target="#add_provider" data-toggle="modal" href="#">Добавить</a>)</small></label> <select class="form-control" id="provider" name="provider" required="required">
+										<label>Контрагент <small>(<a data-target="#add_provider" data-toggle="modal" href="#">Добавить</a>)</small></label> <select class="form-control select2" id="provider" name="provider" required="required">
 											<option value="0">
 												Веберите контррагента...
 											</option><?php 
@@ -119,36 +140,45 @@ $order_responsible = $order['order_responsible'];
                                       <th>Цена</th>
                                       <th>Сумма</th>
                                       <th>Срок поставки</th>
+                                      <th></th>
                                       <th>Удаление</th>
                                     </tr>
                                    
                                    <?php 
                                     $arr_pos = $orders->get_pos_in_order($id);
-                                   //print_r (  $arr_pos);
+
                                 foreach ($arr_pos as &$value) { 
                                     $date = new DateTime($value['pos_date']);
                                     $pos_date = $date->format('d.m.Y');
+                                    /*if ($value['assembly'] != 0) {
+                                        $icon_get_assembly = '<i class="fa fa-check-circle text-green fa-2x" data-toggle="modal" data-target="#get_assembly"></i>';
+                                    } else {
+                                        $icon_get_assembly = '';
+                                    }*/
+                                    $icon_get_assembly = '';
+
                                 echo '   
                                     <tr> 
-                        <td>'.$value['id'].'</td> 
-                        <td>'.$value['vendor_code'].'</td> 
-                        <td>'.$value['title'].'</td> 
-                        <td class="quant"><span>0</span><input type="text" class="form-control quant_inp"  style="position: relative; top: -20px; width: 55px; text-align: center;" placeholder="0" value="0"></td>  
-                        
-                        <td class="price">'.$value['price'] / $value['pos_count'].'</td> 
-                        <td class="sum">'.$value['price'].'</td> 
-                        <td>
-                            <div class="input-group date" style="width: 135px;"> 
-                                <div class="input-group-addon"> 
-                                    <i class="fa fa-calendar"></i> 
-                                </div> 
-                                <span style="position: absolute;">'.$order_date.'</span>
-                                <input type="text" class="form-control pull-right date_inp" style="position: relative; text-align: center;" placeholder="'.$order_date.'" value="'.$order_date.'"> 
-                            </div>
-                        </td> 
-                        <td><i class="fa fa-2x fa-remove" style="cursor: pointer;"></i></td> 
-                        </tr>
-                        ';
+                                    <td>'.$value['id'].'</td> 
+                                    <td>'.$value['vendor_code'].'</td> 
+                                    <td>'.$value['title'].'</td> 
+                                    <td class="quant"><span>'.$value['pos_count'].'</span><input type="text" class="form-control quant_inp"  style="position: relative; top: -20px; width: 55px; text-align: center;" value="'.$value['pos_count'].'"></td>  
+                                    
+                                    <td class="price">'.$value['price'].'</td> 
+                                    <td class="sum">'.$value['price']*$value['pos_count'].'</td> 
+                                    <td>
+                                        <div class="input-group date" style="width: 135px;"> 
+                                            <div class="input-group-addon"> 
+                                                <i class="fa fa-calendar"></i> 
+                                            </div> 
+                                            <span style="position: absolute;">'.$order_date.'</span>
+                                            <input type="text" class="form-control pull-right date_inp datepicker" style="position: relative; text-align: center;" placeholder="'.$order_date.'" value="'.$order_date.'" onchange="textData($(this))"> 
+                                        </div>
+                                    </td>
+                                    <td><div id="icon_'.$value['id'].'" class="btn_get_assembly">'.$icon_get_assembly.'</div></td>
+                                    <td><i class="fa fa-2x fa-remove" style="cursor: pointer;"></i></td> 
+                                    </tr>
+                                    ';
                                 }
                                     
                                     ?>
@@ -207,209 +237,393 @@ $order_responsible = $order['order_responsible'];
 			</div>
 		</div>
 	</div>
-	<?php include './template/scripts.html'; ?>
+
+    <div aria-hidden="true" aria-labelledby="assembly" class="modal fade" id="get_assembly" role="dialog" tabindex="-1">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Просмотр сборки</h5><button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+
+                    <table class="table table-striped" id="table_assembly">
+                        <thead>
+                        <tr>
+                            <th style="width: 10px">Id</th>
+                            <th>Артикул</th>
+                            <th>Наименование</th>
+                            <th>Нужно</th>
+                            <th>Есть</th>
+                            <th>Дефицит</th>
+                            <th>Заказ</th>
+                        </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+
+
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-dismiss="modal" type="button">Закрыть</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+	<?php include 'template/scripts.php'; ?>
 	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="./bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.js"></script>
+    <script src="./bower_components/bootstrap-datepicker/dist/locales/bootstrap-datepicker.ru.min.js"></script>
+    <!-- Select2 -->
+    <script src="./bower_components/select2/dist/js/select2.full.min.js"></script>
 
-	<script>
-	
-$(document).ready(function() { 	
-var arr_str = [];
-var arr_ids = [];
-var arr_pos = [];
-var pos_info = [];
-var category_data = [];
-var category1 = "---";
- $("#save_close").click(function() {
- 	save_close();
- 	return false;
- });
- 
- $("#save_new").click(function() {
- 	save_new();
- 	return false;
- });
- 
- $("#btn_add_provider").click(function() {
- 	var type = $('#provider_type').val();
- 	var title = $('#provider_title').val();
- 	//alert("123");
- 	if (title != "") {
- 		$.post("./api.php", {
- 			action: "add_pos_provider",
- 			type: type,
- 			title: title
- 		}).done(function(data) {
- 			console.log(data);
- 			if (data == "false") {
- 				alert("Data Loaded: " + data);
- 				return false;
- 			} else {
- 				$('#provider').append("<option value='" + data + "' selected>" + title + "<\/option>");
- 				$('#add_provider').modal('hide');
- 				//return false;
- 			}
- 		});
- 	}
- });
- 
-  $("#search_pos").autocomplete({
-          source: "./tt.php?action=pos_search", // url-адрес
-          minLength: 2 // минимальное количество для совершения запроса
+    <script>
+
+    //datepicker
+    $(document).on('focus',".datepicker", function(){
+        $(this).datepicker({
+            format: 'dd.mm.yyyy',
+            language: 'ru-Ru',
+            autoclose: true
+        });
     });
- 
-   function set_category(data) {
-       category1 =  data;
-       
-       console.log(category1);
-    }
-    
-   function set_subcategory(data) {
-       subcategory1 =  data;
-    }
- 
-  $("#add").click(function() {
-        var str = $('#search_pos').val();
-        arr_str = str.split('::');
-        var id = arr_str[0];
-        var vendor_code = arr_str[1];
-        var title = arr_str[2];
-        var subcategory="";
-        $.post( "./api.php", { 
-                    action: "get_info_pos", 
-                    id: id
-                        } )
-                  .done(function( data1) {
-                     pos_info = jQuery.parseJSON (data1);
 
+    function textData(data) {
+        var val = data.val();
+        data.parent().find( "span" ).text(val);
+    }
+
+        var arr_assembly = [];
+        $(document).ready(function() {
+
+            $('.select2').select2();
+
+            var arr_str = [];
+            var arr_ids = [];
+            var arr_pos = [];
+            var pos_info = [];
+            var category_data = [];
+            var category1 = "---";
+
+            $("#save_close").click(function() {
+                $(this).last().addClass( "disabled" );
+                save_close();
+                return false;
+            });
+
+            $("#save_new").click(function() {
+                $(this).last().addClass( "disabled" );
+                save_new();
+                return false;
+            });
+
+            $("#btn_add_provider").click(function() {
+                var type = $('#provider_type').val();
+                var title = $('#provider_title').val();
+                //alert("123");
+                if (title != "") {
+                    $.post("./api.php", {
+                        action: "add_pos_provider",
+                        type: type,
+                        title: title
+                    }).done(function(data) {
+                        console.log(data);
+                        if (data == "false") {
+                            alert("Data Loaded: " + data);
+                            return false;
+                        } else {
+                            $('#provider').append("<option value='" + data + "' selected>" + title + "<\/option>");
+                            $('#add_provider').modal('hide');
+                            //return false;
+                        }
+                    });
+                }
+            });
+
+            $("#search_pos").autocomplete({
+                source: "./tt.php", // url-адрес
+                minLength: 2 // минимальное количество для совершения запроса
+            });
+
+            function set_category(data) {
+                category1 =  data;
+
+                console.log(category1);
+            }
+
+            function set_subcategory(data) {
+                subcategory1 =  data;
+            }
+
+            $("#add").click(function() {
+                var str = $('#search_pos').val();
+                arr_str = str.split('::');
+                var id = arr_str[0];
+                var vendor_code = arr_str[1];
+                var title = arr_str[2];
+
+                var subcategory = "";
+                var assembly = 0;
+                var out_assembly = "";
+                $.post("./api.php", {
+                    action: "get_info_pos",
+                    id: id
+                })
+                    .done(function(data1) {
+                        pos_info = jQuery.parseJSON(data1);
+                        assembly = pos_info['assembly'];
+                        if (assembly != 0) {
+                            $.post("./api.php", {
+                                action: "get_pos_in_assembly",
+                                id: assembly
+                            }).done(function(data) {
+
+                                posArr = jQuery.parseJSON(data);
+                                arr_assembly[id] = [];
+                                arr_assembly[id]['source'] = [];
+                                arr_assembly[id]['new'] = [];
+                                $("#icon_"+pos_info['id']).html("<i class='fa fa-check-circle text-green fa-2x' data-toggle='modal' data-target='#get_assembly'></i>");
+                                $.each(posArr, function(index, element) {
+
+                                    arr_assembly[id]['source'][index] = [];
+                                    arr_assembly[id]['source'][index]['pos_id'] = element["id_pos"];
+                                    arr_assembly[id]['source'][index]['vendor_code'] = element["vendor_code"];
+                                    arr_assembly[id]['source'][index]['title'] = element["title"];
+                                    arr_assembly[id]['source'][index]['count'] = element["count"];
+                                    arr_assembly[id]['source'][index]['total'] = parseInt(element["total"]);
+                                    arr_assembly[id]['source'][index]['reserv'] = parseInt(element["reserv"]);
+                                    arr_assembly[id]['source'][index]['real'] = arr_assembly[id]['source'][index]['total'] - arr_assembly[id]['source'][index]['reserv'];
+
+                                    arr_assembly[id]['new'][index] = [];
+                                    arr_assembly[id]['new'][index]['pos_id'] = element["id_pos"];
+                                    arr_assembly[id]['new'][index]['vendor_code'] = element["vendor_code"];
+                                    arr_assembly[id]['new'][index]['title'] = element["title"];
+                                    arr_assembly[id]['new'][index]['count'] = element["count"];
+                                    arr_assembly[id]['new'][index]['total'] = parseInt(element["total"]);
+                                    arr_assembly[id]['new'][index]['reserv'] = parseInt(element["reserv"]);
+                                    arr_assembly[id]['new'][index]['real'] = arr_assembly[id]['source'][index]['total'] - arr_assembly[id]['source'][index]['reserv'];
+
+
+
+                                    if (arr_assembly[id]['new'][index]['real'] < arr_assembly[id]['new'][index]['count']) {
+                                        $("#icon_"+pos_info['id']).html("<i class='fa fa-exclamation-circle text-red fa-2x' data-toggle='modal' data-target='#get_assembly' ></i>");
+                                    }
+
+
+
+
+                                });
+
+                                //console.log(arr_assembly);
+                            });
+
+                        }
+                        //var price = pos_info['price'];
+                        var date = $('#listPos tr:eq(1) td:eq(6) input').val();
+                        if (date === undefined) {
+                            date =  '<?php echo $order_date; ?>';
+                        }
                         $('#listPos tr:last').after('<tr> \
-                        <td>'+pos_info['id']+'</td> \
-                        <td>'+pos_info['vendor_code']+'</td> \
-                        <td>'+pos_info['title']+'</td> \
-                        <td class="quant"><span>1</span><input type="text" class="form-control quant_inp"  style="position: relative; top: -20px; width: 55px; text-align: center;" placeholder="1"></td> \
-                        <td class="price">'+pos_info['price']+'</td> \
-                        <td class="sum">'+pos_info['price']+'</td> \
+                        <td>' + pos_info['id'] + '</td> \
+                        <td>' + pos_info['vendor_code'] + '</td> \
+                        <td>' + pos_info['title'] + '</td> \
+                        <td class="quant"><span style="position: absolute;">1</span><input id="' + pos_info['id'] + '" type="text" class="form-control quant_inp"  style="position: relative;  width: 55px; text-align: center;" placeholder="1"></td> \
+                        <td class="price">' + pos_info['price'] + '</td> \
+                        <td class="sum">' + pos_info['price'] + '</td> \
                         <td><div class="input-group date" style="width: 135px;"> \
                           <div class="input-group-addon"> \
                             <i class="fa fa-calendar"></i> \
                           </div> \
-                          <span style="position: absolute;"><?php echo $order_date; ?></span><input type="text" class="form-control pull-right date_inp" style="position: relative; text-align: center;" placeholder="<?php echo $order_date; ?>" value="<?php echo $order_date; ?>"> \
+                          <span style="position: absolute;">' + date + '</span><input  type="text" class="form-control pull-right date_inp datepicker" style="position: relative;   text-align: center;" placeholder="' + date + '" value="' + date + '" onchange="textData($(this))"> \
                         </div></td> \
+                        <td><div id="icon_' + pos_info['id'] + '" class="btn_get_assembly"></div></td> \
                         <td><i class="fa fa-2x fa-remove" style="cursor: pointer;"></i></td> \
                         </tr>');
-                        $('#search_pos').val(""); 
-       
-                  });
-        
-        
-        //arr_ids.push([arr_str[0], arr_str[1]]);
-        
-        return false;  
-  });
- 
- $('#add_pos').validator();
- $('#add_provider_form').validator();
 
- 
- 
-$("#listPos").on("keyup", ".quant_inp, .date_inp", function() {
-     var val = $( this ).val();
-     $( this ).parent().find( "span" ).text(val);
-   });
-   
-$("#listPos").on("keyup", ".quant_inp", function() {
-     var price = $( this ).parent().parent().find( ".price" ).text();
-     var quant = $( this ).val();
-     var sum = price * quant;
-     
-     $( this ).parent().parent().find( ".sum" ).text(sum);
-   });   
+                        $('#search_pos').val("");
+                        //console.log(arr_assembly);
+                    });
+
+                //arr_ids.push([arr_str[0], arr_str[1]]);
+
+                return false;
+            });
+
+            $('#add_pos').validator();
+            $('#add_provider_form').validator();
 
 
-$("#listPos").on("click", ".fa-remove", function() {
 
-    $(this).parent().parent().fadeOut("normal", function() {
-        $(this).remove();
-    });
-   }); 
-   
- 
- 
- function save_close() {
-     var category =  $("#category").val();
-     var provider =  $("#provider").val();
-    var TableArray = [];
-        TableArray.push([$('#category').val(),$('#provider').val()]);
-        
-        $("#listPos tr").each(function() {
-            var arrayOfThisRow = [];
-            var tableData = $(this).find('td');
-            if (tableData.length > 0) {
-                tableData.each(function() { arrayOfThisRow.push($(this).text()); });
-                TableArray.push(arrayOfThisRow);
+            $("#listPos").on("keyup", ".quant_inp", function() {
+                var val = $( this ).val();
+                $( this ).parent().find( "span" ).text(val);
+            });
+            //$("#listPos").on("keyup", ".date_inp", function() {
+            //    var val = $( this ).val();
+            //    $( this ).parent().find( "span" ).text(val);
+            //});
+
+
+            $("#listPos").on("click", ".btn_get_assembly", function() {
+                var str = $(this).attr("id");
+                arr_str = str.split('_');
+                var id = arr_str[1];
+                $("#table_assembly > tbody").html("");
+                //console.log(arr_assembly[id]['new']);
+                //собрать массив отправкой запроса апи data
+
+
+
+
+                $.each(arr_assembly[id]['new'], function(index, element) {
+                    var def = 0;
+                    def =  element['real'] - element['count'];
+                    if (def > 0) { def = 0;}
+                    //console.log(element['real']);
+                    var ordered = "";
+                    var idd = element['pos_id'];
+
+                    $.post("./api.php", {
+                        action: "orderDate",
+                        id: idd
+                    }).done(function(data) {
+                        console.log(data);
+
+                        $('#table_assembly tbody').append('<tr> \
+                        <td>' + element['pos_id'] + '</td> \
+                        <td>' + element['vendor_code'] + '</td> \
+                        <td>' + element['title'] + '</td> \
+                        <td>' + element['count'] + '</td> \
+                        <td>' + element['real'] + '</td> \
+                        <td><b>' + Math.abs(def)  + '</b></td> \
+                        <td>' + data + '</td> \
+                        </tr>');
+
+
+                    });
+
+                });
+
+
+            });
+
+
+
+
+
+
+            $("#listPos").on("keyup", ".quant_inp", function() {
+                var price = $( this ).parent().parent().find( ".price" ).text();
+                var quant = $( this ).val();
+                var id = $( this ).attr("id");
+                if (quant=="") quant = 1;
+                var sum = price * quant;
+                sum = sum.toFixed(1)
+
+                if (arr_assembly[id] !== undefined) {
+                    $("#icon_"+id).html("<i class='fa fa-check-circle text-green fa-2x' data-toggle='modal' data-target='#get_assembly'></i>");
+                    $.each(arr_assembly[id]['source'], function(index, element) {
+                        arr_assembly[id]['new'][index]['count'] = element['count'] * quant;
+
+                        if (arr_assembly[id]['new'][index]['real'] < arr_assembly[id]['new'][index]['count']) {
+                            $("#icon_"+pos_info['id']).html("<i class='fa fa-exclamation-circle text-red fa-2x' data-toggle='modal' data-target='#get_assembly'></i>");
+                        }
+
+                    });
+                }
+
+                console.log(arr_assembly);
+                $( this ).parent().parent().find( ".sum" ).text(sum);
+            });
+
+
+            $("#listPos").on("click", ".fa-remove", function() {
+
+                $(this).parent().parent().fadeOut("normal", function() {
+                    $(this).remove();
+                });
+            });
+
+
+
+            function save_close() {
+                var category =  $("#category").val();
+                var provider =  $("#provider").val();
+                var version =  $("#version").val();
+                var TableArray = [];
+                TableArray.push([$('#category').val(),$('#provider').val()]);
+
+                $("#listPos tr").each(function() {
+                    var arrayOfThisRow = [];
+                    var tableData = $(this).find('td');
+                    if (tableData.length > 0) {
+                        tableData.each(function() { arrayOfThisRow.push($(this).text()); });
+                        TableArray.push(arrayOfThisRow);
+                    }
+                });
+
+
+
+
+                var JsonString = JSON.stringify(TableArray);
+                console.log(JsonString);
+
+                if (category!=0 && provider!=0)  {
+                    $.post("./api.php", {
+                        action: "add_order",
+                        json: JsonString,
+                        version: version
+                    }).done(function(data) {
+                        console.log(data);
+
+                        window.location.href = "./orders.php?id="+ category;
+                    });
+                }
+
+                return false;
             }
-        });
-         
-         
-        
-         
-       var JsonString = JSON.stringify(TableArray);  
-       console.log(JsonString);
-       
-       if (category!=0 && provider!=0)  {
-       	$.post("./api.php", {
- 			action: "add_order",
- 			json: JsonString
- 		}).done(function(data) {
- 			console.log(data);
- 			
- 			window.location.href = "./orders.php?id="+ category;
- 		});
-       }
-       
-       return false;
- }
 
- function save_new() {
-      var category =  $("#category").val();
-     var provider =  $("#provider").val();
-     
-     var TableArray = [];
-        TableArray.push([$('#category').val(),$('#provider').val()]);
-        
-        $("#listPos tr").each(function() {
-            var arrayOfThisRow = [];
-            var tableData = $(this).find('td');
-            if (tableData.length > 0) {
-                tableData.each(function() { arrayOfThisRow.push($(this).text()); });
-                TableArray.push(arrayOfThisRow);
+            function save_new() {
+                var category =  $("#category").val();
+                var provider =  $("#provider").val();
+
+                var TableArray = [];
+                TableArray.push([$('#category').val(),$('#provider').val()]);
+
+                $("#listPos tr").each(function() {
+                    var arrayOfThisRow = [];
+                    var tableData = $(this).find('td');
+                    if (tableData.length > 0) {
+                        tableData.each(function() { arrayOfThisRow.push($(this).text()); });
+                        TableArray.push(arrayOfThisRow);
+                    }
+                });
+
+
+
+
+                var JsonString = JSON.stringify(TableArray);
+                console.log(JsonString);
+
+                if (category!=0 && provider!=0)  {
+                    $.post("./api.php", {
+                        action: "add_order",
+                        json: JsonString
+                    }).done(function(data) {
+                        console.log(data);
+                        var category =  $("#category").val();
+
+                    });
+
+
+                    window.location.href = "./add_order.php";
+                    return false;
+                }
             }
+
         });
-         
-         
-        
-         
-       var JsonString = JSON.stringify(TableArray);  
-       console.log(JsonString);
-       
-        if (category!=0 && provider!=0)  {
-           	$.post("./api.php", {
-     			action: "add_order",
-     			json: JsonString
-     		}).done(function(data) {
-     			console.log(data);
-     			var category =  $("#category").val();
-     			
-     		});
-        
-       
-       window.location.href = "./add_order.php";
-       return false;
-        }
- }
 
-  });
-
-	</script>
+    </script>
 </body>
 </html>

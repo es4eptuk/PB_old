@@ -14,7 +14,7 @@ $current_month = date('m');
 
 
 ?>
-<?php include 'template/head.html' ?>
+<?php include 'template/head.php' ?>
 
 <style>
     .assembly {
@@ -25,9 +25,9 @@ $current_month = date('m');
 </style>
 <body class="hold-transition skin-blue sidebar-mini">
 	<div class="wrapper">
-		<? include 'template/header.html' ?>
+		<?php include 'template/header.php' ?>
 		<!-- Left side column. contains the logo and sidebar -->
-		<?php include 'template/sidebar.html';?>
+		<?php include 'template/sidebar.php';?>
 		<div class="content-wrapper">
 			<!-- Content Header (Page header) -->
 			<section class="content-header">
@@ -55,8 +55,8 @@ $current_month = date('m');
 									
 								
 								    <h2 id="title"></h2>
-								    <h4>Артикул: <span id="vendor_code"></span></h2>
-							     	<h4>На складе: <b id="total"></b></h2>
+								    <h4>Артикул: <span id="vendor_code"></span></h4>
+							     	<h4>На складе: <b id="total"></b></h4>
 							     	
 							     	<div class="form-group">
                                       <label>Новое количество</label>
@@ -84,7 +84,7 @@ $current_month = date('m');
 
 
 	
-	<?php include './template/scripts.html'; ?>
+	<?php include 'template/scripts.php'; ?>
 	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <!-- Select2 -->

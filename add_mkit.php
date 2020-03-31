@@ -8,7 +8,7 @@ $kit_title = $kit['kit_title'];
 $kit_category = $kit['kit_category'];
 $kit_version = $kit['kit_version'];
 ?>
-<?php include 'template/head.html' ?>
+<?php include 'template/head.php' ?>
 
 <!DOCTYPE html>
 <html>
@@ -17,7 +17,7 @@ $kit_version = $kit['kit_version'];
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
-    <? include 'template/header.html' ?>
+    <?php include 'template/header.php' ?>
 
     <style>
         @media print {
@@ -28,7 +28,7 @@ $kit_version = $kit['kit_version'];
 
     </style>
     <!-- Left side column. contains the logo and sidebar -->
-    <?php include 'template/sidebar.html';?>
+    <?php include 'template/sidebar.php';?>
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
         <section class="content-header">
@@ -46,7 +46,7 @@ $kit_version = $kit['kit_version'];
 
                             <div class="form-group">
                                 <label>Название</label>
-                                <input type="text" class="form-control" name="title" required="required" id="title" value="<? echo $kit_title." (модернизированный)"; ?> ">
+                                <input type="text" class="form-control" name="title" required="required" id="title" value="<?php echo $kit_title." (модернизированный)"; ?> ">
                             </div>
 
 
@@ -54,7 +54,7 @@ $kit_version = $kit['kit_version'];
                             <div class="form-group">
                                 <label>Версия робота</label>
                                 <select class="form-control" name="version" placeholder="Веберите версию" id="version" required="required">
-                                    <?
+                                    <?php
 
                                     $versions = $position->get_equipment();
 
@@ -160,7 +160,7 @@ $kit_version = $kit['kit_version'];
     <div class="control-sidebar-bg"></div>
 </div><!-- ./wrapper -->
 <!-- Modal -->
-<?php include './template/scripts.html'; ?>
+<?php include 'template/scripts.php'; ?>
 <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 
@@ -255,7 +255,7 @@ $kit_version = $kit['kit_version'];
             var id = $(this).attr('id');
             $.post("./api.php", {
                 action: "del_pos_kit",
-                id: <? echo $kit_id; ?>,
+                id: <?php echo $kit_id; ?>,
                 id_row: id
             }).done(function(data) {
                 $("#tr_"+id).remove();
@@ -274,7 +274,7 @@ $kit_version = $kit['kit_version'];
             var title =  $("#title").val();
             var category =  $("#category").val();
             var version =  $("#version").val();
-            var parent = <? echo  $kit_id; ?>;
+            var parent = <?php echo  $kit_id; ?>;
 
             var TableArray = [];
             TableArray.push([title,category,version,parent]);

@@ -37,4 +37,3 @@ class Log
     {
     }
 }
-$log = new Log;

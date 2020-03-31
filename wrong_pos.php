@@ -1,4 +1,4 @@
-<? 
+<?php 
 error_reporting(0); 
 include 'include/class.inc.php';
  $query = "SELECT * FROM pos_kit_items WHERE 1";

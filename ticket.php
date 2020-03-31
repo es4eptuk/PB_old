@@ -87,14 +87,14 @@ $robot_id= $robot_info['id'];
 
 ?>
 
-<?php include 'template/head.html' ?>
+<?php include 'template/head.php' ?>
 
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
 
- <?php include 'template/header.html' ?>
+ <?php include 'template/header.php' ?>
   <!-- Left side column. contains the logo and sidebar -->
-  <?php include 'template/sidebar.html';?>
+  <?php include 'template/sidebar.php';?>
 
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
@@ -117,7 +117,7 @@ $robot_id= $robot_info['id'];
           <div class="box box-widget">
             <div class="box-header with-border" >
            
-            <h3 class="box-title ticket_data" ><? echo $ticket_category.": ".$ticket_subcategory; ?></h3>
+            <h3 class="box-title ticket_data" ><?php echo $ticket_category.": ".$ticket_subcategory; ?></h3>
             <i class="fa fa-pencil pull-right" id="btn_edit_title"></i>
             
             <div class="row ticket_edit" >
@@ -195,19 +195,19 @@ $robot_id= $robot_info['id'];
             <div class="box-body" style="min-height: 240px;">
               <!-- post text -->
               
-             <p class="ticket_data"><? echo $ticket_description; ?></p> 
+             <p class="ticket_data"><?php echo $ticket_description; ?></p> 
              
-             Решение: <? echo $ticket_result; ?>
+             Решение: <?php echo $ticket_result; ?>
                  <div class="form-group ticket_edit">
                   <label>Описание</label>
-                  <textarea class="form-control" rows="3" placeholder="Enter ..." id="descriprion"><? echo $ticket_description; ?></textarea>
+                  <textarea class="form-control" rows="3" placeholder="Enter ..." id="descriprion"><?php echo $ticket_description; ?></textarea>
                   
                    <br>
                   <button type="submit" class="btn btn-info pull-right" id="ticket_save">Сохранить</button>
                 </div>
             
              
-             <? 
+             <?php 
              if ($ticket_status==3) {
                  
                  echo '<div class="alert alert-success alert-dismissible">
@@ -249,7 +249,7 @@ $robot_id= $robot_info['id'];
                 <label>Тикет</label>
                 <select class="form-control select2" style="width: 100%;" id="selectConnect">
                     <option></option>
-                     <?
+                     <?php
 
                      $arr = $tickets->get_tickets("$robot_id",0,0,"update_date","DESC",0,0,0,"P",0,1);
                   
@@ -270,7 +270,7 @@ $robot_id= $robot_info['id'];
               <!-- /.attachment-block -->
 
               <!-- Social sharing buttons -->
-              <? 
+              <?php 
               $arr_comments = $tickets->get_comments($ticket_id);
               if (!isset($arr_comments))
               {$arr_count_comments = 0;}
@@ -286,10 +286,10 @@ $robot_id= $robot_info['id'];
           <!-- Widget: user widget style 1 -->
           <div class="box box-widget widget-user-2">
             <!-- Add the bg color to the header using any of the bg-* classes -->
-            <div class="widget-user-header" style="background-color: <? echo $ticket_color ?>; color: <? echo $ticket_font ?>">
+            <div class="widget-user-header" style="background-color: <?php echo $ticket_color ?>; color: <?php echo $ticket_font ?>">
               <div class="widget-user-image">
                   
-                  <?
+                  <?php
                   if ($ticket_assign_img!='') {
                       
                       echo '<img class="img-circle" src="./img/avatar/'.$ticket_assign_img.'">';
@@ -299,7 +299,7 @@ $robot_id= $robot_info['id'];
                 
               </div>
               <!-- /.widget-user-image -->
-              <h3 class="widget-user-username"><? if ($ticket_assign!="")  { echo $ticket_assign; } else { echo "Не назначено";}?></h3>
+              <h3 class="widget-user-username"><?php if ($ticket_assign!="")  { echo $ticket_assign; } else { echo "Не назначено";}?></h3>
               
             </div>
             <div class="box-footer">
@@ -347,18 +347,18 @@ $robot_id= $robot_info['id'];
                 </div>
                 
               <ul class="nav nav-stacked">
-                <li><a href="#">Дата создания <span class="pull-right"><? echo $ticket_create->format('d.m.Y H:i:s'); ?></span></a></li>
-                <? if ($ticket_status==3 || $ticket_status ==6) {
+                <li><a href="#">Дата создания <span class="pull-right"><?php echo $ticket_create->format('d.m.Y H:i:s'); ?></span></a></li>
+                <?php if ($ticket_status==3 || $ticket_status ==6) {
                 echo ' <li><a href="#">Дата решения <span class="pull-right">'.$ticket_inwork->format('d.m.Y H:i:s').'</span></a></li>';
                 
                 }?>
                 
-                 <li><a href="#">Взято в работу <span class="pull-right"><? echo $ticket_assign_date->format('d.m.Y H:i:s'); ?></span></a></li>
+                 <li><a href="#">Взято в работу <span class="pull-right"><?php echo $ticket_assign_date->format('d.m.Y H:i:s'); ?></span></a></li>
                
                 
                 
-                <li><a href="#">Дата изменения <span class="pull-right"><? echo $ticket_update->format('d.m.Y H:i:s'); ?></span></a></li>
-                <? if ($ticket_info['finish_date']!='0000-00-00') {
+                <li><a href="#">Дата изменения <span class="pull-right"><?php echo $ticket_update->format('d.m.Y H:i:s'); ?></span></a></li>
+                <?php if ($ticket_info['finish_date']!='0000-00-00') {
                     $ticket_finish = new DateTime($ticket_info['finish_date']);
                     echo '<li><a href="#">Дата ремонта <span class="pull-right">'.$ticket_finish->format('d.m.Y').'</span></a></li>';
                 }
@@ -366,9 +366,9 @@ $robot_id= $robot_info['id'];
              
                 ?>
                 
-                <li><a href="#">Комментарии <span class="pull-right badge bg-aqua"><? echo $arr_count_comments ?></span></a></li>
+                <li><a href="#">Комментарии <span class="pull-right badge bg-aqua"><?php echo $arr_count_comments ?></span></a></li>
                 <li><a href="#">Вложения <span class="pull-right badge bg-green">0</span></a></li>
-                <li><a href="#">В работе<span class="pull-right badge bg-red"><? echo $ticket_work_str; ?></span></a></li>
+                <li><a href="#">В работе<span class="pull-right badge bg-red"><?php echo $ticket_work_str; ?></span></a></li>
               </ul>
             </div>
           </div>
@@ -399,7 +399,7 @@ $robot_id= $robot_info['id'];
                
                 <!-- /.direct-chat-msg -->
 
-                <? 
+                <?php 
                
                 
                 if (isset($arr_comments)) {
@@ -686,7 +686,7 @@ $( "#btn_edit_title" ).click(function() {
  
  $( "#btn_add_reuslt" ).click(function() {
      
-     var id = <? echo $ticket_id?>;
+     var id = <?php echo $ticket_id?>;
      var result = $('#result_description').val();
      
       $.post( "./api.php", { 
@@ -706,7 +706,7 @@ $( "#btn_edit_title" ).click(function() {
  
  $( "#btn_add_date" ).click(function() {
      
-     var id = <? echo $ticket_id?>;
+     var id = <?php echo $ticket_id?>;
      var date = $('#datepicker').val();
      
       $.post( "./api.php", { 
@@ -726,7 +726,7 @@ $( "#btn_edit_title" ).click(function() {
 
 $( "#ticket_status" )
   .change(function () {
-    var id = <? echo $ticket_id?>;
+    var id = <?php echo $ticket_id?>;
     var status = $('#ticket_status').val();
     var subcategory = $('#subcategory').val();
     var ticket_class_2 = $('#ticket_class_2').text(); 
@@ -755,7 +755,7 @@ $( "#ticket_status" )
                     action: "ticket_change_status", 
                     id: id,
                     status: status,
-                    workin: "<? echo $ticket_work->format('%Y-%m-%d %H:%i:%s');  ?>"
+                    workin: "<?php echo $ticket_work->format('%Y-%m-%d %H:%i:%s');  ?>"
                     
                 } )
           .done(function( data ) {
@@ -772,7 +772,7 @@ $( "#ticket_status" )
     
 $( "#ticket_assign" )
   .change(function () {
-    var id = <? echo $ticket_id?>;
+    var id = <?php echo $ticket_id?>;
     var assign = $('#ticket_assign').val();
     
      $.post( "./api.php", { 

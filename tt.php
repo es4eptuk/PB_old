@@ -17,7 +17,7 @@ $output = '';
         ];
         $pdo = new PDO($dsn, $database_user, $database_password, $opt);
 
-        $query = "SELECT id,title,vendor_code,assembly FROM pos_items WHERE (title LIKE '%$term%' OR vendor_code LIKE '%$term%')";
+        $query = "SELECT id,title,vendor_code,assembly FROM pos_items WHERE (title LIKE '%$term%' OR vendor_code LIKE '%$term%') AND (archive = 0)";
 
         $result = $pdo->query($query);
         while ($line = $result->fetch()) {

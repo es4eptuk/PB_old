@@ -10,7 +10,7 @@ class Robots
     function __construct()
     {
 
-        global $database_server, $database_user, $database_password, $dbase;
+        global $database_server, $database_user, $database_password, $dbase, $telegramAPI, $position;
         $dsn = "mysql:host=$database_server;dbname=$dbase;charset=utf8";
         $opt = [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
@@ -19,8 +19,8 @@ class Robots
         ];
         $this->pdo = new PDO($dsn, $database_user, $database_password, $opt);
 
-        $this->telegram = new TelegramAPI;
-        $this->sklad = new Position;
+        $this->telegram = $telegramAPI; //new TelegramAPI;
+        $this->sklad = $position; //new Position;
 
 
     }
@@ -655,5 +655,3 @@ class Robots
 
     }
 }
-
-$robots = new Robots;

@@ -2,15 +2,15 @@
 include 'include/class.inc.php';
 ?>
 
-<?php include 'template/head.html' ?>
+<?php include 'template/head.php' ?>
 
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
 
-<?php include 'template/header.html' ?>
+<?php include 'template/header.php' ?>
 
   <!-- Left side column. contains the logo and sidebar -->
-<?php include 'template/sidebar.html';?>
+<?php include 'template/sidebar.php';?>
 
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
@@ -102,7 +102,7 @@ include 'include/class.inc.php';
                   <label>Артикул</label>
                   <?php
                   $gen_code = $position->generate_art();
-                  $gen_code = $gen_code['max(id)'];
+                  $gen_code = $gen_code['Auto_increment']; //$gen_code['max(id)']
                   $cat = "";
                   if (isset($_GET['category'])) {
                   switch ($_GET['category']) {
@@ -248,7 +248,7 @@ include 'include/class.inc.php';
   </div>
 </div>
 
-<?php include './template/scripts.html'; ?>
+<?php include 'template/scripts.php'; ?>
 <script>
   
   $( "#category" )

@@ -51,12 +51,12 @@ class User {
           
         	if (isset($users_array))
         	return $users_array;
-        }
-    
-}
+    }
 
     function __destruct() {
 
     }
+    
+}
 
-$user = new User; 
+

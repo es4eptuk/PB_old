@@ -228,4 +228,3 @@ class TelegramAPI {
     }
 }
 
-$telegramAPI = new TelegramAPI;

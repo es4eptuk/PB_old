@@ -9,14 +9,14 @@ $robot_id= $robot_info['id'];
 $robot_dop_manufactur= $robot_info['dop_manufactur'];
 ?>
 
-<?php include 'template/head.html' ?>
+<?php include 'template/head.php' ?>
 
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
 
- <?php include 'template/header.html' ?>
+ <?php include 'template/header.php' ?>
   <!-- Left side column. contains the logo and sidebar -->
-  <?php include 'template/sidebar.html';?>
+  <?php include 'template/sidebar.php';?>
 
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
@@ -60,7 +60,7 @@ $robot_dop_manufactur= $robot_info['dop_manufactur'];
             <form role="form" class="comment">
               <div class="box-body">
 
-                  <i><? echo $robot_dop_manufactur; ?></i>
+                  <i><?php echo $robot_dop_manufactur; ?></i>
 
                     <div class="form-group">
                   <label>Класс обращения </label>
@@ -165,7 +165,7 @@ $robot_dop_manufactur= $robot_info['dop_manufactur'];
                 <tbody>
                 
                 
-                <? 
+                <?php 
                 $arr_tickets = $tickets->get_tickets($robot_id);
                 
                 

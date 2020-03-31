@@ -1,4 +1,4 @@
-<?
+<?php
 include 'include/class.inc.php';
 
 global $database_server, $database_user, $database_password, $dbase;

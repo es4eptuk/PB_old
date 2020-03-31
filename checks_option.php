@@ -7,14 +7,14 @@ $title_option = $option_info['title'];
 
 ?>
 
-<?php include 'template/head.html' ?>
+<?php include 'template/head.php' ?>
 
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
 
- <?php include 'template/header.html' ?>
+ <?php include 'template/header.php' ?>
   <!-- Left side column. contains the logo and sidebar -->
-  <?php include 'template/sidebar.html';?>
+  <?php include 'template/sidebar.php';?>
 
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
@@ -37,7 +37,7 @@ $title_option = $option_info['title'];
             <!-- /.box-header -->
             
              <div class="box-header">
-              <h3 class="box-title"><? echo $title_option;?></h3>
+              <h3 class="box-title"><?php echo $title_option;?></h3>
             </div>
             
             <div class="box-body">
@@ -258,7 +258,7 @@ $title_option = $option_info['title'];
 <!-- page script -->
 <script>
 var id_check = 0;
-var id_option = <? echo $_GET['id']; ?> ;
+var id_option = <?php echo $_GET['id']; ?> ;
 $( ".fa-pencil" ).click(function() {
                
                     id_check = $(this).attr("id");

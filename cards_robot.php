@@ -53,14 +53,14 @@ include 'include/class.inc.php';
 
 ?>
 
-<?php include 'template/head.html' ?>
+<?php include 'template/head.php' ?>
 
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
 
- <?php include 'template/header.html' ?>
+ <?php include 'template/header.php' ?>
   <!-- Left side column. contains the logo and sidebar -->
-  <?php include 'template/sidebar.html';?>
+  <?php include 'template/sidebar.php';?>
 
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
@@ -83,22 +83,22 @@ include 'include/class.inc.php';
             <div class="box-body">
              
              <div class="col-xs-6">
-          <p class="lead">На сегодня <? echo date("d.m.Y"); ?></p>
+          <p class="lead">На сегодня <?php echo date("d.m.Y"); ?></p>
 
           <div class="table-responsive">
             <table class="table">
               <tbody><tr>
                 <th style="width:50%">Открытых тикетов:</th>
-                <td><? echo array_sum($inprocess); ?>
+                <td><?php echo array_sum($inprocess); ?>
                 </td>
               </tr>
               <tr>
                 <th>Проблемных роботов:</th>
-                <td class="dop"><? echo count($inprocess);?> <i class="fa fa-fw fa-plus-circle pull-right text-green" style="cursor: pointer;"></i>
+                <td class="dop"><?php echo count($inprocess);?> <i class="fa fa-fw fa-plus-circle pull-right text-green" style="cursor: pointer;"></i>
                 <div class="robots" style="display: none">
                     <ul>
                     
-                    <? 
+                    <?php 
                     $count = 0;
                      foreach ($inprocess as $key => $value) {
                          $robot_info = $robots->get_info_robot($key);
@@ -125,10 +125,10 @@ include 'include/class.inc.php';
               </tr>
               <tr>
                 <th>В процессе решения:</th>
-                <td class="dop"><? echo $process_tickets;?> <i class="fa fa-fw fa-plus-circle pull-right text-green" style="cursor: pointer;"></i>
+                <td class="dop"><?php echo $process_tickets;?> <i class="fa fa-fw fa-plus-circle pull-right text-green" style="cursor: pointer;"></i>
                  <div class="robots" style="display: none">
                     <ul>
-                    <? 
+                    <?php 
                      foreach ($process as $key => $value) {
                          $robot_info = $robots->get_info_robot($key);
                          $robot_info['number'] = str_pad($robot_info['number'], 4, "0", STR_PAD_LEFT); 
@@ -142,10 +142,10 @@ include 'include/class.inc.php';
               </tr>
               <tr>
                 <th>Ожидают ремонта:</th>
-                <td class="dop"> <? echo count($remont);?> <i class="fa fa-fw fa-plus-circle pull-right text-green" style="cursor: pointer;"></i>
+                <td class="dop"> <?php echo count($remont);?> <i class="fa fa-fw fa-plus-circle pull-right text-green" style="cursor: pointer;"></i>
                 <div class="robots" style="display: none">
                     <ul>
-                    <? 
+                    <?php 
                     //print_r($remont);
                      foreach ($remont as $key => $value) {
                          $robot_info = $robots->get_info_robot($key);
@@ -167,7 +167,7 @@ include 'include/class.inc.php';
         </div>
         <div class="col-xs-6">
          <p class="lead">За вчера</p>
-<? 
+<?php 
  $date_min = date("Y-m-d", strtotime("yesterday"));
  $date_max = date("Y-m-d");
  
@@ -247,13 +247,13 @@ include 'include/class.inc.php';
             <table class="table">
               <tbody><tr>
                 <th style="width:50%">Проблемных роботов:</th>
-                <td class="dop"><? echo $countNew24." (".($rNew < 0 ? '' : '+').$rNew.")";
+                <td class="dop"><?php echo $countNew24." (".($rNew < 0 ? '' : '+').$rNew.")";
                 ?>
                 <i class="fa fa-fw fa-plus-circle pull-right text-green" style="cursor: pointer;"></i>
                 <div class="robots" style="display: none">
                     <ul>
                     
-                    <? 
+                    <?php 
                     $count=0;
                     //print_r($remont);
                      foreach ($arr_new24_sort as $value) {
@@ -272,11 +272,11 @@ include 'include/class.inc.php';
               
               <tr>
                 <th style="width:50%">Исправленных роботов:</th>
-                <td class="dop"><? echo $countResh24 ;
+                <td class="dop"><?php echo $countResh24 ;
                 ?> <i class="fa fa-fw fa-plus-circle pull-right text-green" style="cursor: pointer;"></i>
                  <div class="robots" style="display: none">
                     <ul>
-                    <? 
+                    <?php 
                     //print_r($remont);
                      foreach ($arrTicketRobotNoProblem as $key => $value) {
                          echo "<li><a href='./robot_card.php?id=".$key."'>".$value."</a></li>";
@@ -625,7 +625,7 @@ include 'include/class.inc.php';
 	
 
 
-<?php include "./template/scripts.html";?>
+<?php include 'template/scripts.php';?>
 <script src="../../bower_components/select2/dist/js/select2.full.min.js"></script>
 <script>
 

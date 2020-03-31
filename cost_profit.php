@@ -7,14 +7,14 @@ $month_arr = $_GET['month'];
 
 ?>
 
-<?php include 'template/head.html' ?>
+<?php include 'template/head.php' ?>
 
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
 
- <?php include 'template/header.html' ?>
+ <?php include 'template/header.php' ?>
   <!-- Left side column. contains the logo and sidebar -->
-  <?php include 'template/sidebar.html';?>
+  <?php include 'template/sidebar.php';?>
 
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
@@ -108,7 +108,7 @@ $month_arr = $_GET['month'];
 									<thead>    
                                     <tr>
                                       <th></th>
-                                      <? 
+                                      <?php 
                                       foreach ($month_arr as $key=>$value) {
                                         echo '<th>'.$value.'</th>' ;
                                       }
@@ -184,7 +184,7 @@ $month_arr = $_GET['month'];
                                        
                                         <tr >
                                             <td><b>ИТОГО ПОСТУПЛЕНИЯ (C пересчетом ЦБ-5%)</b></td>
-                                            <? echo $output_incom_total ?>
+                                            <?php echo $output_incom_total ?>
                                         </tr> 
                                         <tr >
                                            
@@ -192,38 +192,38 @@ $month_arr = $_GET['month'];
                                         
                                         <tr>
                                             <td>Кол-во отгруженных роботов V2</td>
-                                            <? echo $output_V2; ?>
+                                            <?php echo $output_V2; ?>
                                             
                                         </tr>
                                         
                                          <tr>
                                             <td>Кол-во отгруженных роботов V4</td>
-                                            <? echo $output_V4; ?>
+                                            <?php echo $output_V4; ?>
                                         </tr>
                                         
                                          <tr>
                                             <td>Задолженность покупателей RUR (к выплате)</td>
-                                            <?  ?>
+                                            <?php  ?>
                                         </tr>
                                         
                                          <tr>
                                             <td>Задолженность покупателей USD (к выплате)</td>
-                                            <?  ?>
+                                            <?php  ?>
                                         </tr>
                                         
                                          <tr>
                                             <td>Задолженность покупателей EUR (к выплате)</td>
-                                            <?  ?>
+                                            <?php  ?>
                                         </tr>
                                         
                                          <tr>
                                             <td><b>ИТОГО ДЕБЕТОРКА  (C пересчетом ЦБ-5%)</b></td>
-                                            <?  ?>
+                                            <?php  ?>
                                         </tr>
                                         
                                         
                                         
-                                        <?  
+                                        <?php  
                                             
                                              $arr_cat = $oneC->get_cost_category();
                                              foreach ($arr_cat as $key => $value) {
@@ -305,7 +305,7 @@ $month_arr = $_GET['month'];
 
 </div>
 <!-- ./wrapper -->
-<?php include "./template/scripts.html";?>
+<?php include 'template/scripts.php';?>
 <script src="../../bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
  <!-- Select2 -->
     <script src="../../bower_components/select2/dist/js/select2.full.min.js"></script>

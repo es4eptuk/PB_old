@@ -31,7 +31,7 @@ $robot_test = $robot_info['date_test'];
 $robot_test = new DateTime($robot_test);
 $robot_test = $robot_test->format('d.m.Y');
 ?>
-<?php include 'template/head.html' ?>
+<?php include 'template/head.php' ?>
 
 <!DOCTYPE html>
 <html>
@@ -40,9 +40,9 @@ $robot_test = $robot_test->format('d.m.Y');
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
 	<div class="wrapper">
-		<? include 'template/header.html' ?>
+		<?php include 'template/header.php' ?>
 		<!-- Left side column. contains the logo and sidebar -->
-		<?php include 'template/sidebar.html';?>
+		<?php include 'template/sidebar.php';?>
 		<div class="content-wrapper">
 			<!-- Content Header (Page header) -->
 			<section class="content-header">
@@ -53,7 +53,7 @@ $robot_test = $robot_test->format('d.m.Y');
 					<div class="col-xs-12">
 						<div class="box box-warning">
 							<div class="box-header with-border">
-								<h3 class="box-title">Редактирование робота <? echo $robot_version.".".$robot_number; ?></h3>
+								<h3 class="box-title">Редактирование робота <?php echo $robot_version.".".$robot_number; ?></h3>
 							</div><!-- /.box-header -->
 							<div class="box-body">
 						 
@@ -65,7 +65,7 @@ $robot_test = $robot_test->format('d.m.Y');
                   <label>Версия</label>
                   <select class="form-control" name="version" id="version">
                       
-                      <? 
+                      <?php 
                         $array_version = [
                                                                         4 => 4,
                                                                         3 => 3,
@@ -89,11 +89,11 @@ $robot_test = $robot_test->format('d.m.Y');
                 
                  <div class="form-group">
                   <label>Номер робота</label></label>
-                  <input type="text" class="form-control" name="number" required="required" id="number" value="<? echo $robot_number ?>">
+                  <input type="text" class="form-control" name="number" required="required" id="number" value="<?php echo $robot_number ?>">
                 </div>
                 <div class="form-group">
                   <label>Кодовое имя</label>
-                  <input type="text" class="form-control" name="name" id="name" value="<? echo $robot_name ?>">
+                  <input type="text" class="form-control" name="name" id="name" value="<?php echo $robot_name ?>">
                 </div>
                 <div class="form-group">
                   <label>Заказчик <small>(<a href="#" data-toggle="modal" data-target="#add_customer">Добавить</a>)</small></label>
@@ -124,7 +124,7 @@ $robot_test = $robot_test->format('d.m.Y');
                   <label>Язык на роботе</label>
                   <select class="form-control" name="language_robot" id="language_robot">
                       
-                       <? 
+                       <?php 
                         $language_robot = [
                                             "russian" => "Русский",
                                             "english" => "Английский",                          
@@ -153,7 +153,7 @@ $robot_test = $robot_test->format('d.m.Y');
                 <div class="form-group">
                   <label>Язык инструкции</label>
                   <select class="form-control" name="language_doc" id="language_doc">
-                     <? 
+                     <?php 
                         $language_doc = [
                                             "russian" => "Русский",
                                             "english" => "Английский"                          
@@ -178,7 +178,7 @@ $robot_test = $robot_test->format('d.m.Y');
                   <label>Напряжение зарядной станции</label>
                   <select class="form-control" name="charger" id="charger">
                    
-                   <? 
+                   <?php 
                         $charger= [
                                             "220" => "220",
                                             "110" => "110"                          
@@ -205,7 +205,7 @@ $robot_test = $robot_test->format('d.m.Y');
                 <div class="form-group">
                     <label for="exampleInputFile">Комплектация</label>
                     
-                    <?
+                    <?php
                     $options = $robots->get_robot_options($id);
                     
                     foreach ($options as &$value) {
@@ -228,24 +228,24 @@ $robot_test = $robot_test->format('d.m.Y');
                 
                 <div class="form-group">
                   <label>Цвет</label>
-                  <input type="text" class="form-control" name="color" id="color" value="<? echo $robot_color ?>">
+                  <input type="text" class="form-control" name="color" id="color" value="<?php echo $robot_color ?>">
                 </div>
                 
                 <div class="form-group">
                   <label>Брендирование </label>
-                  <input type="text" class="form-control" name="brand" id="brand" value="<? echo $robot_brand ?>">
+                  <input type="text" class="form-control" name="brand" id="brand" value="<?php echo $robot_brand ?>">
                 </div>
                 
                 <div class="form-group">
                   <label>ИКП</label>
-                  <input type="text" class="form-control" name="ikp" id="ikp" value="<? echo $robot_ikp ?>">
+                  <input type="text" class="form-control" name="ikp" id="ikp" value="<?php echo $robot_ikp ?>">
                 </div>
                 
                  <div class="form-group">
                   <label>Наличие АКБ</label>
                   <select class="form-control" name="battery" id="battery">
                       
-                       <? 
+                       <?php 
                         $battery= [
                                             1 => "Да",
                                             0 => "Нет"                          
@@ -269,18 +269,18 @@ $robot_test = $robot_test->format('d.m.Y');
                 
                 <div class="form-group">
                   <label>Дополнительная информация</label>
-                  <input type="text" class="form-control" name="dop" id="dop" value="<? echo $robot_dop ?>">
+                  <input type="text" class="form-control" name="dop" id="dop" value="<?php echo $robot_dop ?>">
                 </div>
 
 
                                 <div class="form-group">
                                     <label>Информация от производства</label>
-                                    <textarea rows="5" cols="45" class="form-control" name="dop_manufactur" id="dop_manufactur"><? echo $robot_dop_manufactur ?></textarea>
+                                    <textarea rows="5" cols="45" class="form-control" name="dop_manufactur" id="dop_manufactur"><?php echo $robot_dop_manufactur ?></textarea>
                                 </div>
                 
                 <div class="checkbox">
                     <label>
-                      <input type="checkbox" id="send" <? echo ($robot_progress ==100) ? "checked" : ""; ?>>
+                      <input type="checkbox" id="send" <?php echo ($robot_progress ==100) ? "checked" : ""; ?>>
                       Отправленный
                     </label>
                   </div>
@@ -292,7 +292,7 @@ $robot_test = $robot_test->format('d.m.Y');
                   <div class="input-group-addon">
                     <i class="fa fa-calendar"></i>
                   </div>
-                  <input type="text" class="form-control pull-right" id="datepicker" class="datepicker" value="<? echo $robot_date ?>">
+                  <input type="text" class="form-control pull-right" id="datepicker" class="datepicker" value="<?php echo $robot_date ?>">
                 </div>
                 <!-- /.input group -->
               </div> 
@@ -304,7 +304,7 @@ $robot_test = $robot_test->format('d.m.Y');
                   <div class="input-group-addon">
                     <i class="fa fa-calendar"></i>
                   </div>
-                  <input type="text" class="form-control pull-right" id="datepicker2" class="datepicker" value="<? echo $robot_test ?>">
+                  <input type="text" class="form-control pull-right" id="datepicker2" class="datepicker" value="<?php echo $robot_test ?>">
                 </div>
                 <!-- /.input group -->
               </div> 
@@ -365,7 +365,7 @@ $robot_test = $robot_test->format('d.m.Y');
 			</div>
 		</div>
 	</div>
-	<?php include './template/scripts.html'; ?>
+	<?php include 'template/scripts.php'; ?>
 	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <script src="../../bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
@@ -394,7 +394,7 @@ var category1 = "---";
 
   $(".check").change(function() {
     var id = $(this).attr("id"); 
-    var robot = <? echo $id; ?>
+    var robot = <?php echo $id; ?>
       
     if(this.checked) {
         val = 1;
@@ -448,7 +448,7 @@ var category1 = "---";
      $(this).last().addClass( "disabled" );
  $.post( "./api.php", { 
         action: "delete_robot", 
-        id: <? echo $id ?>
+        id: <?php echo $id ?>
         
         
     } )
@@ -499,7 +499,7 @@ var category1 = "---";
     
       $.post( "./api.php", { 
         action: "edit_robot", 
-        id: <? echo  $id ?>,
+        id: <?php echo  $id ?>,
         number: number,
         version: version,
         name: name,

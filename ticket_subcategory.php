@@ -2,14 +2,14 @@
 include 'include/class.inc.php';
 ?>
 
-<?php include 'template/head.html' ?>
+<?php include 'template/head.php' ?>
 
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
 
- <?php include 'template/header.html' ?>
+ <?php include 'template/header.php' ?>
   <!-- Left side column. contains the logo and sidebar -->
-  <?php include 'template/sidebar.html';?>
+  <?php include 'template/sidebar.php';?>
 
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
@@ -128,14 +128,14 @@ include 'include/class.inc.php';
 		</div>
 	</div>
 	
-<?php include "./template/scripts.html";?>
+<?php include 'template/scripts.php';?>
 
 <!-- page script -->
 <script>
 
 $("#btn_add_subcategory").click(function() {
 
-    var category = <? echo $_GET['id']?> ;
+    var category = <?php echo $_GET['id']?> ;
     
  	var title = $('#subcategory_title').val();
  	console.log(category);

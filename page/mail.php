@@ -111,5 +111,3 @@ class Mail {
     	return true;
     }
 }
-
-$mail = new Mail; 

@@ -10,7 +10,7 @@ class Writeoff {
 
     function __construct()
     {
-        global $database_server, $database_user, $database_password, $dbase;
+        global $database_server, $database_user, $database_password, $dbase, $log, $orders, $mail;
         $dsn = "mysql:host=$database_server;dbname=$dbase;charset=utf8";
         $opt = [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
@@ -19,9 +19,10 @@ class Writeoff {
         ];
 
         $this->pdo = new PDO($dsn, $database_user, $database_password, $opt);
-        $this -> orders = new Orders;
-        $this -> mail = new Mail;
-        $this -> log = new Log;
+
+        $this->orders = $orders;//new Orders;
+        $this->mail = $mail;//new Mail;
+        $this->log = $log;//new Log;
     }
 
     function add_writeoff($json) {
@@ -381,4 +382,4 @@ class Writeoff {
     }
 } 
 
-$writeoff = new Writeoff; 
+

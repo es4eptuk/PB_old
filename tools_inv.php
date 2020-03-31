@@ -1,4 +1,4 @@
-<?
+<?php
 include 'include/class.inc.php';
 $arr_writeoff_pos = Array();
 $arr_total_pos = Array();

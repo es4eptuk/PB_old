@@ -6,14 +6,14 @@ include 'page/dashboard.php';
 
 ?>
 
-<?php include 'template/head.html' ?>
+<?php include 'template/head.php' ?>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0/dist/Chart.min.js"></script>
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
 
-    <?php include 'template/header.html' ?>
+    <?php include 'template/header.php' ?>
     <!-- Left side column. contains the logo and sidebar -->
-    <?php include 'template/sidebar.html';?>
+    <?php include 'template/sidebar.php';?>
 
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
@@ -37,7 +37,7 @@ include 'page/dashboard.php';
                         </div>
                         <div class="box-body table-responsive">
 
-                            <?
+                            <?php
                             $robotsComplete = $dashboard->getRobotCompleteCount();
                             echo "Количество готовых роботов: <b>".$robotsComplete."</b><br>";
 
@@ -78,7 +78,7 @@ include 'page/dashboard.php';
                             <h3 class="box-title">Техническая поддержка</h3>
                         </div>
                         <div class="box-body table-responsive">
-                            <?
+                            <?php
 
                             function print_r2($val)
                             {
@@ -415,7 +415,7 @@ include 'page/dashboard.php';
 <div class="control-sidebar-bg"></div>
 </div>
 
-<?php include "./template/scripts.html";?>
+<?php include 'template/scripts.php';?>
 
 
 <script>
@@ -423,10 +423,10 @@ include 'page/dashboard.php';
     var myChart = new Chart(ctx, {
         type: 'line',
         data: {
-            labels: [<? echo "$labels_str" ?>],
+            labels: [<?php echo "$labels_str" ?>],
             datasets: [{
                 label: 'До 1 минуты',
-                data: [<? echo "$countAnswers01_arr_str" ?>],
+                data: [<?php echo "$countAnswers01_arr_str" ?>],
                 backgroundColor: [
                     'rgba(51, 153, 0, 1)'
                 ],
@@ -441,7 +441,7 @@ include 'page/dashboard.php';
 
             }, {
                 label: 'От 1 до 2 минут',
-                data: [<? echo "$countAnswers12_arr_str" ?>],
+                data: [<?php echo "$countAnswers12_arr_str" ?>],
                 backgroundColor: [
                     'rgba(153, 204, 51, 1)'
                 ],
@@ -456,7 +456,7 @@ include 'page/dashboard.php';
 
             }, {
                 label: 'От 2 до 3 минут',
-                data: [<? echo "$countAnswers23_arr_str" ?>],
+                data: [<?php echo "$countAnswers23_arr_str" ?>],
                 backgroundColor: [
                     'rgba(255, 204, 0, 1)'
                 ],
@@ -471,7 +471,7 @@ include 'page/dashboard.php';
 
             }, {
                 label: 'От 3 до 5 минут',
-                data: [<? echo "$countAnswers35_arr_str" ?>],
+                data: [<?php echo "$countAnswers35_arr_str" ?>],
                 backgroundColor: [
                     'rgba(255, 153, 102, 1)'
                 ],
@@ -486,7 +486,7 @@ include 'page/dashboard.php';
 
             }, {
                 label: 'Более 15 минут',
-                data: [<? echo "$countAnswers15_arr_str" ?>],
+                data: [<?php echo "$countAnswers15_arr_str" ?>],
                 backgroundColor: [
                     'rgb(204,92,7)'
                 ],
@@ -500,7 +500,7 @@ include 'page/dashboard.php';
                 pointBackgroundColor: 'rgb(204,92,7)',
             }, {
                 label: 'НАРУШЕНИЯ',
-                data: [<? echo "$countViolation_arr_str" ?>],
+                data: [<?php echo "$countViolation_arr_str" ?>],
                 backgroundColor: [
                     'rgba(204,51,0,1)'
                 ],
@@ -515,7 +515,7 @@ include 'page/dashboard.php';
 
             }, {
                 label: 'Всего ответов',
-                data: [<? echo "$totalAnswers_arr_str" ?>],
+                data: [<?php echo "$totalAnswers_arr_str" ?>],
                 backgroundColor: [
                     'rgba(34,45,50,1)'
                 ],
@@ -562,10 +562,10 @@ include 'page/dashboard.php';
     var myChart = new Chart(ctx, {
         type: 'line',
         data: {
-            labels: [<? echo "$labels_str_second" ?>],
+            labels: [<?php echo "$labels_str_second" ?>],
             datasets: [ {
                 label: 'Всего ответов',
-                data: [<? echo "$totalAnswers_arr_str_second" ?>],
+                data: [<?php echo "$totalAnswers_arr_str_second" ?>],
                 backgroundColor: [
                     'rgba(34,45,50,1)'
                 ],

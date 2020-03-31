@@ -12,7 +12,7 @@ $order_responsible = $order['order_responsible'];
 $order_date = new DateTime($order['order_delivery']);
 $order_date = $order_date->format('d.m.Y');
 ?>
-<?php include 'template/head.html' ?>
+<?php include 'template/head.php' ?>
 
 <!DOCTYPE html>
 <html>
@@ -21,9 +21,9 @@ $order_date = $order_date->format('d.m.Y');
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
 	<div class="wrapper">
-		<?php include 'template/header.html' ?>
+		<?php include 'template/header.php' ?>
 		<!-- Left side column. contains the logo and sidebar -->
-		<?php include 'template/sidebar.html';?>
+		<?php include 'template/sidebar.php';?>
 		<div class="content-wrapper">
 			<!-- Content Header (Page header) -->
 			<section class="content-header">
@@ -229,7 +229,7 @@ $order_date = $order_date->format('d.m.Y');
                           <div class="input-group-addon"> 
                             <i class="fa fa-calendar"></i> 
                           </div> 
-                          <span style="position: absolute;">'.$pos_date.'</span><input type="text" class="form-control pull-right date_inp" style="position: relative;   text-align: center;" placeholder="'.$pos_date.'" value="'.$pos_date.'"> 
+                          <span style="position: absolute;">'.$pos_date.'</span><input type="text" class="form-control pull-right date_inp datepicker" style="position: relative;   text-align: center;" placeholder="'.$pos_date.'" value="'.$pos_date.'" onchange="textData($(this))"> 
                         </div></td> 
                         <td style="text-align: center;" ><i class="fa fa-2x fa-remove" style="cursor: pointer;"></i></td> 
                         </tr>
@@ -296,12 +296,28 @@ $order_date = $order_date->format('d.m.Y');
 			</div>
 		</div>
 	</div>
-	<?php include './template/scripts.html'; ?>
+	<?php include 'template/scripts.php'; ?>
 	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="./bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.js"></script>
+    <script src="./bower_components/bootstrap-datepicker/dist/locales/bootstrap-datepicker.ru.min.js"></script>
 
 	<script>
-	
+
+    //datepicker
+    $(document).on('focus',".datepicker", function(){
+        $(this).datepicker({
+            format: 'dd.mm.yyyy',
+            language: 'ru-Ru',
+            autoclose: true
+        });
+    });
+
+    function textData(data) {
+        var val = data.val();
+        data.parent().find( "span" ).text(val);
+    }
+
 $(document).ready(function() { 	
 var arr_str = [];
 var arr_ids = [];
@@ -371,33 +387,33 @@ var category1 = "---";
                     id: id
                         } )
                   .done(function( data1) {
-                     pos_info = jQuery.parseJSON (data1);
-
-                        $('#listPos tr:last').after('<tr> \
-                        <td>'+pos_info['id']+'</td> \
-                        <td>'+pos_info['vendor_code']+'</td> \
-                        <td>'+pos_info['title']+'</td> \
-  <td class="quant"><span>1</span><input type="text" class="form-control quant_inp"  style="position: relative; top: -20px; width: 55px; text-align: center;" placeholder="1"></td> \
-  <td class="finish">0</td> \
-  <td>0</td> \
-  <td class="price">'+pos_info['price']+'</td> \
-  <td class="sum">'+pos_info['price']+'</td> \
-  <td><div class="input-group date" style="width: 135px;"> \
-  <div class="input-group-addon"> \
-  <i class="fa fa-calendar"></i> \
-  </div> \
-  <span style="position: absolute;"><?php echo $order_date; ?></span><input type="text" class="form-control pull-right date_inp" style="position: relative; text-align: center;" placeholder="<?php echo $order_date; ?>" value="<?php echo $order_date; ?>"> \
-  </div></td> \
-  <td style="text-align: center;"><i class="fa fa-2x fa-remove" style="cursor: pointer;"></i></td> \
-  </tr>');
-      $('#search_pos').val("");
-
-  });
-        
-        
+                          pos_info = jQuery.parseJSON (data1);
+                          var date = $('#listPos tr:eq(1) td:eq(8) input').val();
+                          if (date === undefined) {
+                              date =  '<?php echo $order_date; ?>';
+                          }
+                          $('#listPos tr:last').after('<tr> \
+                              <td>'+pos_info['id']+'</td> \
+                              <td>'+pos_info['vendor_code']+'</td> \
+                              <td>'+pos_info['title']+'</td> \
+                              <td class="quant"><span>1</span><input type="text" class="form-control quant_inp"  style="position: relative; top: -20px; width: 55px; text-align: center;" placeholder="1"></td> \
+                              <td class="finish">0</td> \
+                              <td>0</td> \
+                              <td class="price">'+pos_info['price']+'</td> \
+                              <td class="sum">'+pos_info['price']+'</td> \
+                              <td><div class="input-group date" style="width: 135px;"> \
+                              <div class="input-group-addon"> \
+                              <i class="fa fa-calendar"></i> \
+                              </div> \
+                              <span style="position: absolute;">' + date + '</span><input type="text" class="form-control pull-right date_inp datepicker" style="position: relative; text-align: center;" placeholder="' + date + '" value="' + date + '" onchange="textData($(this))"> \
+                              </div></td> \
+                              <td style="text-align: center;"><i class="fa fa-2x fa-remove" style="cursor: pointer;"></i></td> \
+                              </tr>'
+                          );
+                          $('#search_pos').val("");
+                  });
         //arr_ids.push([arr_str[0], arr_str[1]]);
-        
-        return false;  
+        return false;
   });
  
  $('#add_pos').validator();
@@ -405,10 +421,14 @@ var category1 = "---";
 
  
  
-$("#listPos").on("keyup", ".quant_inp, .date_inp", function() {
+$("#listPos").on("keyup", ".quant_inp", function() {
      var val = $( this ).val();
      $( this ).parent().find( "span" ).text(val);
    });
+//$("#listPos").on("keyup", ".date_inp", function() {
+//    var val = $( this ).val();
+//    $( this ).parent().find( "span" ).text(val);
+//});
    
 $("#listPos").on("keyup", ".quant_inp", function() {
      var price = $( this ).parent().parent().find( ".price" ).text();

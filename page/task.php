@@ -57,6 +57,4 @@ class Task {
     function __destruct() {
        
     }
-} 
-
-$task = new Task; 
+}

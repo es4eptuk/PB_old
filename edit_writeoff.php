@@ -9,7 +9,7 @@ $writeoff_description = $writeoff1['description'];
 $writeoff_price = $writeoff1['total_price'];
 $writeoff_user_id = $writeoff1['update_user'];
 ?>
-<?php include 'template/head.html' ?>
+<?php include 'template/head.php' ?>
 
 <!DOCTYPE html>
 <html>
@@ -18,9 +18,9 @@ $writeoff_user_id = $writeoff1['update_user'];
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
 	<div class="wrapper">
-		<?php include 'template/header.html' ?>
+		<?php include 'template/header.php' ?>
 		<!-- Left side column. contains the logo and sidebar -->
-		<?php include 'template/sidebar.html';?>
+		<?php include 'template/sidebar.php';?>
 		<div class="content-wrapper">
 			<!-- Content Header (Page header) -->
 			<section class="content-header">
@@ -95,7 +95,7 @@ $writeoff_user_id = $writeoff1['update_user'];
 									
 							
 							<?php 
-							if ($userdata['user_id'] == 35 || $userdata['user_id'] == 14) {
+							if ($userdata['user_id'] == 35 || $userdata['user_id'] == 14 || $userdata['user_id'] == 75 ) {
 							    echo '
 							    
 							    	<div class="box-footer">
@@ -120,7 +120,7 @@ $writeoff_user_id = $writeoff1['update_user'];
 		<div class="control-sidebar-bg"></div>
 	</div><!-- ./wrapper -->
 	<!-- Modal -->
-	<?php include './template/scripts.html'; ?>
+	<?php include 'template/scripts.php'; ?>
 	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 

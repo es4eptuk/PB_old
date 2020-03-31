@@ -9,14 +9,14 @@ $robot_id= $robot_info['id'];
 $robot_progress= $robot_info['progress'];
 ?>
 
-<?php include 'template/head.html' ?>
+<?php include 'template/head.php' ?>
 
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
 
- <?php include 'template/header.html' ?>
+ <?php include 'template/header.php' ?>
   <!-- Left side column. contains the logo and sidebar -->
-  <?php include 'template/sidebar.html';?>
+  <?php include 'template/sidebar.php';?>
 
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
@@ -229,7 +229,7 @@ $robot_progress= $robot_info['progress'];
               <div class="box-body">
                   <div class="form-group">
                   <a class="btn btn-app" onclick="onRemont();">
-                   <span class="badge bg-yellow"><? echo $robots->countRemont($robot_id);?></span>
+                   <span class="badge bg-yellow"><?php echo $robots->countRemont($robot_id);?></span>
                    <i class="fa fa-wrench"></i> Ремонт
                   </a>
                   </div>
@@ -378,7 +378,7 @@ $robot_progress= $robot_info['progress'];
         robot: robot,
         level: level,
         comment: comment,
-        number: <? echo (int)$robot_number; ?>
+        number: <?php echo (int)$robot_number; ?>
         
     } )
           .done(function( data ) {
@@ -414,7 +414,7 @@ $robot_progress= $robot_info['progress'];
     
     function onRemont() {
         var isRemont = confirm("Вы действительно хотите перевести робота в ремонт? Все чек-листы будут сброшены.");
-        var progress = <? echo $robot_progress;?>;
+        var progress = <?php echo $robot_progress;?>;
 
         if (isRemont && progress===100) {
             

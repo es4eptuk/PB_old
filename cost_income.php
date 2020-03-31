@@ -7,14 +7,14 @@ include 'include/class.inc.php';
 //$robot_id= $robot_info['id'];
 ?>
 
-<?php include 'template/head.html' ?>
+<?php include 'template/head.php' ?>
 
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
 
- <?php include 'template/header.html' ?>
+ <?php include 'template/header.php' ?>
   <!-- Left side column. contains the logo and sidebar -->
-  <?php include 'template/sidebar.html';?>
+  <?php include 'template/sidebar.php';?>
 
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
@@ -50,7 +50,7 @@ include 'include/class.inc.php';
                 <label>Категория</label>
                 <select class="form-control select3" style="width: 100%;" id="category">
                      <option value="0">Выберите категорию</option>
-                  <?
+                  <?php
                    $arr_cat = $oneC->get_cat_income();
                    
                           foreach ($arr_cat as &$value) {
@@ -152,7 +152,7 @@ include 'include/class.inc.php';
 	</div>
 	
 <!-- ./wrapper -->
-<?php include "./template/scripts.html";?>
+<?php include 'template/scripts.php';?>
 <script src="../../bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
  <!-- Select2 -->
     <script src="../../bower_components/select2/dist/js/select2.full.min.js"></script>

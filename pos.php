@@ -2,14 +2,14 @@
 include 'include/class.inc.php';
 ?>
 
-<?php include 'template/head.html' ?>
+<?php include 'template/head.php' ?>
 
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
 
- <?php include 'template/header.html' ?>
+ <?php include 'template/header.php' ?>
   <!-- Left side column. contains the logo and sidebar -->
-  <?php include 'template/sidebar.html';?>
+  <?php include 'template/sidebar.php';?>
 
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
@@ -34,6 +34,21 @@ include 'include/class.inc.php';
             </div>
             <!-- /.box-header -->
             <div class="box-body">
+              <form id="show_all">
+                <input type="hidden" name="id" value="<?php echo $_GET['id'];?>">
+                <div class="checkbox">
+                    <label>
+                        <?php   if ( isset($_GET['show_all']) == 'on') {
+                            echo '<input type="checkbox" id="check_show_all" name="show_all" checked>';
+                        } else {
+                            echo '<input type="checkbox" id="check_show_all" name="show_all"  >';
+                        }
+                        ?>
+                        Отображать архивные позиции
+                    </label>
+                </div>
+
+              </form>
               <table id="pos" class="table table-responsive">
                 <thead>
                 <tr>
@@ -59,9 +74,13 @@ include 'include/class.inc.php';
                 </tr>
                 </thead>
                 <tbody>
-                <?php 
-                
-                $arr = $position->get_pos_in_category($_GET['id']);
+                <?php
+                if(isset($_GET['show_all'])) {
+                    $archive = 1;
+                } else {
+                    $archive = 0;
+                }
+                $arr = $position->get_pos_in_category($_GET['id'], 0, 0, $archive);
                
                 
                 foreach ($arr as &$pos) {
@@ -246,10 +265,16 @@ include 'include/class.inc.php';
                       Суммировать при заказе
                     </label>
                   </div>
-
-                  
                 </div>
-                
+
+                <div class="form-group">
+                  <div class="checkbox">
+                      <label>
+                          <input type="checkbox" id="archive" >
+                          Архивная позиция
+                      </label>
+                  </div>
+                </div>
                 
                 
                 <div class="form-group">
@@ -263,6 +288,7 @@ include 'include/class.inc.php';
                 <div class="box-footer" >
                     <div class="overlay" style="display:none"><img src="img/25.gif" width="30"></div>
                     <button type="submit" class="btn btn-primary" id="save_close" name="">Сохранить</button>
+                    <button type="button" class="btn btn-primary btn-warning" id="warehouse" name="">Переместить</button>
                     <button type="button" class="btn btn-primary btn-danger pull-right" id="delete" name="">Удалить</button>
                 </div>
               </form>
@@ -420,6 +446,7 @@ $( "#category" )
                      $('#min_balance').val(obj['min_balance']);
                      console.log(obj['summary']);
                      if(obj['summary']=="1") {$('#summary').prop('checked', true);} else {$('#summary').prop('checked', false);}
+                     if(obj['archive']=="1") {$('#archive').prop('checked', true);} else {$('#archive').prop('checked', false);}
                      
                    
                   });
@@ -448,29 +475,46 @@ $( "#category" )
   save_close();
   return false;
   });
-  
-    $( "#delete" ).click(function() { 
+
+  $( "#delete" ).click(function() {
   delete_pos();
   return false;
   });
-  
    function delete_pos() {
      var category =  $('#category').val();
-     $.post( "./api.php", { 
-        action: "delete_pos", 
+     $.post( "./api.php", {
+        action: "delete_pos",
         id: id_pos
-        
-        
+
+
     } )
           .done(function( data ) {
               if (data=="false") {alert( "Data Loaded: " + data ); }
               else {
-                window.location.href = "./pos.php?id="+category;  
+                window.location.href = "./pos.php?id="+category;
               }
           });
-    
+
    }
-  
+
+    $( "#warehouse" ).click(function() {
+        to_warehouse();
+        return false;
+    });
+    function to_warehouse() {
+        var category =  $('#category').val();
+        $.post( "./api.php", {
+            action: "to_warehouse",
+            id: id_pos
+        } )
+            .done(function( data ) {
+                if (data=="false") {alert( "Data Loaded: " + data ); }
+                else {
+                    window.location.href = "./pos.php?id="+category;
+                }
+            });
+    }
+
   function save_close() {
       
     var title =  $('#title').val();
@@ -486,13 +530,17 @@ $( "#category" )
     var min_balance =  $('#min_balance').val();
     var assembly =  $('#assembly').val();
     var file =  $('#file').val();
-    var summary =  0;
+    var summary = 0;
      if($("#summary").prop("checked")) { 
-        summary =  1;
-    } 
+        summary = 1;
+    }
+    var archive = 0;
+     if($("#archive").prop("checked")) {
+         archive = 1;
+    }
     
       $.post( "./api.php", { 
-        action: "edit_pos", 
+        action: "edit_pos",
         id: id_pos,
         title: title,
         longtitle: longtitle ,
@@ -507,6 +555,7 @@ $( "#category" )
         min_balance: min_balance ,
         assembly : assembly,
         summary : summary,
+        archive : archive,
         file : file
     } )
           .done(function( data ) {
@@ -529,7 +578,7 @@ $( "#category" )
                 type: 'post',
                 success: function(php_script_response){
                     //alert(php_script_response);
-                   window.location.href = "./pos.php?id="+category;  
+                   window.location.href = "./pos.php?id="+category;
                 }
      });
                   
@@ -573,6 +622,17 @@ $( "#category" )
         "lengthMenu": [[10, 25, 100, -1], [10, 25, 100, "All"]],
         "order": [[ 7, "asc" ]]
     } );
+
+$('#check_show_all').change(function() {
+    if($(this).is(":checked")) {
+        //var returnVal = confirm("Are you sure?");
+        $(this).attr("checked", true);
+    }
+    // alert($(this).is(':checked'));
+    $("#show_all").submit();
+
+});
+
 </script>
 
    
