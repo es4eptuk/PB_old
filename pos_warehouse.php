@@ -231,7 +231,7 @@ include 'include/class.inc.php';
                  <div class="form-group">
                   <label>Сборка</label>
 
-                  <select class="form-control" name="assembly"  id="assembly" required="required">
+                  <select class="form-control" name="assembly"  id="assembly" required="required" disabled>
                    <option value="0"></option>
                    <?php
                    //!!! СБОРКА

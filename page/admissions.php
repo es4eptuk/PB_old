@@ -30,6 +30,8 @@ class Admissions
 
         //$log = date('Y-m-d H:i:s') . ' ' . print_r($pos_arr, true);
         //file_put_contents(__DIR__ . '/log.txt', $log . PHP_EOL, FILE_APPEND);
+        //die;
+
 
         $p_finish = 0;
         $p_admis  = 0;

@@ -260,27 +260,32 @@ include 'include/class.inc.php';
                 
                 <div class="form-group">
                   <div class="checkbox">
-                    <label>
-                      <input type="checkbox" id="summary" >
-                      Суммировать при заказе
-                    </label>
+                    <label><input type="checkbox" id="summary" >Суммировать при заказе</label>
                   </div>
                 </div>
 
                 <div class="form-group">
                   <div class="checkbox">
-                      <label>
-                          <input type="checkbox" id="archive" >
-                          Архивная позиция
-                      </label>
+                      <label><input type="checkbox" id="archive" >Архивная позиция </label>
                   </div>
                 </div>
-                
-                
                 <div class="form-group">
                   <label for="file">Изображение</label>
                   <input type="file" id="file">
                   <p class="help-block"></p>
+                </div>
+
+                <div class="form-group">
+                  <div class="">
+                      <p class="p-label" id="in-kit">Состоит в комплектах: </p>
+
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <div class="">
+                      <p class="p-label" id="in-assembly">Состоит в сборках: </p>
+                  </div>
                 </div>
                 
                 <div id="update"></div>
@@ -359,6 +364,10 @@ include 'include/class.inc.php';
 <!-- page script -->
 <script>
 var id_pos=0;
+var pos_in_assembly=null;
+var pos_in_kits=null;
+var pos_is_assembly=null;
+
 
 
 $( "#category" )
@@ -428,15 +437,44 @@ $( "#category" )
                             //console.log(obj);
                             $.each( obj2, function( key, value ) {
                               $('#subcategory')
-                             .append($("<option></option>")
+                              .append($("<option></option>")
                                         .attr("value",value['id'])
                                         .text(value['title'])); 
                                         
                             });
                             $('#subcategory').val(obj['subcategory']);
                         });
-                     
-                     
+                     //находим все комплекты где состоит деталь и вставляем в поле
+                     $.post( "./api.php", { action: "get_kit_by_pos", id: id_pos } )
+                        .done(function( data ) {
+                            $('a', $("#in-kit")).remove();
+                            var objKits = jQuery.parseJSON(data);
+                            pos_in_kits = objKits;
+                            if (objKits != null) {
+                                $.each(objKits, function (key, value) {
+                                    $('#in-kit').append($("<a></a>").attr("href", './edit_kit.php?id=' + value['id_kit']).text(' ' + value['id_kit']));
+                                });
+                            } else {
+                                $('#in-kit').append($("<a></a>").attr("style", "font-weight: 700;").text('нет'));
+                            }
+                        });
+                     //находим все сборки где состоит деталь и вставляем в поле
+                     $.post( "./api.php", { action: "get_assembly_by_pos", id: id_pos } )
+                          .done(function( data ) {
+                              $('a', $("#in-assembly")).remove();
+                              var objAssembly = jQuery.parseJSON(data);
+                              pos_in_assembly = objAssembly;
+                              if (objAssembly != null) {
+                                  $.each(objAssembly, function (key, value) {
+                                      $('#in-assembly').append($("<a></a>").attr("href", './edit_assembly.php?id=' + value['id_assembly']).text(' ' + value['id_assembly']));
+                                  });
+                              } else {
+                                  $('#in-assembly').append($("<a></a>").attr("style", "font-weight: 700;").text('нет'));
+                              }
+                          });
+                     //присваеваем глобальную переменную если позиция является сборкой
+                     if (obj['assembly'] != 0) {pos_is_assembly = obj['assembly']}
+                     //заменяем поля в форме редактирования позиции
                      $('#vendorcode').val(obj['vendor_code']);
                      $('#provider').val(obj['provider']);
                      $('#price').val(obj['price']);
@@ -444,7 +482,7 @@ $( "#category" )
                      $('#quant_robot').val(obj['quant_robot']);
                      $('#quant_total').val(obj['total']);
                      $('#min_balance').val(obj['min_balance']);
-                     console.log(obj['summary']);
+                     //console.log(obj['summary']);
                      if(obj['summary']=="1") {$('#summary').prop('checked', true);} else {$('#summary').prop('checked', false);}
                      if(obj['archive']=="1") {$('#archive').prop('checked', true);} else {$('#archive').prop('checked', false);}
                      
@@ -476,11 +514,14 @@ $( "#category" )
   return false;
   });
 
-  $( "#delete" ).click(function() {
-  delete_pos();
-  return false;
-  });
-   function delete_pos() {
+    //при нажатии на кнопку "удалить"
+    $( "#delete" ).click(function() {
+    delete_pos();
+    return false;
+    });
+
+    //функция удаления позиции
+    function delete_pos() {
      var category =  $('#category').val();
      $.post( "./api.php", {
         action: "delete_pos",
@@ -495,12 +536,19 @@ $( "#category" )
               }
           });
 
-   }
+    }
 
+    //при нажатии на кнопку "переместить"
     $( "#warehouse" ).click(function() {
-        to_warehouse();
+        if (pos_in_assembly == null && pos_in_kits == null && pos_is_assembly == null) {
+            to_warehouse();
+        } else {
+            alert('Позиция, которая состоит в комплектах и сборках, а так же является сборкой переместить нельзя!');
+        }
         return false;
     });
+
+    //функция перемещения позиции
     function to_warehouse() {
         var category =  $('#category').val();
         $.post( "./api.php", {

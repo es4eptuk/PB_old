@@ -14,8 +14,17 @@ if (isset($_POST['action'])) {
     if ($_POST['action'] == "get_pos_in_assembly") {
         echo json_encode($position->get_pos_in_assembly($_POST['id']), JSON_UNESCAPED_UNICODE);
     }
+    //выбрать все позиции из набора
     if ($_POST['action'] == "get_pos_in_kit") {
         echo json_encode($position->get_pos_in_kit($_POST['id']), JSON_UNESCAPED_UNICODE);
+    }
+    //выбрать все комплекты в которых состоит позиция
+    if ($_POST['action'] == "get_kit_by_pos") {
+        echo json_encode($position->get_kit_by_pos($_POST['id']), JSON_UNESCAPED_UNICODE);
+    }
+    //выбрать все сборки в которых состоит позиция
+    if ($_POST['action'] == "get_assembly_by_pos") {
+        echo json_encode($position->get_assembly_by_pos($_POST['id']), JSON_UNESCAPED_UNICODE);
     }
     if ($_POST['action'] == "del_pos_writeoff") {
         echo json_encode($writeoff->del_pos_writeoff($_POST['id'], $_POST['pos_id'], $_POST['count']), JSON_UNESCAPED_UNICODE);

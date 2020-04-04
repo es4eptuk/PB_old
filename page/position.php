@@ -945,6 +945,29 @@ class Position
         if (isset($kit_array))
             return $kit_array['0'];
     }
+
+    //выбрать все комплекты в которых состоит позици
+    function get_kit_by_pos($id)
+    {
+        $query = "SELECT id_kit FROM `pos_kit_items` WHERE id_pos = $id";
+        $result = $this->pdo->query($query);
+        while ($line = $result->fetch()) {
+            $kit_array[] = $line;
+        }
+        return (isset($kit_array)) ? $kit_array : null;
+    }
+
+    //выбрать все сборки в которых состоит позиция
+    function get_assembly_by_pos($id)
+    {
+        $query = "SELECT id_assembly FROM `pos_assembly_items` WHERE id_pos = $id";
+        $result = $this->pdo->query($query);
+        while ($line = $result->fetch()) {
+            $kit_array[] = $line;
+        }
+        return (isset($kit_array)) ? $kit_array : null;
+    }
+
     function get_pos_in_kit($id = 0)
     {
         $where = "";
