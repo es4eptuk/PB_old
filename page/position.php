@@ -753,9 +753,12 @@ class Position
         }
         return $result;
     }
+
+    //отдает массив данных по всем сборкам
     function get_assembly()
     {
-        $query = "SELECT * FROM pos_assembly ORDER BY `title` ASC";
+        //$query = "SELECT * FROM pos_assembly ORDER BY `title` ASC";
+        $query = "SELECT `pos_assembly`.*,`pos_items`.`vendor_code` FROM `pos_assembly` LEFT JOIN `pos_items` ON pos_assembly.id_assembly = pos_items.assembly ORDER BY `title` ASC";
         $result = $this->pdo->query($query);
         while ($line = $result->fetch()) {
             $equipment_array[] = $line;
@@ -763,6 +766,7 @@ class Position
         if (isset($equipment_array))
             return $equipment_array;
     }
+
     function get_info_assembly($id)
     {
         $query = "SELECT * FROM pos_assembly WHERE id_assembly='$id'";

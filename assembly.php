@@ -37,12 +37,10 @@ include 'include/class.inc.php';
               <table id="items" class="table table-bordered table-striped">
                 <thead>
                 <tr>
-                 
-                  <th>ID</th>
-                 
-                  <th>Название</th>
-                 
-                   <th></th>
+                    <th>ID</th>
+                    <th>Артикул</th>
+                    <th>Название</th>
+                    <th></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -56,6 +54,7 @@ include 'include/class.inc.php';
                        echo "
                     <tr>
                         <td>".$pos['id_assembly']."</td>
+                        <td>".$pos['vendor_code']."</td>                        
                         <td>".$pos['title']."</td>
                         <td><i class='fa fa-2x fa-pencil' style='cursor: pointer;' id='".$pos['id_assembly']."'></i></td>
                     </tr>

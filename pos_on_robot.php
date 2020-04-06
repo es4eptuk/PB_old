@@ -38,7 +38,7 @@ include 'include/class.inc.php';
                                 <thead>
                                 <tr>
                                     <th>ID</th>
-                                    <th>Артиткул</th>
+                                    <th>Артикул</th>
                                     <th>Наименование</th>
                                     <th>Количество на складе</th>
                                     <th>На робота</th>

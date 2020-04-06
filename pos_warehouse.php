@@ -53,7 +53,7 @@ include 'include/class.inc.php';
                 <thead>
                 <tr>
                   <th>Подгруппа</th>
-                  <th>Артиткул</th>
+                  <th>Артикул</th>
                   <th>Наименование</th>
                  
                  
