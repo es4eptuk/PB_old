@@ -49,7 +49,7 @@ class Robots
             $robots_array[] = $line;
         }
 
-        $this->sklad->unset_reserv($robots_array[0]['version']);
+        //$this->sklad->unset_reserv($robots_array[0]['version']);
         return $result;
     }
 
@@ -360,6 +360,7 @@ class Robots
         $result = $this->pdo->query($this->query);
         $idd =  $this->pdo->lastInsertId();
 
+        //собираем чеклисты привязанные к роботу
         $arr_mh = Array();
         $arr_hp = Array();
         $arr_bd = Array();
@@ -402,9 +403,9 @@ class Robots
         }
 
         $result_arr = array_merge($arr_mh, $arr_hp, $arr_bd, $arr_up, $arr_hs);
-
         // print_r($result_arr);
 
+        //создаем чеклисты по новому роботу
         foreach($result_arr as & $value)
         {
             $operation = $value['title'];
@@ -423,7 +424,6 @@ class Robots
                      `check`,
                      `sort`,
                      `id_kit`,
-                     `update_date`, 
                      `update_user` ) VALUES (
                          NULL, 
                          '$id_check',
@@ -434,17 +434,16 @@ class Robots
                          '0',
                          '$sort',
                          '$id_kit',
-                         '', 
-                         '')";
+                         '0')";
             $result = $this->pdo->query($this->query);
         }
 
-        $this->sklad->set_reserv($version);
+        //$this->sklad->set_reserv($version);
     }
 
     function edit_robot($id, $number, $name, $version, $options, $customer, $language_robot, $language_doc, $charger, $color, $brand, $ikp, $battery, $dop,$dop_manufactur, $date_start,$date_test, $send)
     {
-//	print_r($options);
+        //	print_r($options);
         $robot_info= $this->get_info_robot($id);
 
         $date_start = new DateTime($date_start);
@@ -456,6 +455,8 @@ class Robots
         $date = date("Y-m-d H:i:s");
         $user_id = intval($_COOKIE['id']);
         $number = str_pad($number, 4, "0", STR_PAD_LEFT);
+
+        //если робот отправлен присваеваем прогресс 100%
         if ($send == 1)
         {
             $progress = 100;
@@ -465,6 +466,7 @@ class Robots
             $progress = 0;
         }
 
+        //вносим изменения в робота
         $this->query = "UPDATE `robots` SET 
         `version` = '$version', 
         `number` = $number, 
@@ -488,9 +490,11 @@ class Robots
         $result = $this->pdo->query($this->query);
         $idd = $this->pdo->lastInsertId();
 
+        //удаляем все опции у робота - Зачем?
         $this->query = "DELETE FROM `robot_options_items` WHERE `id_robot` = $id";
         $result = $this->pdo->query($this->query);
 
+        //если что то удалилось, то заного переписываем опции у робота
         if ($result) {
             foreach ($options as &$value) {
                 $this->add_options_on_robot($value,$id);
@@ -498,7 +502,7 @@ class Robots
 
         }
 
-
+        //если сменился заказчик отправляем сообщение телеграм
         $old_name = $robot_info['name'];
         if($name!=$old_name) {
             $comment      = "У робота $version.$number изменен заказчик на - $name";
@@ -506,12 +510,13 @@ class Robots
             $this->telegram->sendNotify("sale", $telegram_str);
         }
 
-        $old_date = $robot_info['name'];
+        //пока не работает по этому выключил
+        /*$old_date = $robot_info['name'];
         if($name!=$old_name) {
             $comment      = "У робота $version.$number изменен заказчик на - $name";
             $telegram_str = $comment;
             $this->telegram->sendNotify("sale", $telegram_str);
-        }
+        }*/
 
 
     }

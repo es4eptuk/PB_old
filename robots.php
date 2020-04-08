@@ -338,7 +338,7 @@ include 'include/class.inc.php';
                 
                 <div class="box-footer">
                     <button type="submit" class="btn btn-primary" id="save_close" name="">Сохранить</button>
-                    <button type="button" class="btn btn-primary btn-danger pull-right" id="Close" name="">Закрыть</button>
+                    <button type="button" class="btn btn-primary btn-danger pull-right" name="" data-dismiss="modal" aria-label="Close">Закрыть</button>
                 </div>
               </form>
          
@@ -502,16 +502,17 @@ include 'include/class.inc.php';
         ikp: ikp,
         battery: battery,
         dop: dop,
-          dop_manufactur: dop_manufactur,
+        dop_manufactur: dop_manufactur,
         date: date,
         date_test: date_test,
         send: send
         
     } )
           .done(function( data ) {
-              if (data=="false") {alert( "Data Loaded: " + data ); }
-              else {
-                //window.location.href = "./robots.php";
+              if (data=="false") {
+                  alert( "Data Loaded: " + data );
+              } else {
+                window.location.href = "./robots.php";
               }
           });
     

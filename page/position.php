@@ -353,33 +353,30 @@ class Position
             return $art_array;
     }
 
-    function set_reserv($version)
+    //постановка деталей в резерв
+    /*function set_reserv($version)
     {
-
         $arr_pos = $this->get_pos_in_equipment($version);
-
         if (isset($arr_pos)){
-        foreach ($arr_pos as &$value) {
-            $pos_id = $value['pos_id'];
-            $count = $value['count'];
-            $query = "UPDATE `pos_items` SET `reserv` = reserv+$count WHERE `id` = $pos_id";
-            $result = $this->pdo->query($query);
-            if ($result && $count != 0) {
-                $param['id'] = $pos_id;
-                $param['type'] = "reserv";
-                $param['count'] = $count;
-                $param['title'] = "Постановка в резерв";
-                $this->add_log($param);
-
-
+            foreach ($arr_pos as &$value) {
+                $pos_id = $value['pos_id'];
+                $count = $value['count'];
+                $query = "UPDATE `pos_items` SET `reserv` = reserv+$count WHERE `id` = $pos_id";
+                $result = $this->pdo->query($query);
+                if ($result && $count != 0) {
+                    $param['id'] = $pos_id;
+                    $param['type'] = "reserv";
+                    $param['count'] = $count;
+                    $param['title'] = "Постановка в резерв";
+                    $this->add_log($param);
+                }
             }
-        }
-
-
         return $result;
-    }
-    }
-    function unset_reserv($version)
+        }
+    }*/
+
+    //списание деталей из резерва
+    /*function unset_reserv($version)
     {
         $arr_pos = $this->get_pos_in_equipment($version);
         foreach ($arr_pos as &$value) {
@@ -396,7 +393,8 @@ class Position
             }
         }
         return $result;
-    }
+    }*/
+
     function set_writeoff($version, $robot)
     {
         // $query = "UPDATE `pos_items` SET `total` = total-quant_robot WHERE `version` = $version";
@@ -485,7 +483,7 @@ class Position
         return $result;
     }
     
-     function set_writeoff_kit($version, $number, $kit, $check,$robot)
+    function set_writeoff_kit($version, $number, $kit, $check,$robot)
     {
         // $query = "UPDATE `pos_items` SET `total` = total-quant_robot WHERE `version` = $version";
         // $result = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
@@ -534,7 +532,6 @@ class Position
     }
     
      /*Списание доп опций */
-     
     function set_writeoff_options($version, $number, $kit, $check, $robot)
     {
       $query = "SELECT * FROM robot_options_items JOIN robot_options ON robot_options.id_option = robot_options_items.id_option WHERE `id_robot` =  $robot";
@@ -551,7 +548,6 @@ class Position
     }
     
     /*Комплектации */
-    
     function add_equipment($json)
     {
         $equipment_arr = json_decode($json);
@@ -702,12 +698,12 @@ class Position
         if (isset($equipment_array))
             return $equipment_array;
     }
-    
-    
+
     
     /*Сборки */
-    
-     function add_assembly($json)
+
+    //создание сборки
+    function add_assembly($json)
     {
         $equipment_arr = json_decode($json);
         $title         = $equipment_arr['0']['0'];
@@ -729,6 +725,8 @@ class Position
         }
         return $result;
     }
+
+    //редактирование сборки
     function edit_assembly($id, $json)
     {
         $equipment_arr = json_decode($json);
@@ -767,6 +765,7 @@ class Position
             return $equipment_array;
     }
 
+    //информация по сборке
     function get_info_assembly($id)
     {
         $query = "SELECT * FROM pos_assembly WHERE id_assembly='$id'";
@@ -778,6 +777,8 @@ class Position
         if (isset($equipment_array))
             return $equipment_array['0'];
     }
+
+    //список позиций в сборке
     function get_pos_in_assembly($id = 0)
     {
         $where = "";
@@ -793,6 +794,8 @@ class Position
         if (isset($equipment_array))
             return $equipment_array;
     }
+
+    //
     function get_pos_in_assambly_cat($id = 0)
     {
         $where = "";
@@ -808,7 +811,8 @@ class Position
         if (isset($equipment_array))
             return $equipment_array;
     }
-    
+
+    //удаление позиции из сборки
     function del_pos_assembly($id, $id_row)
     {
         $date    = date("Y-m-d H:i:s");
@@ -823,17 +827,23 @@ class Position
 
         return $result;
     }
-    
-    
-    
-    
-    
-    
-    
-    
+
+    //выбрать все сборки в которых состоит позиция
+    function get_assembly_by_pos($id)
+    {
+        $query = "SELECT id_assembly FROM `pos_assembly_items` WHERE id_pos = $id";
+        $result = $this->pdo->query($query);
+        while ($line = $result->fetch()) {
+            $kit_array[] = $line;
+        }
+        return (isset($kit_array)) ? $kit_array : null;
+    }
+
+
     /*Комплекты */
-    
-     function add_kit($json)
+
+    //создание комплекта
+    function add_kit($json)
     {
         $date    = date("Y-m-d H:i:s");
         $user_id = intval($_COOKIE['id']);
@@ -860,6 +870,8 @@ class Position
         }
         return $result;
     }
+
+    //редактирование комплекта
     function edit_kit($id, $json)
     {
         $date    = date("Y-m-d H:i:s");
@@ -890,6 +902,8 @@ class Position
         }
         return $result;
     }
+
+    //список комплектов по категории, версии, опции
     function get_kit($category=0,$version = -1,$option = -1)
     {
         $where = "";
@@ -925,6 +939,8 @@ class Position
         if (isset($kit_array))
             return $kit_array;
     }
+
+    //информация по комплекту
     function get_info_kit($id)
     {
         $query = "SELECT * FROM pos_kit WHERE id_kit='$id'";
@@ -950,28 +966,7 @@ class Position
             return $kit_array['0'];
     }
 
-    //выбрать все комплекты в которых состоит позици
-    function get_kit_by_pos($id)
-    {
-        $query = "SELECT id_kit FROM `pos_kit_items` WHERE id_pos = $id";
-        $result = $this->pdo->query($query);
-        while ($line = $result->fetch()) {
-            $kit_array[] = $line;
-        }
-        return (isset($kit_array)) ? $kit_array : null;
-    }
-
-    //выбрать все сборки в которых состоит позиция
-    function get_assembly_by_pos($id)
-    {
-        $query = "SELECT id_assembly FROM `pos_assembly_items` WHERE id_pos = $id";
-        $result = $this->pdo->query($query);
-        while ($line = $result->fetch()) {
-            $kit_array[] = $line;
-        }
-        return (isset($kit_array)) ? $kit_array : null;
-    }
-
+    //взять позиции в коамплекте
     function get_pos_in_kit($id = 0)
     {
         $where = "";
@@ -987,7 +982,8 @@ class Position
         if (isset($kit_array))
             return $kit_array;
     }
-    
+
+    //удалить позицию в комплекте
     function del_pos_kit($id, $id_row)
     {
         $date    = date("Y-m-d H:i:s");
@@ -1003,7 +999,82 @@ class Position
         // mysql_free_result($result);
         return $result;
     }
+
+    //выбрать все комплекты в которых состоит позици
+    function get_kit_by_pos($id)
+    {
+        $query = "SELECT id_kit FROM `pos_kit_items` WHERE id_pos = $id";
+        $result = $this->pdo->query($query);
+        while ($line = $result->fetch()) {
+            $kit_array[] = $line;
+        }
+        return (isset($kit_array)) ? $kit_array : null;
+    }
+
+    //
+    function get_pos_in_kit_cat($id = 0, $version=0, $positive = 0)
+    {
+        $where = "";
+        if ($id != 0) {
+            $where .= " AND pos_items.category=$id";
+        }
+
+        if ($version != 0) {
+            $where .= " AND pos_kit_items.version=$version";
+        }
+
+        if ($positive != 0) {
+            $where .= " AND pos_kit_items.count>0";
+        }
+
+        $query = "SELECT pos_items.id, pos_items.title, pos_items.category, pos_items.vendor_code,SUM(pos_kit_items.count), pos_kit_items.version, pos_items.total, pos_items.subcategory, pos_items.provider, pos_items.price, pos_items.summary, pos_items.assembly , pos_items.min_balance FROM pos_kit_items JOIN pos_items ON pos_kit_items.id_pos = pos_items.id WHERE pos_kit_items.id_pos  > 0   AND pos_kit_items.delete = 0 $where GROUP BY pos_kit_items.id_pos ";
+        $result = $this->pdo->query($query);
+        while ($line = $result->fetch()) {
+            $id = $line['id'];
+            $equipment_array[$id] = $line;
+        }
+
+        if (isset($equipment_array))
+            return $equipment_array;
+    }
+
+    //собирает рекурсивно все зависимые наборы по ид первоночального родителя
+    function get_all_mod_kits_by_id($id)
+    {
+        $query = "SELECT * FROM `pos_kit` WHERE parent_kit = $id";
+        $result = $this->pdo->query($query);
+        while ($line = $result->fetch()) {
+            $kit_array[] = $line;
+        }
+        if (isset($kit_array)) {
+            foreach ($kit_array as $kit) {
+                $kit_array_children = $this->get_all_mod_kits_by_id($kit['id_kit']);
+                if (isset($kit_array_children)) {
+                    $kit_array = array_merge($kit_array, $kit_array_children);
+                }
+            }
+            return $kit_array;
+        }
+
+        return null;
+    }
+
+    //выдает массив набора/ов в том числе с дочерними начиная с текущего
+    function get_all_kits_by_id($id)
+    {
+        $query = "SELECT * FROM `pos_kit` WHERE id_kit = $id";
+        $result = $this->pdo->query($query);
+        while ($line = $result->fetch()) {
+            $kit_array[] = $line;
+        }
+        $kit_array_children = $this->get_all_mod_kits_by_id($id);
+        $result = (isset($kit_array_children)) ? array_merge($kit_array, $kit_array_children) : $kit_array;
+        return (isset($result)) ? $result : null;
+    }
+
     /*Логирование */
+
+    //создать лог в пос_лог
     function add_log($param)
     {
         $id      = $param['id'];
@@ -1038,6 +1109,8 @@ class Position
         }
         $result = $this->pdo->query($query);
     }
+    
+    //взять лог в пос_лог
     function get_log($id)
     {
         $query = "SELECT * FROM `pos_log` WHERE `id_pos` = $id";
@@ -1049,34 +1122,11 @@ class Position
         if (isset($log_array))
             return $log_array;
     }
-    
-    
-        function get_pos_in_kit_cat($id = 0, $version=0, $positive = 0)
-    {
-        $where = "";
-        if ($id != 0) {
-            $where .= " AND pos_items.category=$id";
-        }
-        
-        if ($version != 0) {
-            $where .= " AND pos_kit_items.version=$version";
-        }
 
-        if ($positive != 0) {
-            $where .= " AND pos_kit_items.count>0";
-        }
-
-        $query = "SELECT pos_items.id, pos_items.title, pos_items.category, pos_items.vendor_code,SUM(pos_kit_items.count), pos_kit_items.version, pos_items.total, pos_items.subcategory, pos_items.provider, pos_items.price, pos_items.summary, pos_items.assembly , pos_items.min_balance FROM pos_kit_items JOIN pos_items ON pos_kit_items.id_pos = pos_items.id WHERE pos_kit_items.id_pos  > 0   AND pos_kit_items.delete = 0 $where GROUP BY pos_kit_items.id_pos ";
-        $result = $this->pdo->query($query);
-        while ($line = $result->fetch()) {
-            $id = $line['id'];
-            $equipment_array[$id] = $line;
-        }
-
-        if (isset($equipment_array))
-            return $equipment_array;
-    }
     
+    /*Поставщики*/
+    
+    //удалить поставщика
     function del_provider($id)
     {
         
@@ -1091,6 +1141,9 @@ class Position
         return $result;
     }
 
+    
+    /*Удаленный склад*/
+    
     //Перемещение позиции с основного на удаленный склад
     function to_warehouse($pos_id)
     {

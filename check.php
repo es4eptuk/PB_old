@@ -94,47 +94,71 @@ $category_id = $_GET['category'];
                 
                 if (isset($arr)) {
                 foreach ($arr as &$check) {
-                    
+
                        $user_info = $user->get_info_user($check['update_user']);
                        $check_info = $checks->get_info_check($check["id_check"]);
                         //$user_info = $user->get_info_user($pos['order_responsible']);
                         //$order_date = new DateTime($pos['order_date']);
                         //$order_delivery = new DateTime($pos['order_delivery']);
-                       if($check["check"]==1) {$checked = "checked";} else {$checked = "";}
-                       if ( $check["update_date"] == "0000-00-00 00:00:00") {$check["update_date"] = "";} 
-                     
-                       
-                       
+                       if($check["check"]==1) {
+                           $checked = "checked";
+                           $disabled = "disabled";
+                       } else {
+                           $checked = "";
+                           $disabled = "";
+                       }
+                       if ( $check["update_date"] == "0000-00-00 00:00:00") {$check["update_date"] = "";}
+
+                       //".$check["id_kit"]." - это старый набор - поменять вместо ".$kit_options."
+                       //создание формы выбора набора
+                       if ($check["id_kit"] != 0) {
+                           $options = "";
+                           $arr_kits = $position->get_all_kits_by_id($check_info["kit"]);
+                           if (isset($arr_kits)) {
+                               foreach($arr_kits as $kit) {
+                                   if ($check["id_kit"] == $kit['id_kit']) {
+                                       $option = "<option value='".$kit['id_kit']."' selected>".$kit['id_kit'].'::'.$kit['kit_title']."</option>";
+                                   } else {
+                                       $option = "<option value='".$kit['id_kit']."'>".$kit['id_kit'].'::'.$kit['kit_title']."</option>";
+                                   }
+                                   $options = $options.$option;
+                               }
+                           }
+                           $kit_options = "
+                                <form class='kit-change'>
+                                    <div class='form-group'>
+                                        <select class='form-control kit' id='kit_change_".$check["id"]."' data-id_row='".$check["id"]."' ".$disabled.">
+                                            ".$options." 
+                                        </select>
+                                    </div>
+                                </form>                        
+                           ";
+                       } else {
+                           $kit_options = "";
+                       }
+
                        echo "
                         <tr >
-                    
-                       
-                        <td>".$check['sort']."</td>
-                        <td>
-                        
-                        <div class='checkbox'>
-                    <label>
-                      <input type='checkbox' id='".$check["id_check"]."' class='check' ".$checked." data-kit='".$check_info["kit"]."' data-id_row='".$check["id"]."'>
-                      ".$check["operation"]."
-                    </label>
-                  </div>
-                        
-                        
-                        </td>
-                         <td>
-                         <form class='comment' id='comment_".$check["id"]."'>
-                         
-                        <div class='form-group'>
-                            <textarea class='form-control' rows='1' placeholder='Комментарий ...'>".$check["comment"]."</textarea>
-                        </div>
-                         
-                         
-                         <button type='submit' class='btn btn-primary pull-right' id='btn_".$check["id"]."'>Ок</button>
-                         </form>
-                         </td>
-                         <td>".$check["id_kit"]."</td>
-                        <td>".$user_info['user_name']."</td>
-                         <td>".$check["update_date"]."</td>
+                            <td>".$check['sort']."</td>
+                            <td>
+                                <div class='checkbox'>
+                                    <label>
+                                        <input type='checkbox' id='".$check["id_check"]."' class='check' ".$checked." data-kit='".$check["id_kit"]."' data-id_row='".$check["id"]."'>".$check["operation"]."</label>
+                                </div>
+                            </td>
+                            <td>
+                                <form class='comment' id='comment_".$check["id"]."'>
+                                    <div class='form-group'>
+                                        <textarea class='form-control' rows='1' placeholder='Комментарий ...'>".$check["comment"]."</textarea>
+                                    </div>
+                                    <button type='submit' class='btn btn-primary pull-right' id='btn_".$check["id"]."'>Ок</button>
+                                </form>
+                            </td>
+                            <td>
+                            ".$kit_options."
+                            </td>
+                            <td>".$user_info['user_name']."</td>
+                            <td>".$check["update_date"]."</td>
 
                     </tr>
                        
@@ -381,17 +405,30 @@ $('.comment').submit(function(){
       //if (category == 4 && (finish_hs!=100  ||  finish_mh!=100 || finish_hp!=100 )) {alert("Не выполнены все операции в предыдущих отделах!"); $(this).prop( "checked", false ); return false;}
      
     var id = $(this).attr("id");
-    var kit =  $(this).data('kit');
     var id_row =  $(this).data('id_row');
+    var kit = $('select[data-id_row='+id_row+']').val(); //$(this).data('kit');
+
+    if  (kit == undefined) {
+        kit = 0;
+    }
+
     //alert(id);
+    //console.log(kit);
+
     if(this.checked) {
         val = 1;
+        //отключает смену набора
+        $('select[data-id_row='+id_row+']').prop('disabled', true);
     } else {
         val = 0;
+        //включает смену набора
+        $('select[data-id_row='+id_row+']').prop('disabled', false);
     }
     
     var robot =  <?php echo $robot_id; ?>;
     var remont = <?php echo $robot_remont; ?>;
+
+
 
       $.post( "./api.php", { 
         action: "add_check_on_robot", 
@@ -411,8 +448,17 @@ $('.comment').submit(function(){
                   $(".check").prop('disabled', false);
               }
           });
+
 });
 
+//
+$(".kit").on('change', function() {
+    var id_row =  $(this).data('id_row');
+    var id_kit =  $(this).val();
+
+    $('input[data-id_row='+id_row+']').attr('data-kit', id_kit);
+    //console.log(th);
+});
 
   
 </script>

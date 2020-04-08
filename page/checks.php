@@ -110,6 +110,7 @@ class Checks
         $result = $this->pdo->query($query);
         return $result;
     }
+    //собирает чек лесты по выбранной категории и роботу (базовые)
     function get_checks_on_robot($category, $robot)
     {
         $query = "SELECT * FROM `check` WHERE `category` = $category AND `robot` = $robot AND `option` = 0 ORDER BY `sort` ASC";
@@ -120,6 +121,7 @@ class Checks
         if (isset($checks_array))
             return $checks_array;
     }
+    //собирает чек лесты по выбранной категории и роботу (только по опциям)
     function get_checks_on_robot_option($category, $robot)
     {
         $query = "SELECT robot_options.title, check.id, check.id_check, check.check, check.operation, check.comment, check.id_kit, check.update_user, check.update_date  FROM `check` JOIN `robot_options` ON check.option = robot_options.id_option WHERE check.category = $category AND check.robot = $robot AND check.option != 0 ORDER BY check.sort ASC";
@@ -131,6 +133,7 @@ class Checks
             return $checks_array;
     }
 
+    //
     function add_check_on_robot($id_row, $robot, $id, $value, $number, $remont, $kit)
     {
         $date    = date("Y-m-d H:i:s");
@@ -138,7 +141,7 @@ class Checks
         if ($id == 131 && $value == 0) {
             return false;
         }
-        $query = "UPDATE `check` SET `check` = '$value', `update_user` = '$user_id', `update_date` = '$date' WHERE `id` = $id_row";
+        $query = "UPDATE `check` SET `check` = '$value', `update_user` = '$user_id', `update_date` = '$date', `id_kit` = '$kit' WHERE `id` = $id_row";
         $result = $this->pdo->query($query);
         $query = "SELECT * FROM `check` WHERE `id` = $id_row";
         $result = $this->pdo->query($query);
@@ -251,6 +254,8 @@ class Checks
             $this->sklad->unset_writeoff_kit($robot_version, $number, $kit, $id, $robot);
         }
     }
+
+    //
     function add_comment_on_check($id_row, $robot, $id, $value, $comment_check, $number)
     {
         $date         = date("Y-m-d H:i:s");

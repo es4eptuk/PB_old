@@ -45,6 +45,7 @@ include 'include/class.inc.php';
                                         <option value="Покраска/Покрытие">Покраска/Покрытие</option>
                                         <option value="Сварка/Зенковка">Сварка/Зенковка</option>
                                         <option value="Не прокатило">Не прокатило</option>
+                                        <option value="ThermoControl">ThermoControl</option>
                                     </select>
                                 </div>
 
