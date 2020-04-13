@@ -48,7 +48,7 @@ $current_month = date('m');
                                       <select class="form-control" name="version" id="version" required="required">
                                           <?php
 
-                                          $versions = $position->get_equipment();
+                                          $versions = $robots->getEquipment;
 
                                           foreach ($versions as &$version) {
 

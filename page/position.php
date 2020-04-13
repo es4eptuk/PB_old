@@ -8,7 +8,7 @@ class Position
 
     function __construct()
     {
-        global $database_server, $database_user, $database_password, $dbase, $writeoff, $log;
+        global $database_server, $database_user, $database_password, $dbase;
         $dsn = "mysql:host=$database_server;dbname=$dbase;charset=utf8";
         $opt = [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
@@ -17,11 +17,15 @@ class Position
             PDO::MYSQL_ATTR_INIT_COMMAND => "SET sql_mode='';",
         ];
         $this->pdo = new PDO($dsn, $database_user, $database_password, $opt);
+    }
+
+    function init()
+    {
+        global $writeoff, $log;
 
         $this->writeoff = $writeoff; //new Writeoff;
         $this->log = $log; //new Log;
     }
-
 
     /**
      * @param $id
@@ -483,7 +487,7 @@ class Position
         return $result;
     }
     
-    function set_writeoff_kit($version, $number, $kit, $check,$robot)
+    function set_writeoff_kit($version, $number, $kit, $check, $robot)
     {
         // $query = "UPDATE `pos_items` SET `total` = total-quant_robot WHERE `version` = $version";
         // $result = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
@@ -628,7 +632,9 @@ class Position
         }
         return $result;
     }
-    function get_equipment()
+
+    //надо переносить в роботы там уже есть список
+    /*function get_equipment()
     {
         $query = "SELECT * FROM robot_equipment ORDER BY `title` DESC";
         $result = $this->pdo->query($query);
@@ -637,7 +643,8 @@ class Position
         }
         if (isset($equipment_array))
             return $equipment_array;
-    }
+    }*/
+
     function get_info_equipment($id)
     {
         $query = "SELECT * FROM robot_equipment WHERE id='$id'";
@@ -1038,8 +1045,8 @@ class Position
             return $equipment_array;
     }
 
-    //собирает рекурсивно все зависимые наборы по ид первоночального родителя
-    function get_all_mod_kits_by_id($id)
+    //собирает рекурсивно все дочерние наборы по ид первоночального родителя
+    function get_all_children_kits_by_id($id)
     {
         $query = "SELECT * FROM `pos_kit` WHERE parent_kit = $id";
         $result = $this->pdo->query($query);
@@ -1048,9 +1055,31 @@ class Position
         }
         if (isset($kit_array)) {
             foreach ($kit_array as $kit) {
-                $kit_array_children = $this->get_all_mod_kits_by_id($kit['id_kit']);
+                $kit_array_children = $this->get_all_children_kits_by_id($kit['id_kit']);
                 if (isset($kit_array_children)) {
                     $kit_array = array_merge($kit_array, $kit_array_children);
+                }
+            }
+            return $kit_array;
+        }
+
+        return null;
+    }
+
+    //собирает рекурсивно все родительские наборы по ид первоночального родителя
+    function get_all_parents_kits_by_id($id)
+    {
+        $query = "SELECT * FROM `pos_kit` WHERE id_kit = $id";
+        $result = $this->pdo->query($query);
+        while ($line = $result->fetch()) {
+            $kit_array[] = $line;
+        }
+
+        if (isset($kit_array)) {
+            foreach ($kit_array as $kit) {
+                $kit_array_parent = $this->get_all_parents_kits_by_id($kit['parent_kit']);
+                if (isset($kit_array_parent)) {
+                    $kit_array = array_merge($kit_array, $kit_array_parent);
                 }
             }
             return $kit_array;
@@ -1062,13 +1091,40 @@ class Position
     //выдает массив набора/ов в том числе с дочерними начиная с текущего
     function get_all_kits_by_id($id)
     {
-        $query = "SELECT * FROM `pos_kit` WHERE id_kit = $id";
-        $result = $this->pdo->query($query);
-        while ($line = $result->fetch()) {
-            $kit_array[] = $line;
+        $kit_array_parents = $this->get_all_parents_kits_by_id($id);
+        //$kit_array_children = $this->get_all_children_kits_by_id($id);
+        $kit_array_children = [];
+        if (!is_array($kit_array_parents)) {
+            $kit_array_parents = [];
+        } else {
+            foreach ($kit_array_parents as $kit) {
+                $kit_array = $this->get_all_children_kits_by_id($kit['id_kit']);
+                if (isset($kit_array)) {
+                    $kit_array_children = array_merge($kit_array_children, $kit_array);
+                }
+            }
         }
-        $kit_array_children = $this->get_all_mod_kits_by_id($id);
-        $result = (isset($kit_array_children)) ? array_merge($kit_array, $kit_array_children) : $kit_array;
+        /*if (!is_array($kit_array_children)) {
+            $kit_array_children = [];
+        }*/
+
+        $kit_array = array_merge($kit_array_parents, $kit_array_children);
+        if (is_array($kit_array)) {
+            //удаляем повторы
+            $result = [];
+            $id_kits = [];
+            foreach ($kit_array as $kit) {
+                if (!in_array($kit['id_kit'], $id_kits)) {
+                    $result[] = $kit;
+                    $id_kits[] = $kit['id_kit'];
+                }
+            }
+            //сортеруем по полю id_kit
+            uasort($result, function($a, $b){
+                return ($a['id_kit'] - $b['id_kit']);
+            });
+        }
+
         return (isset($result)) ? $result : null;
     }
 

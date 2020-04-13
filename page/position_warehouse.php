@@ -8,7 +8,7 @@ class PositionWarehouse
 
     function __construct()
     {
-        global $database_server, $database_user, $database_password, $dbase, $writeoff, $log;
+        global $database_server, $database_user, $database_password, $dbase;
         $dsn = "mysql:host=$database_server;dbname=$dbase;charset=utf8";
         $opt = [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
@@ -17,11 +17,15 @@ class PositionWarehouse
             PDO::MYSQL_ATTR_INIT_COMMAND => "SET sql_mode='';",
         ];
         $this->pdo = new PDO($dsn, $database_user, $database_password, $opt);
+    }
+
+    function init()
+    {
+        global $writeoff, $log;
 
         $this->writeoff = $writeoff; //new Writeoff;
         $this->log = $log; //new Log;
     }
-
 
     /**
      * @param $id

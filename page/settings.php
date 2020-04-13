@@ -15,7 +15,12 @@ class Settings
         ];
         $this->pdo = new PDO($dsn, $database_user, $database_password, $opt);
     }
-    
+
+    function init()
+    {
+
+    }
+
     function get_param($name) {
         
         $query = "SELECT * FROM `system_settings` WHERE `name` = '$name'";

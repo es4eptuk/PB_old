@@ -14,6 +14,12 @@ class Log
         ];
         $this->pdo = new PDO($dsn, $database_user, $database_password, $opt);
     }
+
+    function init()
+    {
+
+    }
+
     function add($class, $message)
     {
         $date    = date("Y-m-d H:i:s");

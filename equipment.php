@@ -47,23 +47,17 @@ include 'include/class.inc.php';
                 </thead>
                 <tbody>
                 <?php 
-                
-                $arr = $position->get_equipment();
-                
+                $arr = $robots->getEquipment;
                 if (isset($arr)) {
-                foreach ($arr as &$pos) {
-
-                       echo "
-                    <tr>
-                        <td>".$pos['id']."</td>
-                        <td>".$pos['title']."</td>
-                        <td><i class='fa fa-2x fa-pencil' style='cursor: pointer;' id='".$pos['id']."'></i></td>
-                    </tr>
-                       
-                       
-                       ";
-                    
-                }
+                    foreach ($arr as &$pos) {
+                        echo "
+                        <tr>
+                            <td>".$pos['id']."</td>
+                            <td>".$pos['title']."</td>
+                            <td><i class='fa fa-2x fa-pencil' style='cursor: pointer;' id='".$pos['id']."'></i></td>
+                        </tr>
+                        ";
+                    }
                 } 
                 ?>
               </table>

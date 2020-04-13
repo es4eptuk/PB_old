@@ -53,7 +53,7 @@ $order_responsible = $order['order_responsible'];
                                         <label>Версия робота</label>
                                         <select class="form-control" name="version" id="version" required="required">
                                             <?php
-                                            $versions = $position->get_equipment();
+                                            $versions = $robots->getEquipment;
                                             foreach ($versions as &$version) {
                                                 if ( $version['id'] == $order_version ) {
                                                     echo "

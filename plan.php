@@ -70,7 +70,7 @@ if (isset($_GET['status'])) $id_status = $_GET['status'];
                       </button>
                       <ul class="dropdown-menu" role="menu">
 
-                          <?php $arr_eq = $position->get_equipment();
+                          <?php $arr_eq = $robots->getEquipment;
                           foreach ($arr_eq as $eq) {
                               echo '<li><a href="plan.php?id='.$_GET['id'].'&version='.$eq['id'].'">'.$eq['title'].'</a></li>';
                           }

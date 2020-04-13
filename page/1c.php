@@ -3,6 +3,7 @@ class OneC
 {
     private $query;
     private $pdo;
+
     function __construct()
     {
         global $database_server, $database_user, $database_password, $dbase;
@@ -14,6 +15,12 @@ class OneC
         ];
         $this->pdo = new PDO($dsn, $database_user, $database_password, $opt);
     }
+
+    function init()
+    {
+
+    }
+
     function add_PP($data)
     {
         //print_r($data);

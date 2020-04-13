@@ -46,7 +46,7 @@ include 'include/class.inc.php';
 
                           <?php
 
-                          $versions = $position->get_equipment();
+                          $versions = $robots->getEquipment;
 
                           foreach ($versions as &$version) {
 
@@ -163,7 +163,7 @@ include 'include/class.inc.php';
                   <select class="form-control" name="group" placeholder="Веберите версию" id="version" required="required">
                       <?php
 
-                      $versions = $position->get_equipment();
+                      $versions = $robots->getEquipment;
 
                       foreach ($versions as &$version) {
 
@@ -242,7 +242,7 @@ include 'include/class.inc.php';
                   <select class="form-control" name="version" placeholder="Веберите версию" id="version_edit" required="required">
                       <?php
 
-                      $versions = $position->get_equipment();
+                      $versions = $robots->getEquipment;
 
                       foreach ($versions as &$version) {
 

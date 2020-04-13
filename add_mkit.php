@@ -56,7 +56,7 @@ $kit_version = $kit['kit_version'];
                                 <select class="form-control" name="version" placeholder="Веберите версию" id="version" required="required">
                                     <?php
 
-                                    $versions = $position->get_equipment();
+                                    $versions = $robots->getEquipment;
 
                                     foreach ($versions as &$version) {
 

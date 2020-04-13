@@ -56,34 +56,20 @@ $robot_test = $robot_test->format('d.m.Y');
 								<h3 class="box-title">Редактирование робота <?php echo $robot_version.".".$robot_number; ?></h3>
 							</div><!-- /.box-header -->
 							<div class="box-body">
-						 
                 <!-- text input -->
                 <!-- select -->
-                
-
                  <div class="form-group">
                   <label>Версия</label>
-                  <select class="form-control" name="version" id="version">
-                      
-                      <?php 
-                        $array_version = [
-                                                                        4 => 4,
-                                                                        3 => 3,
-                                                                        2 => 2
-                                                                        
-                                                                    ];
-                                                                    
-                         foreach ($array_version as $key => $value) { 
-								if ( $key == $robot_version ) {  
-                                    echo "<option value='".$key."' selected>".$value."</option>";
-									} else {
-									echo "<option value='".$key."'>".$value."</option>"; 
-											}
-									}                                            
-                      
-                      
+                  <select class="form-control" name="version" id="version" disabled>
+                      <?php
+                          foreach ($robots->getEquipment as &$version) {
+                              if ($version['id'] == $robot_version) {
+                                  echo "<option value='" . $version['id'] . "' selected>" . $version['title'] . "</option>";
+                              } else {
+                                  echo "<option value='" . $version['id'] . "'>" . $version['title'] . "</option>";
+                              }
+                          }
                       ?>
-                    
                   </select>
                 </div>
                 
@@ -100,53 +86,39 @@ $robot_test = $robot_test->format('d.m.Y');
                   <select class="form-control" name="customer" id="customer">
                       <option value="0"></option>
                     <?php 
-                   $arr = $robots->get_customers();
-                
+                    $arr = $robots->get_customers();
                     foreach ($arr as &$customer) {
-                        
                         if ($customer['id']==$robot_customer) {
-                       echo "
-                       <option value='".$customer['id']."' selected>".$customer['name']."</option>
-                       ";
+                            echo "<option value='".$customer['id']."' selected>".$customer['name']."</option>";
                         } else {
-                             echo "
-                       <option value='".$customer['id']."'>".$customer['name']."</option>
-                       ";
-                            
+                            echo "<option value='".$customer['id']."'>".$customer['name']."</option>";
                         }
                     }
-                   
-                   ?>
+                    ?>
                   </select>
                 </div>
                 
                 <div class="form-group">
                   <label>Язык на роботе</label>
                   <select class="form-control" name="language_robot" id="language_robot">
-                      
-                       <?php 
+                       <?php
                         $language_robot = [
-                                            "russian" => "Русский",
-                                            "english" => "Английский",                          
-                                             "spanish" => "Испаниский",
-                                              "turkish" => "Турецкий",
-                                               "arab" => "Арабский",
-                                                "portuguese" => "Португальский",
-                                                 "german" => "Немецкий"
-                                                                    ];
-                                                                    
-                         foreach ($language_robot as $key => $value) { 
-								if ( $key == $robot_language_robot ) {  
+                            "russian" => "Русский",
+                            "english" => "Английский",
+                            "spanish" => "Испаниский",
+                            "turkish" => "Турецкий",
+                            "arab" => "Арабский",
+                            "portuguese" => "Португальский",
+                            "german" => "Немецкий"
+                        ];
+                        foreach ($language_robot as $key => $value) {
+                            if ( $key == $robot_language_robot ) {
                                     echo "<option value='".$key."' selected>".$value."</option>";
-									} else {
-									echo "<option value='".$key."'>".$value."</option>"; 
-											}
-									}                                            
-
+                                } else {
+                                    echo "<option value='".$key."'>".$value."</option>";
+                            }
+                        }
                       ?>
-                      
-                      
-                   
                   </select>
                 </div>
                 
@@ -154,76 +126,43 @@ $robot_test = $robot_test->format('d.m.Y');
                   <label>Язык инструкции</label>
                   <select class="form-control" name="language_doc" id="language_doc">
                      <?php 
-                        $language_doc = [
-                                            "russian" => "Русский",
-                                            "english" => "Английский"                          
-                                             
-                                                                    ];
-                                                                    
-                         foreach ($language_doc as $key => $value) { 
+                        $language_doc = ["russian" => "Русский", "english" => "Английский"];
+                         foreach ($language_doc as $key => $value) {
 								if ( $key == $robot_language_doc ) {  
                                     echo "<option value='".$key."' selected>".$value."</option>";
 									} else {
 									echo "<option value='".$key."'>".$value."</option>"; 
 											}
 									}                                            
-
                       ?>
-                    
-                    
                   </select>
                 </div>
                 
                  <div class="form-group">
                   <label>Напряжение зарядной станции</label>
                   <select class="form-control" name="charger" id="charger">
-                   
-                   <?php 
-                        $charger= [
-                                            "220" => "220",
-                                            "110" => "110"                          
-                                             
-                                                                    ];
-                                                                    
-                         foreach ($charger as $key => $value) { 
-								if ( $key == $robot_charger ) {  
-                                    echo "<option value='".$key."' selected>".$value."</option>";
-									} else {
-									echo "<option value='".$key."'>".$value."</option>"; 
-											}
-									}                                            
-
-                      ?>
-                   
-                   
-                    
+                    <?php
+                    $charger= ["220" => "220", "110" => "110"];
+                    foreach ($charger as $key => $value) {
+                        if ( $key == $robot_charger ) {
+                            echo "<option value='".$key."' selected>".$value."</option>";
+                        } else {
+                            echo "<option value='".$key."'>".$value."</option>";
+                        }
+                    }
+                    ?>
                   </select>
                 </div>
-                
-                
-                
-                <div class="form-group">
+
+                <div class="form-group" id="allOptions">
                     <label for="exampleInputFile">Комплектация</label>
-                    
                     <?php
                     $options = $robots->get_robot_options($id);
-                    
                     foreach ($options as &$value) {
                         $check = ($value['check'] ==1) ? "checked" : "";
-                            echo '<div class="checkbox">
-                    <label>
-                      <input type="checkbox" class="check" id="'.$value['id'].'"  '.$check.' name="options" value=  '.$value['id'].'>
-                      '.$value['title'].'
-                    </label>
-                  </div>';
+                            echo '<div class="checkbox"><label><input type="checkbox" class="check" id="'.$value['id'].'" name="options" value='.$value['id'].' '.$check.'>'.$value['title'].'</label></div>';
                         }
-                    
                     ?>
-                    
-                  
-
-                  
-                  
                 </div>
                 
                 <div class="form-group">
@@ -244,26 +183,16 @@ $robot_test = $robot_test->format('d.m.Y');
                  <div class="form-group">
                   <label>Наличие АКБ</label>
                   <select class="form-control" name="battery" id="battery">
-                      
-                       <?php 
-                        $battery= [
-                                            1 => "Да",
-                                            0 => "Нет"                          
-                                             
-                                                                    ];
-                                                                    
-                         foreach ($battery as $key => $value) { 
-								if ( $key == $robot_battery ) {  
-                                    echo "<option  value='".$key."' selected>".$value."</option>";
-									} else {
-									echo "<option  value='".$key."'>".$value."</option>"; 
-											}
-									}                                            
-
-                      ?>
-                      
-                      
-                   
+                       <?php
+                       $battery= [1 => "Да", 0 => "Нет"];
+                       foreach ($battery as $key => $value) {
+                            if ( $key == $robot_battery ) {
+                                echo "<option  value='".$key."' selected>".$value."</option>";
+                            } else {
+                                echo "<option  value='".$key."'>".$value."</option>";
+                            }
+                       }
+                       ?>
                   </select>
                 </div>
                 
@@ -271,13 +200,10 @@ $robot_test = $robot_test->format('d.m.Y');
                   <label>Дополнительная информация</label>
                   <input type="text" class="form-control" name="dop" id="dop" value="<?php echo $robot_dop ?>">
                 </div>
-
-
                                 <div class="form-group">
                                     <label>Информация от производства</label>
                                     <textarea rows="5" cols="45" class="form-control" name="dop_manufactur" id="dop_manufactur"><?php echo $robot_dop_manufactur ?></textarea>
                                 </div>
-                
                 <div class="checkbox">
                     <label>
                       <input type="checkbox" id="send" <?php echo ($robot_progress ==100) ? "checked" : ""; ?>>
@@ -325,222 +251,167 @@ $robot_test = $robot_test->format('d.m.Y');
        immediately after the control sidebar -->
 		<div class="control-sidebar-bg"></div>
 	</div><!-- ./wrapper -->
-	<!-- Modal -->
-	<div aria-hidden="true" aria-labelledby="exampleModalLabel" class="modal fade" id="add_provider" role="dialog" tabindex="-1">
-		<div class="modal-dialog" role="document">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title" id="exampleModalLabel">Добавить поставщика</h5><button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
-				</div>
-				<div class="modal-body">
-					<form data-toggle="validator" id="add_provider_form" name="add_provider_form" role="form">
-						<!-- select -->
-						<div class="form-group">
-							<label>Форма собственности</label> <select class="form-control" id="provider_type" name="provider_type" required="required">
-								<option value="ИП">
-									ИП
-								</option>
-								<option value="ООО">
-									ООО
-								</option>
-								<option value="ОАО">
-									ОАО
-								</option>
-								<option value="ЗАО">
-									ЗАО
-								</option>
-								<option value="Ltd.">
-									Ltd.
-								</option>
-							</select>
-						</div>
-						<div class="form-group">
-							<label>Наименование</label> <input class="form-control" id="provider_title" name="provider_title" required="required" type="text">
-						</div>
-					</form>
-				</div>
-				<div class="modal-footer">
-					<button class="btn btn-secondary" data-dismiss="modal" type="button">Закрыть</button> <button class="btn btn-primary" id="btn_add_provider" type="button">Добавить</button>
-				</div>
-			</div>
-		</div>
-	</div>
-	<?php include 'template/scripts.php'; ?>
+
+    <!-- Modal -->
+    <div aria-hidden="true" aria-labelledby="exampleModalLabel" class="modal fade" id="add_customer" role="dialog" tabindex="-1">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Добавить клиента</h5>
+                    <button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <form data-toggle="validator" id="add_provider_form" name="add_provider_form" role="form">
+                        <!-- select -->
+                        <div class="form-group">
+                            <label>Наименование</label> <input class="form-control" id="name_cust" name="name_cust" required="required" type="text">
+                        </div>
+                        <div class="form-group">
+                            <label>ФИО</label> <input class="form-control" id="fio" name="fio" required="required" type="text">
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label> <input class="form-control" id="email" name="email" required="required" type="text">
+                        </div>
+                        <div class="form-group">
+                            <label>Телефон</label> <input class="form-control" id="phone" name="phone" required="required" type="text">
+                        </div>
+                        <div class="form-group">
+                            <label>Адрес</label> <input class="form-control" id="address" name="address" required="required" type="text">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-dismiss="modal" type="button">Закрыть</button>
+                    <button class="btn btn-primary" id="btn_add_customer" type="button">Добавить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+	<?php include 'template/scripts.php';?>
 	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-    <script src="../../bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+    <script src="./bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.js"></script>
+    <script src="./bower_components/bootstrap-datepicker/dist/locales/bootstrap-datepicker.ru.min.js"></script>
 
-	<script>
-	 //Date picker
-    $('#datepicker').datepicker({
-      format: 'dd.mm.yyyy',
-     
-      autoclose: true
-    })
-    
-    $('#datepicker2').datepicker({
-      format: 'dd.mm.yyyy',
-       
-      autoclose: true
-    })
-    
-$(document).ready(function() { 	
-var arr_str = [];
-var arr_ids = [];
-var arr_pos = [];
-var pos_info = [];
-var category_data = [];
-var category1 = "---";
+    <script>
+        //Date picker
+        $('#datepicker').datepicker({
+            format: 'dd.mm.yyyy',
+            language: 'ru-Ru',
+            startDate: '-3d',
+            autoclose: true
+        })
+        $('#datepicker2').datepicker({
+            format: 'dd.mm.yyyy',
+            language: 'ru-Ru',
+            startDate: '-3d',
+            autoclose: true
+        })
 
-  $(".check").change(function() {
-    var id = $(this).attr("id"); 
-    var robot = <?php echo $id; ?>
-      
-    if(this.checked) {
-        val = 1;
-    } else {
-        val = 0;
-    }
-    
-     $.post( "./api.php", { 
-        action: "add_option_check",
-        robot: robot,
-        id: id,
-        value: val
-    } )
-          .done(function( data ) {
-              if (data=="false") {alert( "Data Loaded: " + data ); }
-              else {
-                //window.location.href = "./robots.php";
-              }
-          });
-    
-    console.log(id);
-      
-  });
- 
- 
- $("#btn_add_provider").click(function() {
- 	var type = $('#provider_type').val();
- 	var title = $('#provider_title').val();
- 	//alert("123");
- 	if (title != "") {
- 		$.post("./api.php", {
- 			action: "add_pos_provider",
- 			type: type,
- 			title: title
- 		}).done(function(data) {
- 			console.log(data);
- 			if (data == "false") {
- 				alert("Data Loaded: " + data);
- 				return false;
- 			} else {
- 				$('#provider').append("<option value='" + data + "' selected>" + title + "<\/option>");
- 				$('#add_provider').modal('hide');
- 				//return false;
- 			}
- 		});
- 	}
- });
- 
-  
- $("#delete").click(function() {
-     $(this).last().addClass( "disabled" );
- $.post( "./api.php", { 
-        action: "delete_robot", 
-        id: <?php echo $id ?>
-        
-        
-    } )
-          .done(function( data ) {
-              if (data=="false") {alert( "Data Loaded: " + data ); }
-              else {
-                window.location.href = "./robots.php";  
-              }
-          });
- });
- 
- 
-  $("#save_close").click(function() {
-      var options = [];
-      $(this).last().addClass( "disabled" );
-  var number =  $('#number').val();
-    var name =  $('#name').val();
-    var version =  $('#version').val();
-    var photo =  $('#photo').is(':checked') ? 1 : 0;
-    var termo =  $('#termo').is(':checked') ? 1 : 0;
-    var dispenser =  $('#dispenser').is(':checked') ? 1 : 0;
-    var terminal =  $('#terminal').is(':checked') ? 1 : 0;
-    var kaznachey =  $('#kaznachey').is(':checked') ? 1 : 0;
-    var lidar =  $('#lidar').is(':checked') ? 1 : 0;
-    var other =  $('#other').is(':checked') ? 1 : 0;
-    var customer =  $('#customer').val();
-    var language_robot =  $('#language_robot').val();
-    var language_doc =  $('#language_doc').val();
-    var charger =  $('#charger').val();
-    var color =  $('#color').val();
-    var brand =  $('#brand').val();
-    var ikp =  $('#ikp').val();
-    var battery =  $('#battery').val();
-      var dop =  $('#dop').val();
-      var dop_manufactur =  $('#dop_manufactur').val();
-
-    var date = $('#datepicker').val();
-    var date_test = $('#datepicker2').val();
-    var send =  $('#send').is(':checked') ? 1 : 0;
-    
-   $('input[name=options]').each(function () {
-           if (this.checked) {
-                options.push($(this).val());
-           }
-    });
-    
-   console.log(options);
-    
-      $.post( "./api.php", { 
-        action: "edit_robot", 
-        id: <?php echo  $id ?>,
-        number: number,
-        version: version,
-        name: name,
-        options: options,
-        customer: customer,
-        language_robot: language_robot,
-        language_doc: language_doc,
-        charger: charger,
-        color: color,
-        brand: brand,
-        ikp: ikp,
-        battery: battery,
-        dop: dop,
-          dop_manufactur: dop_manufactur,
-        date: date,
-        date_test: date_test,
-        send: send
-        
-    } )
-          .done(function( data ) {
-              if (data=="false") {alert( "Data Loaded: " + data ); }
-              else {
-                window.location.href = "./robots.php";
-              }
-          });
- });
- 
- 
+        //создать клиента
+        $("#btn_add_customer").click(function () {
+            var name_cust = $('#name_cust').val();
+            var fio = $('#fio').val();
+            var email = $('#email').val();
+            var phone = $('#phone').val();
+            var address = $('#address').val();
+            if (name_cust != "") {
+                $.post("./api.php", {
+                    action: "add_customer",
+                    name: name_cust,
+                    fio: fio,
+                    email: email,
+                    phone: phone,
+                    address: address
+                }).done(function (data) {
+                    console.log(data);
+                    if (data == "false") {
+                        alert("Data Loaded: " + data);
+                        return false;
+                    } else {
+                        $('#customer').append("<option value='" + data + "' selected>" + name_cust + "<\/option>");
+                        $('#add_customer').modal('hide');
+                    }
+                });
+            }
+        });
 
 
- function save_new() {
-     
-     return false;
- }
- 
+        $(document).ready(function () {
+            //удаление робота
+            $("#delete").click(function () {
+                $(this).last().addClass("disabled");
+                $.post("./api.php", {
+                    action: "delete_robot",
+                    id: <?php echo $id ?>
+                })
+                    .done(function (data) {
+                        if (data == "false") {
+                            alert("Data Loaded: " + data);
+                        } else {
+                            window.location.href = "./robots.php";
+                        }
+                    });
+            });
 
-  
+            //сохранить изменения
+            $("#save_close").click(function () {
+                $(this).last().addClass("disabled");
+                var options = [];
+                var number = $('#number').val();
+                var name = $('#name').val();
+                var version = $('#version').val();
+                var customer = $('#customer').val();
+                var language_robot = $('#language_robot').val();
+                var language_doc = $('#language_doc').val();
+                var charger = $('#charger').val();
+                var color = $('#color').val();
+                var brand = $('#brand').val();
+                var ikp = $('#ikp').val();
+                var battery = $('#battery').val();
+                var dop = $('#dop').val();
+                var dop_manufactur = $('#dop_manufactur').val();
+                var date_start = $('#datepicker').val();
+                var date_test = $('#datepicker2').val();
+                var send = $('#send').is(':checked') ? 1 : 0;
+                //собираем отмеченные опции
+                $('input[name=options]').each(function () {
+                    if (this.checked) {
+                        options.push($(this).val());
+                    }
+                });
+                $.post("./api.php", {
+                    action: "edit_robot",
+                    id: <?php echo $id ?>,
+                    number: number,
+                    version: version,
+                    name: name,
+                    options: options,
+                    customer: customer,
+                    language_robot: language_robot,
+                    language_doc: language_doc,
+                    charger: charger,
+                    color: color,
+                    brand: brand,
+                    ikp: ikp,
+                    battery: battery,
+                    dop: dop,
+                    dop_manufactur: dop_manufactur,
+                    date_start: date_start,
+                    date_test: date_test,
+                    send: send
+                })
+                    .done(function (data) {
+                        if (data == "false") {
+                            alert("Data Loaded: " + data);
+                        } else {
+                            window.location.href = "./robots.php";
+                        }
+                    });
+            });
+        });
 
-
-  });
-
-	</script>
+    </script>
 </body>
 </html>

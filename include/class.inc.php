@@ -22,7 +22,7 @@ include_once ('page/plan.php');
 include_once ('page/1c.php');
 include_once ('page/settings.php');
 
-
+//создание экземпляров
 $log = new Log();
 $telegramAPI = new TelegramAPI();
 $mail = new Mail();
@@ -39,6 +39,24 @@ $tickets = new Tickets();
 $plan = new Plan();
 $oneC = new OneC();
 $settings = new Settings();
+
+//инициализация
+$log->init();
+$telegramAPI->init();
+$mail->init();
+$orders->init();
+$writeoff->init();
+$position->init();
+$position_warehouse->init();
+$user->init();
+$admission->init();
+$robots->init();
+$checks->init();
+$task->init();
+$tickets->init();
+$plan->init();
+$oneC->init();
+$settings->init();
 
 
 $i = $_SERVER['REQUEST_URI'];

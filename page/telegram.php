@@ -1,23 +1,19 @@
 <?php
 class TelegramAPI {
+    public $status;
     public $token;
+    public $token_support;
     public $chatID_manafacture;
     public $chatID_tehpod;
     public $chatID_sale;
+    public $chatID_test;
     private $query;
     private $pdo;
 
     function __construct()
     {
-        $this -> token = "583056708:AAFzy7OX6VwV9SFllhMW9pUeY50MwAU89QI";
-        $this -> token_support = "828383903:AAFJ5LQrGxt1qfTrqlv-TO_tLaFUj2UzjBg";
-        $this -> chatID_manafacture = -249207066;
-        $this -> chatID_tehpod = -232413504;
-        $this -> chatID_sale = -1001461923634;
-        $this -> chatID_test = -278080358;
-
-
         global $database_server, $database_user, $database_password, $dbase;
+
         $dsn = "mysql:host=$database_server;dbname=$dbase;charset=utf8";
         $opt = [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
@@ -26,6 +22,19 @@ class TelegramAPI {
         ];
         $this->pdo = new PDO($dsn, $database_user, $database_password, $opt);
 
+    }
+
+    function init()
+    {
+        global $telegram_settings;
+
+        $this -> status = $telegram_settings['status'];
+        $this -> token = $telegram_settings['token'];
+        $this -> token_support = $telegram_settings['token_support'];
+        $this -> chatID_manafacture = $telegram_settings['chatID_manafacture'];
+        $this -> chatID_tehpod = $telegram_settings['chatID_tehpod'];
+        $this -> chatID_sale = $telegram_settings['chatID_sale'];
+        $this -> chatID_test = $telegram_settings['chatID_test'];
     }
 
     public function sendNotify($departament,$message,$t_chat_id=0)
@@ -60,14 +69,16 @@ class TelegramAPI {
             'parse_mode'=>'HTML'
         ];
         // print_r($params);
-        $ch = curl_init($website . '/sendMessage');
-        curl_setopt($ch, CURLOPT_HEADER, false);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, ($params));
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        $result = curl_exec($ch);
-        curl_close($ch);
+        if ($this -> status) {
+            $ch = curl_init($website . '/sendMessage');
+            curl_setopt($ch, CURLOPT_HEADER, false);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, ($params));
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            $result = curl_exec($ch);
+            curl_close($ch);
+        }
         return $this ->token;
     }
 

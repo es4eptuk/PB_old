@@ -13,7 +13,7 @@ class Tickets
 
     public function __construct()
     {
-        global $database_server, $database_user, $database_password, $dbase, $user, $robots;
+        global $database_server, $database_user, $database_password, $dbase;
         $dsn = "mysql:host=$database_server;dbname=$dbase;charset=utf8";
         $opt = [
             PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
@@ -21,14 +21,18 @@ class Tickets
             PDO::ATTR_EMULATE_PREPARES   => false,
         ];
         $this->pdo = new PDO($dsn, $database_user, $database_password, $opt);
+    }
+
+    function init()
+    {
+        global $user, $robots;
 
         //Подключение внешних классов
         $this->robot = $robots; //new Robots;
         $this->user = $user; //new User;
     }
-    
-    //Получение списка возможных статусов тикетов
 
+    //Получение списка возможных статусов тикетов
     /**
      * @param int $id
      * @return array

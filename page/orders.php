@@ -4,9 +4,10 @@ class Orders
     private $query;
     private $pdo;
     private $log;
+
     function __construct()
     {
-        global $database_server, $database_user, $database_password, $dbase, $log;
+        global $database_server, $database_user, $database_password, $dbase;
         $dsn = "mysql:host=$database_server;dbname=$dbase;charset=utf8";
         $opt = [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
@@ -15,10 +16,16 @@ class Orders
         ];
         $this->pdo = new PDO($dsn, $database_user, $database_password, $opt);
 
+    }
+
+    function init()
+    {
+        global $log;
+
         $this->log = $log; //new Log;
         //$this -> robot = new Robots;
     }
-    
+
     function add_order($json,$version,$auto = false)
     {
         $order_arr = json_decode($json, true);

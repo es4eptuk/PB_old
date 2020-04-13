@@ -47,7 +47,7 @@ $order_date = $order_date->format('d.m.Y');
                                           <?php
 
 
-                                          $versions = $position->get_equipment();
+                                          $versions = $robots->getEquipment;
 
                                           foreach ($versions as &$version) {
 

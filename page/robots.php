@@ -6,11 +6,16 @@ class Robots
     private $sklad;
     private $query;
     private $pdo;
+    private $checks;
+
+    //списки
+    public $getEquipment;
+
 
     function __construct()
     {
 
-        global $database_server, $database_user, $database_password, $dbase, $telegramAPI, $position;
+        global $database_server, $database_user, $database_password, $dbase;
         $dsn = "mysql:host=$database_server;dbname=$dbase;charset=utf8";
         $opt = [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
@@ -18,24 +23,36 @@ class Robots
             PDO::ATTR_EMULATE_PREPARES => false,
         ];
         $this->pdo = new PDO($dsn, $database_user, $database_password, $opt);
+    }
+
+    function init()
+    {
+        global $telegramAPI, $position, $checks;
 
         $this->telegram = $telegramAPI; //new TelegramAPI;
         $this->sklad = $position; //new Position;
+        $this->checks = $checks;
 
+        //список версий роботов
+        $query = "SELECT * FROM robot_equipment ORDER BY `title` DESC";
+        $result = $this->pdo->query($query);
+        while ($line = $result->fetch()) {
+            $equipment[] = $line;
+        }
+        $this->getEquipment = (isset($equipment)) ? $equipment : [];
 
     }
 
     function get_robots()
-{
-    $this->query  = "SELECT * FROM robots WHERE `delete` != 1  ORDER BY `number` ASC";
-    $result = $this->pdo->query($this->query);
-    while ($line = $result->fetch())
     {
-        $robots_array[] = $line;
-    }
+        $this->query = "SELECT * FROM robots WHERE `delete` != 1  ORDER BY `number` ASC";
+        $result = $this->pdo->query($this->query);
+        while ($line = $result->fetch()) {
+            $robots_array[] = $line;
+        }
 
-    if (isset($robots_array)) return $robots_array;
-}
+        if (isset($robots_array)) return $robots_array;
+    }
 
     function del_robot($id)
     {
@@ -115,55 +132,52 @@ class Robots
 
         // $user_id = intval($_COOKIE['id']);
 
-        $number_str = substr(strstr($host, '_') , 1, strlen($host));
+        $number_str = substr(strstr($host, '_'), 1, strlen($host));
         $number = $number_str;
 
 
-        $number_0 = ltrim($number,'0');
+        $number_0 = ltrim($number, '0');
 
-        $this->query  = "SELECT * FROM robots WHERE (number='$number' OR number='$number_0')  AND version = 4";
+        $this->query = "SELECT * FROM robots WHERE (number='$number' OR number='$number_0')  AND version = 4";
         $result = $this->pdo->query($this->query);
-        while ($line = $result->fetch())
-        {
+        while ($line = $result->fetch()) {
             $robot_array[] = $line;
         }
 
-        if (isset($robot_array))
-        {
+        if (isset($robot_array)) {
             $robot_id = $robot_array[0]['id'];
             $t_chat_id = $robot_array[0]['telegram'];
             // echo $query;
 
-            $this->query  = "SELECT * FROM `robot_zabbix` WHERE `id_event` = $id";
+            $this->query = "SELECT * FROM `robot_zabbix` WHERE `id_event` = $id";
             $result = $this->pdo->query($this->query);
 
-            while ($line = $result->fetch())
-            {
+            while ($line = $result->fetch()) {
                 $event_array[] = $line;
             }
 
-            if (isset($event_array))
-            {
-                $this->query  = "UPDATE `robot_zabbix` SET `status` = '$status' WHERE `id_event` = $id";
+            if (isset($event_array)) {
+                $this->query = "UPDATE `robot_zabbix` SET `status` = '$status' WHERE `id_event` = $id";
                 $result = $this->pdo->query($this->query);
-            }else {
-                $this->query  = "INSERT INTO `robot_zabbix` (`id`, `id_robot`,`number_robot`,`host`, `time`, `problem`,`total_uptime`, `update_date`,`id_event`, `status`) VALUES (NULL, $robot_id, $number, '$host', '$time', '$problem','$total_uptime', '$date', '$id', '$status')";
+            } else {
+                $this->query = "INSERT INTO `robot_zabbix` (`id`, `id_robot`,`number_robot`,`host`, `time`, `problem`,`total_uptime`, `update_date`,`id_event`, `status`) VALUES (NULL, $robot_id, $number, '$host', '$time', '$problem','$total_uptime', '$date', '$id', '$status')";
                 $result = $this->pdo->query($this->query);
             }
 
-            $this->query  = "INSERT INTO `robot_log` (`id`, `robot_id`,`source`, `level`, `comment`, `update_user`, `update_date`) VALUES (NULL, $robot_id, 'ZABBIX','WARNING', '$problem', 33, '$date')";
+            $this->query = "INSERT INTO `robot_log` (`id`, `robot_id`,`source`, `level`, `comment`, `update_user`, `update_date`) VALUES (NULL, $robot_id, 'ZABBIX','WARNING', '$problem', 33, '$date')";
             $result = $this->pdo->query($this->query);
-        }
-        else
-        {
-            $this->query  = "INSERT INTO `robot_zabbix` (`id`, `id_robot`,`number_robot`,`host`, `time`, `problem`,`total_uptime`, `update_date`,`id_event`, `status`) VALUES (NULL, 0, $number, '$host', '$time', '$problem', '$total_uptime', '$date', '$id', '$status')";
+        } else {
+            $this->query = "INSERT INTO `robot_zabbix` (`id`, `id_robot`,`number_robot`,`host`, `time`, `problem`,`total_uptime`, `update_date`,`id_event`, `status`) VALUES (NULL, 0, $number, '$host', '$time', '$problem', '$total_uptime', '$date', '$id', '$status')";
             $result = $this->pdo->query($this->query);
         }
 
-        switch ($type_message)
-        {
+        switch ($type_message) {
             case "Disaster":
-                if ($status=="OK") {$icon = '✅';} else {$icon = '🆘';}
+                if ($status == "OK") {
+                    $icon = '✅';
+                } else {
+                    $icon = '🆘';
+                }
 
                 $telegram_str = $icon . " #" . $number . " " . $problem;
                 break;
@@ -194,14 +208,12 @@ class Robots
         }
 
 
-        if ($type == 0 && $client!=1)
-        {
+        if ($type == 0 && $client != 1) {
 
             $this->query = "SELECT * FROM `tickets` WHERE `description` LIKE '%$problem%' AND `robot` = $robot_id AND ( `status` != 6 OR `status` != 3) AND `date_create` >= date_sub(now(), INTERVAL 1 HOUR)";
             $result = $this->pdo->query($this->query);
             $line = $result->fetch();
-            if ($line==null)
-            {
+            if ($line == null) {
                 $cat_zabbix = stristr($problem, '.', true);
                 $this->query = "SELECT id FROM `tickets_category` WHERE `zabbix` LIKE '$cat_zabbix'";
                 $result = $this->pdo->query($this->query);
@@ -211,7 +223,7 @@ class Robots
                 $date = date("Y-m-d H:i:s");
                 $user_id = 33;
 
-                if ($status!="OK" and preg_match("(2048|640|136|138)", "$problem") != true ) {
+                if ($status != "OK" and preg_match("(2048|640|136|138)", "$problem") != true) {
                     $this->query = "INSERT INTO `tickets` (
                                                 `id`, 
                                                 `robot`, 
@@ -238,28 +250,24 @@ class Robots
                                                     '$date')";
                     $result = $this->pdo->query($this->query);
                 }
-                if ($client!=1 and preg_match("(2048|640|136|138)", "$problem") != true) {$this->telegram->sendNotify("tehpod", $telegram_str." - ".$status);}
+                if ($client != 1 and preg_match("(2048|640|136|138)", "$problem") != true) {
+                    $this->telegram->sendNotify("tehpod", $telegram_str . " - " . $status);
+                }
 
             } else {
-                if ($status=="OK" and preg_match("(2048|640|136|138)", "$problem") != true) {
-                    if ($client!=1) {$this->telegram->sendNotify("tehpod", $telegram_str." - ".$status);}
+                if ($status == "OK" and preg_match("(2048|640|136|138)", "$problem") != true) {
+                    if ($client != 1) {
+                        $this->telegram->sendNotify("tehpod", $telegram_str . " - " . $status);
+                    }
                 }
             }
-        }
-        else
-        {
-
-            if ($client==1) {
-                $this->telegram->sendNotify("client", $telegram_str,$t_chat_id);
+        } else {
+            if ($client == 1) {
+                $this->telegram->sendNotify("client", $telegram_str, $t_chat_id);
             } else {
                 $this->telegram->sendNotify("test", $telegram_str);
             }
-
-
         }
-
-
-
     }
 
     function delete_log($id)
@@ -268,7 +276,6 @@ class Robots
         $user_id = intval($_COOKIE['id']);
         $this->query = "DELETE FROM `robot_log` WHERE `id` = $id";
         $result = $this->pdo->query($this->query);
-
     }
 
     public
@@ -284,7 +291,55 @@ class Robots
         if (isset($robot_array)) return $robot_array['0'];
     }
 
-    function add_robot($number, $name, $version, $photo, $termo, $dispenser, $terminal, $kaznachey, $lidar, $other, $customer, $language_robot, $language_doc, $charger, $color, $brand, $ikp, $battery, $dop,$dop_manufactur, $send,$date_start,$date_test)
+    //добавить робота
+
+    function add_robot($number, $name, $version, $options, $customer, $language_robot, $language_doc, $charger, $color, $brand, $ikp, $battery, $dop, $dop_manufactur, $date_start, $date_test, $send)
+    {
+        $date_start = new DateTime($date_start);
+        $date_start = $date_start->format('Y-m-d H:i:s');
+        $date_test = new DateTime($date_test);
+        $date_test = $date_test->format('Y-m-d H:i:s');
+        $date = date("Y-m-d H:i:s");
+        $user_id = intval($_COOKIE['id']);
+        $number = str_pad($number, 4, "0", STR_PAD_LEFT);
+        if (!is_array($options)) {
+            $options = [];
+        }
+        if ($send == 1) {
+            $progress = 100;
+        } else {
+            $progress = 0;
+        }
+
+        $this->query = "INSERT 
+            INTO `robots` (`id`, `version`, `number`, `name`, `customer`, `language_robot`, `language_doc`, `charger`, `color`, `brand`, `ikp`, `battery`, `dop`, `dop_manufactur`, `progress`, `date`, `date_test`, `update_date`, `update_user`) 
+            VALUES (NULL, '$version', '$number', '$name', '$customer', '$language_robot', '$language_doc', '$charger', '$color', '$brand', '$ikp', '$battery', '$dop', '$dop_manufactur', '$progress', '$date_start', '$date_test', '$date', '$user_id')
+        ";
+        $result = $this->pdo->query($this->query);
+
+        //собираем чеклисты привязанные к роботу
+        if ($result) {
+            $idd = $this->pdo->lastInsertId();
+            //категории от 1 до 5
+            for ($i=1; $i<=5; $i++) {
+                $this->checks->add_robot_check($version, $i, $idd);
+            }
+            //добавлем опции
+            if (isset($options)) {
+                foreach ($options as $option) {
+                    $this->add_options_on_robot($option, $idd);
+                    $this->checks->add_option_check($option, $idd,1);
+                }
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /*старый код
+    function add_robot($number, $name, $version, $photo, $termo, $dispenser, $terminal, $kaznachey, $lidar, $other, $customer, $language_robot, $language_doc, $charger, $color, $brand, $ikp, $battery, $dop, $dop_manufactur, $send, $date_start, $date_test)
     {
         $date_start = new DateTime($date_start);
         $date_start = $date_start->format('Y-m-d H:i:s');
@@ -295,70 +350,19 @@ class Robots
         $date = date("Y-m-d H:i:s");
         $user_id = intval($_COOKIE['id']);
         $number = str_pad($number, 4, "0", STR_PAD_LEFT);
-        if ($send == 1)
-        {
+
+        if ($send == 1) {
             $progress = 100;
-        }
-        else
-        {
+        } else {
             $progress = 0;
         }
 
-        $this->query = "INSERT INTO `robots` (
-        `id`, 
-        `version`,
-        `number`,
-        `photo`, 
-        `termo`,
-        `dispenser`,
-        `terminal`,
-        `kaznachey`,
-        `lidar`,
-        `other`, 
-        `name`,
-        `customer`,
-        `language_robot`,
-        `language_doc`,
-        `charger`,
-        `color`,
-        `brand`,
-        `ikp`, 
-        `battery`,
-        `dop`, 
-        `dop_manufactur`,
-        `progress`,
-        `date`,
-        `date_test`,
-        `update_date`,
-        `update_user` ) VALUES (
-            NULL, 
-            '$version', 
-            '$number',
-            '$photo', 
-            '$termo',
-            '$dispenser',
-            '$terminal',
-            '$kaznachey',
-            '$lidar',
-            '$other',
-            '$name',
-            '$customer',
-            '$language_robot',
-            '$language_doc',
-            '$charger',
-            '$color',
-            '$brand',
-            '$ikp',
-            '$battery',
-            '$dop',
-            '$dop_manufactur',
-            '$progress',
-            '$date_start',
-            '$date_test',
-            '$date', 
-            '$user_id')";
+        $this->query = "INSERT
+            INTO `robots` (`id`, `version`, `number`, `photo`, `termo`, `dispenser`,  `terminal`, `kaznachey`, `lidar`, `other`, `name`, `customer`, `language_robot`, `language_doc`, `charger`, `color`, `brand`, `ikp`, `battery`, `dop`, `dop_manufactur`, `progress`, `date`, `date_test`, `update_date`, `update_user`)
+            VALUES (NULL, '$version', '$number', '$photo', '$termo', '$dispenser', '$terminal', '$kaznachey', '$lidar', '$other', '$name', '$customer', '$language_robot', '$language_doc', '$charger', '$color', '$brand', '$ikp', '$battery', '$dop', '$dop_manufactur', '$progress', '$date_start', '$date_test', '$date', '$user_id')
+        ";
         $result = $this->pdo->query($this->query);
-        $idd =  $this->pdo->lastInsertId();
+        $idd = $this->pdo->lastInsertId();
 
         //собираем чеклисты привязанные к роботу
         $arr_mh = Array();
@@ -366,86 +370,49 @@ class Robots
         $arr_bd = Array();
         $arr_up = Array();
         $arr_hs = Array();
-
         $this->query = "SELECT * FROM check_items WHERE category='1' AND version=$version ORDER BY `sort` ASC";
         $result = $this->pdo->query($this->query);
-        while ($line = $result->fetch())
-        {
+        while ($line = $result->fetch()) {
             $arr_mh[] = $line;
         }
-
         $this->query = "SELECT * FROM check_items WHERE category='2' AND version=$version ORDER BY `sort` ASC";
         $result = $this->pdo->query($this->query);
-        while ($line = $result->fetch())
-        {
+        while ($line = $result->fetch()) {
             $arr_hp[] = $line;
         }
-
         $this->query = "SELECT * FROM check_items WHERE category='3' AND version=$version ORDER BY `sort` ASC";
         $result = $this->pdo->query($this->query);
-        while ($line = $result->fetch())
-        {
+        while ($line = $result->fetch()) {
             $arr_bd[] = $line;
         }
-
         $this->query = "SELECT * FROM check_items WHERE category='4' AND version=$version ORDER BY `sort` ASC";
         $result = $this->pdo->query($this->query);
-        while ($line = $result->fetch())
-        {
+        while ($line = $result->fetch()) {
             $arr_up[] = $line;
         }
-
         $this->query = "SELECT * FROM check_items WHERE category='5' AND version=$version ORDER BY `sort` ASC";
         $result = $this->pdo->query($this->query);
-        while ($line = $result->fetch())
-        {
+        while ($line = $result->fetch()) {
             $arr_hs[] = $line;
         }
-
         $result_arr = array_merge($arr_mh, $arr_hp, $arr_bd, $arr_up, $arr_hs);
-        // print_r($result_arr);
 
         //создаем чеклисты по новому роботу
-        foreach($result_arr as & $value)
-        {
+        foreach ($result_arr as & $value) {
             $operation = $value['title'];
             $category = $value['category'];
             $group = $value['group'];
             $sort = $value['sort'];
             $id_check = $value['id'];
             $id_kit = $value['kit'];
-            $this->query = "INSERT INTO `check` (
-                     `id`, 
-                     `id_check`, 
-                     `robot`, 
-                     `operation`,
-                     `category`,
-                     `group`, 
-                     `check`,
-                     `sort`,
-                     `id_kit`,
-                     `update_user` ) VALUES (
-                         NULL, 
-                         '$id_check',
-                         '$idd', 
-                         '$operation', 
-                         '$category',
-                         '$group',
-                         '0',
-                         '$sort',
-                         '$id_kit',
-                         '0')";
+            $this->query = "INSERT INTO `check` (`id`, `id_check`, `robot`, `operation`, `category`, `group`, `check`, `sort`, `id_kit`, `update_user` ) VALUES (NULL, '$id_check', '$idd', '$operation', '$category', '$group', '0', '$sort', '$id_kit', '0')";
             $result = $this->pdo->query($this->query);
         }
-
         //$this->sklad->set_reserv($version);
-    }
+    }*/
 
-    function edit_robot($id, $number, $name, $version, $options, $customer, $language_robot, $language_doc, $charger, $color, $brand, $ikp, $battery, $dop,$dop_manufactur, $date_start,$date_test, $send)
+    function edit_robot($id, $number, $name, $version, $options, $customer, $language_robot, $language_doc, $charger, $color, $brand, $ikp, $battery, $dop, $dop_manufactur, $date_start, $date_test, $send)
     {
-        //	print_r($options);
-        $robot_info= $this->get_info_robot($id);
-
         $date_start = new DateTime($date_start);
         $date_start = $date_start->format('Y-m-d H:i:s');
 
@@ -455,16 +422,6 @@ class Robots
         $date = date("Y-m-d H:i:s");
         $user_id = intval($_COOKIE['id']);
         $number = str_pad($number, 4, "0", STR_PAD_LEFT);
-
-        //если робот отправлен присваеваем прогресс 100%
-        if ($send == 1)
-        {
-            $progress = 100;
-        }
-        else
-        {
-            $progress = 0;
-        }
 
         //вносим изменения в робота
         $this->query = "UPDATE `robots` SET 
@@ -488,28 +445,67 @@ class Robots
         
         WHERE `id` = $id";
         $result = $this->pdo->query($this->query);
-        $idd = $this->pdo->lastInsertId();
 
-        //удаляем все опции у робота - Зачем?
-        $this->query = "DELETE FROM `robot_options_items` WHERE `id_robot` = $id";
+        //собираем массив опций которые были
+        $this->query = "SELECT id_option FROM `robot_options_items` WHERE `id_robot` = $id";
         $result = $this->pdo->query($this->query);
+        $options_old = [];
+        while ($line = $result->fetch())
+        {
+            $options_old[] = $line['id_option'];
+        }
+        if (!is_array($options)) {
+            $options = [];
+        }
 
-        //если что то удалилось, то заного переписываем опции у робота
+        //удаляем опции
+        $del = array_diff($options_old, $options);
+        if (isset($del)) {
+            foreach ($del as $option) {
+                $this->checks->add_option_check($option, $id,0);
+                $this->del_options_on_robot($option, $id);
+            }
+        }
+        //добавлем опции
+        $add = array_diff($options, $options_old);
+        if (isset($add)) {
+            foreach ($add as $option) {
+                $this->checks->add_option_check($option, $id,1);
+                $this->add_options_on_robot($option, $id);
+            }
+        }
+
+        /*$text = 'add -'.$option;
+        $log = date('Y-m-d H:i:s') . ' ' . print_r($text, true);
+        file_put_contents(__DIR__ . '/log111.txt', $log . PHP_EOL, FILE_APPEND);
+        die;*/
+
+        //это старый код
+        //если робот отправлен присваеваем прогресс 100% хотя это не записывается в базу
+        /*if ($send == 1) {
+            $progress = 100;
+        } else {
+            $progress = 0;
+        }*/
+
+        //$idd = $this->pdo->lastInsertId();
+        //удаляем все опции у робота и если что то удалилось переписываем опции
+        /*$this->query = "DELETE FROM `robot_options_items` WHERE `id_robot` = $id";
+        $result = $this->pdo->query($this->query);
         if ($result) {
             foreach ($options as &$value) {
                 $this->add_options_on_robot($value,$id);
             }
+        }*/
 
-        }
-
-        //если сменился заказчик отправляем сообщение телеграм
-        $old_name = $robot_info['name'];
+        //$robot_info= $this->get_info_robot($id);
+        //если сменился заказчик отправляем сообщение телеграм не работает
+        /*$old_name = $robot_info['name'];
         if($name!=$old_name) {
             $comment      = "У робота $version.$number изменен заказчик на - $name";
             $telegram_str = $comment;
             $this->telegram->sendNotify("sale", $telegram_str);
-        }
-
+        }*/
         //пока не работает по этому выключил
         /*$old_date = $robot_info['name'];
         if($name!=$old_name) {
@@ -517,8 +513,6 @@ class Robots
             $telegram_str = $comment;
             $this->telegram->sendNotify("sale", $telegram_str);
         }*/
-
-
     }
 
     function sortable($json)
@@ -574,9 +568,18 @@ class Robots
             return $option_array;
     }
 
+    //добавление опции к роботу
     function add_options_on_robot($option,$robot)
     {
         $this->query = "INSERT INTO `robot_options_items` (`id_row`, `id_option`, `id_robot`) VALUES (NULL, $option, $robot)";
+        $result = $this->pdo->query($this->query);
+        return $result;
+    }
+
+    //удаление опции у робота
+    function del_options_on_robot($option,$robot)
+    {
+        $this->query = "DELETE FROM `robot_options_items` WHERE `id_robot` = $robot AND `id_option` = $option";
         $result = $this->pdo->query($this->query);
         return $result;
     }

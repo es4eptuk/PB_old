@@ -6,9 +6,10 @@ class Admissions
     private $log;
     private $orders;
     private $writeoff;
+
     function __construct()
     {
-        global $database_server, $database_user, $database_password, $dbase, $writeoff, $log, $orders;
+        global $database_server, $database_user, $database_password, $dbase;
         $dsn = "mysql:host=$database_server;dbname=$dbase;charset=utf8";
         $opt = [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
@@ -16,11 +17,17 @@ class Admissions
             PDO::ATTR_EMULATE_PREPARES => false,
         ];
         $this->pdo = new PDO($dsn, $database_user, $database_password, $opt);
+    }
+
+    function init()
+    {
+        global $writeoff, $log, $orders;
 
         $this->log = $log;//new Log;
         $this->orders = $orders;//new Orders;
         $this->writeoff = $writeoff;//new Writeoff;
     }
+
     function add_admission($order_id, $json, $category, $provider)
     {
         //echo $order_id;

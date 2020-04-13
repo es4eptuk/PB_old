@@ -46,28 +46,24 @@ $robot_progress= $robot_info['progress'];
             <div class="box-body table-responsive">
                
                <div class="row">
+
         <a href="./check.php?category=1&robot=<?php echo $robot_id; ?>">           
         <div class="col-md-3 col-sm-6 col-xs-12" >
           <div class="info-box bg-aqua">
             <span class="info-box-icon"><i class="fa fa-gear"></i></span>
-
             <div class="info-box-content">
               <span class="info-box-text">Механика</span>
               <span class="info-box-number"><?php
                   $mh = $checks->get_progress($robot_id, 1);
-
-                  if (isset($mh)) {
-
-                      echo $mh;
+                  if ($mh !== false) {
+                      echo $mh.'%';
+                  } else {
+                      echo 'Нет';
                   }
-
-
-                  ?>%</span>
-
+                  ?></span>
               <div class="progress">
-                <div class="progress-bar" style="width: <?php echo $checks->get_progress($robot_id, 1); ?>%"></div>
+                <div class="progress-bar" style="width: <?php echo ($mh !== false) ? $mh : '100'; ?>%"></div>
               </div>
-                  
             </div>
             <!-- /.info-box-content -->
           </div>
@@ -75,32 +71,24 @@ $robot_progress= $robot_info['progress'];
         </div>
         </a>
         <!-- /.col -->
-        
-        
+
          <a href="./check.php?category=2&robot=<?php echo $robot_id; ?>"> 
         <div class="col-md-3 col-sm-6 col-xs-12" >
           <div class="info-box bg-green">
             <span class="info-box-icon"><i class="fa fa-laptop"></i></span>
-
             <div class="info-box-content">
               <span class="info-box-text">Аппаратка</span>
               <span class="info-box-number"><?php
-
                   $hp = $checks->get_progress($robot_id, 2);
-
-                  if (isset($hp)) {
-
-                      echo $hp;
+                  if ($hp !== false) {
+                      echo $hp.'%';
+                  } else {
+                      echo 'Нет';
                   }
-
-
-
-                ?>%</span>
-
+                  ?></span>
               <div class="progress">
-                <div class="progress-bar" style="width: <?php echo $checks->get_progress($robot_id, 2); ?>%"></div>
+                <div class="progress-bar" style="width: <?php echo ($hp !== false) ? $hp : '100'; ?>%"></div>
               </div>
-                 
             </div>
             <!-- /.info-box-content -->
           </div>
@@ -108,35 +96,24 @@ $robot_progress= $robot_info['progress'];
         </div>
         </a>
         <!-- /.col -->
-        
-        
+
          <a href="./check.php?category=5&robot=<?php echo $robot_id; ?>"> 
          <div class="col-md-3 col-sm-6 col-xs-12" >
           <div class="info-box bg-purple-active">
             <span class="info-box-icon"><i class="fa fa-sliders"></i></span>
-
             <div class="info-box-content">
               <span class="info-box-text">Настройка</span>
              <span class="info-box-number"><?php
-
-
                  $hs = $checks->get_progress($robot_id, 5);
-
-                 if (isset($hs)) {
-
-                     echo $hs;
+                 if ($hs !== false) {
+                     echo $hs.'%';
+                 } else {
+                     echo 'Нет';
                  }
-
-
-
-
-
-                 ?>%</span>
-
+                 ?></span>
               <div class="progress">
-                <div class="progress-bar" style="width: <?php echo $checks->get_progress($robot_id, 5); ?>%"></div>
+                <div class="progress-bar" style="width: <?php echo ($hs !== false) ? $hs : '100'; ?>%"></div>
               </div>
-                  
             </div>
             <!-- /.info-box-content -->
           </div>
@@ -148,29 +125,19 @@ $robot_progress= $robot_info['progress'];
         <div class="col-md-3 col-sm-6 col-xs-12" >
           <div class="info-box bg-yellow">
             <span class="info-box-icon"><i class="fa fa-random"></i></span>
-
             <div class="info-box-content">
               <span class="info-box-text">Корпус</span>
               <span class="info-box-number"><?php
-
                   $bd = $checks->get_progress($robot_id, 3);
-
-                  if (isset($bd)) {
-
-                      echo $bd;
+                  if ($bd !== false) {
+                      echo $bd.'%';
+                  } else {
+                      echo 'Нет';
                   }
-
-
-
-
-
-
-                  ?>%</span>
-
+                  ?></span>
               <div class="progress">
-                <div class="progress-bar" style="width: <?php echo $checks->get_progress($robot_id, 3); ?>%"></div>
+                <div class="progress-bar" style="width: <?php echo ($bd !== false) ? $bd : '100'; ?>%"></div>
               </div>
-                  
             </div>
             <!-- /.info-box-content -->
           </div>
@@ -183,27 +150,19 @@ $robot_progress= $robot_info['progress'];
         <div class="col-md-3 col-sm-6 col-xs-12" >
           <div class="info-box bg-red">
             <span class="info-box-icon"><i class="glyphicon glyphicon-briefcase"></i></span>
-
             <div class="info-box-content">
               <span class="info-box-text">Упаковка</span>
              <span class="info-box-number"><?php
-
                  $up = $checks->get_progress($robot_id, 4);
-
-                 if (isset($up)) {
-
-                     echo $up;
+                 if ($up !== false) {
+                     echo $up.'%';
+                 } else {
+                     echo 'Нет';
                  }
-
-
-
-
-                 ?>%</span>
-
+                 ?></span>
               <div class="progress">
-                <div class="progress-bar" style="width: <?php echo $checks->get_progress($robot_id, 4); ?>%"></div>
+                <div class="progress-bar" style="width: <?php echo ($up !== false) ? $up : '100'; ?>%"></div>
               </div>
-                  
             </div>
             <!-- /.info-box-content -->
           </div>

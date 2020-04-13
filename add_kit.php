@@ -37,22 +37,12 @@ include 'include/class.inc.php';
 										<div class="form-group">
                                       <label>Версия робота</label>
                                       <select class="form-control" name="version" placeholder="Веберите версию" id="version" required="required">
-                                     <?php 
-                                     
-                                     $versions = $position->get_equipment();
-                                     
-                                     foreach ($versions as &$version) {
-											                      
-											                       echo "
-											                       <option value='".$version['id']."'>".$version['title']."</option>
-											                       
-											                       ";
-											                    }
-											                    
-                                     
-                                     
-                                     
-                                     ?>
+                                        <?php
+                                            $versions = $robots->getEquipment;
+                                            foreach ($versions as &$version) {
+                                                echo "<option value='".$version['id']."'>".$version['title']."</option>";
+                                            }
+                                        ?>
                                       </select>
                                     </div>
 								   
