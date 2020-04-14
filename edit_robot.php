@@ -160,8 +160,9 @@ $robot_test = $robot_test->format('d.m.Y');
                     $options = $robots->get_robot_options($id);
                     foreach ($options as &$value) {
                         $check = ($value['check'] ==1) ? "checked" : "";
-                            echo '<div class="checkbox"><label><input type="checkbox" class="check" id="'.$value['id'].'" name="options" value='.$value['id'].' '.$check.'>'.$value['title'].'</label></div>';
-                        }
+                        $disabled = ($robots->get_dis_check_option($value['id'], $id)) ? "disabled" : "";
+                        echo '<div class="checkbox"><label><input type="checkbox" class="check" id="'.$value['id'].'" name="options" value='.$value['id'].' '.$check.' '.$disabled.'>'.$value['title'].'</label></div>';
+                    }
                     ?>
                 </div>
                 

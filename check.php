@@ -183,6 +183,7 @@ $category_id = $_GET['category'];
                                     <table id="orders" class="table table-bordered table-striped">
                                         <thead>
                                             <tr>
+                                                <th>#</th>
                                                 <th style="width: 40%;">Наименование</th>
                                                 <th>Коментарий</th>
                                                 <th style=" width: 15%;">Комплект деталей</th>
@@ -236,6 +237,7 @@ $category_id = $_GET['category'];
 
                             echo "
                                 <tr>
+                                    <td></td>                                
                                     <td>
                                         <div class='checkbox'>
                                             <label>
@@ -351,20 +353,20 @@ $category_id = $_GET['category'];
   </div>
 </div>
 <!-- jQuery 3 -->
-<script src="../../bower_components/jquery/dist/jquery.min.js"></script>
+<script src="./bower_components/jquery/dist/jquery.min.js"></script>
 <!-- Bootstrap 3.3.7 -->
-<script src="../../bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="./bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 <!-- DataTables -->
-<script src="../../bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
-<script src="../../bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+<script src="./bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="./bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
 <!-- SlimScroll -->
-<script src="../../bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+<script src="./bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
 <!-- FastClick -->
-<script src="../../bower_components/fastclick/lib/fastclick.js"></script>
+<script src="./bower_components/fastclick/lib/fastclick.js"></script>
 <!-- AdminLTE App -->
-<script src="../../dist/js/adminlte.min.js"></script>
+<script src="./dist/js/adminlte.min.js"></script>
 <!-- AdminLTE for demo purposes -->
-<script src="../../dist/js/demo.js"></script>
+<script src="./dist/js/demo.js"></script>
 
 
 <!-- page script -->

@@ -29,9 +29,16 @@ class Writeoff {
         $this->log = $log;//new Log;
     }
 
+
+
+
+    //создать списание
     function add_writeoff($json)
     {
         $writeoff_arr = json_decode($json, true);
+        /*$log = date('Y-m-d H:i:s') . ' ' . print_r($writeoff_arr, true);
+        file_put_contents(__DIR__ . '/log.txt', $log . PHP_EOL, FILE_APPEND);
+        die;*/
         //print_r($writeoff_arr);
         $check = 0;
         $robot = 0;
@@ -95,12 +102,14 @@ class Writeoff {
             $vendor_code = $value['1'];
             $title = $value['2'];
             $count = $value['3'];
-            $price = $value['4'] * $value['3'];
-
+            $price = $value['4'];
+            /*$log = date('Y-m-d H:i:s') . ' ' . print_r($value, true);
+            file_put_contents(__DIR__ . '/log.txt', $log . PHP_EOL, FILE_APPEND);
+            die;*/
             $subcategory = 0;
 
             if ($pos_id != "") {
-                $this->query = "INSERT INTO `writeoff_items` (`id`,`writeoff_id`, `pos_id`, `vendor_code`,`pos_title`, `pos_count`,`pos_price`) VALUES (NULL, $idd, $pos_id, '$vendor_code', '$title', $count, $price);";
+                $this->query = "INSERT INTO `writeoff_items` (`id`, `writeoff_id`, `pos_id`, `vendor_code`, `pos_title`, `pos_count`, `pos_price`) VALUES (NULL, '$idd', '$pos_id', '$vendor_code', '$title', '$count', '$price');";
                 $result = $this->pdo->query($this->query);
                 $this->query = "UPDATE `pos_items` SET `total` = total - $count WHERE `id` = $pos_id";
                 $result = $this->pdo->query($this->query);
@@ -126,7 +135,7 @@ class Writeoff {
 
         }
 
-        return $result;
+        return true;
 
     }
 
@@ -195,10 +204,11 @@ class Writeoff {
         while ($line = $result->fetch()) {
             $old_array[] = $line;
         }
-
+        $total_price = 0;
         foreach ($old_array as $key => $old) {
 
             $count_new = $pos_arr[$key]['4'];
+            $price = $pos_arr[$key]['5'];
             $count_old = $old['pos_count'];
             $delta = $count_old - $count_new;
             $row_id = $pos_arr[$key]['0'];
@@ -217,12 +227,13 @@ class Writeoff {
                 $param['title'] = "Изменение списания ";
                 $this->add_log($param);
             }
+            $total_price = $total_price + $count_new * $price;
 
         }
 
 
         //echo $date;
-        $this->query = "UPDATE `writeoff` SET  `description` = '$description' ,`update_date` = '$date'  WHERE `id` = $id;";
+        $this->query = "UPDATE `writeoff` SET  `description` = '$description', `update_date` = '$date', `total_price` = '$total_price'  WHERE `id` = $id;";
         //echo $query;
         $result = $this->pdo->query($this->query);
 
@@ -315,22 +326,37 @@ class Writeoff {
     {
         $date    = date("Y-m-d H:i:s");
         $user_id = intval($_COOKIE['id']);
-        $this->query   = "DELETE FROM `writeoff_items` WHERE `pos_id` = $pos_id AND `writeoff_id` = $id";
+        $this->query   = "SELECT * FROM `writeoff_items` WHERE `pos_id` = $pos_id AND `writeoff_id` = $id";
         $result = $this->pdo->query($this->query);
-        
-        if ($result) {
-           $this->query   = "UPDATE `pos_items` SET `total` = total + $count WHERE`id` = $pos_id";
-           $result = $this->pdo->query($this->query);
-           $param['id'] = $pos_id;
-           $param['type'] = "addmission";
-           $param['count'] = $count;
-           $param['title'] = "Отмена списания ";
-           $this->add_log($param);
+        while($line = $result->fetch()){
+            $pos_writeoff[] = $line;
         }
+        foreach ($pos_writeoff as $value) {
+            $count = $value['pos_count'];
+            $price = $value['pos_price'];
+            $delta = $count * $price;
+            $this->query   = "UPDATE `writeoff` SET `total_price` = total_price - $delta WHERE `id` = $id";
+            $result = $this->pdo->query($this->query);
+
+            $this->query   = "DELETE FROM `writeoff_items` WHERE `pos_id` = $pos_id AND `writeoff_id` = $id";
+            $result = $this->pdo->query($this->query);
+
+            if ($result) {
+                $this->query   = "UPDATE `pos_items` SET `total` = total + $count WHERE`id` = $pos_id";
+                $result = $this->pdo->query($this->query);
+                $param['id'] = $pos_id;
+                $param['type'] = "addmission";
+                $param['count'] = $count;
+                $param['title'] = "Отмена списания ";
+                $this->add_log($param);
+            }
+        }
+
+
         
         // Освобождаем память от результата
         // mysql_free_result($result);
-        return $result;
+        return true;
     }
     
     

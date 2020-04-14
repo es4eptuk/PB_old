@@ -290,7 +290,7 @@ $("#listPos").on("keyup", ".quant_inp", function() {
                      pos_info = jQuery.parseJSON (data1);
                      console.log(pos_info);
 
-                        $('#listPos tbody').append('<tr> \
+                        $('#listPos tr:eq(0)').after('<tr> \
                         <td>'+pos_info['id']+'</td> \
                         <td>'+pos_info['vendor_code']+'</td> \
                         <td>'+pos_info['title']+'</td> \

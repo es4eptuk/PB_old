@@ -651,6 +651,18 @@ class Robots
         return json_decode($result,true);
     }
 
+    //проверка есть ли отмеченые чеклисты по опции
+    function get_dis_check_option($option_id, $robot_id) {
+        //var_dump($robot_id);die;
+        $this->query = "SELECT `id` FROM `check` WHERE `robot`=$robot_id AND `option`=$option_id AND `check`=1";
+        $result = $this->pdo->query($this->query);
+        $check = [];
+        while ($line = $result->fetch()) {
+            $check[] = $line;
+        }
+
+        return (count($check) == 0) ? false : true;
+    }
 
 
     function __destruct()

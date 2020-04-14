@@ -3,11 +3,6 @@ include 'include/class.inc.php';
 ?>
 <?php include 'template/head.php' ?>
 
-<!DOCTYPE html>
-<html>
-<head>
-    <title></title>
-</head>
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
     <?php include 'template/header.php' ?>
@@ -72,7 +67,7 @@ include 'include/class.inc.php';
                                     <label>Описание</label>
                                     <textarea class="form-control" rows="3" placeholder="Укажите уточнение к списанию ..." id="description"></textarea>
                                 </div>
-
+                                <p class="p-label">Добавить позицию</p>
                                 <div class="form-group input-group" id="pos">
 
                                     <input type="text" class="form-control" name="pos" id="search_pos" placeholder="Введите название позиции...">

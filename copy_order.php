@@ -162,7 +162,7 @@ $order_responsible = $order['order_responsible'];
                                     <td>'.$value['id'].'</td> 
                                     <td>'.$value['vendor_code'].'</td> 
                                     <td>'.$value['title'].'</td> 
-                                    <td class="quant"><span>'.$value['pos_count'].'</span><input type="text" class="form-control quant_inp"  style="position: relative; top: -20px; width: 55px; text-align: center;" value="'.$value['pos_count'].'"></td>  
+                                    <td class="quant"><span style="position: absolute;">'.$value['pos_count'].'</span><input type="text" class="form-control quant_inp"  style="position: relative; width: 55px; text-align: center;" value="'.$value['pos_count'].'"></td>  
                                     
                                     <td class="price">'.$value['price'].'</td> 
                                     <td class="sum">'.$value['price']*$value['pos_count'].'</td> 
@@ -420,11 +420,11 @@ $order_responsible = $order['order_responsible'];
 
                         }
                         //var price = pos_info['price'];
-                        var date = $('#listPos tr:eq(1) td:eq(6) input').val();
+                        var date = $('#listPos tr:last td:eq(6) input').val();
                         if (date === undefined) {
                             date =  '<?php echo $order_date; ?>';
                         }
-                        $('#listPos tr:last').after('<tr> \
+                        $('#listPos tr:eq(0)').after('<tr> \
                         <td>' + pos_info['id'] + '</td> \
                         <td>' + pos_info['vendor_code'] + '</td> \
                         <td>' + pos_info['title'] + '</td> \

@@ -15,3 +15,6 @@
 /img/
 /inv/
 /files/
+
+#script for change tabel bd
+/bd_script.php

@@ -178,7 +178,7 @@ var category1 = "---";
                   .done(function( data1) {
                      pos_info = jQuery.parseJSON (data1);
 
-                        $('#listPos tr:last').after('<tr> \
+                        $('#listPos tr:eq(0)').after('<tr> \
                         <td>'+pos_info['id']+'</td> \
                         <td>'+pos_info['vendor_code']+'</td> \
                         <td>'+pos_info['title']+'</td> \

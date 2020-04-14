@@ -192,6 +192,7 @@ class Position
     {
         $date    = date("Y-m-d H:i:s");
         $user_id = intval($_COOKIE['id']);
+        $title = quotemeta($title);
         $query   = "INSERT INTO `pos_items` (`id`, `category`, `subcategory`,`title`, `vendor_code`, `provider`, `price`, `longtitle`, `quant_robot`, `total`, `update_date`, `update_user` ) VALUES (NULL, '$category', '$subcategory', '$title', '$vendorcode', '$provider', '$price', '$longtitle', '$quant_robot', '$quant_total', '$date', '$user_id')";
         $result = $this->pdo->query($query);
         

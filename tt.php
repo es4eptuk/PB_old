@@ -16,9 +16,8 @@ $output = '';
             PDO::ATTR_EMULATE_PREPARES => false,
         ];
         $pdo = new PDO($dsn, $database_user, $database_password, $opt);
-
+        //$term = quotemeta($term);
         $query = "SELECT id,title,vendor_code,assembly FROM pos_items WHERE (title LIKE '%$term%' OR vendor_code LIKE '%$term%') AND (archive = 0)";
-
         $result = $pdo->query($query);
         while ($line = $result->fetch()) {
             $pos_array[] = $line; 
@@ -27,7 +26,13 @@ $output = '';
         if (isset($pos_array)) {
 
             foreach ($pos_array as $row) {
-                $row['title'] = trim($row['title']);
+                $row['title'] = str_ireplace("\"", "'", trim($row['title']));
+
+                //$sq = quotemeta($row['title']);
+                //$log = date('Y-m-d H:i:s') . ' ' . print_r($sq, true);
+                //file_put_contents(__DIR__ . '/loggg.txt', $log . PHP_EOL, FILE_APPEND);
+                //die;
+
                 array_push($str_arr, "\"". $row['id'] ."::" . $row['vendor_code'] ."::" . $row['title'] . "\"");
             }
 

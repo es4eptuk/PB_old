@@ -360,12 +360,12 @@ var category1 = "---";
 
             }
             //var price = pos_info['price'];
-            var date = $('#listPos tr:eq(1) td:eq(6) input').val();
+            var date = $('#listPos tr:last td:eq(6) input').val();
             if (date === undefined) {
                 date =  '<?php echo $order_date; ?>';
             }
             //console.log(date);
-            $('#listPos tr:last').after('<tr> \
+            $('#listPos tr:eq(0)').after('<tr> \
                         <td>' + pos_info['id'] + '</td> \
                         <td>' + pos_info['vendor_code'] + '</td> \
                         <td>' + pos_info['title'] + '</td> \

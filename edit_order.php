@@ -388,11 +388,11 @@ var category1 = "---";
                         } )
                   .done(function( data1) {
                           pos_info = jQuery.parseJSON (data1);
-                          var date = $('#listPos tr:eq(1) td:eq(8) input').val();
+                          var date = $('#listPos tr:last td:eq(8) input').val();
                           if (date === undefined) {
                               date =  '<?php echo $order_date; ?>';
                           }
-                          $('#listPos tr:last').after('<tr> \
+                          $('#listPos tr:eq(0)').after('<tr> \
                               <td>'+pos_info['id']+'</td> \
                               <td>'+pos_info['vendor_code']+'</td> \
                               <td>'+pos_info['title']+'</td> \
