@@ -75,7 +75,7 @@ $robot_test = $robot_test->format('d.m.Y');
                 
                  <div class="form-group">
                   <label>Номер робота</label></label>
-                  <input type="text" class="form-control" name="number" required="required" id="number" value="<?php echo $robot_number ?>">
+                  <input type="text" class="form-control" name="number" required="required" id="number" value="<?php echo $robot_number ?>" <?php echo ($robot_progress == 100) ? "disabled" : ""; ?>>
                 </div>
                 <div class="form-group">
                   <label>Кодовое имя</label>
@@ -83,7 +83,7 @@ $robot_test = $robot_test->format('d.m.Y');
                 </div>
                 <div class="form-group">
                   <label>Заказчик <small>(<a href="#" data-toggle="modal" data-target="#add_customer">Добавить</a>)</small></label>
-                  <select class="form-control" name="customer" id="customer">
+                  <select class="form-control" name="customer" id="customer" <?php echo ($robot_progress == 100) ? "disabled" : ""; ?>>
                       <option value="0"></option>
                     <?php 
                     $arr = $robots->get_customers();
@@ -100,7 +100,7 @@ $robot_test = $robot_test->format('d.m.Y');
                 
                 <div class="form-group">
                   <label>Язык на роботе</label>
-                  <select class="form-control" name="language_robot" id="language_robot">
+                  <select class="form-control" name="language_robot" id="language_robot" <?php echo ($robot_progress == 100) ? "disabled" : ""; ?>>
                        <?php
                         $language_robot = [
                             "russian" => "Русский",
@@ -124,7 +124,7 @@ $robot_test = $robot_test->format('d.m.Y');
                 
                 <div class="form-group">
                   <label>Язык инструкции</label>
-                  <select class="form-control" name="language_doc" id="language_doc">
+                  <select class="form-control" name="language_doc" id="language_doc" <?php echo ($robot_progress == 100) ? "disabled" : ""; ?>>
                      <?php 
                         $language_doc = ["russian" => "Русский", "english" => "Английский"];
                          foreach ($language_doc as $key => $value) {
@@ -140,7 +140,7 @@ $robot_test = $robot_test->format('d.m.Y');
                 
                  <div class="form-group">
                   <label>Напряжение зарядной станции</label>
-                  <select class="form-control" name="charger" id="charger">
+                  <select class="form-control" name="charger" id="charger" <?php echo ($robot_progress == 100) ? "disabled" : ""; ?>>
                     <?php
                     $charger= ["220" => "220", "110" => "110"];
                     foreach ($charger as $key => $value) {
@@ -160,7 +160,7 @@ $robot_test = $robot_test->format('d.m.Y');
                     $options = $robots->get_robot_options($id);
                     foreach ($options as &$value) {
                         $check = ($value['check'] ==1) ? "checked" : "";
-                        $disabled = ($robots->get_dis_check_option($value['id'], $id)) ? "disabled" : "";
+                        $disabled = ($robots->get_dis_check_option($value['id'], $id) || $robot_progress == 100) ? "disabled" : "";
                         echo '<div class="checkbox"><label><input type="checkbox" class="check" id="'.$value['id'].'" name="options" value='.$value['id'].' '.$check.' '.$disabled.'>'.$value['title'].'</label></div>';
                     }
                     ?>
@@ -168,22 +168,22 @@ $robot_test = $robot_test->format('d.m.Y');
                 
                 <div class="form-group">
                   <label>Цвет</label>
-                  <input type="text" class="form-control" name="color" id="color" value="<?php echo $robot_color ?>">
+                  <input type="text" class="form-control" name="color" id="color" value="<?php echo $robot_color ?>" <?php echo ($robot_progress == 100) ? "disabled" : ""; ?>>
                 </div>
                 
                 <div class="form-group">
                   <label>Брендирование </label>
-                  <input type="text" class="form-control" name="brand" id="brand" value="<?php echo $robot_brand ?>">
+                  <input type="text" class="form-control" name="brand" id="brand" value="<?php echo $robot_brand ?>" <?php echo ($robot_progress == 100) ? "disabled" : ""; ?>>
                 </div>
                 
                 <div class="form-group">
                   <label>ИКП</label>
-                  <input type="text" class="form-control" name="ikp" id="ikp" value="<?php echo $robot_ikp ?>">
+                  <input type="text" class="form-control" name="ikp" id="ikp" value="<?php echo $robot_ikp ?>" <?php echo ($robot_progress == 100) ? "disabled" : ""; ?>>
                 </div>
                 
                  <div class="form-group">
                   <label>Наличие АКБ</label>
-                  <select class="form-control" name="battery" id="battery">
+                  <select class="form-control" name="battery" id="battery" <?php echo ($robot_progress == 100) ? "disabled" : ""; ?>>
                        <?php
                        $battery= [1 => "Да", 0 => "Нет"];
                        foreach ($battery as $key => $value) {
@@ -199,15 +199,15 @@ $robot_test = $robot_test->format('d.m.Y');
                 
                 <div class="form-group">
                   <label>Дополнительная информация</label>
-                  <input type="text" class="form-control" name="dop" id="dop" value="<?php echo $robot_dop ?>">
+                  <input type="text" class="form-control" name="dop" id="dop" value="<?php echo $robot_dop ?>" <?php echo ($robot_progress == 100) ? "disabled" : ""; ?>>
                 </div>
-                                <div class="form-group">
-                                    <label>Информация от производства</label>
-                                    <textarea rows="5" cols="45" class="form-control" name="dop_manufactur" id="dop_manufactur"><?php echo $robot_dop_manufactur ?></textarea>
-                                </div>
+                <div class="form-group">
+                    <label>Информация от производства</label>
+                    <textarea rows="5" cols="45" class="form-control" name="dop_manufactur" id="dop_manufactur"><?php echo $robot_dop_manufactur ?></textarea>
+                </div>
                 <div class="checkbox">
                     <label>
-                      <input type="checkbox" id="send" <?php echo ($robot_progress ==100) ? "checked" : ""; ?>>
+                      <input type="checkbox" id="send" <?php echo ($robot_progress == 100) ? "checked" : ""; ?> <?php echo ($robot_progress == 0) ? "" : "disabled"; ?> >
                       Отправленный
                     </label>
                   </div>
@@ -219,7 +219,7 @@ $robot_test = $robot_test->format('d.m.Y');
                   <div class="input-group-addon">
                     <i class="fa fa-calendar"></i>
                   </div>
-                  <input type="text" class="form-control pull-right" id="datepicker" class="datepicker" value="<?php echo $robot_date ?>">
+                  <input type="text" class="form-control pull-right" id="datepicker" class="datepicker" value="<?php echo $robot_date ?>" <?php echo ($robot_progress == 100) ? "disabled" : ""; ?>>
                 </div>
                 <!-- /.input group -->
               </div> 
@@ -231,7 +231,7 @@ $robot_test = $robot_test->format('d.m.Y');
                   <div class="input-group-addon">
                     <i class="fa fa-calendar"></i>
                   </div>
-                  <input type="text" class="form-control pull-right" id="datepicker2" class="datepicker" value="<?php echo $robot_test ?>">
+                  <input type="text" class="form-control pull-right" id="datepicker2" class="datepicker" value="<?php echo $robot_test ?>" <?php echo ($robot_progress == 100) ? "disabled" : ""; ?>>
                 </div>
                 <!-- /.input group -->
               </div> 

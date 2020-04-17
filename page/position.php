@@ -6,6 +6,10 @@ class Position
     private $writeoff;
     private $log;
 
+    //списки
+    public $getCategoryes;
+    public $getSubcategoryes;
+
     function __construct()
     {
         global $database_server, $database_user, $database_password, $dbase;
@@ -25,6 +29,25 @@ class Position
 
         $this->writeoff = $writeoff; //new Writeoff;
         $this->log = $log; //new Log;
+
+        //список категорий
+        $query = "SELECT * FROM `pos_category`";
+        $result = $this->pdo->query($query);
+        while ($line = $result->fetch()) {
+            $categoryes[$line['id']] = $line;
+        }
+        $this->getCategoryes = (isset($categoryes)) ? $categoryes : [];
+
+        //список субкатегорий
+        $query = "SELECT * FROM `pos_sub_category`";
+        $result = $this->pdo->query($query);
+        $subcategoryes[0]= ['id'=> 0, 'parent' => 0, 'title' => ''];
+        while ($line = $result->fetch()) {
+            $subcategoryes[$line['id']] = $line;
+        }
+
+        $this->getSubcategoryes = (isset($subcategoryes)) ? $subcategoryes : [];
+
     }
 
     /**
@@ -59,7 +82,7 @@ class Position
      * @return array
      * Получение списка категорий
      */
-    function get_pos_category()
+    /*function get_pos_category()
     {
         $query = 'SELECT * FROM pos_category';
         $result = $this->pdo->query($query);
@@ -69,7 +92,7 @@ class Position
 
         if (isset($cat_array))
             return $cat_array;
-    }
+    }*/
 
 
 
@@ -143,6 +166,8 @@ class Position
 
         return (isset($pos_array)) ? $pos_array : [];
     }
+
+    //взять название субкатегории
     function get_name_subcategory($id)
     {
         $query = "SELECT * FROM pos_sub_category WHERE id='$id'";
@@ -154,6 +179,8 @@ class Position
         if (isset($pos_array))
             return $pos_array['0']['title'];
     }
+
+    /*
     function get_name_category($id)
     {
         $query = "SELECT * FROM pos_category WHERE id='$id'";
@@ -165,6 +192,7 @@ class Position
         if (isset($pos_array))
             return $pos_array['0']['title'];
     }
+    */
     function get_info_pos_provider($id)
     {
         $query = "SELECT * FROM pos_provider WHERE id='$id'";
@@ -553,6 +581,7 @@ class Position
     }
     
     /*Комплектации */
+    //создать новую версию робота
     function add_equipment($json)
     {
         $equipment_arr = json_decode($json);

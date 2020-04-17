@@ -70,7 +70,7 @@ $current_month = date('m');
 											<option value="0">
 												Веберите категорию...
 											</option><?php 
-											                   $arr = $position->get_pos_category();
+											                   $arr = $position->getCategoryes;
 											                
 											                    foreach ($arr as &$category) {
 											                       echo "

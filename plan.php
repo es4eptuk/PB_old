@@ -51,7 +51,7 @@ if (isset($_GET['status'])) $id_status = $_GET['status'];
 
           <div class="box">
             <div class="box-header">
-              <h3 class="box-title"><?php echo $position->get_name_category($_GET['id']) ;
+              <h3 class="box-title"><?php echo $position->getCategoryes[$_GET['id']]['title'] ;
              
              // echo $plan->get_ordered_items(65);
               ?></h3>
@@ -86,14 +86,17 @@ if (isset($_GET['status'])) $id_status = $_GET['status'];
                 
                <br><br>
               <dl>
-                  <?php 
+                  <?php
+                   $version = $robots->getEquipment;
                    $arr_robot = $plan->get_robot_inprocess();
                     ksort($arr_robot);
                     //print_r($arr_robot);
                      foreach ($arr_robot as $key => $value) {
                       echo "<dt>$key</dt>";
                          foreach ($value as $key_v => $value_v) {
-                             echo "<dd>$key_v - $value_v</dd>";
+                             $name = $version[$key_v]['title'];
+                             //echo "<dd>$key_v - $value_v</dd>";
+                             echo "<dd>&nbsp;&nbsp; $name - $value_v</dd>";
                          }
                      }
                     
@@ -151,7 +154,7 @@ if (isset($_GET['status'])) $id_status = $_GET['status'];
                    //собираем список деталей из всех активных комплектов (ид_категория, ид_версия)
                    $arr_pos = $position->get_pos_in_kit_cat($_GET['id'],$get_version);
                    //print_r($arr_pos);
-
+                   $arr_pos = (isset($arr_pos)) ? $arr_pos : [];
                    //делаем проверку на сборку, т.е. проверяем является ли позиция сборкой
                    foreach ($arr_pos as &$pos) {
                        if($pos['assembly']!= 0) {
@@ -239,7 +242,7 @@ if (isset($_GET['status'])) $id_status = $_GET['status'];
                        //массив заказов с текущей запчастью (где есть хотя бы 1 неотгруженная запчасть)
                        $ordered_info = $plan->get_ordered_items_info($pos['id']);
                        //создаем массив для дальнейшей обработки
-                       $arr_pos_edit[$pos['id']]['subcategory'] = $position->get_name_subcategory($pos['subcategory']); //не имеет смысла использовать название !!!
+                       $arr_pos_edit[$pos['id']]['subcategory'] = $position->getSubcategoryes[$pos['subcategory']]['title']; //не имеет смысла использовать название !!!
                        $arr_pos_edit[$pos['id']]['category'] = $pos['category'];
                        $arr_pos_edit[$pos['id']]['vendor_code'] = $pos['vendor_code'];
                        $arr_pos_edit[$pos['id']]['title'] = $pos['title'];
@@ -341,8 +344,8 @@ if (isset($_GET['status'])) $id_status = $_GET['status'];
                    //die;
                     
                     //print_r($arr_order);
-                    
-                  
+
+                   $arr_pos_edit = (isset($arr_pos_edit)) ? $arr_pos_edit : [];
                    //
                   foreach ($arr_pos_edit as $key => $value) {
                       $month = $value['month'];
@@ -427,7 +430,7 @@ $( document ).ready(function() {
    $(".add_order").click(function() {
      var date = $(this).attr("id");  
      var arr_order = ""; 
-     var dataString = <?php echo json_encode($arr_order); ?>;
+     var dataString = <?php echo (isset($arr_order)) ? json_encode($arr_order) : json_encode([]); ?>;
      var jsonString = JSON.stringify(dataString);
      console.log(jsonString);
      

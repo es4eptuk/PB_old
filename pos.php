@@ -30,7 +30,7 @@ include 'include/class.inc.php';
 
           <div class="box">
             <div class="box-header">
-              <h3 class="box-title"><?php echo $position->get_name_category($_GET['id']) ?></h3>
+              <h3 class="box-title"><?php echo $position->getCategoryes[$_GET['id']]['title'] ?></h3>
             </div>
             <!-- /.box-header -->
             <div class="box-body">
@@ -55,17 +55,10 @@ include 'include/class.inc.php';
                   <th>Подгруппа</th>
                   <th>Артикул</th>
                   <th>Наименование</th>
-                 
-                 
                   <th>Количество на складе</th>
-                  
-                  
                   <th>Неснижаемый остаток</th>
-                  
-                  
                   <th>Поставщик</th>
                   <th>Стоимость</th>
-                 
                   <th>Сборка</th>
                   <th>Изображение</th>
                   <th>Ред.</th>
@@ -104,7 +97,7 @@ include 'include/class.inc.php';
                      
                        echo "
                        <tr>
-                          <td>".$position->get_name_subcategory($pos['subcategory'])."</td>
+                          <td>".$position->getSubcategoryes[$pos['subcategory']]['title']."</td>
                           <td>".$pos['vendor_code']."</td>
                           <td>".$pos['title']."</td>
                           <td>".$pos['total']."</td>
@@ -178,7 +171,7 @@ include 'include/class.inc.php';
                   <select class="form-control" name="category" placeholder="Веберите категорию" id="category" required="required">
                    <option>Веберите категорию...</option>
                    <?php 
-                   $arr = $position->get_pos_category();
+                   $arr = $position->getCategoryes;
                 
                     foreach ($arr as &$category) {
                        echo "
@@ -363,90 +356,117 @@ include 'include/class.inc.php';
 <script src="../../dist/js/demo.js"></script>
 <!-- page script -->
 <script>
-var id_pos=0;
-var pos_in_assembly=null;
-var pos_in_kits=null;
-var pos_is_assembly=null;
 
+    $(document).ready(function () {
+        /* Для таблицы */
 
-
-$( "#category" )
-  .change(function () {
-    var id = "";
-    
-    $( "#category option:selected" ).each(function() {
-      id = $( this ).val();
-    });
- 
-    $.post( "./api.php", { action: "get_pos_sub_category", subcategory: id } )
-    .done(function( data ) {
-        $('option', $("#subcategory")).remove();
-        var obj = jQuery.parseJSON(data);
-        //console.log(obj);
-        $.each( obj, function( key, value ) {
-          $('#subcategory')
-         .append($("<option></option>")
-                    .attr("value",value['id'])
-                    .text(value['title'])); 
-                    
+        // Setup - add a text input to each footer cell
+        /*
+        $('#example tfoot th').each(function () {
+            var title = $('#example thead th').eq($(this).index()).text();
+            $(this).html('<input type="text" placeholder="Search ' + title + '" />');
         });
-    });
-  });
+        */
+        // DataTable
+        /*var table = $('#example').DataTable({
+            stateSave: true
+        });*/
+        //инициализация таблиц
+        var table = $('#pos').DataTable({
+            "iDisplayLength": 100,
+            "lengthMenu": [[10, 25, 100, -1], [10, 25, 100, "All"]],
+            "order": [[2, 'asc']],
+            stateSave: true
+        });
+        /*
+        // Restore state
+        var state = table.state.loaded();
+        if (state) {
+            table.columns().eq(0).each(function (colIdx) {
+                var colSearch = state.columns[colIdx].search;
 
+                if (colSearch.search) {
+                    $('input', table.column(colIdx).footer()).val(colSearch.search);
+                }
+            });
 
-    $( "#pos .fa-pencil" ).click(function() {
-               
-                id_pos = $(this).attr("id");
-                
-                $('#pos_edit').modal('show');
-                
-                $.post( "./api.php", { 
-                    action: "get_info_pos", 
-                    id: id_pos
-                        } )
-                  .done(function( data ) {
-                     var obj = jQuery.parseJSON (data);
-                    
-                     
-                      $.post( "./api.php", { 
-                            action: "get_info_user", 
-                            id: obj['update_user']
-                        } )
-                              .done(function( data ) {
-                                  if (data=="false") {alert( "Data Loaded: " + data ); }
-                                  else {
-                                    var obj2 = jQuery.parseJSON (data);
-                                    //console.log(obj['user_name']);  
-                                     $('#update').text("Изменено: " + obj['update_date'] + "  (" +obj2['user_name'] +")");
-                                    
-                                  }
-                              });
-                     
-                     
-                   
+            table.draw();
+        }
+        // Apply the search
+        table.columns().eq(0).each(function (colIdx) {
+            $('input', table.column(colIdx).footer()).on('keyup change', function () {
+                table
+                    .column(colIdx)
+                    .search(this.value)
+                    .draw();
+            });
+        });
+        */
+
+        var id_pos = 0;
+        var pos_in_assembly = null;
+        var pos_in_kits = null;
+        var pos_is_assembly = null;
+        //при смене категории загружаем подкатегории
+        $("#category").change(function () {
+            var id = "";
+            $("#category option:selected").each(function () {
+                id = $(this).val();
+            });
+            $.post("./api.php", {action: "get_pos_sub_category", subcategory: id})
+                .done(function (data) {
+                    $('option', $("#subcategory")).remove();
+                    var obj = jQuery.parseJSON(data);
+                    //console.log(obj);
+                    $.each(obj, function (key, value) {
+                        $('#subcategory')
+                            .append($("<option></option>")
+                                .attr("value", value['id'])
+                                .text(value['title']));
+                    });
+                });
+        });
+        //при нажатии на кнопку редактирования позиции
+        $("#pos .fa-pencil").click(function () {
+            id_pos = $(this).attr("id");
+            $('#pos_edit').modal('show');
+            //собираем форму для редактирования позиции
+            $.post("./api.php", {action: "get_info_pos", id: id_pos})
+                .done(function (data) {
+                    var obj = jQuery.parseJSON(data);
+                    //информация о пользователе
+                    $.post("./api.php", {action: "get_info_user", id: obj['update_user']})
+                        .done(function (data) {
+                            if (data == "false") {
+                                alert("Data Loaded: " + data);
+                            } else {
+                                var obj2 = jQuery.parseJSON(data);
+                                //console.log(obj['user_name']);
+                                $('#update').text("Изменено: " + obj['update_date'] + "  (" + obj2['user_name'] + ")");
+                            }
+                        });
                     // console.log (get_info_user(obj['update_user']));
-                     $('#title').val(obj['title']);
-                     $('#longtitle').val(obj['longtitle']);
-                     $('#category').val(obj['category']);
-                    
-                     
-                     $.post( "./api.php", { action: "get_pos_sub_category", subcategory: obj['category'] } )
-                        .done(function( data ) {
+                    $('#title').val(obj['title']);
+                    $('#longtitle').val(obj['longtitle']);
+                    $('#category').val(obj['category']);
+                    //загружаем подкатегории по выбранной категории
+                    $.post("./api.php", {action: "get_pos_sub_category", subcategory: obj['category']})
+                        .done(function (data) {
                             $('option', $("#subcategory")).remove();
                             var obj2 = jQuery.parseJSON(data);
                             //console.log(obj);
-                            $.each( obj2, function( key, value ) {
-                              $('#subcategory')
-                              .append($("<option></option>")
-                                        .attr("value",value['id'])
-                                        .text(value['title'])); 
-                                        
+                            $.each(obj2, function (key, value) {
+                                $('#subcategory')
+                                    .append($("<option></option>")
+                                        .attr("value", value['id'])
+                                        .text(value['title']));
+
                             });
                             $('#subcategory').val(obj['subcategory']);
                         });
-                     //находим все комплекты где состоит деталь и вставляем в поле
-                     $.post( "./api.php", { action: "get_kit_by_pos", id: id_pos } )
-                        .done(function( data ) {
+                    //находим все комплекты где состоит деталь и вставляем в поле
+                    $.post("./api.php", {action: "get_kit_by_pos", id: id_pos})
+                        .done(function (data) {
                             $('a', $("#in-kit")).remove();
                             var objKits = jQuery.parseJSON(data);
                             pos_in_kits = objKits;
@@ -458,231 +478,209 @@ $( "#category" )
                                 $('#in-kit').append($("<a></a>").attr("style", "font-weight: 700;").text('нет'));
                             }
                         });
-                     //находим все сборки где состоит деталь и вставляем в поле
-                     $.post( "./api.php", { action: "get_assembly_by_pos", id: id_pos } )
-                          .done(function( data ) {
-                              $('a', $("#in-assembly")).remove();
-                              var objAssembly = jQuery.parseJSON(data);
-                              pos_in_assembly = objAssembly;
-                              if (objAssembly != null) {
-                                  $.each(objAssembly, function (key, value) {
-                                      $('#in-assembly').append($("<a></a>").attr("href", './edit_assembly.php?id=' + value['id_assembly']).text(' ' + value['id_assembly']));
-                                  });
-                              } else {
-                                  $('#in-assembly').append($("<a></a>").attr("style", "font-weight: 700;").text('нет'));
-                              }
-                          });
-                     //присваеваем глобальную переменную если позиция является сборкой
-                     if (obj['assembly'] != 0) {pos_is_assembly = obj['assembly']}
-                     //заменяем поля в форме редактирования позиции
-                     $('#vendorcode').val(obj['vendor_code']);
-                     $('#provider').val(obj['provider']);
-                     $('#price').val(obj['price']);
-                     $('#assembly').val(obj['assembly']);
-                     $('#quant_robot').val(obj['quant_robot']);
-                     $('#quant_total').val(obj['total']);
-                     $('#min_balance').val(obj['min_balance']);
-                     //console.log(obj['summary']);
-                     if(obj['summary']=="1") {$('#summary').prop('checked', true);} else {$('#summary').prop('checked', false);}
-                     if(obj['archive']=="1") {$('#archive').prop('checked', true);} else {$('#archive').prop('checked', false);}
-                     
-                   
-                  });
-               
-
-    });
-
-
-
-  $(function () {
-    $('#example1').DataTable()
-    $('#example2').DataTable({
-      'paging'      : true,
-      'lengthChange': false,
-      'searching'   : false,
-      'ordering'    : true,
-      'info'        : true,
-      'autoWidth'   : false
-    })
-  })
-  
-  
-  $( "#save_close" ).click(function() { 
-      $( this ).hide();
-      $('.overlay').show();
-  save_close();
-  return false;
-  });
-
-    //при нажатии на кнопку "удалить"
-    $( "#delete" ).click(function() {
-    delete_pos();
-    return false;
-    });
-
-    //функция удаления позиции
-    function delete_pos() {
-     var category =  $('#category').val();
-     $.post( "./api.php", {
-        action: "delete_pos",
-        id: id_pos
-
-
-    } )
-          .done(function( data ) {
-              if (data=="false") {alert( "Data Loaded: " + data ); }
-              else {
-                window.location.href = "./pos.php?id="+category;
-              }
-          });
-
-    }
-
-    //при нажатии на кнопку "переместить"
-    $( "#warehouse" ).click(function() {
-        if (pos_in_assembly == null && pos_in_kits == null && pos_is_assembly == null) {
-            to_warehouse();
-        } else {
-            alert('Позиция, которая состоит в комплектах и сборках, а так же является сборкой переместить нельзя!');
-        }
-        return false;
-    });
-
-    //функция перемещения позиции
-    function to_warehouse() {
-        var category =  $('#category').val();
-        $.post( "./api.php", {
-            action: "to_warehouse",
-            id: id_pos
-        } )
-            .done(function( data ) {
-                if (data=="false") {alert( "Data Loaded: " + data ); }
-                else {
-                    window.location.href = "./pos.php?id="+category;
+                    //находим все сборки где состоит деталь и вставляем в поле
+                    $.post("./api.php", {action: "get_assembly_by_pos", id: id_pos})
+                        .done(function (data) {
+                            $('a', $("#in-assembly")).remove();
+                            var objAssembly = jQuery.parseJSON(data);
+                            pos_in_assembly = objAssembly;
+                            if (objAssembly != null) {
+                                $.each(objAssembly, function (key, value) {
+                                    $('#in-assembly').append($("<a></a>").attr("href", './edit_assembly.php?id=' + value['id_assembly']).text(' ' + value['id_assembly']));
+                                });
+                            } else {
+                                $('#in-assembly').append($("<a></a>").attr("style", "font-weight: 700;").text('нет'));
+                            }
+                        });
+                    //присваеваем глобальную переменную если позиция является сборкой
+                    if (obj['assembly'] != 0) {
+                        pos_is_assembly = obj['assembly']
+                    }
+                    //заменяем поля в форме редактирования позиции
+                    $('#vendorcode').val(obj['vendor_code']);
+                    $('#provider').val(obj['provider']);
+                    $('#price').val(obj['price']);
+                    $('#assembly').val(obj['assembly']);
+                    $('#quant_robot').val(obj['quant_robot']);
+                    $('#quant_total').val(obj['total']);
+                    $('#min_balance').val(obj['min_balance']);
+                    //console.log(obj['summary']);
+                    if (obj['summary'] == "1") {
+                        $('#summary').prop('checked', true);
+                    } else {
+                        $('#summary').prop('checked', false);
+                    }
+                    if (obj['archive'] == "1") {
+                        $('#archive').prop('checked', true);
+                    } else {
+                        $('#archive').prop('checked', false);
+                    }
+                });
+        });
+        //нет такого???
+        /*$(function () {
+            $('#example1').DataTable()
+            $('#example2').DataTable({
+                'paging': true,
+                'lengthChange': false,
+                'searching': false,
+                'ordering': true,
+                'info': true,
+                'autoWidth': false
+            })
+        })*/
+        //при нажатии на кнопку сохранить
+        $("#save_close").click(function () {
+            $(this).hide();
+            $('.overlay').show();
+            save_close();
+            return false;
+        });
+        //при нажатии на кнопку "удалить"
+        $("#delete").click(function () {
+            delete_pos();
+            return false;
+        });
+        //функция удаления позиции
+        function delete_pos() {
+            var category = $('#category').val();
+            $.post("./api.php", {
+                action: "delete_pos",
+                id: id_pos
+            }).done(function (data) {
+                if (data == "false") {
+                    alert("Data Loaded: " + data);
+                } else {
+                    //window.location.href = "./pos.php?id=" + category;
+                    location.reload();
                 }
             });
-    }
-
-  function save_close() {
-      
-    var title =  $('#title').val();
-    var longtitle =  $('#longtitle').val();
-    var category =  $('#category').val();
-    var subcategory =  $('#subcategory').val();
-   
-    var vendorcode =  $('#vendorcode').val();
-    var provider =  $('#provider').val();
-    var price =  $('#price').val();
-    var quant_robot =  0; 
-    var quant_total =  $('#quant_total').val();
-    var min_balance =  $('#min_balance').val();
-    var assembly =  $('#assembly').val();
-    var file =  $('#file').val();
-    var summary = 0;
-     if($("#summary").prop("checked")) { 
-        summary = 1;
-    }
-    var archive = 0;
-     if($("#archive").prop("checked")) {
-         archive = 1;
-    }
-    
-      $.post( "./api.php", { 
-        action: "edit_pos",
-        id: id_pos,
-        title: title,
-        longtitle: longtitle ,
-        category: category ,
-        subcategory: subcategory ,
-      
-        vendorcode: vendorcode ,
-        provider: provider ,
-        price: price ,
-        quant_robot: quant_robot ,
-        quant_total: quant_total ,
-        min_balance: min_balance ,
-        assembly : assembly,
-        summary : summary,
-        archive : archive,
-        file : file
-    } )
-          .done(function( data ) {
-              if (data=="false") {alert( "Data Loaded: " + data ); }
-              else {
-                  
-                var file_data = $('#file').prop('files')[0];
-                var form_data = new FormData();
-                form_data.append('file', file_data);
-                form_data.append('category', category);
-                form_data.append('vendor', vendorcode);
-                //alert(form_data);
-                $.ajax({
-                url: 'upload.php',
-                dataType: 'text',
-                cache: false,
-                contentType: false,
-                processData: false,
-                data: form_data,
-                type: 'post',
-                success: function(php_script_response){
-                    //alert(php_script_response);
-                   window.location.href = "./pos.php?id="+category;
+        }
+        //при нажатии на кнопку "переместить"
+        $("#warehouse").click(function () {
+            if (pos_in_assembly == null && pos_in_kits == null && pos_is_assembly == null) {
+                to_warehouse();
+            } else {
+                alert('Позиция, которая состоит в комплектах и сборках, а так же является сборкой переместить нельзя!');
+            }
+            return false;
+        });
+        //функция перемещения позиции
+        function to_warehouse() {
+            var category = $('#category').val();
+            $.post("./api.php", {
+                action: "to_warehouse",
+                id: id_pos
+            }).done(function (data) {
+                if (data == "false") {
+                    alert("Data Loaded: " + data);
+                } else {
+                    //window.location.href = "./pos.php?id=" + category;
+                    location.reload();
                 }
-     });
-                  
-                  
-               //
-              }
-          });
-    
- }
- 
- function get_info_user(id) {
-     
-     
-     
- }
-  $("#btn_add_provider").click(function() {
- 	var type = $('#provider_type').val();
- 	var title = $('#provider_title').val();
- 	//alert("123");
- 	if (title != "") {
- 		$.post("./api.php", {
- 			action: "add_pos_provider",
- 			type: type,
- 			title: title
- 		}).done(function(data) {
- 			console.log(data);
- 			if (data == "false") {
- 				alert("Data Loaded: " + data);
- 				return false;
- 			} else {
- 				$('#provider').append("<option value='" + data + "' selected>" + type + " " + title + "<\/option>");
- 				$('#add_provider').modal('hide');
- 				//return false;
- 			}
- 		});
- 	}
- });
- 
-  $('#pos').DataTable({
-       "iDisplayLength": 100,
-        "lengthMenu": [[10, 25, 100, -1], [10, 25, 100, "All"]],
-        "order": [[ 7, "asc" ]]
-    } );
-
-$('#check_show_all').change(function() {
-    if($(this).is(":checked")) {
-        //var returnVal = confirm("Are you sure?");
-        $(this).attr("checked", true);
-    }
-    // alert($(this).is(':checked'));
-    $("#show_all").submit();
-
-});
+            });
+        }
+        //функция записи изменений позиции
+        function save_close() {
+            var title = $('#title').val();
+            var longtitle = $('#longtitle').val();
+            var category = $('#category').val();
+            var subcategory = $('#subcategory').val();
+            var vendorcode = $('#vendorcode').val();
+            var provider = $('#provider').val();
+            var price = $('#price').val();
+            var quant_robot = 0;
+            var quant_total = $('#quant_total').val();
+            var min_balance = $('#min_balance').val();
+            var assembly = $('#assembly').val();
+            var file = $('#file').val();
+            var summary = 0;
+            if ($("#summary").prop("checked")) {
+                summary = 1;
+            }
+            var archive = 0;
+            if ($("#archive").prop("checked")) {
+                archive = 1;
+            }
+            $.post("./api.php", {
+                action: "edit_pos",
+                id: id_pos,
+                title: title,
+                longtitle: longtitle,
+                category: category,
+                subcategory: subcategory,
+                vendorcode: vendorcode,
+                provider: provider,
+                price: price,
+                quant_robot: quant_robot,
+                quant_total: quant_total,
+                min_balance: min_balance,
+                assembly: assembly,
+                summary: summary,
+                archive: archive,
+                file: file
+            }).done(function (data) {
+                if (data == "false") {
+                    alert("Data Loaded: " + data);
+                } else {
+                    var file_data = $('#file').prop('files')[0];
+                    var form_data = new FormData();
+                    form_data.append('file', file_data);
+                    form_data.append('category', category);
+                    form_data.append('vendor', vendorcode);
+                    //alert(form_data);
+                    $.ajax({
+                        url: 'upload.php',
+                        dataType: 'text',
+                        cache: false,
+                        contentType: false,
+                        processData: false,
+                        data: form_data,
+                        type: 'post',
+                        success: function (php_script_response) {
+                            //alert(php_script_response);
+                            //window.location.href = "./pos.php?id=" + category;
+                            location.reload();
+                        }
+                    });
+                }
+            });
+        }
+        //??
+        /*function get_info_user(id) {
+        }*/
+        //функция добавления поставщика
+        $("#btn_add_provider").click(function () {
+            var type = $('#provider_type').val();
+            var title = $('#provider_title').val();
+            //alert("123");
+            if (title != "") {
+                $.post("./api.php", {
+                    action: "add_pos_provider",
+                    type: type,
+                    title: title
+                }).done(function (data) {
+                    console.log(data);
+                    if (data == "false") {
+                        alert("Data Loaded: " + data);
+                        return false;
+                    } else {
+                        $('#provider').append("<option value='" + data + "' selected>" + type + " " + title + "<\/option>");
+                        $('#add_provider').modal('hide');
+                        //return false;
+                    }
+                });
+            }
+        });
+        //отображать архив
+        $('#check_show_all').change(function () {
+            if ($(this).is(":checked")) {
+                $(this).attr("checked", true);
+            }
+            $("#show_all").submit();
+        });
+    });
 
 </script>
-
-   
 </body>
 </html>

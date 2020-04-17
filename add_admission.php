@@ -3,11 +3,6 @@ include 'include/class.inc.php';
 ?>
 <?php include 'template/head.php' ?>
 
-<!DOCTYPE html>
-<html>
-<head>
-	<title>Добавить поступление</title>
-</head>
 <body class="hold-transition skin-blue sidebar-mini">
 	<div class="wrapper">
 		<?php include 'template/header.php' ?>
@@ -33,7 +28,7 @@ include 'include/class.inc.php';
 											<option value="0">
 												Веберите категорию...
 											</option><?php 
-											                   $arr = $position->get_pos_category();
+											                   $arr = $position->getCategoryes;
 											                
 											                    foreach ($arr as &$category) {
 											                       echo "

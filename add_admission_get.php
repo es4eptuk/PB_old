@@ -15,11 +15,6 @@ include 'include/class.inc.php';
 
 ?>
 
-<!DOCTYPE html>
-<html>
-<head>
-	<title>Добавить поступление</title>
-</head>
 <body class="hold-transition skin-blue sidebar-mini">
 	<div class="wrapper">
 		<?php include 'template/header.php' ?>

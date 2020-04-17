@@ -6,12 +6,9 @@ include 'include/class.inc.php';
 
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
-
 <?php include 'template/header.php' ?>
-
   <!-- Left side column. contains the logo and sidebar -->
 <?php include 'template/sidebar.php';?>
-
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
@@ -53,7 +50,7 @@ include 'include/class.inc.php';
                   <select class="form-control" name="category" placeholder="Веберите категорию" id="category" required="required">
                    <option value="0">Веберите категорию...</option>
                    <?php 
-                   $arr = $position->get_pos_category();
+                   $arr = $position->getCategoryes;
                 
                 if (isset($_GET['category'])) {
                     foreach ($arr as &$category) {

@@ -3,11 +3,6 @@ include 'include/class.inc.php';
 ?>
 <?php include 'template/head.php' ?>
 
-<!DOCTYPE html>
-<html>
-<head>
-	<title></title>
-</head>
 <body class="hold-transition skin-blue sidebar-mini">
 	<div class="wrapper">
 		<?php include 'template/header.php' ?>

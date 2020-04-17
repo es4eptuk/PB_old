@@ -306,8 +306,8 @@ class Orders
         $pos_arr = json_decode($json);
         array_shift($pos_arr);
         $sum      = 0;
-        $p_finish = 0;
-        $p_admis  = 0;
+        //$p_finish = 0;
+        //$p_admis  = 0;
         foreach ($pos_arr as &$value) {
             $pos_id     = $value['0'];
             $count_pos  = $value['3'];
@@ -336,7 +336,8 @@ class Orders
         $result = $this->pdo->query($query);
         $p_finish = 0;
         $p_admis  = 0;
-        
+        $finish_pos_percent = 0;
+
         foreach ($pos_arr as &$value) {
             $pos_id      = $value['0'];
             $subcategory = 0;
@@ -348,13 +349,21 @@ class Orders
             $finish_pos  = $value['4'];
             $p_finish    = $p_finish + $count;
             $p_admis     = $p_admis + $finish_pos;
-           // echo $count." ".$finish_pos. " ||| ";
-            
+            // echo $count." ".$finish_pos. " ||| ";
+
+            //считам сумарное поступление для процента выполнения заказа
+            if ($finish_pos <= $count) {
+                $finish_pos_percent = $finish_pos_percent + $finish_pos;
+            } else {
+                $finish_pos_percent = $finish_pos_percent + $count;
+            }
+
+            /*
             if ($finish_pos >= $count) {
                 $arr_finish[] = 1;
             } else {
                 $arr_finish[] = 0;
-            }
+            }*/
            
             $date   = new DateTime($value['8']);
             //print_r( $value );
@@ -385,22 +394,25 @@ class Orders
                     '$price', 
                     '$date_r');";
             $result = $this->pdo->query($query);
+
         }
         
         
-        echo "Total: ".array_sum($arr_finish)." из ".count($pos_arr)." ";
+        //echo "Total: ".array_sum($arr_finish)." из ".count($pos_arr)." ";
         
-        $date    = date("Y-m-d H:i:s");
-        
-        if ( count($pos_arr) > 1) {
-        $percent = round((array_sum($arr_finish) * 100) / count($pos_arr),PHP_ROUND_HALF_DOWN);}
-        else {
-            
-          $percent = round(($finish_pos * 100) / $count,PHP_ROUND_HALF_DOWN );
-          
+        $date = date("Y-m-d H:i:s");
+
+        //пересчитываем процент выполнения
+        /*if ( count($pos_arr) > 1) {
+            $percent = round((array_sum($arr_finish) * 100) / count($pos_arr),PHP_ROUND_HALF_DOWN);
+        } else {
+            $percent = round(($finish_pos * 100) / $count,PHP_ROUND_HALF_DOWN );
         }
-        echo $percent;
+        echo $percent;*/
         //$percent =  round(($p_admis * 100) / $p_finish);
+
+        //высчитываем процент выполнения по новой логике
+        $percent = floor(round($finish_pos_percent * 100/ $p_finish, 2, PHP_ROUND_HALF_DOWN));
         
         if ($percent > 0) {
             $status = 1;

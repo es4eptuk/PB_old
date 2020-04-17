@@ -30,7 +30,7 @@ include 'include/class.inc.php';
 
           <div class="box">
             <div class="box-header">
-              <h3 class="box-title"><?php echo $position->get_name_category($_GET['id']) ?></h3>
+              <h3 class="box-title"><?php echo $position->getCategoryes[$_GET['id']]['title'] ?></h3>
             </div>
             <!-- /.box-header -->
             <div class="box-body">

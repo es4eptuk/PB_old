@@ -132,7 +132,7 @@ include 'include/class.inc.php';
                   <select class="form-control" name="category" placeholder="Веберите категорию" id="category" required="required">
                    <option>Веберите категорию...</option>
                    <?php 
-                   $arr = $position->get_pos_category();
+                   $arr = $position->getCategoryes;
                 
                     foreach ($arr as &$category) {
                        echo "

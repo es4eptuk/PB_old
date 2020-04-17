@@ -53,6 +53,7 @@ class Admissions
 
         $order_date = new DateTime($order_date);
         $order_date = $order_date->format('Y-m-d H:i:s');
+        $finish_pos_percent = 0;
         $i = 0;
         foreach ($pos_arr as &$value) {
 
@@ -61,8 +62,8 @@ class Admissions
             $finish_pos   = $value['4']; //отгруженное количество
             $admis_pos    = $value['5']; //поступаемое количество
             $return_pos   = $value['6']; //возврат количество
-            $painting   = $value['7']; //?
-            $drilling   = $value['8']; //?
+            $painting   = (isset($value['7'])) ? $value['7'] : null; //?
+            $drilling   = (isset($value['8'])) ? $value['8'] : null; //?
 
             //зачем это
             $order_paint['0']['0'] = 998; //?
@@ -106,11 +107,11 @@ class Admissions
 
             //создаем массив $arr_finish
             //проверяем уже поступило + поступило сейчас >= заказанному количеству
-            if ($finish_pos + $admis_pos >= $count_pos) {
+            /*if ($finish_pos + $admis_pos >= $count_pos) {
                 $arr_finish[] = 1;
             } else {
                 $arr_finish[] = 0;
-            }
+            }*/
 
             //ищем позицию в базе и записываем ее в массив $pos_array2
             $query2 = "SELECT * FROM pos_items WHERE id=$pos_id";
@@ -137,7 +138,7 @@ class Admissions
             }
             //добовляем изменения в базу (позиции в текущем заказе)
             if ($order_id != 0) {
-                $return_pos = $return_pos - $admis_pos;
+                $return_pos = intval($return_pos) - intval($admis_pos);
                 $query      = "UPDATE IGNORE `orders_items` SET `pos_count_finish` = $total_finish,`pos_return` = $return_pos WHERE `order_id` = $order_id AND `pos_id` = $pos_id";
                 $result = $this->pdo->query($query);
             }
@@ -181,18 +182,17 @@ class Admissions
             }*/
 
             //высчитываем процент выполнения по новой логике
-            $percent = round($finish_pos_percent * 100/ $p_finish, 0, PHP_ROUND_HALF_DOWN);
+            $percent = floor(round($finish_pos_percent * 100/ $p_finish, 2, PHP_ROUND_HALF_DOWN));
 
             //выводем процент, зачем?
             //echo $percent;
 
             //непонятные телодвижения
-            $query = "SELECT * FROM orders WHERE order_id='$order_id'";
+            $query = "SELECT * FROM `orders` WHERE `order_id` = $order_id";
             $result = $this->pdo->query($query);
-            while ($line = $result2->fetch()) {
+            while ($line = $result->fetch()) {
                 $order_array[] = $line;
             }
-            $result = $this->pdo->query($query);
 
             //меняем статус при выполнении заказа на 100%
             if ($percent >= 100) {

@@ -30,7 +30,7 @@ include 'include/class.inc.php';
 
           <div class="box">
             <div class="box-header">
-              <h3 class="box-title"><?php echo $position->get_name_category($_GET['id']) ?></h3>
+              <h3 class="box-title"><?php echo $position->getCategoryes[$_GET['id']]['title'] ?></h3>
             </div>
             <!-- /.box-header -->
             <div class="box-body">
@@ -59,7 +59,7 @@ include 'include/class.inc.php';
                     <tr id='".$pos['id']."'>
                         <td>".$pos['id']."</td>
                         <td>".$admis_date->format('d.m.Y')."</td>
-                        <td>".$position->get_name_category($pos['category'])."</td>
+                        <td>".$position->getCategoryes[$pos['category']]['title']."</td>
                         <td>".$provider['title'].", ".$provider['type']."</td>
                         <td>".$user_info['user_name']."</td>
                     </tr>
@@ -109,7 +109,7 @@ include 'include/class.inc.php';
                   <select class="form-control" name="category" placeholder="Веберите категорию" id="category" required="required">
                    <option>Веберите категорию...</option>
                    <?php 
-                   $arr = $position->get_pos_category();
+                   $arr = $position->getCategoryes;
                 
                     foreach ($arr as &$category) {
                        echo "

@@ -37,53 +37,39 @@ include 'include/class.inc.php';
               <table id="items" class="table table-bordered table-striped">
                 <thead>
                 <tr>
-                 
                   <th>ID</th>
-                 
                   <th>Название</th>
-                  
-                  <th>Чек - лист</th>
-                 
-                   <th></th>
+                  <th>Чек - листы</th>
+                  <th>Версия робота</th>
+                  <th></th>
                 </tr>
                 </thead>
                 <tbody>
                 <?php 
-                
-                $arr = $robots->get_options();
-                
-                if (isset($arr)) {
-                foreach ($arr as &$pos) {
-                    
-                    
-                     
-                    
-                    
-                    $check_out = "<a href='checks_option.php?id=".$pos['id_option']."'><i class='fa fa-2x fa-check-square-o'></i></a>";
-                     
-
-                       echo "
-                    <tr>
-                        <td>".$pos['id_option']."</td>
-                        <td>".$pos['title']."</td>
-                        
-                        
-                        <td align='center'>".$check_out."</td>
-                        <td><i class='fa fa-2x fa-pencil' style='cursor: pointer;' id='".$pos['id_option']."'></i></td>
-                    </tr>
-                       
-                       
-                       ";
-                    
-                }
-                } 
+                    $arr = $robots->getOptions;
+                    $version = $robots->getEquipment;
+                    if (isset($arr)) {
+                        foreach ($arr as &$pos) {
+                            $vers_out = ($pos['version']==0) ? "Для любой версии" : $version[$pos['version']]['title'];
+                            $check_out = "<a href='checks_option.php?id=".$pos['id_option']."'><i class='fa fa-2x fa-check-square-o'></i></a>";
+                            echo "
+                                <tr>
+                                    <td>".$pos['id_option']."</td>
+                                    <td>".$pos['title']."</td>
+                                    <td align='center'>".$check_out."</td>
+                                    <td>".$vers_out."</td>                        
+                                    <td><i class='fa fa-2x fa-pencil' style='cursor: pointer;' id='".$pos['id_option']."'></i></td>
+                                </tr>
+                            ";
+                        }
+                    }
                 ?>
               </table>
               
             </div>
             
               <div class="box-footer">
-                    <a href="./add_kit.php" class="btn btn-primary" >Добавить опцию</a>
+                    <a href="./add_option.php" class="btn btn-primary" >Добавить опцию</a>
                 </div>
             <!-- /.box-body -->
           </div>

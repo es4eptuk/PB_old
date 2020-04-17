@@ -114,9 +114,9 @@ class Checks
         //$user_id = intval($_COOKIE['id']);
         $query   = "UPDATE `robot_options_checks` SET `check_title` = '$title ',  `check_category` = $category,  `id_kit` = $kit  WHERE `check_id` = $id";
         $result = $this->pdo->query($query);
-        $query = "UPDATE `check` SET `operation` = '$title',`id_kit` = '$kit' WHERE `category` = $category AND `operation` LIKE '$title' ";
-        $result = $this->pdo->query($query);
-        return $result;
+        /*$query = "UPDATE `check` SET `operation` = '$title',`id_kit` = '$kit' WHERE `category` = $category AND `operation` LIKE '$title' ";
+        $result = $this->pdo->query($query);*/
+        return true;
     }
     //собирает чек лесты по выбранной категории и роботу (базовые)
     function get_checks_on_robot($category, $robot)
@@ -252,7 +252,9 @@ class Checks
                 $finish_check = $finish_check + 1;
             }
         }
-        $progress = $finish_check * 100 / $count_check;
+        //$progress = $finish_check * 100 / $count_check;
+        $progress = floor(round(($finish_check * 100) / $count_check, 2, PHP_ROUND_HALF_DOWN));
+
         $query    = "UPDATE `robots` SET `progress` = '$progress', `stage` = '$stage', `last_operation` = '$title', `update_user` = '$user_id', `update_date` = '$date' WHERE `robots`.`id` = $robot";
         $result = $this->pdo->query($query);
         if ($result && $kit != 0 && $value == 1 && $remont==0) {
@@ -476,9 +478,9 @@ class Checks
     }*/
 
     //взять информацию по всем исходным чеклистам опции (ид_опции)
-    function get_checks_on_option($id)
+    function get_checks_on_option($id=0)
     {
-        $query = "SELECT * FROM `robot_options_checks` JOIN `pos_category` ON robot_options_checks.check_category = pos_category.id WHERE `id_option` = $id ORDER BY robot_options_checks.check_category ASC";
+        $query = "SELECT * FROM `robot_options_checks` JOIN `pos_category` ON `robot_options_checks`.`check_category` = `pos_category`.`id` WHERE `id_option` = $id ORDER BY `robot_options_checks`.`check_category` ASC";
         $result = $this->pdo->query($query);
         while ($line = $result->fetch()) {
             $checks_array[] = $line;
@@ -488,13 +490,31 @@ class Checks
             return $checks_array;
     }
 
-    function add_check_on_option($id_option, $title, $category, $version = 4, $kit)
+    //взять информацию по всем исходным чеклистам (ид_опции, ид_категории)
+    function get_checks_on_option_in_cat($id=0, $cat)
+    {
+        $where = "WHERE `check_category` = $cat";
+        if ($id != 0) {
+            $where .= " AND `id_option` = $id";
+        }
+        $query = "SELECT * FROM `robot_options_checks` $where ORDER BY `check_title` ASC";
+        $result = $this->pdo->query($query);
+        while ($line = $result->fetch()) {
+            $checks_array[] = $line;
+        }
+
+        if (isset($checks_array))
+            return $checks_array;
+    }
+
+    //добавления чек-листа к опции
+    function add_check_on_option($id_option, $title, $category, $kit)
     {
         $title = trim($title);
         $query = "INSERT INTO `robot_options_checks` (`check_id`, `id_option`, `check_title`, `check_category`, `id_kit`) VALUES (NULL, $id_option, '$title', $category, $kit);";
         $result = $this->pdo->query($query);
         $idd   = $this->pdo->lastInsertId();
-        $query = "SELECT robot_options_items.id_row, robot_options_items.id_option, robot_options_items.id_robot FROM `robot_options_items` JOIN `robots` ON robot_options_items.id_robot = robots.id WHERE robot_options_items.id_option = $id_option AND robots.version = $version AND robots.progress != 100";
+        $query = "SELECT robot_options_items.id_row, robot_options_items.id_option, robot_options_items.id_robot FROM `robot_options_items` JOIN `robots` ON robot_options_items.id_robot = robots.id WHERE robot_options_items.id_option = $id_option AND robots.progress != 100";
         $result = $this->pdo->query($query);
         while ($line = $result->fetch()) {
             $robots_array[] = $line;
@@ -502,7 +522,7 @@ class Checks
         if (isset($robots_array)) {
             foreach ($robots_array as &$value) {
                 $id_robot = $value['id_robot'];
-                echo $id_robot;
+                //echo $id_robot;
                 $query = "INSERT INTO `check` (
                      `id`, 
                      `id_check`, 
@@ -520,18 +540,19 @@ class Checks
                          '$id_robot', 
                          '$title', 
                          '$category',
-                         
                          '0',
                          '0',
                          '$id_option',
                          '$kit',
-                         '', 
-                         '')";
+                         NULL, 
+                         '0')";
                 $result = $this->pdo->query($query);
             }
         }
         return $result;
     }
+
+    //удаление чеклиста
     function del_check($id, $version)
     {
         $query = "DELETE FROM `check_items` WHERE `id` = $id";
@@ -546,7 +567,25 @@ class Checks
             $query    = "DELETE FROM `check` WHERE id_check = $id AND robot = $id_robot";
             $result = $this->pdo->query($query);
         }
-        return $result;
+        return true;
+    }
+
+    //удаление чеклиста в опции
+    function del_check_in_option($id)
+    {
+        $query = "DELETE FROM `robot_options_checks` WHERE `check_id` = $id";
+        $result = $this->pdo->query($query);
+        /*$query = "SELECT * FROM robots WHERE version = $version AND progress != 100 ORDER BY `sort` ASC";
+        $result = $this->pdo->query($query);
+        while ($line = $result->fetch()) {
+            $robots_array[] = $line;
+        }
+        foreach ($robots_array as &$value) {
+            $id_robot = $value['id'];
+            $query    = "DELETE FROM `check` WHERE id_check = $id AND robot = $id_robot";
+            $result = $this->pdo->query($query);
+        }*/
+        return true;
     }
 
     //создание чеклистов для опций (ид_опции, ид_робота, добавление/удаление)
@@ -623,7 +662,15 @@ class Checks
             $result = $this->pdo->query($this->query);
         }
     }
-    
+
+    //отмечает все чек листы для робота без списаний (ид_робота)
+    function checked_all_check_in_robot($id)
+    {
+        $query = "UPDATE `check` SET `check` = 1 WHERE `robot` = $id";
+        $result = $this->pdo->query($query);
+        return ($result) ? true : false;
+    }
+
     function __destruct()
     {
         //echo "check - ";

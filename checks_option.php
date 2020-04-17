@@ -52,6 +52,7 @@ $title_option = $option_info['title'];
                   <th>Название</th>
                   <th>Комплект деталей</th>
                   <th></th>
+                  <th></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -74,7 +75,8 @@ $title_option = $option_info['title'];
                         <td>".$pos['check_title']."</td>
                         
                         <td align='center'>".$kit_out."</td>
-                        <td><i class='fa fa-2x fa-pencil' style='cursor: pointer;' id='".$pos['check_id']."' data-title='".$pos['check_title']."' data-category='".$pos['check_category']."' data-kit='".$pos['id_kit']."'></i></td>
+                        <td><i class='fa fa-2x fa-pencil' style='cursor: pointer;' data-id='".$pos['check_id']."' data-title='".$pos['check_title']."' data-category='".$pos['check_category']."' data-kit='".$pos['id_kit']."'></i></td>
+                        <td><i class='fa fa-2x fa-remove' style='cursor: pointer;' data-id='".$pos['check_id']."'></i></td>
                     </tr>
                        
                        
@@ -127,7 +129,7 @@ $title_option = $option_info['title'];
                   <select class="form-control" name="category" placeholder="Веберите категорию" id="category" required="required">
                    <option value="0">Веберите категорию...</option>
                    <?php 
-                   $arr = $position->get_pos_category();
+                   $arr = $position->getCategoryes;
                 
                     foreach ($arr as &$category) {
                        echo "
@@ -195,7 +197,7 @@ $title_option = $option_info['title'];
                   <select class="form-control" name="category" placeholder="Веберите категорию" id="category_edit" required="required">
                    <option value="0">Веберите категорию...</option>
                    <?php 
-                   $arr = $position->get_pos_category();
+                   $arr = $position->getCategoryes;
                 
                     foreach ($arr as &$category) {
                        echo "
@@ -239,29 +241,32 @@ $title_option = $option_info['title'];
 </div>
 
 
-<!-- ./wrapper -->
-<!-- jQuery 3 -->
-<script src="../../bower_components/jquery/dist/jquery.min.js"></script>
-<!-- Bootstrap 3.3.7 -->
-<script src="../../bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-<!-- DataTables -->
-<script src="../../bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
-<script src="../../bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
-<!-- SlimScroll -->
-<script src="../../bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
-<!-- FastClick -->
-<script src="../../bower_components/fastclick/lib/fastclick.js"></script>
-<!-- AdminLTE App -->
-<script src="../../dist/js/adminlte.min.js"></script>
-<!-- AdminLTE for demo purposes -->
-<script src="../../dist/js/demo.js"></script>
+<!-- jQuery 3
+<script src="./bower_components/jquery/dist/jquery.min.js"></script>-->
+<!-- Bootstrap 3.3.7
+<script src="./bower_components/bootstrap/dist/js/bootstrap.min.js"></script>-->
+<!-- DataTables
+<script src="./bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="./bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>-->
+<!-- SlimScroll
+<script src="./bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>-->
+<!-- FastClick
+<script src="./bower_components/fastclick/lib/fastclick.js"></script>-->
+<!-- AdminLTE App
+<script src="./dist/js/adminlte.min.js"></script>-->
+<!-- AdminLTE for demo purposes
+<script src="./dist/js/demo.js"></script>-->
+
+
+<?php include 'template/scripts.php';?>
+
 <!-- page script -->
 <script>
 var id_check = 0;
 var id_option = <?php echo $_GET['id']; ?> ;
 $( ".fa-pencil" ).click(function() {
                
-                    id_check = $(this).attr("id");
+                    id_check = $(this).data("id");
                     var title = $(this).data( "title" );
                     var category = $(this).data( "category" );
                     var kit = $(this).data( "kit" );
@@ -273,6 +278,18 @@ $( ".fa-pencil" ).click(function() {
                     $('#kit_edit').val(kit);
 
                   });
+$( ".fa-remove" ).click(function() {
+    var id = $(this).data("id");
+    $.post( "./api.php", {
+        action: "del_check_in_option",
+        id: id,
+    } )
+        .done(function( data ) {
+            window.location.href = "./checks_option.php?id="+id_option;
+            return false;
+        });
+
+});
                   
  $( "#btn_edit" ).click(function() { 
     
@@ -334,15 +351,13 @@ function save_close() {
     var category = $('#category').val();
     var title =  $('#title').val();
     var kit =  $('#kit').val();
-    var version =  4;
-    
+
     if (category != 0 ) {
       $.post( "./api.php", { 
         action: "add_check_on_option", 
         id_option: id_option,
         title: title ,
         category: category,
-        version: version,
         kit: kit
     } )
           .done(function( data ) {

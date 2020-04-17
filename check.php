@@ -43,7 +43,7 @@ $category_id = $_GET['category'];
 
           <div class="box">
             <div class="box-header">
-              <h3 class="box-title"><?php echo $position->get_name_category($_GET['category']) ?></h3>
+              <h3 class="box-title"><?php echo $position->getCategoryes[$_GET['category']]['title'] ?></h3>
             </div>
             <!-- /.box-header -->
             <div class="box-body table-responsive">
@@ -314,7 +314,7 @@ $category_id = $_GET['category'];
                   <select class="form-control" name="group" placeholder="Веберите группу" id="group" required="required">
                    <option>Веберите группу...</option>
                    <?php 
-                  /* $arr = $position->get_pos_category();
+                  /* $arr = $position->getCategoryes;
                 
                     foreach ($arr as &$category) {
                        echo "

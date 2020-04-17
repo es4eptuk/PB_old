@@ -22,7 +22,7 @@ class Position {
         }
     
     //Получение списка категорий
-        function get_pos_category() {
+        /*function get_pos_category() {
             $query = 'SELECT * FROM pos_category';
             $result = mysql_query($query) or die('Запрос не удался: ' . mysql_error());
             
@@ -35,7 +35,7 @@ class Position {
         	
         	if (isset($cat_array))
         	return $cat_array;
-        }
+        }*/
         
         //Получение списка категорий
         function get_pos_subcategory($category) {

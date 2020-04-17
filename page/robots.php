@@ -10,6 +10,7 @@ class Robots
 
     //списки
     public $getEquipment;
+    public $getOptions;
 
 
     function __construct()
@@ -34,12 +35,20 @@ class Robots
         $this->checks = $checks;
 
         //список версий роботов
-        $query = "SELECT * FROM robot_equipment ORDER BY `title` DESC";
+        $query = "SELECT * FROM `robot_equipment` ORDER BY `title` DESC";
         $result = $this->pdo->query($query);
         while ($line = $result->fetch()) {
-            $equipment[] = $line;
+            $equipment[$line['id']] = $line;
         }
         $this->getEquipment = (isset($equipment)) ? $equipment : [];
+
+        //список опций
+        $query = "SELECT * FROM `robot_options` ORDER BY `title` ASC";
+        $result = $this->pdo->query($query);
+        while ($line = $result->fetch()) {
+            $options[$line['id_option']] = $line;
+        }
+        $this->getOptions = (isset($options)) ? $options : [];
 
     }
 
@@ -292,7 +301,6 @@ class Robots
     }
 
     //добавить робота
-
     function add_robot($number, $name, $version, $options, $customer, $language_robot, $language_doc, $charger, $color, $brand, $ikp, $battery, $dop, $dop_manufactur, $date_start, $date_test, $send)
     {
         $date_start = new DateTime($date_start);
@@ -330,6 +338,10 @@ class Robots
                     $this->add_options_on_robot($option, $idd);
                     $this->checks->add_option_check($option, $idd,1);
                 }
+            }
+            //простовляем отметки по чеклистам без списания для старых роботов
+            if ($send == 1) {
+                $this->checks->checked_all_check_in_robot($idd);
             }
 
             return true;
@@ -422,11 +434,26 @@ class Robots
         $date = date("Y-m-d H:i:s");
         $user_id = intval($_COOKIE['id']);
         $number = str_pad($number, 4, "0", STR_PAD_LEFT);
+        $progress = $this->get_info_robot($id)['progress'];
+
+        //старый робот или нет, если старый то 100% и выполняем отметку чек листов в самом низу
+        if ($send == 1 && $progress == 0) {
+            $robot_old = true;
+            $progress = 100;
+        } else {
+            $robot_old = false;
+        }
+
+        /*if ($send == 1) {
+            $progress = 100;
+        } else {
+            $progress = $this->get_info_robot($id)['progress'];
+        }*/
 
         //вносим изменения в робота
         $this->query = "UPDATE `robots` SET 
         `version` = '$version', 
-        `number` = $number, 
+        `number` = '$number', 
         `name` = '$name', 
         `customer` = '$customer', 
         `language_robot` = '$language_robot', 
@@ -437,12 +464,12 @@ class Robots
         `ikp` = '$ikp', 
         `battery` = '$battery', 
         `dop` = '$dop', 
-        `dop_manufactur` = '$dop_manufactur', 
+        `dop_manufactur` = '$dop_manufactur',
+        `progress`  = $progress,
         `date` = '$date_start',
         `date_test` = '$date_test',
         `update_user` = '$user_id', 
         `update_date` = '$date' 
-        
         WHERE `id` = $id";
         $result = $this->pdo->query($this->query);
 
@@ -475,18 +502,17 @@ class Robots
             }
         }
 
+        //простовляем отметки по чеклистам без списания для старых роботов
+        if ($robot_old) {
+            $this->checks->checked_all_check_in_robot($id);
+        }
+
         /*$text = 'add -'.$option;
         $log = date('Y-m-d H:i:s') . ' ' . print_r($text, true);
         file_put_contents(__DIR__ . '/log111.txt', $log . PHP_EOL, FILE_APPEND);
         die;*/
 
         //это старый код
-        //если робот отправлен присваеваем прогресс 100% хотя это не записывается в базу
-        /*if ($send == 1) {
-            $progress = 100;
-        } else {
-            $progress = 0;
-        }*/
 
         //$idd = $this->pdo->lastInsertId();
         //удаляем все опции у робота и если что то удалилось переписываем опции
@@ -557,6 +583,25 @@ class Robots
         return $line['remont'];
     }
 
+    //создать опцию
+    function add_option($version = 0, $title)
+    {
+        $this->query = "INSERT INTO `robot_options` (`id_option`, `version`, `title`, `id_kit`) VALUES (NULL, $version, '$title', '0')";
+        $result = $this->pdo->query($this->query);
+        return true;
+    }
+
+    //удалить опцию
+    function del_option($id)
+    {
+        $this->query = "DELETE FROM `robot_options_checks` WHERE `id_option` = $id";
+        $result = $this->pdo->query($this->query);
+        $this->query = "DELETE FROM `robot_options` WHERE `id_option` = $id";
+        $result = $this->pdo->query($this->query);
+        return true;
+    }
+
+    //собрать все опции
     function get_options()
     {
         $this->query = "SELECT * FROM robot_options ORDER BY `title` ASC";
@@ -618,9 +663,9 @@ class Robots
         if (isset($option_array)) return $option_array['0'];
     }
 
-    function edit_option ($id,$title) {
+    function edit_option ($id, $version, $title) {
 
-        $this->query = "UPDATE `robot_options` SET `title` = '$title' WHERE `id_option` = $id";
+        $this->query = "UPDATE `robot_options` SET `title` = '$title', `version` = '$version' WHERE `id_option` = $id";
         $result = $this->pdo->query($this->query);
         return $result;
     }

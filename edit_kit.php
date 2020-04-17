@@ -77,7 +77,7 @@ $kit_version = $kit['kit_version'];
 											<option>
 												Веберите категорию...
 											</option><?php 
-											                   $arr = $position->get_pos_category();
+											                   $arr = $position->getCategoryes;
 											                    
 											                    foreach ($arr as &$category) {
 											                       if ( $category['id'] == $kit_category ) {

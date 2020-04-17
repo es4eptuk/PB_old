@@ -178,9 +178,11 @@ include 'include/class.inc.php';
  $countNew24 = 0;
  $countResh24 = 0;
  $arr_new24 = $tickets->get_tickets(0,0,0,"update_date","DESC","date_create",$date_min,$date_max,"P");
+ $arr_new24_sort = [];
+ $arrTicketRobotNoProblem = [];
  //print_r($arr_new24);
    if (isset($arr_new24)){
-  
+
   foreach ($arr_new24 as &$value) {
         $arr_new24_sort[] = $value['robot'];
         //echo $value['robot']." ";

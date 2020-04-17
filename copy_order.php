@@ -78,7 +78,7 @@ $order_responsible = $order['order_responsible'];
 												Веберите категорию...
 											</option>
                                             <?php
-                                            $arr = $position->get_pos_category();
+                                            $arr = $position->getCategoryes;
                                             foreach ($arr as &$category) {
                                                if ( $category['id'] == $order_category ) {
                                                     echo "

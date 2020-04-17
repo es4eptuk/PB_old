@@ -104,7 +104,7 @@ include 'include/class.inc.php';
                         <td>".$robot['version'].".".$num."</td>
                         <td>".$robot['name']." ".$remont." </td>
                         <td>".$robot['progress']."</td>
-                        <td>".$position->get_name_category($robot['stage'])."</td>
+                        <td>".$position->getCategoryes[$robot['stage']]['title']."</td>
                         <td>".$robot['last_operation']."</td>
                         <td>".$robot_date->format('d.m.Y')."</td>
                         

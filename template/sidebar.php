@@ -71,13 +71,11 @@
             <li><a href="./orders.php?id=2"><i class="fa fa-circle-o"></i> Аппаратка</a></li>
             <li><a href="./orders.php?id=3"><i class="fa fa-circle-o"></i> Корпус</a></li>
             <li><a href="./orders.php?id=4"><i class="fa fa-circle-o"></i> Упаковка</a></li>
-              <li><a href="./orders.php?id=7"><i class="fa fa-circle-o"></i> Листовые материалы</a></li>
+            <li><a href="./orders.php?id=7"><i class="fa fa-circle-o"></i> Листовые материалы</a></li>
             <li><a href="./orders.php?id=999"><i class="fa fa-circle-o"></i> Возвраты поставщику</a></li>
-              <li><a href="./orders.php?id=998"><i class="fa fa-circle-o"></i> Покраска/Покрытие</a></li>
-              <li><a href="./orders.php?id=997"><i class="fa fa-circle-o"></i> Сварка/Зенковка</a></li>
-
+            <li><a href="./orders.php?id=998"><i class="fa fa-circle-o"></i> Покраска/Покрытие</a></li>
+            <li><a href="./orders.php?id=997"><i class="fa fa-circle-o"></i> Сварка/Зенковка</a></li>
           </ul>
-          
         </li>
         
         <li class="treeview">
@@ -129,18 +127,15 @@
           <a href="#">
             <i class="fa fa-calendar"></i> <span>График заказов</span>
             <span class="pull-right-container">
-              
             </span>
           </a>
           <ul class="treeview-menu">
-           
             <li><a href="./plan.php?id=1"><i class="fa fa-circle-o"></i> Механика</a></li>
             <li><a href="./plan.php?id=2"><i class="fa fa-circle-o"></i> Аппаратка</a></li>
             <li><a href="./plan.php?id=3"><i class="fa fa-circle-o"></i> Корпус</a></li>
             <li><a href="./plan.php?id=4"><i class="fa fa-circle-o"></i> Упаковка</a></li>
               <li><a href="./plan.php?id=7"><i class="fa fa-circle-o"></i> Листовые материалы</a></li>
           </ul>
-          
         </li>
         
         <li>
@@ -233,10 +228,28 @@
             </span>
           </a>
           <ul class="treeview-menu">
-            <li><a href="./equipment.php"><i class="fa fa-list-ol"></i><span> Комплектации</span></a></li>
-            <li><a href="./options.php"><i class="fa fa-circle-o"></i> Опции</a></li>          
+          
             <li class="treeview">
-            <a href="./checks.php?id=1"><i class="fa fa-circle-o"></i> Чек - листы (Роботы)</a>
+              <a href="#">
+                <i class="fa fa-dropbox"></i><span> Склад</span>
+                <span class="pull-right-container">
+                </span>
+              </a>
+              <ul class="treeview-menu">
+                <li ><a href="./contragents.php"><i class="fa fa-compress"></i><span> Контрагенты</span></a></li>
+              </ul>
+            </li> 
+                      
+            <li class="treeview">
+              <a href="#">
+                <i class="fa fa-android"></i><span> Роботы</span>
+                <span class="pull-right-container">
+                </span>
+              </a>
+              <ul class="treeview-menu">
+                <li><a href="./equipment.php"><i class="fa fa-th-list"></i><span> Комплектации</span></a></li>
+                <li class="treeview">
+                    <a href="#"><i class="fa fa-list"></i> Чек - листы (Комплектации)</a>
                     <ul class="treeview-menu">
                     <li><a href="./checks.php?id=1"><i class="fa fa-circle-o"></i> Механика</a></li>
                     <li><a href="./checks.php?id=2"><i class="fa fa-circle-o"></i> Аппаратка</a></li>
@@ -244,9 +257,33 @@
                     <li><a href="./checks.php?id=3"><i class="fa fa-circle-o"></i> Корпус</a></li>
                     <li><a href="./checks.php?id=4"><i class="fa fa-circle-o"></i> Упаковка</a></li>
                     </ul>
-            </li>
-            <li ><a href="./contragents.php"><i class="fa fa-compress"></i><span> Контрагенты (Склад)</span></a></li>
-            <li><a href="./ticket_category.php"><i class="fa fa-circle-o"></i> Категории обращений (Тикет)</a></li>
+                </li>
+                <li><a href="./options.php"><i class="fa fa-plus-square"></i> Опции</a></li>                
+                <li class="treeview">
+                    <a href="#"><i class="fa fa-list"></i> Чек - листы (Опции)</a>
+                    <ul class="treeview-menu">
+                    <li><a href="./checks_options.php?id=1"><i class="fa fa-circle-o"></i> Механика</a></li>
+                    <li><a href="./checks_options.php?id=2"><i class="fa fa-circle-o"></i> Аппаратка</a></li>
+                    <li><a href="./checks_options.php?id=5"><i class="fa fa-circle-o"></i> Настройка</a></li>
+                    <li><a href="./checks_options.php?id=3"><i class="fa fa-circle-o"></i> Корпус</a></li>
+                    <li><a href="./checks_options.php?id=4"><i class="fa fa-circle-o"></i> Упаковка</a></li>
+                    </ul>
+                </li>                
+              </ul>
+            </li>          
+
+            <li class="treeview">
+              <a href="#">
+                <i class="fa fa-life-ring"></i><span> Тех. поддержка</span>
+                <span class="pull-right-container">
+                </span>
+              </a>
+              <ul class="treeview-menu">
+                <li><a href="./ticket_category.php"><i class="fa fa-th-list"></i> Категории обращений (Тикет)</a></li>
+              </ul>
+            </li> 
+
+
           </ul>
           
         </li>
@@ -299,7 +336,7 @@
        
        <li class="treeview">
           <a href="#">
-            <i class="fa fa-life-ring"></i> <span>Планировщик</span>
+            <i class="fa fa-clock-o"></i> <span>Планировщик</span>
             <span class="pull-right-container">
               
             </span>

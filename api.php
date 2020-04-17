@@ -72,9 +72,9 @@ if (isset($_POST['action'])) {
         echo json_encode($oneC->get_info_income_cat($_POST['id']), JSON_UNESCAPED_UNICODE);
     }
     //Получение списка категорий
-    if ($_POST['action'] == "get_pos_category") {
+    /*if ($_POST['action'] == "get_pos_category") {
         echo json_encode($position->get_pos_category(), JSON_UNESCAPED_UNICODE);
-    }
+    }*/
     //Получение списка подкатегорий  
     if ($_POST['action'] == "get_pos_sub_category") {
         echo json_encode($position->get_pos_sub_category($_POST['subcategory']), JSON_UNESCAPED_UNICODE);
@@ -188,9 +188,17 @@ if (isset($_POST['action'])) {
     if ($_POST['action'] == "add_writeoff") {
         echo $writeoff->add_writeoff($_POST['json']);
     }
-    //Создание нового заказа
+    //Создание новой версии робота
     if ($_POST['action'] == "add_equipment") {
         echo $position->add_equipment($_POST['json']);
+    }
+    //Создание новой опции для робота
+    if ($_POST['action'] == "add_option") {
+        echo $robots->add_option($_POST['version'], $_POST['title']);
+    }
+    //Удаление опции
+    if ($_POST['action'] == "del_option") {
+        echo $robots->del_option($_POST['id']);
     }
     //Создание нового заказа
     if ($_POST['action'] == "add_assembly") {
@@ -249,7 +257,7 @@ if (isset($_POST['action'])) {
     }
     //добавление операции в чеклист
     if ($_POST['action'] == "add_check_on_option") {
-        echo json_encode($checks->add_check_on_option($_POST['id_option'], $_POST['title'], $_POST['category'], $_POST['version'], $_POST['kit']), JSON_UNESCAPED_UNICODE);
+        echo json_encode($checks->add_check_on_option($_POST['id_option'], $_POST['title'], $_POST['category'], $_POST['kit']), JSON_UNESCAPED_UNICODE);
     }
     
     
@@ -287,10 +295,10 @@ if (isset($_POST['action'])) {
         $options = (isset($_POST['options'])) ? $_POST['options']: [];
         echo json_encode($robots->edit_robot($_POST['id'], $_POST['number'], $_POST['name'], $_POST['version'], $options, $_POST['customer'], $_POST['language_robot'], $_POST['language_doc'], $_POST['charger'], $_POST['color'], $_POST['brand'], $_POST['ikp'], $_POST['battery'], $_POST['dop'],  $_POST['dop_manufactur'], $_POST['date_start'], $_POST['date_test'], $_POST['send']), JSON_UNESCAPED_UNICODE);
     }
-    //редактирование робота
+    //редактирование опции
     if ($_POST['action'] == "edit_option") {
         //echo $_POST['number'];
-        echo json_encode($robots->edit_option($_POST['id'], $_POST['title']), JSON_UNESCAPED_UNICODE);
+        echo json_encode($robots->edit_option($_POST['id'], $_POST['version'], $_POST['title']), JSON_UNESCAPED_UNICODE);
     }
     //сортировка роботов
     if ($_POST['action'] == "sortable") {
@@ -373,8 +381,13 @@ if (isset($_POST['action'])) {
     if ($_POST['action'] == "ticket_info") {
         echo json_encode($tickets->info($_POST['id']), JSON_UNESCAPED_UNICODE);
     }
+    //удаление чеклиста
     if ($_POST['action'] == "del_check") {
         echo json_encode($checks->del_check($_POST['id'], $_POST['version']), JSON_UNESCAPED_UNICODE);
+    }
+    //удаление чеклиста в опции
+    if ($_POST['action'] == "del_check_in_option") {
+        echo json_encode($checks->del_check_in_option($_POST['id']), JSON_UNESCAPED_UNICODE);
     }
     if ($_POST['action'] == "del_contragent") {
         echo json_encode($position->del_provider($_POST['id']), JSON_UNESCAPED_UNICODE);
