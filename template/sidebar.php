@@ -229,6 +229,8 @@
           </a>
           <ul class="treeview-menu">
           
+            <li ><a href="./contragents.php"><i class="fa fa-compress"></i><span> Контрагенты</span></a></li>
+            
             <li class="treeview">
               <a href="#">
                 <i class="fa fa-dropbox"></i><span> Склад</span>
@@ -236,7 +238,7 @@
                 </span>
               </a>
               <ul class="treeview-menu">
-                <li ><a href="./contragents.php"><i class="fa fa-compress"></i><span> Контрагенты</span></a></li>
+                
               </ul>
             </li> 
                       

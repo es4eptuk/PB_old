@@ -212,8 +212,10 @@ class Position
         while ($line = $result->fetch()) {
             $pos_array[] = $line;
         }
-        if (isset($pos_array))
-            return $pos_array['0'];
+
+        return (isset($pos_array)) ? $pos_array['0']: [];
+        /*if (isset($pos_array))
+            return $pos_array['0'];*/
     }
 
     function add_pos($title, $longtitle, $category, $subcategory, $vendorcode, $provider, $price, $quant_robot, $quant_total)

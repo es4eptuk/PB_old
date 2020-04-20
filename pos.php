@@ -106,7 +106,7 @@ include 'include/class.inc.php';
                           <td>".$pos['price']."</td>
                           <td>".$assembly_out."</td>
                           <td>".$img."</td>
-                          <td><i class='fa fa-2x fa-pencil' style='cursor: pointer;' id='".$pos['id']."'></i></td>
+                          <td><i class='fa fa-2x fa-pencil' style='cursor: pointer;' data-id='".$pos['id']."'></i></td>
                           <td><a href='add_pos.php?title=".$pos['title']."&longtitle=".$pos['longtitle']."&category=".$_GET['id']."&subcategory=".$pos['subcategory']."&provider=".$pos['provider']."&price=".$pos['price']."'><i class='fa fa-2x fa-copy' style='cursor: pointer;' id='".$pos['id']."'></i></a></td>
                           <td><a href='pos_log.php?id=".$pos['id']."'><i class='fa fa-2x fa-list-alt'></i></a></td>
                         </tr>
@@ -427,8 +427,9 @@ include 'include/class.inc.php';
                 });
         });
         //при нажатии на кнопку редактирования позиции
-        $("#pos .fa-pencil").click(function () {
-            id_pos = $(this).attr("id");
+        $("#pos").on('click', '.fa-pencil', function () {
+            id_pos = $(this).data("id");
+            console.log (id_pos);
             $('#pos_edit').modal('show');
             //собираем форму для редактирования позиции
             $.post("./api.php", {action: "get_info_pos", id: id_pos})
