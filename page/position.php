@@ -239,7 +239,7 @@ class Position
         $query   = "UPDATE `pos_items` SET `title` = '$title', `longtitle` = '$longtitle', `category` = '$category', `subcategory` = '$subcategory', `provider` = '$provider', `price` = '$price', `quant_robot` = '$quant_robot', `total` = '$quant_total', `min_balance` = '$min_balance', `vendor_code` = '$vendorcode', `assembly` = '$assembly', `summary` = '$summary', `archive` = '$archive', `update_date` = '$date', `update_user` = '$user_id' WHERE `pos_items`.`id` = $id;";
         $result = $this->pdo->query($query);
         if ($result && $quant_total != 0) {
-            $log_title      = "Редактирвоание информации о позиции";
+            $log_title      = "Редактирвоание позиции";
             $param['id']    = $id;
             $param['type']  = "edit";
             $param['count'] = $quant_total;
@@ -1174,12 +1174,15 @@ class Position
         $query   = "SELECT * FROM `pos_items` WHERE id = $id";
         $result = $this->pdo->query($query);
         $line       = $result->fetch();
-        $old_count  = $line['total'];
+        $new_count = $line['total'];
         $old_reserv = $line['reserv'];
+
         switch ($type) {
             case "edit":
-                $title = $title . ": Новое значение -> $old_count";
-                $query = "INSERT INTO `pos_log` (`id`, `id_pos`,  `new_count`, `title`, `update_date`, `update_user`) VALUES (NULL, '$id', '$old_count', '$title', '$date', '$user_id')";
+                $new_reserv = $old_reserv;
+                $old_count = 0;
+                $title = $title . ": Новое значение -> $new_count";
+                $query = "INSERT INTO `pos_log` (`id`, `id_pos`, `old_count`, `new_count`, `title`, `old_reserv`, `new_reserv`, `update_date`, `update_user`) VALUES (NULL, '$id', '$old_count', '$new_count', '$title', '$old_reserv', '$new_reserv', '$date', '$user_id')";
                 break;
             /*
             case "reserv":
@@ -1192,9 +1195,16 @@ class Position
                 break;
             */
             case "writeoff":
-                $tmp   = $old_count - $count;
-                $title = $title . ": $count шт. $old_count -> $tmp";
-                $query = "INSERT INTO `pos_log` (`id`, `id_pos`, `old_count`, `new_count`, `title`,`update_date`, `update_user`) VALUES (NULL, '$id', '$old_count', '$count', '$title', '$date', '$user_id')";
+                $new_reserv = $old_reserv;
+                $old_count = $new_count + $count;
+                $title = $title . ": $count шт. Новое значение -> $new_count";
+                $query = "INSERT INTO `pos_log` (`id`, `id_pos`, `old_count`, `new_count`, `title`, `old_reserv`, `new_reserv`, `update_date`, `update_user`) VALUES (NULL, '$id', '$old_count', '$new_count', '$title', '$old_reserv', '$new_reserv', '$date', '$user_id')";
+                break;
+            case "addmission":
+                $new_reserv = $old_reserv;
+                $old_count = $new_count - $count;
+                $title = $title . ": $count шт. Новое значение -> $new_count";
+                $query = "INSERT INTO `pos_log` (`id`, `id_pos`, `old_count`, `new_count`, `title`, `old_reserv`, `new_reserv`, `update_date`, `update_user`) VALUES (NULL, '$id', '$old_count', '$new_count', '$title', '$old_reserv', '$new_reserv', '$date', '$user_id')";
                 break;
         }
         $result = $this->pdo->query($query);

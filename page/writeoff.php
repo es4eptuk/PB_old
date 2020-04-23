@@ -1,12 +1,12 @@
 <?php 
-
-
-class Writeoff { 
-    private $orders;
-    private $mail;
-    private $log;
+class Writeoff
+{
     private $query;
     private $pdo;
+    private $log;
+    private $orders;
+    private $mail;
+    private $position;
 
     function __construct()
     {
@@ -22,11 +22,12 @@ class Writeoff {
 
     function init()
     {
-        global $log, $orders, $mail;
+        global $log, $orders, $mail, $position;
 
+        $this->log = $log;//new Log;
         $this->orders = $orders;//new Orders;
         $this->mail = $mail;//new Mail;
-        $this->log = $log;//new Log;
+        $this->position = $position;
     }
 
 
@@ -52,8 +53,9 @@ class Writeoff {
         if (isset($writeoff_arr['0']['3'])) {
             $robot = $writeoff_arr['0']['3'];
         }
-
+        $total_price_is_null = false;
         if ($category == "Возврат поставщику") {
+            $total_price_is_null = true;
             $writeoff_arr['0']['0'] = 999;
             $writeoff_arr['0']['1'] = $provider;
             $json = json_encode($writeoff_arr);
@@ -62,6 +64,7 @@ class Writeoff {
         }
 
         if ($category == "Покраска/Покрытие") {
+            $total_price_is_null = true;
             $writeoff_arr['0']['0'] = 998;
             $writeoff_arr['0']['1'] = $provider;
             $json = json_encode($writeoff_arr);
@@ -70,6 +73,7 @@ class Writeoff {
         }
 
         if ($category == "Сварка/Зенковка") {
+            $total_price_is_null = true;
             $writeoff_arr['0']['0'] = 997;
             $writeoff_arr['0']['1'] = $provider;
             $json = json_encode($writeoff_arr);
@@ -88,6 +92,7 @@ class Writeoff {
             $total_price = $total_price + $price;
         }
 
+        $total_price = ($total_price_is_null) ? 0 : $total_price;
         $this->query = "INSERT INTO `writeoff` (`id`, `category`, `description`,`total_price`,`check`,`robot`, `option`, `update_date`, `update_user`) VALUES (NULL, '$category','$description','$total_price','$check','$robot', '0', '$date', $user_id)";
         $result = $this->pdo->query($this->query);
 
@@ -120,7 +125,7 @@ class Writeoff {
                     $param['type'] = "writeoff";
                     $param['count'] = $count;
                     $param['title'] = $log_title;
-                    $this->add_log($param);
+                    $this->position->add_log($param);
                 }
             }
 
@@ -190,16 +195,22 @@ class Writeoff {
     //редактирование списания
     function edit_writeoff($id, $json)
     {
-
         $pos_arr = json_decode($json);
         $description = $pos_arr['0']['1'];
+        $category = $pos_arr['0']['0'];
+        if ($category == "Возврат поставщику" || $category == "Покраска/Покрытие" || $category == "Сварка/Зенковка") {
+            $total_price_is_null = true;
+        } else {
+            $total_price_is_null = false;
+        }
+
         array_shift($pos_arr);
 
         $date = date("Y-m-d H:i:s");
         $user_id = intval($_COOKIE['id']);
 
-        $this->query = "SELECT * FROM `writeoff_items` WHERE `writeoff_id`=$id";
-        $result = $this->pdo->query($this->query);
+        $query = "SELECT * FROM `writeoff_items` WHERE `writeoff_id`=$id";
+        $result = $this->pdo->query($query);
 
         while ($line = $result->fetch()) {
             $old_array[] = $line;
@@ -225,17 +236,17 @@ class Writeoff {
                 $param['type'] = "addmission";
                 $param['count'] = $delta;
                 $param['title'] = "Изменение списания ";
-                $this->add_log($param);
+                $this->position->add_log($param);
             }
             $total_price = $total_price + $count_new * $price;
 
         }
 
-
+        $total_price = ($total_price_is_null) ? 0 : $total_price;
         //echo $date;
-        $this->query = "UPDATE `writeoff` SET  `description` = '$description', `update_date` = '$date', `total_price` = '$total_price'  WHERE `id` = $id;";
+        $query = "UPDATE `writeoff` SET  `description` = '$description', `update_date` = '$date', `total_price` = '$total_price'  WHERE `id` = $id;";
         //echo $query;
-        $result = $this->pdo->query($this->query);
+        $result = $this->pdo->query($query);
 
         if ($result) {
             $this->log->add(__METHOD__, "Редактирование списание №$id");
@@ -275,51 +286,52 @@ class Writeoff {
     }
 
     //создает лог - лог позиции
+    /*
     function add_log($param)
     {
         $id = $param['id'];
         $type = $param['type'];
         $count = $param['count'];
         $title = $param['title'];
-
         $date = date("Y-m-d H:i:s");
         $user_id = intval($_COOKIE['id']);
-
-        $this->query = "SELECT * FROM `pos_items` WHERE id = $id";
-        $result = $this->pdo->query($this->query);
+        $query = "SELECT * FROM `pos_items` WHERE id = $id";
+        $result = $this->pdo->query($query);
         $line = $result->fetch();
-        $old_count = $line['total'];
+        $new_count = $line['total'];
         $old_reserv = $line['reserv'];
 
         switch ($type) {
             case "edit":
-                $title = $title . ": $old_count -> $count";
-                $this->query = "INSERT INTO `pos_log` (`id`, `id_pos`, `old_count`, `new_count`, `old_reserv`, `new_reserv`, `title`, `update_date`, `update_user`) VALUES (NULL, '$id', '$old_count', '$count', '$old_reserv', '$old_reserv', '$title', '$date', '$user_id')";
+                $new_reserv = $old_reserv;
+                $old_count = 0;
+                $title = $title . ": Новое значение -> $new_count";
+                $query = "INSERT INTO `pos_log` (`id`, `id_pos`, `old_count`, `new_count`, `title`, `old_reserv`, `new_reserv`, `update_date`, `update_user`) VALUES (NULL, '$id', '$old_count', '$new_count', '$title', '$old_reserv', '$new_reserv', '$date', '$user_id')";
                 break;
-            /*
             case "reserv":
                 $title = $title . ": $count шт.";
-                $this->query = "INSERT INTO `pos_log` (`id`, `id_pos`, `old_reserv`, `new_reserv`, `title`, `update_date`, `update_user`) VALUES (NULL, '$id', '$old_reserv', '$old_reserv+$count', '$title', '$date', '$user_id')";
+                $query = "INSERT INTO `pos_log` (`id`, `id_pos`, `old_reserv`, `new_reserv`, `title`, `update_date`, `update_user`) VALUES (NULL, '$id', '$old_reserv', '$old_reserv+$count', '$title', '$date', '$user_id')";
                 break;
             case "unreserv":
                 $title = $title . ": $count шт.";
-                $this->query = "INSERT INTO `pos_log` (`id`, `id_pos`, `old_reserv`, `new_reserv`, `title`, `update_date`, `update_user`) VALUES (NULL, '$id', '$old_reserv', '$old_reserv-$count', '$title', '$date', '$user_id')";
+                $query = "INSERT INTO `pos_log` (`id`, `id_pos`, `old_reserv`, `new_reserv`, `title`, `update_date`, `update_user`) VALUES (NULL, '$id', '$old_reserv', '$old_reserv-$count', '$title', '$date', '$user_id')";
                 break;
-            */
             case "writeoff":
-                $tmp = $old_count - $count;
-                $title = $title . ": $count шт. Новое значение -> $old_count";
-                $this->query = "INSERT INTO `pos_log` (`id`, `id_pos`, `old_count`, `new_count`, `old_reserv`, `new_reserv` , `title`, `update_date`, `update_user`) VALUES (NULL, '$id', '$old_count', '$tmp', '$old_reserv', '$old_reserv', '$title', '$date', '$user_id')";
+                $new_reserv = $old_reserv;
+                $old_count = $new_count + $count;
+                $title = $title . ": $count шт. Новое значение -> $new_count";
+                $query = "INSERT INTO `pos_log` (`id`, `id_pos`, `old_count`, `new_count`, `title`, `old_reserv`, `new_reserv`, `update_date`, `update_user`) VALUES (NULL, '$id', '$old_count', '$new_count', '$title', '$old_reserv', '$new_reserv', '$date', '$user_id')";
                 break;
             case "addmission":
-                $tmp = $old_count + $count;
-                $title = $title . ": $count шт. Новое значение - > $old_count";
-                $this->query = "INSERT INTO `pos_log` (`id`, `id_pos`, `old_count`, `new_count`, `old_reserv`, `new_reserv`, `title`, `update_date`, `update_user`) VALUES (NULL, '$id', '$old_count', '$count', '$old_reserv', '$old_reserv', '$title', '$date', '$user_id')";
+                $new_reserv = $old_reserv;
+                $old_count = $new_count - $count;
+                $title = $title . ": $count шт. Новое значение -> $new_count";
+                $query = "INSERT INTO `pos_log` (`id`, `id_pos`, `old_count`, `new_count`, `title`, `old_reserv`, `new_reserv`, `update_date`, `update_user`) VALUES (NULL, '$id', '$old_count', '$new_count', '$title', '$old_reserv', '$new_reserv', '$date', '$user_id')";
                 break;
         }
-        $result = $this->pdo->query($this->query);
+        $result = $this->pdo->query($query);
     }
-    
+    */
     
     
     function del_pos_writeoff($id, $pos_id, $count)
@@ -348,7 +360,7 @@ class Writeoff {
                 $param['type'] = "addmission";
                 $param['count'] = $count;
                 $param['title'] = "Отмена списания ";
-                $this->add_log($param);
+                $this->position->add_log($param);
             }
         }
 
@@ -382,7 +394,7 @@ class Writeoff {
                $param['type'] = "addmission";
                $param['count'] = $count;
                $param['title'] = "Удаление списания ";
-               $this->add_log($param);
+               $this->position->add_log($param);
                 
             }
          }

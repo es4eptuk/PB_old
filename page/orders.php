@@ -100,22 +100,19 @@ class Orders
         //в автомате создает файлы
         if ($auto) {
             $date_folder= date("m.d.y"); 
-            
-             $date_folder = new DateTime($max_date);
-           
-            $date_folder      = $date_folder->format('d_m_y');
-            
+            $date_folder = new DateTime($max_date);
+            $date_folder = $date_folder->format('d_m_y');
             if (!file_exists("/var/www/promobot/data/www/db.promo-bot.ru/new/orders/".$date_folder)) {
-            mkdir("/var/www/promobot/data/www/db.promo-bot.ru/new/orders/".$date_folder, 0777);
+                mkdir("/var/www/promobot/data/www/db.promo-bot.ru/new/orders/".$date_folder, 0777);
             }
             $excel_name = "/var/www/promobot/data/www/db.promo-bot.ru/new/orders/".$date_folder."/Order_".$idd;
             $zip = new ZipArchive();
             $zip->open("/var/www/promobot/data/www/db.promo-bot.ru/new/orders/".$date_folder."/orders_".$category.".zip", ZipArchive::CREATE);
-            require_once('excel/Classes/PHPExcel.php');
-            require_once 'excel/Classes/PHPExcel/IOFactory.php';
+            require_once ('excel/Classes/PHPExcel.php');
+            require_once ('excel/Classes/PHPExcel/IOFactory.php');
             $objPHPExcel = new PHPExcel();
             $objRichText = new PHPExcel_RichText();
-              // Set properties
+            // Set properties
             $objPHPExcel->getProperties()->setCreator("SAMPLE1");
               $objPHPExcel->getProperties()->setLastModifiedBy("SAMPLE1");
               $objPHPExcel->getProperties()->setTitle("SAMPLE1");
@@ -180,7 +177,7 @@ class Orders
 
         }
 
-
+        //вставляет позиции из заказа
         $cnt = 1;
         foreach ($order_arr as &$value) {
             $pos_id      = $value['0'];
@@ -238,8 +235,8 @@ class Orders
             
             $cnt++;
         }
-        
 
+        //только если авто
          if ($auto) {
             // Save Excel 2007 file
             $objWriter = new PHPExcel_Writer_Excel2007($objPHPExcel);

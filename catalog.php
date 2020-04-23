@@ -40,11 +40,9 @@ include 'include/class.inc.php';
                   <th>Подгруппа</th>
                   <th>Артикул</th>
                   <th>Наименование</th>
-                 
-                 
-                  <th>Количество на складе</th>
+                  <th>Кол-во на складе</th>
                   <th>В резерве</th>
-                  <th>Для реализации</th>
+                  <th>Свободно</th>
                   <th>Заказ</th>
                   <th>Поставщик</th>
                   <th>Стоимость</th>
@@ -68,7 +66,7 @@ include 'include/class.inc.php';
                      
                        echo "
                        <tr>
-                          <td>".$position->getSubcategoryes[$pos['subcategory']]['title']()."</td>
+                          <td>".$position->getSubcategoryes[$pos['subcategory']]['title']."</td>
                           <td>".$pos['vendor_code']."</td>
                           <td>".$pos['title']."</td>
                           <td>".$pos['total']."</td>

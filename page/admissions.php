@@ -6,6 +6,7 @@ class Admissions
     private $log;
     private $orders;
     private $writeoff;
+    private $position;
 
     function __construct()
     {
@@ -21,11 +22,12 @@ class Admissions
 
     function init()
     {
-        global $writeoff, $log, $orders;
+        global $writeoff, $log, $orders, $position;
 
         $this->log = $log;//new Log;
         $this->orders = $orders;//new Orders;
         $this->writeoff = $writeoff;//new Writeoff;
+        $this->position = $position;
     }
 
     function add_admission($order_id, $json, $category, $provider)
@@ -134,7 +136,7 @@ class Admissions
                 $param['type']  = "addmission";
                 $param['count'] = $admis_pos;
                 $param['title'] = "Поступление по заказу №$order_id";
-                $this->add_log($param);
+                $this->position->add_log($param);
             }
             //добовляем изменения в базу (позиции в текущем заказе)
             if ($order_id != 0) {
@@ -251,6 +253,8 @@ class Admissions
         if (isset($admiss_array))
             return $admiss_array;
     }
+
+    /*
     function add_log($param)
     {
         $id      = $param['id'];
@@ -262,14 +266,16 @@ class Admissions
         $query   = "SELECT * FROM `pos_items` WHERE id = $id";
         $result = $this->pdo->query($query);
         $line       = $result->fetch();
-        $old_count  = $line['total'];
+        $new_count = $line['total'];
         $old_reserv = $line['reserv'];
+
         switch ($type) {
             case "edit":
-                $title = $title . ": $old_count -> $count";
-                $query = "INSERT INTO `pos_log` (`id`, `id_pos`, `old_count`, `new_count`, `title`, `update_date`, `update_user`) VALUES (NULL, '$id', '$old_count', '$count', '$title', '$date', '$user_id')";
+                $new_reserv = $old_reserv;
+                $old_count = 0;
+                $title = $title . ": Новое значение -> $new_count";
+                $query = "INSERT INTO `pos_log` (`id`, `id_pos`, `old_count`, `new_count`, `title`, `old_reserv`, `new_reserv`, `update_date`, `update_user`) VALUES (NULL, '$id', '$old_count', '$new_count', '$title', '$old_reserv', '$new_reserv', '$date', '$user_id')";
                 break;
-            /*
             case "reserv":
                 $title = $title . ": $count шт.";
                 $query = "INSERT INTO `pos_log` (`id`, `id_pos`, `old_reserv`, `new_reserv`, `title`, `update_date`, `update_user`) VALUES (NULL, '$id', '$old_reserv', '$old_reserv+$count', '$title', '$date', '$user_id')";
@@ -278,20 +284,23 @@ class Admissions
                 $title = $title . ": $count шт.";
                 $query = "INSERT INTO `pos_log` (`id`, `id_pos`, `old_reserv`, `new_reserv`, `title`, `update_date`, `update_user`) VALUES (NULL, '$id', '$old_reserv', '$old_reserv-$count', '$title', '$date', '$user_id')";
                 break;
-            */
             case "writeoff":
-                $tmp   = $old_count - $count;
-                $title = $title . ": $count шт. $old_count -> $tmp";
-                $query = "INSERT INTO `pos_log` (`id`, `id_pos`, `old_count`, `new_count`, `title`, `update_date`, `update_user`) VALUES (NULL, '$id', '$old_count', '$count', '$title', '$date', '$user_id')";
+                $new_reserv = $old_reserv;
+                $old_count = $new_count + $count;
+                $title = $title . ": $count шт. Новое значение -> $new_count";
+                $query = "INSERT INTO `pos_log` (`id`, `id_pos`, `old_count`, `new_count`, `title`, `old_reserv`, `new_reserv`, `update_date`, `update_user`) VALUES (NULL, '$id', '$old_count', '$new_count', '$title', '$old_reserv', '$new_reserv', '$date', '$user_id')";
                 break;
             case "addmission":
-                $tmp   = $old_count + $count;
-                $title = $title . ": $count шт. Новое значение -> $old_count";
-                $query = "INSERT INTO `pos_log` (`id`, `id_pos`, `old_count`, `new_count`, `title`, `old_reserv`, `new_reserv`, `update_date`, `update_user`) VALUES (NULL, '$id', '$old_count', '$tmp', '$title', '$old_reserv', '$old_reserv', '$date', '$user_id')";
+                $new_reserv = $old_reserv;
+                $old_count = $new_count - $count;
+                $title = $title . ": $count шт. Новое значение -> $new_count";
+                $query = "INSERT INTO `pos_log` (`id`, `id_pos`, `old_count`, `new_count`, `title`, `old_reserv`, `new_reserv`, `update_date`, `update_user`) VALUES (NULL, '$id', '$old_count', '$new_count', '$title', '$old_reserv', '$new_reserv', '$date', '$user_id')";
                 break;
         }
         $result = $this->pdo->query($query);
     }
+    */
+
     function __destruct()
     {
         //echo "admis - ";
