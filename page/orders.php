@@ -620,4 +620,17 @@ class Orders
         //echo "<br>";
         // mysql_close($this ->link_order);
     }
+
+    //поиск всех неотгруженных позиций
+    function get_orders_items_inprocess() {
+        $query = "SELECT `orders_items`.`pos_id`, `orders_items`.`order_id`, `orders_items`.`pos_count`, `orders_items`.`pos_count_finish` FROM `orders_items` JOIN `orders` ON `orders_items`.`order_id` = `orders`.`order_id` WHERE `orders`.`order_status` = 1"; //пока без категории AND `orders_items`.`pos_category` = $id
+        $result = $this->pdo->query($query);
+
+        while ($line = $result->fetch()) {
+            $array[] = $line;
+        }
+
+        return (isset($array)) ? $array : [];
+    }
+
 }

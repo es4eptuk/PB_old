@@ -1013,6 +1013,7 @@ class PositionWarehouse
                 $title = $title . ": Новое значение -> $old_count";
                 $query = "INSERT INTO `pos_log` (`id`, `id_pos`,  `new_count`, `title`, `update_date`, `update_user`) VALUES (NULL, '$id', '$old_count', '$title', '$date', '$user_id')";
                 break;
+            /*
             case "reserv":
                 $title = $title . ": $count шт. Всего в резерве: $old_reserv";
                 $query = "INSERT INTO `pos_log` (`id`, `id_pos`,  `new_reserv`, `title`,`update_date`, `update_user`) VALUES (NULL, '$id', '$old_reserv',  '$title', '$date', '$user_id')";
@@ -1021,6 +1022,7 @@ class PositionWarehouse
                 $title = $title . ": $count шт. Всего в резерве: $old_reserv";
                 $query = "INSERT INTO `pos_log` (`id`, `id_pos`,  `new_reserv`, `title`,`update_date`, `update_user`) VALUES (NULL, '$id', '$old_reserv', '$title', '$date', '$user_id')";
                 break;
+            */
             case "writeoff":
                 $tmp   = $old_count - $count;
                 $title = $title . ": $count шт. $old_count -> $tmp";

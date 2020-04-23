@@ -1,4 +1,6 @@
 <?php
+//надо закрыть доступ
+
 // задание максимальной ширины и высоты
 $width = 500;
 $height = 500;
@@ -12,7 +14,8 @@ $tpm_path = "";
         $vendor = $_POST['vendor'];
         @mkdir("img/catalog/".$category);
         @mkdir("img/catalog/".$category."/thumb");
-        $ras = end(explode(".", $_FILES['file']['name']));
+        $tmp = explode(".", $_FILES['file']['name']);
+        $ras = end($tmp);
        // echo $_FILES['file']['name'];
         $name = 'img/catalog/'.$category.'/' . $vendor.'.jpg';
         $thumb = 'img/catalog/'.$category.'/thumb/' . $vendor.'.jpg';

@@ -112,45 +112,36 @@ if (isset($_GET['status'])) $id_status = $_GET['status'];
                 <?php 
                     $out ="";
                     $out2="";
-                    
+                    //собрать роботов в процессе сборки arr[data][version] = count
                     $arr_robot = $plan->get_robot_inprocess();
                     ksort($arr_robot);
-                    //print_r($arr_robot);
-                    
+                    //на основе дат собираем шапку таблицы
                     foreach ($arr_robot as $key => $value) {
                          $out .= '<th colspan="3"><b>'.$key.'</b> <button type="button" class="btn btn-block btn-primary btn-xs add_order" id="'.$key.'">Заказ</button></th>';
-                         $out2 .= '
-                                <th><b>надо</b></th>
-                                <th><b>есть</b></th>
-                                <th><b>статус</b></th>';
+                         $out2 .= '<th><b>надо</b></th><th><b>есть</b></th><th><b>статус</b></th>';
                     }
-                    
-                   
-                    ?>
+                ?>
                     
               <table class="table table-bordered table-striped ">
                   <thead>
                   <tr>
                     <th rowspan="2"><b>Подгруппа</b></th>
                     <th colspan="4"><b>Номенклатура</b></th>
-                    <?php   echo $out; ?>
+                    <?php echo $out; ?>
                   </tr>
                   <tr>
                     <th><b>Артикул</b></th>
                     <th><b>Наименование</b></th>
                     <th><b>На складе</b></th>
                     <th><b>На робота</b></th>
-                    <?php 
-                    echo $out2;
-                    ?>
+                    <?php echo $out2; ?>
                   </tr>
                   </thead>
                   <tbody>
                    <?php 
-                   
+                   //записываем фильтры
                    $get_sybcategory = isset($_GET['subcategory']) ? $_GET['subcategory'] : 0;
                    $get_version = isset($_GET['version']) ? $_GET['version'] : 0;
-
                    //собираем список деталей из всех активных комплектов (ид_категория, ид_версия)
                    $arr_pos = $position->get_pos_in_kit_cat($_GET['id'],$get_version);
                    //print_r($arr_pos);

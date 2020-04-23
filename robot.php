@@ -254,8 +254,9 @@ $robot_progress= $robot_info['progress'];
                             break; 
                         case "TICKET":
                             $color = "#90bec5";
-                            break;       
-                           
+                            break;
+                        default:
+                            $color = "#fff";
                             
                     }
                     $out_del = "";

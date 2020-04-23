@@ -269,6 +269,7 @@ class Admissions
                 $title = $title . ": $old_count -> $count";
                 $query = "INSERT INTO `pos_log` (`id`, `id_pos`, `old_count`, `new_count`, `title`, `update_date`, `update_user`) VALUES (NULL, '$id', '$old_count', '$count', '$title', '$date', '$user_id')";
                 break;
+            /*
             case "reserv":
                 $title = $title . ": $count шт.";
                 $query = "INSERT INTO `pos_log` (`id`, `id_pos`, `old_reserv`, `new_reserv`, `title`, `update_date`, `update_user`) VALUES (NULL, '$id', '$old_reserv', '$old_reserv+$count', '$title', '$date', '$user_id')";
@@ -277,6 +278,7 @@ class Admissions
                 $title = $title . ": $count шт.";
                 $query = "INSERT INTO `pos_log` (`id`, `id_pos`, `old_reserv`, `new_reserv`, `title`, `update_date`, `update_user`) VALUES (NULL, '$id', '$old_reserv', '$old_reserv-$count', '$title', '$date', '$user_id')";
                 break;
+            */
             case "writeoff":
                 $tmp   = $old_count - $count;
                 $title = $title . ": $count шт. $old_count -> $tmp";

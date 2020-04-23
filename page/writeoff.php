@@ -296,16 +296,16 @@ class Writeoff {
                 $title = $title . ": $old_count -> $count";
                 $this->query = "INSERT INTO `pos_log` (`id`, `id_pos`, `old_count`, `new_count`, `old_reserv`, `new_reserv`, `title`, `update_date`, `update_user`) VALUES (NULL, '$id', '$old_count', '$count', '$old_reserv', '$old_reserv', '$title', '$date', '$user_id')";
                 break;
-            //возможно уже не работает
+            /*
             case "reserv":
                 $title = $title . ": $count шт.";
                 $this->query = "INSERT INTO `pos_log` (`id`, `id_pos`, `old_reserv`, `new_reserv`, `title`, `update_date`, `update_user`) VALUES (NULL, '$id', '$old_reserv', '$old_reserv+$count', '$title', '$date', '$user_id')";
                 break;
-            //возможно уже не работает
             case "unreserv":
                 $title = $title . ": $count шт.";
                 $this->query = "INSERT INTO `pos_log` (`id`, `id_pos`, `old_reserv`, `new_reserv`, `title`, `update_date`, `update_user`) VALUES (NULL, '$id', '$old_reserv', '$old_reserv-$count', '$title', '$date', '$user_id')";
                 break;
+            */
             case "writeoff":
                 $tmp = $old_count - $count;
                 $title = $title . ": $count шт. Новое значение -> $old_count";

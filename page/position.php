@@ -464,9 +464,9 @@ class Position
 
             if ($cnt_a == 0) {
             
-            $query  = "UPDATE `pos_items` SET `reserv` = reserv-$count+$cnt_k WHERE `id` = $pos_id";
+            //$query  = "UPDATE `pos_items` SET `reserv` = reserv-$count+$cnt_k WHERE `id` = $pos_id";
             //echo $query;
-                $result = $this->pdo->query($query);
+            //$result = $this->pdo->query($query);
             }
         }
         
@@ -529,8 +529,8 @@ class Position
             $pos_id = $value['id_pos'];
             $count  = $value['count'];
 
-            $query  = "UPDATE `pos_items` SET `reserv` = reserv-$count WHERE `id` = $pos_id";
-            $result = $this->pdo->query($query);
+            //$query  = "UPDATE `pos_items` SET `reserv` = reserv-$count WHERE `id` = $pos_id";
+            //$result = $this->pdo->query($query);
             
         }
         
@@ -659,8 +659,8 @@ class Position
             //echo $reserv_sVersion;
             $reserv = ($count * $num_rows[$id]) + $reserv_sVersion;
             //echo $pos_id." ".$count * $num_rows[$id]." ".$reserv_sVersion."<br>";
-            $query  = "UPDATE `pos_items` SET `reserv` = '$reserv' WHERE `id` = $pos_id";
-            $result = $this->pdo->query($query);
+            //$query  = "UPDATE `pos_items` SET `reserv` = '$reserv' WHERE `id` = $pos_id";
+            //$result = $this->pdo->query($query);
         }
         return $result;
     }
@@ -824,7 +824,7 @@ class Position
         if ($id != 0) {
             $where .= " AND pos_assembly_items.id_assembly='$id'";
         }
-        $query = "SELECT pos_assembly_items.id_row, pos_assembly_items.id_assembly, pos_assembly_items.id_pos, pos_items.title, pos_items.vendor_code, pos_assembly_items.count, pos_items.total, pos_items.reserv, pos_items.subcategory, pos_items.price, pos_items.provider, pos_items.summary, pos_items.version, pos_items.assembly, pos_items.min_balance FROM `pos_assembly_items` INNER JOIN pos_items ON pos_items.id = pos_assembly_items.id_pos WHERE pos_assembly_items.id_row >0 $where";
+        $query = "SELECT pos_assembly_items.id_row, pos_assembly_items.id_assembly, pos_assembly_items.id_pos, pos_items.title, pos_items.vendor_code, pos_assembly_items.count, pos_items.total, pos_items.reserv, pos_items.category, pos_items.subcategory, pos_items.price, pos_items.provider, pos_items.summary, pos_items.version, pos_items.assembly, pos_items.min_balance FROM `pos_assembly_items` INNER JOIN pos_items ON pos_items.id = pos_assembly_items.id_pos WHERE pos_assembly_items.id_row >0 $where";
         $result = $this->pdo->query($query);
         while ($line = $result->fetch()) {
             $equipment_array[] = $line;
@@ -1181,6 +1181,7 @@ class Position
                 $title = $title . ": Новое значение -> $old_count";
                 $query = "INSERT INTO `pos_log` (`id`, `id_pos`,  `new_count`, `title`, `update_date`, `update_user`) VALUES (NULL, '$id', '$old_count', '$title', '$date', '$user_id')";
                 break;
+            /*
             case "reserv":
                 $title = $title . ": $count шт. Всего в резерве: $old_reserv";
                 $query = "INSERT INTO `pos_log` (`id`, `id_pos`,  `new_reserv`, `title`,`update_date`, `update_user`) VALUES (NULL, '$id', '$old_reserv',  '$title', '$date', '$user_id')";
@@ -1189,6 +1190,7 @@ class Position
                 $title = $title . ": $count шт. Всего в резерве: $old_reserv";
                 $query = "INSERT INTO `pos_log` (`id`, `id_pos`,  `new_reserv`, `title`,`update_date`, `update_user`) VALUES (NULL, '$id', '$old_reserv', '$title', '$date', '$user_id')";
                 break;
+            */
             case "writeoff":
                 $tmp   = $old_count - $count;
                 $title = $title . ": $count шт. $old_count -> $tmp";
