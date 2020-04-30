@@ -102,12 +102,12 @@ class Orders
             $date_folder= date("m.d.y"); 
             $date_folder = new DateTime($max_date);
             $date_folder = $date_folder->format('d_m_y');
-            if (!file_exists("/var/www/promobot/data/www/db.promo-bot.ru/new/orders/".$date_folder)) {
-                mkdir("/var/www/promobot/data/www/db.promo-bot.ru/new/orders/".$date_folder, 0777);
+            if (!file_exists(PATCH_DIR."/orders/".$date_folder)) {
+                mkdir(PATCH_DIR."/orders/".$date_folder, 0777);
             }
-            $excel_name = "/var/www/promobot/data/www/db.promo-bot.ru/new/orders/".$date_folder."/Order_".$idd;
+            $excel_name = PATCH_DIR."/orders/".$date_folder."/Order_".$idd;
             $zip = new ZipArchive();
-            $zip->open("/var/www/promobot/data/www/db.promo-bot.ru/new/orders/".$date_folder."/orders_".$category.".zip", ZipArchive::CREATE);
+            $zip->open(PATCH_DIR."/orders/".$date_folder."/orders_".$category.".zip", ZipArchive::CREATE);
             require_once ('excel/Classes/PHPExcel.php');
             require_once ('excel/Classes/PHPExcel/IOFactory.php');
             $objPHPExcel = new PHPExcel();
@@ -547,6 +547,9 @@ class Orders
 		$order_date = $order_date->format('Y-m-d H:i:s');
         //echo $order_date;
         $arr = json_decode($arr, true);
+
+
+
         $i = 0;
         $category = $arr['category'];
         
@@ -563,7 +566,11 @@ class Orders
               $orders[$value['provider']][$i]['summ'] = $value['price']*$value['count'];
               $i++;
             }
-        
+
+        /*$log = date('Y-m-d H:i:s') . ' ' . print_r($orders, true);
+        file_put_contents(__DIR__ . '/log.txt', $log . PHP_EOL, FILE_APPEND);
+        die;*/
+
         //print_r($orders);
          foreach ($orders as $key_order => $value_order) {
              unset($json);
@@ -610,17 +617,9 @@ class Orders
         print_r($json);
     }
    
-    function __destruct()
-    {
-        //echo "orders - ";
-        // print_r($this ->link_order);
-        //echo "<br>";
-        // mysql_close($this ->link_order);
-    }
-
     //поиск всех неотгруженных позиций
     function get_orders_items_inprocess() {
-        $query = "SELECT `orders_items`.`pos_id`, `orders_items`.`order_id`, `orders_items`.`pos_count`, `orders_items`.`pos_count_finish` FROM `orders_items` JOIN `orders` ON `orders_items`.`order_id` = `orders`.`order_id` WHERE `orders`.`order_status` = 1"; //пока без категории AND `orders_items`.`pos_category` = $id
+        $query = "SELECT `orders_items`.`pos_id`, `orders_items`.`order_id`, `orders_items`.`pos_count`, `orders_items`.`pos_count_finish`, `orders_items`.`pos_date` FROM `orders_items` JOIN `orders` ON `orders_items`.`order_id` = `orders`.`order_id` WHERE (`orders`.`order_status` = 1 || `orders`.`order_status` = 0)"; //пока без категории AND `orders_items`.`pos_category` = $id
         $result = $this->pdo->query($query);
 
         while ($line = $result->fetch()) {
@@ -630,4 +629,11 @@ class Orders
         return (isset($array)) ? $array : [];
     }
 
+    function __destruct()
+    {
+        //echo "orders - ";
+        // print_r($this ->link_order);
+        //echo "<br>";
+        // mysql_close($this ->link_order);
+    }
 }

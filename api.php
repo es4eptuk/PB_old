@@ -185,6 +185,10 @@ if (isset($_POST['action'])) {
         echo $orders->add_order_plan($_POST['arr_order'], $_POST['month']);
     }
     //Создание нового заказа
+    if ($_POST['action'] == "add_order_plan_new") {
+        echo $plan->add_order_plan_new($_POST['category'], $_POST['version'], $_POST['month']);
+    }
+    //Создание нового заказа
     if ($_POST['action'] == "add_writeoff") {
         echo $writeoff->add_writeoff($_POST['json']);
     }

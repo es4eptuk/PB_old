@@ -147,7 +147,7 @@ class Robots
 
         $number_0 = ltrim($number, '0');
 
-        $this->query = "SELECT * FROM robots WHERE (number='$number' OR number='$number_0')  AND version = 4";
+        $this->query = "SELECT * FROM robots WHERE (number='$number' OR number='$number_0')"; //AND version = 4
         $result = $this->pdo->query($this->query);
         while ($line = $result->fetch()) {
             $robot_array[] = $line;

@@ -161,7 +161,7 @@ class Position
         $query = "SELECT * FROM pos_items WHERE category='$category'" . $where;
         $result = $this->pdo->query($query);
         while ($line = $result->fetch()) {
-            $pos_array[] = $line;
+            $pos_array[$line['id']] = $line;
         }
 
         return (isset($pos_array)) ? $pos_array : [];
