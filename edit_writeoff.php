@@ -139,12 +139,16 @@ $writeoff_user_id = $writeoff1['update_user'];
 
     <script>
         $(document).ready(function () {
+            /*
             var arr_str = [];
             var arr_ids = [];
             var arr_pos = [];
             var pos_info = [];
             var category_data = [];
             var category1 = "---";
+            */
+            change_total_price();
+
             $("#save_close").click(function () {
                 $(this).last().addClass("disabled");
                 save_close();

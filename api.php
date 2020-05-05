@@ -326,10 +326,15 @@ if (isset($_POST['action'])) {
     if ($_POST['action'] == "delete_log") {
         echo json_encode($robots->delete_log($_POST['id']), JSON_UNESCAPED_UNICODE);
     }
-    //удаление комментария к операции
+    //
     if ($_POST['action'] == "zabbix") {
-        echo json_encode($robots->add_log_width_zabbix($_POST['host'], $_POST['time'], $_POST['type'], $_POST['problem'], $_POST['total_uptime'], $_POST['type_message'], $_POST['id'], $_POST['status'], $_POST['client']), JSON_UNESCAPED_UNICODE);
-        
+        if (isset($_POST['client'])) {
+            $client = $_POST['client'];
+        } else {
+            $client = 0;
+        }
+        echo json_encode($robots->add_log_width_zabbix($_POST['host'], $_POST['time'], $_POST['type'], $_POST['problem'], $_POST['total_uptime'], $_POST['type_message'], $_POST['id'], $_POST['status'], $client), JSON_UNESCAPED_UNICODE);
+
         $file = fopen('log.txt', 'a');
             foreach ($_REQUEST as $key => $val)
             {
@@ -339,9 +344,8 @@ if (isset($_POST['action'])) {
                 }
             }
             fclose($file);
-        
-        
     }
+
     if ($_POST['action'] == "ticket_get_subcategory") {
         echo json_encode($tickets->get_subcategory($_POST['category']), JSON_UNESCAPED_UNICODE);
     }

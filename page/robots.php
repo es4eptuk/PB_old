@@ -143,11 +143,13 @@ class Robots
 
         $number_str = substr(strstr($host, '_'), 1, strlen($host));
         $number = $number_str;
-
-
         $number_0 = ltrim($number, '0');
+        $version = substr($number,0,1);
+        if ($version == 0) {
+            $version = '4';
+        }
 
-        $this->query = "SELECT * FROM robots WHERE (number='$number' OR number='$number_0')"; //AND version = 4
+        $this->query = "SELECT * FROM robots WHERE (number='$number' OR number='$number_0') AND version = '$version'";
         $result = $this->pdo->query($this->query);
         while ($line = $result->fetch()) {
             $robot_array[] = $line;
