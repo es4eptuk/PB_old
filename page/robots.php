@@ -235,7 +235,9 @@ class Robots
                 $user_id = 33;
 
                 if ($status != "OK" and preg_match("(2048|640|136|138)", "$problem") != true) {
-                    $this->query = "INSERT INTO `tickets` (
+                    //не создавать версии для 6 и 7 версии роботов
+                    if ($version != 6 && $version != 7) {
+                        $this->query = "INSERT INTO `tickets` (
                                                 `id`, 
                                                 `robot`, 
                                                 `class`,
@@ -259,7 +261,8 @@ class Robots
                                                     '$date',
                                                     '$user_id', 
                                                     '$date')";
-                    $result = $this->pdo->query($this->query);
+                        $result = $this->pdo->query($this->query);
+                    }
                 }
                 if ($client != 1 and preg_match("(2048|640|136|138)", "$problem") != true) {
                     $this->telegram->sendNotify("tehpod", $telegram_str . " - " . $status);
