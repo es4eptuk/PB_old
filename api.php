@@ -186,7 +186,7 @@ if (isset($_POST['action'])) {
     }
     //Создание нового заказа
     if ($_POST['action'] == "add_order_plan_new") {
-        echo $plan->add_order_plan_new($_POST['category'], $_POST['version'], $_POST['month']);
+        echo $plan->add_order_plan_new($_POST['category'], $_POST['version'], $_POST['month'], $_POST['filter']);
     }
     //Создание нового заказа
     if ($_POST['action'] == "add_writeoff") {

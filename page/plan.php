@@ -313,8 +313,13 @@ class Plan
     }
 
     //создание файлов по плану заказов
-    function add_order_plan_new($id_category, $id_version, $id_month)
+    function add_order_plan_new($id_category, $id_version, $id_month, $v_filtr)
     {
+        $v_filtr = json_decode($v_filtr);
+        //print_r($v_filtr);
+        //die;
+
+
         $arr_robot = $this->get_robot_inprocess();
         $arr_robot = (isset($arr_robot)) ? $arr_robot : [];
 
@@ -324,6 +329,9 @@ class Plan
         foreach ($arr_robot as $k => $v) {
             if (isset($v)) {
                 foreach ($v as $kv => $vv) {
+                    if (!in_array($kv, $v_filtr) && $v_filtr != []) {
+                        continue;
+                    }
                     foreach ($this->get_check_in_process_by_version($k,$kv) as $chesk) {
                         foreach ($arr_kit_items[$chesk['id_kit']] as $id_pos => $count) {
                             $arr_need[$k][$kv][] = [

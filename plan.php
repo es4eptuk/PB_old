@@ -12,6 +12,18 @@ $color_statuses = [
     2 => '#d0d058',
     3 => '#008000',
 ];
+
+$arr_eq = $robots->getEquipment;
+
+$v_filtr = [];
+foreach ($arr_eq as $eq) {
+    if (isset($_POST[$eq['id']])) {
+        array_push($v_filtr, $eq['id']);
+    }
+}
+
+    //print_r($v_filtr);
+
 ?>
 
 <?php include 'template/head.php' ?>
@@ -59,7 +71,8 @@ $color_statuses = [
            
             
             <div class="box-body table-responsive">
-                <div class="margin"> 
+                <div class="margin">
+                    <!--
                     <div class="btn-group">
                       <button type="button" class="btn btn-default">Версия робота</button>
                       <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
@@ -67,7 +80,7 @@ $color_statuses = [
                         <span class="sr-only">Toggle Dropdown</span>
                       </button>
                       <ul class="dropdown-menu" role="menu">
-                          <?php $arr_eq = $robots->getEquipment;
+                          <?php
                               echo '<li><a href="plan.php?id='.$_GET['id'].'">Убрать фильтр</a></li>';
                               foreach ($arr_eq as $eq) {
                                   echo '<li><a href="plan.php?id='.$_GET['id'].'&version='.$eq['id'].'">'.$eq['title'].'</a></li>';
@@ -75,7 +88,29 @@ $color_statuses = [
                           ?>
                       </ul>
                     </div>
-               
+                    -->
+                    <div class="">
+                    <form action="plan.php?id=<?= $_GET['id']?>" method="post">
+                        <div class="form-group">
+                            <?php
+                            foreach ($arr_eq as $eq) {
+                                if (isset($_POST[$eq['id']])) {
+                                    $checked = 'checked';
+                                } else {
+                                    $checked = '';
+                                }
+                                echo '<div class="checkbox">';
+                                echo '<label><input type="checkbox" id="'.$eq['id'].'" name="'.$eq['id'].'" '.$checked.'> '.$eq['title'].'</label>';
+                                echo '</div>';
+                            }
+                            ?>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary" id="add_filtr" name="">Применить</button>
+                            <button type="reset" class="btn btn-default" id="del_filtr" name="" onclick="javascript:document.location = './plan.php?id=' + <?= $_GET['id']?>;">Сбросить</button>
+                        </div>
+                    </form>
+                    </div>
                 
                <br><br>
               <dl>
@@ -88,8 +123,10 @@ $color_statuses = [
                     foreach ($arr_robot as $k => $v) {
                         echo "<dt>$k</dt>";
                         foreach ($v as $kv => $vv) {
-                            $name = $version[$kv]['title'];
-                            echo "<dd>&nbsp;&nbsp; $name - $vv</dd>";
+                            if (in_array($kv, $v_filtr) || $v_filtr == []) {
+                                $name = $version[$kv]['title'];
+                                echo "<dd>&nbsp;&nbsp; $name - $vv</dd>";
+                            }
                         }
                     }
                 ?>
@@ -115,7 +152,7 @@ $color_statuses = [
                     <th colspan="3"><b>Номенклатура</b></th>
                     <th colspan="3">
                         <b>Склад</b><br>
-                        <button type="button" class="btn btn-block btn-primary btn-xs add_order" data-date="0" <?php echo (isset($_GET['version'])) ? "disabled" : "";?>>Заказ</button>
+                        <button type="button" class="btn btn-block btn-primary btn-xs add_order" data-date="0" <?php echo (isset($_GET['version']) || $v_filtr != []) ? "disabled" : "";?>>Заказ</button>
                         <!--<button type="button" class="btn btn-primary btn-xs add_order" data-date="" style="width:48%;" <?php echo (!isset($_GET['version'])) ? "disabled" : "";?>>На робота</button>-->
                     </th>
                     <?php echo $out; ?>
@@ -139,6 +176,9 @@ $color_statuses = [
                   foreach ($arr_robot as $k => $v) {
                       if (isset($v)) {
                           foreach ($v as $kv => $vv) {
+                              if (!in_array($kv, $v_filtr) && $v_filtr != []) {
+                                  continue;
+                              }
                               foreach ($plan->get_check_in_process_by_version($k,$kv) as $chesk) {
                                   //$arr_need[$k][$kv][$chesk['operation']] = $arr_kit_items[$chesk['id_kit']];
                                   foreach ($arr_kit_items[$chesk['id_kit']] as $id_pos => $count) {
@@ -278,7 +318,7 @@ $color_statuses = [
                           }
                           $deleting = $deleting + $incount;
                       }
-                      if (isset($_GET['version']) && $deleting==0) {
+                      if ((isset($_GET['version']) && $deleting==0) || ($v_filtr != [] && $deleting==0)) {
                           unset($arr_pos[$k]);
                           continue;
                       }
@@ -378,18 +418,21 @@ $color_statuses = [
             var category = <?php echo (isset($_GET['id'])) ? $_GET['id'] : 0; ?>;
             var version = <?php echo (isset($_GET['version'])) ? $_GET['version'] : 0; ?>;
             var date = $(this).data('date');
-            //console.log(version);
+            var filter = JSON.stringify([<?php echo implode(',', $v_filtr);?>]);
+            //console.log(filter);
             //return false;
             $.post("./api.php", {
                 action: "add_order_plan_new",
                 category: category,
                 version: version,
-                month: date
+                month: date,
+                filter: filter
             }).done(function (data) {
                 console.log(data);
                 window.location.href = data;
                 setTimeout(function() {
-                    window.location.reload(true);
+                    //document.location = './plan.php?id=' + <?= $_GET['id']?>;
+                    window.location.reload("./plan.php?id=<?= $_GET['id']?>");
                 }, 1000);
                 return false;
             });
