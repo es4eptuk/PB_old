@@ -255,7 +255,7 @@ class Plan
     //собираем массив китов
     function get_kits_items()
     {
-        $query = "SELECT * FROM `pos_kit_items` JOIN `pos_items` ON `pos_items`.`id` = `pos_kit_items`.`id_pos` WHERE `pos_items`.`archive` = 0 AND `pos_kit_items`.`delete` = 0";
+        $query = "SELECT * FROM `pos_kit_items` JOIN `pos_items` ON `pos_items`.`id` = `pos_kit_items`.`id_pos` WHERE `pos_items`.`archive` = 0"; //AND `pos_kit_items`.`delete` = 0
         $result = $this->pdo->query($query);
         $kits = [];
         while ($line = $result->fetch()) {

@@ -263,7 +263,7 @@ foreach ($arr_tickets as &$ticket) {
                                         </div>
                                     </td>
                                 </tr>
-<!--                                --><?php//print_r($robot_info);?>
+<!--                                --><?php /*print_r($robot_info);*/ ?>
 
                                 <tr>
                                     <th>В процессе решения:</th>

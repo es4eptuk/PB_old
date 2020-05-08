@@ -389,46 +389,26 @@ class Position
     }
 
     //постановка деталей в резерв
-    /*function set_reserv($version)
+    function add_reserv($arr_pos)
     {
-        $arr_pos = $this->get_pos_in_equipment($version);
-        if (isset($arr_pos)){
-            foreach ($arr_pos as &$value) {
-                $pos_id = $value['pos_id'];
-                $count = $value['count'];
-                $query = "UPDATE `pos_items` SET `reserv` = reserv+$count WHERE `id` = $pos_id";
-                $result = $this->pdo->query($query);
-                if ($result && $count != 0) {
-                    $param['id'] = $pos_id;
-                    $param['type'] = "reserv";
-                    $param['count'] = $count;
-                    $param['title'] = "Постановка в резерв";
-                    $this->add_log($param);
-                }
-            }
-        return $result;
+        foreach ($arr_pos as $id_pos => $info) {
+            $count = $info;
+            $query = "UPDATE `pos_items` SET `reserv` = reserv + $count WHERE `id` = $id_pos";
+            $result = $this->pdo->query($query);
         }
-    }*/
+        return true;
+    }
 
     //списание деталей из резерва
-    /*function unset_reserv($version)
+    function del_reserv($arr_pos)
     {
-        $arr_pos = $this->get_pos_in_equipment($version);
-        foreach ($arr_pos as &$value) {
-            $pos_id = $value['pos_id'];
-            $count  = $value['count'];
-            $query  = "UPDATE `pos_items` SET `reserv` = reserv-$count WHERE `id` = $pos_id";
+        foreach ($arr_pos as $id_pos => $info) {
+            $count = $info;
+            $query = "UPDATE `pos_items` SET `reserv` = reserv - $count WHERE `id` = $id_pos";
             $result = $this->pdo->query($query);
-            if ($result && $count != 0) {
-                $param['id']    = $pos_id;
-                $param['type']  = "unreserv";
-                $param['count'] = $count;
-                $param['title'] = "Снятие с резерва";
-                $this->add_log($param);
-            }
         }
-        return $result;
-    }*/
+        return true;
+    }
 
     function set_writeoff($version, $robot)
     {
@@ -558,7 +538,8 @@ class Position
         $this->writeoff->add_writeoff(json_encode($json));
         return $result;
     }
-    
+
+    //удаляет списание
     function unset_writeoff_kit($version, $number, $kit, $check, $robot) {
      $query = "SELECT id FROM `writeoff` WHERE `check` = $check AND `robot` = $robot";
      $result = $this->pdo->query($query);
@@ -566,7 +547,7 @@ class Position
      $this->writeoff->del_writeoff($line['id']);
     }
     
-     /*Списание доп опций */
+    /*Списание доп опций */
     function set_writeoff_options($version, $number, $kit, $check, $robot)
     {
       $query = "SELECT * FROM robot_options_items JOIN robot_options ON robot_options.id_option = robot_options_items.id_option WHERE `id_robot` =  $robot";

@@ -1,13 +1,16 @@
 <?php
 class Checks
 {
+    public $auth;
+    private $query;
+    private $pdo;
+
     private $telegram;
     private $robot;
     private $sklad;
-    public $auth;
     private $mail;
-    private $query;
-    private $pdo;
+    private $plan;
+
 
     function __construct()
     {
@@ -23,12 +26,13 @@ class Checks
 
     function init()
     {
-        global $telegramAPI, $robots, $position, $mail;
+        global $telegramAPI, $robots, $position, $mail, $plan;
 
         $this->telegram = $telegramAPI; //new TelegramAPI;
         $this->robot = $robots; //new Robots;
         $this->sklad = $position; //new Position;
         $this->mail = $mail; //new Mail;
+        $this->plan = $plan;
         //$this -> robot = new Robots;
     }
 
@@ -67,6 +71,7 @@ class Checks
         while ($line = $result->fetch()) {
             $robots_array[] = $line;
         }
+        $arr_kits = $this->plan->get_kits();
         foreach ($robots_array as &$value) {
             $id_robot = $value['id'];
             $query    = "INSERT INTO `check` (
@@ -92,10 +97,14 @@ class Checks
                          '', 
                          '')";
             $result = $this->pdo->query($query);
+            //добавляем резерв
+            $this->sklad->add_reserv($arr_kits[$kit]);
+
         }
 
         return $result;
     }
+
     function edit_check($id, $title, $kit, $version = 4)
     {
         $title   = trim($title);
@@ -103,10 +112,12 @@ class Checks
         //$user_id = intval($_COOKIE['id']);
         $query   = "UPDATE `check_items` SET `title` = '$title ', `kit` = $kit, `version` = $version  WHERE `id` = $id";
         $result = $this->pdo->query($query);
+        //сомнительная операция, поменяет у всех чеклистов даже те у которые уже закрыты
         $query = "UPDATE `check` SET `operation` = '$title', `id_kit` = '$kit'  WHERE `id_check` = $id";
         $result = $this->pdo->query($query);
         return $result;
     }
+
     function edit_check_on_option($id, $title, $category, $kit)
     {
         $title   = trim($title);
@@ -118,6 +129,7 @@ class Checks
         $result = $this->pdo->query($query);*/
         return true;
     }
+
     //собирает чек лесты по выбранной категории и роботу (базовые)
     function get_checks_on_robot($category, $robot)
     {
@@ -129,6 +141,7 @@ class Checks
         if (isset($checks_array))
             return $checks_array;
     }
+
     //собирает чек лесты по выбранной категории и роботу (только по опциям)
     function get_checks_on_robot_option($category, $robot)
     {
@@ -146,6 +159,23 @@ class Checks
     {
         $date    = date("Y-m-d H:i:s");
         $user_id = intval($_COOKIE['id']);
+        $arr_kits = $this->plan->get_kits();
+        if ($kit != 0) {
+            $checks_array = [];
+            $query = "SELECT * FROM `check` WHERE `id` = $id_row";
+            $result = $this->pdo->query($query);
+            while ($line = $result->fetch()) {
+                $checks_array[] = $line;
+            }
+            if ($checks_array[0]['id_kit'] != $kit) {
+                //списание старого резерва
+                $this->sklad->del_reserv($arr_kits[$checks_array[0]['id_kit']]);
+                //создание нового резерва
+                $this->sklad->add_reserv($arr_kits[$kit]);
+            }
+
+        }
+        /* выяснить что при снятии отметке 131 чека */
         if ($id == 131 && $value == 0) {
             return false;
         }
@@ -158,6 +188,8 @@ class Checks
         }
         $title = $check_items_array['0']['operation'];
         $stage = $check_items_array['0']['category'];
+
+        /*выяснить что при отметке 54 чека*/
         if ($id == 54 && $value == 1) {
             $query = "SELECT * FROM robots WHERE id='$robot'";
             $result = $this->pdo->query($query);
@@ -172,6 +204,8 @@ class Checks
             $this->telegram->sendNotify("sale", $telegram_str);
 
         }
+
+        /* выяснить что происходит при отметке 105 или 314 чека */
         if (($id == 105 || $id == 314) && $value == 1) {
             $query = "SELECT * FROM robots WHERE id='$robot'";
             $result = $this->pdo->query($query);
@@ -191,6 +225,8 @@ class Checks
             $telegram_str = $icon . $comment;
             $this->telegram->sendNotify("sale", $telegram_str);
         }
+
+        /* выяснить что происходит при отметке 104 или 308 чека */
         if (($id == 104 || $id ==308) && $value == 1) {
             $query = "SELECT * FROM robots WHERE id='$robot'";
             $result = $this->pdo->query($query);
@@ -212,6 +248,8 @@ class Checks
         }
         $robot_name    = $robot_array['0']['name'];
         $robot_version = $robot_array['0']['version'];
+
+        /* выяснить что происходит при отметке 131 чека !!!! робот списывается - почему?*/
         if ($id == 131 && $value == 1) {
             if ($remont == 0) {
                 $query = "SELECT * FROM robots WHERE id='$robot'";
@@ -225,6 +263,8 @@ class Checks
                 // $this->sklad->set_writeoff_options($robot_version,$number,0,$id,$robot);
             }
         }
+
+        //создане лога
         if ($value == 1) {
             $level        = "GOOD";
             $icon         = '✅';
@@ -258,10 +298,16 @@ class Checks
         $query    = "UPDATE `robots` SET `progress` = '$progress', `stage` = '$stage', `last_operation` = '$title', `update_user` = '$user_id', `update_date` = '$date' WHERE `robots`.`id` = $robot";
         $result = $this->pdo->query($query);
         if ($result && $kit != 0 && $value == 1 && $remont==0) {
+            //списание комплекта
             $this->sklad->set_writeoff_kit($robot_version, $number, $kit, $id, $robot);
+            //списание резерва
+            $this->sklad->del_reserv($arr_kits[$kit]);
         }
         if ($result && $kit != 0 && $value == 0) {
+            //отмена списания комплекта
             $this->sklad->unset_writeoff_kit($robot_version, $number, $kit, $id, $robot);
+            //восстановить резерв
+            $this->sklad->add_reserv($arr_kits[$kit]);
         }
     }
 
@@ -345,6 +391,7 @@ class Checks
         if (isset($robots_array))
             return $robots_array;
     }
+
     function my_curl_zabbix($arr)
     {
         $url            = 'https://pb2.icmm.ru/zabbix/api_jsonrpc.php';
@@ -369,6 +416,7 @@ class Checks
         curl_close($curl);
         return json_decode($return, true);
     }
+
     function z_auth()
     {
         $jsonData = array(
@@ -385,6 +433,7 @@ class Checks
         //print_r($auth_arr);
         return $auth_arr['result'];
     }
+
     function z_get_hosts($filter_arr)
     {
         $jsonData = array(
@@ -405,6 +454,7 @@ class Checks
         //print_r($result);
         return $result['result'];
     }
+
     function z_update_hosts($host_id, $action)
     {
         $jsonData = array(
@@ -428,6 +478,7 @@ class Checks
         //echo 123;
         return $result;
     }
+
     function z_add_group($host_id, $group)
     {
         $jsonData                                  = array(
@@ -439,6 +490,7 @@ class Checks
         //print_r($result) ;
         return $result;
     }
+
     function z_remove_group($host_id, $group)
     {
         $jsonData                       = array(
@@ -596,6 +648,7 @@ class Checks
         //выборка из бд чеклисты по ид опции
         $query = "SELECT robot_options_checks.check_id, robot_options_checks.id_option, robot_options_checks.check_title, robot_options_checks.check_category, robot_options_checks.id_kit, robot_options.id_option, robot_options.version, robot_options.title    FROM `robot_options_checks` JOIN robot_options ON robot_options_checks.id_option = robot_options.id_option WHERE robot_options_checks.id_option = $id";
         $result = $this->pdo->query($query);
+        $arr_kits = $this->plan->get_kits();
         //проходимся по чеклистам
         while ($line = $result->fetch()) {
             //print_r($line);
@@ -605,7 +658,7 @@ class Checks
             $option = $line['id_option']; //ид опции, вообще не должно отличаться
             $title = $line['title']; //заголовок опции
 
-            //если опция отмечается, то вставляем запись в бд
+            //если опция добавляется, то вставляем запись в бд
             if ($value == 1) {
                 $query2 = "INSERT INTO `check` (`id_check`, `robot`, `operation`, `category`, `group`, `check`, `comment`, `sort`, `option`, `id_kit`, `update_user`) VALUES ('0', $robot, '$operation', $category, '0', '0', '', '0', $option, $kit, '0')";
                 $result2 = $this->pdo->query($query2);
@@ -615,8 +668,11 @@ class Checks
                     $query_log = "INSERT INTO `robot_log` (`id`, `robot_id`,`source`, `level`, `comment`, `ticket_id`, `update_user`, `update_date`) VALUES (NULL, $robot, 'PRODUCTION', 'INFO', '$comment', '0', $user_id, '$date ')";
                     $result_log = $this->pdo->query($query_log);
                 }
-
-            //если опция снимается, то удоляем все чеклисты по опции
+                //добавляем резерв
+                if ($kit != 0) {
+                    $this->sklad->add_reserv($arr_kits[$kit]);
+                }
+            //если опция удаляется, то удоляем все чеклисты по опции
             } else {
                 $query3 = "SELECT COUNT(0) AS ROW_COUNT  FROM `check` WHERE operation = '$operation' AND robot = $robot AND category = $category AND `check`=0";
                 $result3 = $this->pdo->query($query3);
@@ -633,6 +689,10 @@ class Checks
                         $result_log = $this->pdo->query($query_log);
                     }
                 }
+                //удаляем резерв
+                if ($kit != 0) {
+                    $this->sklad->del_reserv($arr_kits[$kit]);
+                }
             }
             //$result2 = mysql_query($query2) or die('Запрос не удался: ' . mysql_error());
         }
@@ -648,6 +708,7 @@ class Checks
         while ($line = $result->fetch()) {
             $arr[] = $line;
         }
+        $arr_kits = $this->plan->get_kits();
         //добавляем в базу чеклисты
         foreach ($arr as & $value) {
             $operation = $value['title']; //заголовок чеклиста
@@ -660,12 +721,31 @@ class Checks
                 VALUES (NULL, '$id_check', '$robot', '$operation', '$category', '$group', '0', '$sort', '$id_kit', '0')
             ";
             $result = $this->pdo->query($this->query);
+            //создаем резерв
+            if ($id_kit != 0) {
+                $this->sklad->add_reserv($arr_kits[$id_kit]);
+            }
         }
     }
 
     //отмечает все чек листы для робота без списаний (ид_робота)
     function checked_all_check_in_robot($id)
     {
+        //удаляем все резервы
+        $query = "SELECT * FROM `check` WHERE `robot` = $id";
+        $result = $this->pdo->query($query);
+        $arr = [];
+        while ($line = $result->fetch()) {
+            $arr[] = $line;
+        }
+        $arr_kits = $this->plan->get_kits();
+        foreach ($arr as $value) {
+            if ($value['id_kit'] != 0) {
+                $this->sklad->del_reserv($arr_kits[$value['id_kit']]);
+            }
+        }
+
+        //отмечаем все чеки
         $query = "UPDATE `check` SET `check` = 1 WHERE `robot` = $id";
         $result = $this->pdo->query($query);
         return ($result) ? true : false;
