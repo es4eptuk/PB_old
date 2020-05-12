@@ -38,7 +38,7 @@ $order_date = $order_date->format('d.m.Y');
 								<b class="print">Заказ № <?php echo $id;?></b>
 							</div><!-- /.box-header -->
 							<div class="box-body">
-								<form data-toggle="validator" id="add_pos" name="add_pos" role="form">
+
 								    
 								    <div class="form-group">
                                       <label>Версия робота</label>
@@ -288,7 +288,7 @@ $order_date = $order_date->format('d.m.Y');
 						<div class="form-group">
 							<label>Наименование</label> <input class="form-control" id="provider_title" name="provider_title" required="required" type="text">
 						</div>
-					</form>
+
 				</div>
 				<div class="modal-footer">
 					<button class="btn btn-secondary" data-dismiss="modal" type="button">Закрыть</button> <button class="btn btn-primary" id="btn_add_provider" type="button">Добавить</button>
@@ -396,7 +396,7 @@ var category1 = "---";
                               <td>'+pos_info['id']+'</td> \
                               <td>'+pos_info['vendor_code']+'</td> \
                               <td>'+pos_info['title']+'</td> \
-                              <td class="quant"><span>1</span><input type="text" class="form-control quant_inp"  style="position: relative; top: -20px; width: 55px; text-align: center;" placeholder="1"></td> \
+                              <td class="quant"><span style="position: absolute;">1</span><input type="text" class="form-control quant_inp"  style="position: relative;  width: 55px; text-align: center;" placeholder="1"></td> \
                               <td class="finish">0</td> \
                               <td>0</td> \
                               <td class="price">'+pos_info['price']+'</td> \
@@ -435,7 +435,7 @@ $("#listPos").on("keyup", ".quant_inp", function() {
      var quant = $( this ).val();
      var sum = price * quant;
      
-     $( this ).parent().parent().find( ".sum" ).text(sum);
+     $( this ).parent().parent().find( ".sum" ).text(sum.toFixed(2));
    });   
 
   $("#listPos").on("click", ".fa-remove", function() {

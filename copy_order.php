@@ -47,7 +47,6 @@ $order_responsible = $order['order_responsible'];
 								<h3 class="box-title">Добавить заказ</h3>
 							</div><!-- /.box-header -->
 							<div class="box-body">
-								<form data-toggle="validator" id="add_pos" name="add_pos" role="form">
 
                                     <div class="form-group">
                                         <label>Версия робота</label>
@@ -132,7 +131,8 @@ $order_responsible = $order['order_responsible'];
                                     </div>
 									
 									<table class="table table-hover" id="listPos">
-                                    <tbody><tr>
+                                    <tbody>
+                                    <tr>
                                       <th>ID</th>
                                       <th>Артикул</th>
                                       <th>Наименование</th>
@@ -190,7 +190,7 @@ $order_responsible = $order['order_responsible'];
 										<button class="btn btn-primary" id="save_close" type="submit">Сохранить и закрыть</button> 
 										<button class="btn btn-primary" id="save_new" type="submit">Сохранить и создать новый заказ</button>
 									</div>
-								</form>
+
 							</div><!-- /.box-body -->
 						</div>
 					</div><!-- /.col -->
@@ -519,7 +519,7 @@ $order_responsible = $order['order_responsible'];
                 var id = $( this ).attr("id");
                 if (quant=="") quant = 1;
                 var sum = price * quant;
-                sum = sum.toFixed(1)
+                sum = sum.toFixed(2)
 
                 if (arr_assembly[id] !== undefined) {
                     $("#icon_"+id).html("<i class='fa fa-check-circle text-green fa-2x' data-toggle='modal' data-target='#get_assembly'></i>");

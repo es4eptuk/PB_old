@@ -21,7 +21,7 @@ include 'include/class.inc.php';
 								<h3 class="box-title">Добавить поступление</h3>
 							</div><!-- /.box-header -->
 							<div class="box-body">
-								<form data-toggle="validator" id="add_pos" name="add_pos" role="form">
+
 									
 									<div class="form-group">
 										<label>Категория</label> <select class="form-control" id="category" name="category" required="required" >
@@ -58,7 +58,7 @@ include 'include/class.inc.php';
                                     
 									
 									<table class="table table-hover" id="listPos">
-                                    <thead>
+                                    <tbody>
                                     <tr>
                                       <th>ID</th>
                                       <th>Артикул</th>
@@ -68,9 +68,7 @@ include 'include/class.inc.php';
                                       <th>Поступление</th>
                                       <th>Возврат</th>
                                     </tr>
-                                   </thead>
-                                    <tbody>
-                                    
+
                                     </tbody>
                                     </table>
 									
@@ -78,7 +76,7 @@ include 'include/class.inc.php';
 										<button class="btn btn-primary" id="save_close" type="submit">Сохранить и закрыть</button> 
 										<button class="btn btn-primary" id="save_new" type="submit">Сохранить и создать новое поступление</button>
 									</div>
-								</form>
+
 							</div><!-- /.box-body -->
 						</div>
 					</div><!-- /.col -->
@@ -141,7 +139,7 @@ $( "#order" )
       console.log(provider);
   
        
-        $("#listPos > tbody").html("");
+        $("#listPos > tbody").html("<tr><th>ID</th><th>Артикул</th><th>Наименование</th><th>Заказанное количество</th><th>Отгружено</th><th>Поступление</th><th>Возврат</th></tr>");
     
     $.post( "./api.php", { action: "get_pos_in_order", id: id } )
             .done(function( data ) {  
@@ -154,8 +152,8 @@ $( "#order" )
                         <td>'+value['title']+'</td> \
                         <td class="quant_order">'+value['pos_count']+'</td> \
                         <td class="quant_finish">'+value['pos_count_finish']+'</td> \
-                        <td class="quant"><span>0</span><input type="text" class="form-control quant_inp"  style="position: relative; top: -20px; width: 55px; text-align: center;" placeholder="0"></td> \
-                        <td class="quant"><span>0</span><input type="text" class="form-control quant_inp"  style="position: relative; top: -20px; width: 55px; text-align: center;" placeholder="0"></td> \
+                        <td class="quant"><span style="position: absolute;">0</span><input type="text" class="form-control quant_inp"  style="position: relative;  width: 55px; text-align: center;" placeholder="0"></td> \
+                        <td class="quant"><span style="position: absolute;">0</span><input type="text" class="form-control quant_inp"  style="position: relative;  width: 55px; text-align: center;" placeholder="0"></td> \
                         </tr>');
                     });
             });
@@ -291,8 +289,8 @@ $("#listPos").on("keyup", ".quant_inp", function() {
                         <td>'+pos_info['title']+'</td> \
                         <td class="quant_order">0</td> \
                         <td class="quant_finish">0</td> \
-                        <td class="quant"><span>0</span><input type="text" class="form-control quant_inp"  style="position: relative; top: -20px; width: 55px; text-align: center;" placeholder="0"></td> \
-                        <td class="quant"><span>0</span><input type="text" class="form-control quant_inp"  style="position: relative; top: -20px; width: 55px; text-align: center;" placeholder="0"></td> \
+                        <td class="quant"><span style="position: absolute;">0</span><input type="text" class="form-control quant_inp"  style="position: relative;  width: 55px; text-align: center;" placeholder="0"></td> \
+                        <td class="quant"><span style="position: absolute;">0</span><input type="text" class="form-control quant_inp"  style="position: relative;  width: 55px; text-align: center;" placeholder="0"></td> \
                         </tr>');
                         
                         $('#search_pos').val(""); 

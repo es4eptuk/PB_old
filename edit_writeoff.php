@@ -94,7 +94,7 @@ $writeoff_user_id = $writeoff1['update_user'];
                                             <td>'.$value['pos_id'].'</td>
                                             <td>'.$vendor_code.'</td> 
                                             <td>'.$title.'</td> 
-                                            <td class="quant"><span style="position: absolute;">'.$value['pos_count'].'</span><input type="text" class="form-control quant_inp"  style="position: relative; height: 20px; width: 55px; text-align: center;" placeholder="'.$value['pos_count'].'" value="'.$value['pos_count'].'"></td>
+                                            <td class="quant"><span style="position: absolute;">'.$value['pos_count'].'</span><input type="text" class="form-control quant_inp"  style="position: relative;  width: 55px; text-align: center;" placeholder="'.$value['pos_count'].'" value="'.$value['pos_count'].'"></td>
                                             <td class="price">'.$value['pos_price'].'</td>
                                             <td class="sum">'.$sum.'</td>  
                                             <td><i class="fa fa-2x fa-remove" style="cursor: pointer;" id="'.$value['pos_id'].'" data-target="'.$value['pos_count'].'"></i></td> 
@@ -172,7 +172,7 @@ $writeoff_user_id = $writeoff1['update_user'];
             $("#listPos").on("keyup", ".quant_inp", function () {
                 var price = $(this).parent().parent().find(".price").text();
                 var quant = $(this).val();
-                var sum = Math.round(price * quant).toFixed(2);
+                var sum = (price * quant).toFixed(2);
                 $(this).parent().parent().find(".sum").text(sum);
                 change_total_price();
             });
@@ -196,9 +196,9 @@ $writeoff_user_id = $writeoff1['update_user'];
                     let isum = Number($(this).find('.sum').text());
                     all_sum = all_sum + isum;
                 });
-                all_sum = Math.round(all_sum).toFixed(2);
+                //all_sum = Math.round(all_sum).toFixed(2);
                 //console.log(all_sum);
-                $("#total_price").text(all_sum);
+                $("#total_price").text(all_sum.toFixed(2));
             }
 
             function save_close() {

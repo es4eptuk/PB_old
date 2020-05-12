@@ -109,7 +109,8 @@ $current_month = date('m');
                                     </div>
 									
 									<table class="table table-hover" id="listPos">
-                                    <tbody><tr>
+                                    <tbody>
+                                    <tr>
                                       <th>ID</th>
                                       <th>Артикул</th>
                                       <th>Наименование</th>
@@ -120,8 +121,7 @@ $current_month = date('m');
                                       <th></th>
                                       <th>Удаление</th>
                                     </tr>
-                                   
-                                    
+
                                     </tbody>
                                     </table>
 									
@@ -456,7 +456,7 @@ $("#listPos").on("keyup", ".quant_inp", function() {
      var id = $( this ).attr("id");
      if (quant=="") quant = 1;
      var sum = price * quant;
-     sum = sum.toFixed(1)
+     sum = sum.toFixed(2)
      
      if (arr_assembly[id] !== undefined) {
           $("#icon_"+id).html("<i class='fa fa-check-circle text-green fa-2x' data-toggle='modal' data-target='#get_assembly'></i>");

@@ -27,7 +27,7 @@ if (isset($_GET['copy'])) {
 								<h3 class="box-title">Добавить списание</h3>
 							</div><!-- /.box-header -->
 							<div class="box-body">
-								<form data-toggle="validator" id="add_pos" name="add_pos" role="form">
+
                                     <p class="p-label" style="font-size:16px;">Общая сумма списания: <span id="total_price"><?php echo number_format($writeoff_price, 2, ',', ' ') ; ?> </span></p>
                                     <br>
 									<div class="form-group">
@@ -85,7 +85,8 @@ if (isset($_GET['copy'])) {
                                     </div>
 									
 									<table class="table table-hover" id="listPos">
-                                    <tbody><tr>
+                                    <tbody>
+                                    <tr>
                                       <th>ID</th>
                                       <th>Артикул</th>
                                       <th>Наименование</th>
@@ -112,7 +113,7 @@ if (isset($_GET['copy'])) {
                                     <td>'.$value['pos_id'].'</td>
                                     <td>'.$vendor_code.'</td> 
                                     <td>'.$title.'</td> 
-                                    <td class="quant"><span style="display: none;">'.$value['pos_count'].'</span><input type="text" class="form-control quant_inp"  style="position: relative; height: 20px; width: 55px; text-align: center;" placeholder="'.$value['pos_count'].'" value="'.$value['pos_count'].'"></td>
+                                    <td class="quant"><span style="position: absolute;">'.$value['pos_count'].'</span><input type="text" class="form-control quant_inp"  style="position: relative;  width: 55px; text-align: center;" placeholder="'.$value['pos_count'].'" value="'.$value['pos_count'].'"></td>
                                     <td class="price">'.$value['pos_price'].'</td>
                                     <td class="sum">'.$sum.'</td>                                    
                                     <td><i class="fa fa-2x fa-remove" style="cursor: pointer;" id="'.$value['pos_id'].'" data-target="'.$value['pos_count'].'"></i></td> 
@@ -131,7 +132,7 @@ if (isset($_GET['copy'])) {
 										<button class="btn btn-primary" id="save_close" type="submit">Сохранить и закрыть</button> 
 									
 									</div>
-								</form>
+
 							</div><!-- /.box-body -->
 						</div>
 					</div><!-- /.col -->
@@ -224,7 +225,7 @@ if (isset($_GET['copy'])) {
                         <td>' + pos_info['id'] + '</td> \
                         <td>' + pos_info['vendor_code'] + '</td> \
                         <td>' + pos_info['title'] + '</td> \
-                        <td class="quant"><span style="display: none;">1</span><input type="text" class="form-control quant_inp"  style="position: relative; height: 20px; width: 55px; text-align: center;" placeholder="1"></td> \
+                        <td class="quant"><span style="position: absolute;">1</span><input type="text" class="form-control quant_inp"  style="position: relative;  width: 55px; text-align: center;" placeholder="1"></td> \
                         <td class="price">' + pos_info['price'] + '</td> \
                         <td class="sum">' + pos_info['price'] + '</td> \
                         <td><i class="fa fa-2x fa-remove" style="cursor: pointer;"></i></td> \
@@ -247,7 +248,7 @@ if (isset($_GET['copy'])) {
             $("#listPos").on("keyup", ".quant_inp", function () {
                 var price = $(this).parent().parent().find(".price").text();
                 var quant = $(this).val();
-                var sum = Math.round(price * quant).toFixed(2);
+                var sum = (price * quant).toFixed(2);
                 $(this).parent().parent().find(".sum").text(sum);
                 change_total_price();
             });
@@ -281,8 +282,8 @@ if (isset($_GET['copy'])) {
                     let isum = Number($(this).find('.sum').text());
                     all_sum = all_sum + isum;
                 });
-                all_sum = Math.round(all_sum).toFixed(2);
-                $("#total_price").text(all_sum);
+                //all_sum = Math.round(all_sum).toFixed(2);
+                $("#total_price").text(all_sum.toFixed(2));
             }
 
             function save_close() {

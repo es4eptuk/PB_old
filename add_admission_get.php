@@ -33,7 +33,7 @@ include 'include/class.inc.php';
 								<h3 class="box-title">Добавить поступление</h3>
 							</div><!-- /.box-header -->
 							<div class="box-body">
-								<form data-toggle="validator" id="add_pos" name="add_pos" role="form">
+
 									
 									<div class="form-group">
 										<label>Категория:</label> 
@@ -92,12 +92,12 @@ include 'include/class.inc.php';
                             <td>'.$value['title'].'</td> 
                             <td class="quant tot">'.$value['pos_count'].'</td> 
                             <td class="finish">'.$value['pos_count_finish'].'</td> 
-                            <td class="quant inp_tot"><span>0</span><input type="text" class="form-control quant_inp"  style="position: relative; top: -20px; width: 55px; text-align: center;" placeholder="0"></td> 
+                            <td class="quant inp_tot"><span style="position: absolute;">0</span><input type="text" class="form-control quant_inp"  style="position: relative;  width: 55px; text-align: center;" placeholder="0"></td> 
                             <td></td>
                              ';
                                     if ($provider_id==49 || $provider_id==1) {
-                                        echo '   <td class="quant"><span>0</span><input type="text" class="form-control quant_inp"  style="position: relative; top: -20px; width: 55px; text-align: center;" placeholder="0" id="quant_'.$value['id'].'"></td> ';
-                                        echo '   <td class="quant"><span>0</span><input type="text" class="form-control quant_inp"  style="position: relative; top: -20px; width: 55px; text-align: center;" placeholder="0" id="quant_'.$value['id'].'"></td> ';
+                                        echo '   <td class="quant"><span style="position: absolute;">0</span><input type="text" class="form-control quant_inp"  style="position: relative;  width: 55px; text-align: center;" placeholder="0" id="quant_'.$value['id'].'"></td> ';
+                                        echo '   <td class="quant"><span style="position: absolute;">0</span><input type="text" class="form-control quant_inp"  style="position: relative;  width: 55px; text-align: center;" placeholder="0" id="quant_'.$value['id'].'"></td> ';
                                     }
 
                        echo '</tr>' ;
@@ -112,7 +112,7 @@ include 'include/class.inc.php';
                                         <button class="btn btn-primary" id="save_close" >Сохранить и закрыть</button>
 										<button class="btn btn-primary" id="save_new" >Сохранить и создать новое поступление</button>
 									</div>
-								</form>
+
 							</div><!-- /.box-body -->
 						</div>
 					</div><!-- /.col -->
@@ -206,7 +206,7 @@ $("#listPos").on("keyup", ".quant_inp", function() {
  			provider : provider
  		}).done(function(data) {
  			console.log(data);
- 			window.location.href = "./admissions.php?id="+ category;
+ 			window.location.href = "./orders.php?id="+ category;
  		});
        }
        

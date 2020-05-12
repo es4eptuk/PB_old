@@ -432,7 +432,8 @@ foreach ($arr_eq as $eq) {
                 window.location.href = data;
                 setTimeout(function() {
                     //document.location = './plan.php?id=' + <?= $_GET['id']?>;
-                    window.location.reload("./plan.php?id=<?= $_GET['id']?>");
+                    window.location.reload(true);
+                    //window.location.href = "./plan.php?id=<?= $_GET['id']?>";
                 }, 1000);
                 return false;
             });
