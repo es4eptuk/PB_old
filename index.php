@@ -22,16 +22,16 @@ if (isset($_COOKIE['id']) and isset($_COOKIE['hash']))
         switch ($userdata['group']) {
             case 1:
                 header("Location: robots.php"); exit();
-                break;
+                //break;
             case 2:
                 header("Location: plan.php?id=1"); exit();
-                break;
+                //break;
             case 3:
                 header("Location: robots.php"); exit();
-                break;
+                //break;
             case 4:
                 header("Location: cards_robot.php"); exit();
-                break;
+                //break;
         }
         
         

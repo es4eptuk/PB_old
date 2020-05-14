@@ -251,11 +251,11 @@ class Position
 
         return $result;
     }
-    function edit_provider($id, $title, $type, $phone, $email, $address, $contact)
+    function edit_provider($id, $title, $name, $type, $phone, $email, $address, $contact)
     {
         $date    = date("Y-m-d H:i:s");
         $user_id = intval($_COOKIE['id']);
-        $query   = "UPDATE `pos_provider` SET `title` = '$title', `type` = '$type',`phone` = '$phone',`email` = '$email', `address` = '$address', `contact` = '$contact', `update_date` = '$date' , `update_user` = '$user_id' WHERE `id` = $id;";
+        $query   = "UPDATE `pos_provider` SET `title` = '$title', `name` = '$name', `type` = '$type',`phone` = '$phone',`email` = '$email', `address` = '$address', `contact` = '$contact', `update_date` = '$date' , `update_user` = '$user_id' WHERE `id` = $id;";
         $result = $this->pdo->query($query);
         if ($result) {
              $this->log->add(__METHOD__,"Редактирование поставщика $type $title");
@@ -318,11 +318,11 @@ class Position
         return $idd;
     }
     
-     function add_full_provider($type, $title, $phone, $email, $address, $contact)
+     function add_full_provider($type, $title, $name, $phone, $email, $address, $contact)
     {
         $date    = date("Y-m-d H:i:s");
         $user_id = intval($_COOKIE['id']);
-        $query   = "INSERT INTO `pos_provider` (`id`, `type`, `title`, `phone`, `email`, `address`, `contact`, `update_date`, `update_user`) VALUES (NULL, '$type', '$title', '$phone', '$email', '$address', '$contact', '$date', $user_id);";
+        $query   = "INSERT INTO `pos_provider` (`id`, `type`, `title`, `name`, `phone`, `email`, `address`, `contact`, `update_date`, `update_user`) VALUES (NULL, '$type', '$title', '$name', '$phone', '$email', '$address', '$contact', '$date', $user_id);";
         $result = $this->pdo->query($query);
         $idd   = $this->pdo->lastInsertId();
         
@@ -331,7 +331,7 @@ class Position
         }
         
 
-        return $result;
+        return true;
     }
     function search($term)
     {

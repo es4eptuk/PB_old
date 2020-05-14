@@ -11,6 +11,16 @@ class Checks
     private $mail;
     private $plan;
 
+    const ZABIX = [
+        '2' => ['url' => '', 'user' => '', 'password' => '', 'Manufacture' => '', 'Manufacture_test' => '', 'host' => ''],
+        '5' => ['url' => '', 'user' => '', 'password' => '', 'Manufacture' => '', 'Manufacture_test' => '', 'host' => ''],
+        '4' => ['url' => 'https://pb2.icmm.ru/zabbix/api_jsonrpc.php', 'user' => 'manufacture', 'password' => 'queetoh6Ace', 'Manufacture' => '32', 'Manufacture_test' => '31', 'host' => 'promobotv4_'],
+        '6' => ['url' => 'https://195.69.158.137/zabbix/api_jsonrpc.php', 'user' => 'manufacture', 'password' => 'queetoh6Ace', 'Manufacture' => '15', 'Manufacture_test' => '19', 'host' => 'promobotv4_'],
+        '7' => ['url' => 'https://195.69.158.137/zabbix/api_jsonrpc.php', 'user' => 'manufacture', 'password' => 'queetoh6Ace', 'Manufacture' => '15', 'Manufacture_test' => '19', 'host' => 'promobotv4_'],
+    ];
+
+
+
 
     function __construct()
     {
@@ -175,10 +185,10 @@ class Checks
             }
 
         }
-        /* выяснить что при снятии отметке 131 чека */
-        if ($id == 131 && $value == 0) {
+        /* при снятии чека 131(Проверка после первичного теста) ничего не делать!!! */
+        /*if ($id == 131 && $value == 0) {
             return false;
-        }
+        }*/
         $query = "UPDATE `check` SET `check` = '$value', `update_user` = '$user_id', `update_date` = '$date', `id_kit` = '$kit' WHERE `id` = $id_row";
         $result = $this->pdo->query($query);
         $query = "SELECT * FROM `check` WHERE `id` = $id_row";
@@ -189,7 +199,7 @@ class Checks
         $title = $check_items_array['0']['operation'];
         $stage = $check_items_array['0']['category'];
 
-        /*выяснить что при отметке 54 чека*/
+        /* при отметке чека 54(Включение/выключение робота) отправка сообщения в телегу */
         if ($id == 54 && $value == 1) {
             $query = "SELECT * FROM robots WHERE id='$robot'";
             $result = $this->pdo->query($query);
@@ -205,29 +215,42 @@ class Checks
 
         }
 
-        /* выяснить что происходит при отметке 105 или 314 чека */
-        if (($id == 105 || $id == 314) && $value == 1) {
+        /* при отметке чека 105(отправка) смена состояния ПО */
+        /* при отметке чека 314(отправка) смена состояния ПО */
+        /* при отметке чека 553(отправка) смена состояния ПО */
+        /* при отметке чека 548(отправка) смена состояния ПО */
+        if (($id == 105 || $id == 314 || $id == 553 || $id == 548) && $value == 1) {
             $query = "SELECT * FROM robots WHERE id='$robot'";
             $result = $this->pdo->query($query);
             while ($line = $result->fetch()) {
                 $robot_array[] = $line;
             }
+            $version = $robot_array[0]['version'];
             $robot_name = $robot_array[0]['name'];
-            $this->auth = $this->z_auth();
             $num        = str_pad($number, 4, "0", STR_PAD_LEFT);
+            $this->auth = $this->z_auth_new($version);
+            $z_host     = $this->z_get_hosts_new(['host' => self::ZABIX[$version]['host'].$num], $version);
+            $this->z_remove_group_new($z_host[0]['hostid'], self::ZABIX[$version]['Manufacture_test'], $version);
+            $this->z_remove_group_new($z_host[0]['hostid'], self::ZABIX[$version]['Manufacture'], $version);
+            /* старый код
+            $this->auth = $this->z_auth();
             $z_host     = $this->z_get_hosts(array(
                 'host' => 'promobotv4_' . $num
             ));
             $this->z_remove_group($z_host[0]['hostid'], '31');
             $this->z_remove_group($z_host[0]['hostid'], '32');
+            */
             $icon         = '🚚';
             $comment      = " Робот  #" . $number . "(" . $robot_name . ") отправлен";
             $telegram_str = $icon . $comment;
             $this->telegram->sendNotify("sale", $telegram_str);
         }
 
-        /* выяснить что происходит при отметке 104 или 308 чека */
-        if (($id == 104 || $id ==308) && $value == 1) {
+        /* при отметке чека 104(Упаковка) отправка сообщения в телегу и на почту*/
+        /* при отметке чека 308(Проверить робота в Zabbix) отправка сообщения в телегу и на почту*/
+        /* при отметке чека 552(упаковка/наклеить транспортировочные наклейки) отправка сообщения в телегу и на почту*/
+        /* при отметке чека 547(упаковка/наклеить транспортировочные наклейки) отправка сообщения в телегу и на почту*/
+        if (($id == 104 || $id ==308 || $id ==552 || $id ==547) && $value == 1) {
             $query = "SELECT * FROM robots WHERE id='$robot'";
             $result = $this->pdo->query($query);
             while ($line = $result->fetch()) {
@@ -249,8 +272,8 @@ class Checks
         $robot_name    = $robot_array['0']['name'];
         $robot_version = $robot_array['0']['version'];
 
-        /* выяснить что происходит при отметке 131 чека !!!! робот списывается - почему?*/
-        if ($id == 131 && $value == 1) {
+        /* при снятии чека 131(Проверка после первичного теста) робот списывается */
+        /*if ($id == 131 && $value == 1) {
             if ($remont == 0) {
                 $query = "SELECT * FROM robots WHERE id='$robot'";
                 $result = $this->pdo->query($query);
@@ -262,7 +285,7 @@ class Checks
                 // $this->sklad->set_writeoff($robot_version,$number);
                 // $this->sklad->set_writeoff_options($robot_version,$number,0,$id,$robot);
             }
-        }
+        }*/
 
         //создане лога
         if ($value == 1) {
@@ -392,6 +415,7 @@ class Checks
             return $robots_array;
     }
 
+    /* CТАРЫЙ ЗАБИКС */
     function my_curl_zabbix($arr)
     {
         $url            = 'https://pb2.icmm.ru/zabbix/api_jsonrpc.php';
@@ -416,7 +440,6 @@ class Checks
         curl_close($curl);
         return json_decode($return, true);
     }
-
     function z_auth()
     {
         $jsonData = array(
@@ -433,7 +456,6 @@ class Checks
         //print_r($auth_arr);
         return $auth_arr['result'];
     }
-
     function z_get_hosts($filter_arr)
     {
         $jsonData = array(
@@ -454,7 +476,6 @@ class Checks
         //print_r($result);
         return $result['result'];
     }
-
     function z_update_hosts($host_id, $action)
     {
         $jsonData = array(
@@ -478,7 +499,6 @@ class Checks
         //echo 123;
         return $result;
     }
-
     function z_add_group($host_id, $group)
     {
         $jsonData                                  = array(
@@ -490,7 +510,6 @@ class Checks
         //print_r($result) ;
         return $result;
     }
-
     function z_remove_group($host_id, $group)
     {
         $jsonData                       = array(
@@ -502,6 +521,115 @@ class Checks
         //print_r($result) ;
         return $result;
     }
+    /**/
+
+    /* НОВЫЙ ЗАБИКС */
+    function my_curl_zabbix_new($arr, $version)
+    {
+        $url            = self::ZABIX[$version]['url'];
+        $arr['jsonrpc'] = '2.0';
+        $arr['id']      = '1';
+        $arr['auth']    = $this->auth;
+        // echo $arr['auth'];
+        $postfields     = json_encode($arr);
+        $curl           = curl_init();
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+            'Content-Type: application/json-rpc'
+        ));
+        curl_setopt($curl, CURLOPT_HEADER, false);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 20);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($curl, CURLOPT_POST, 1);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $postfields);
+        $return = curl_exec($curl);
+        curl_close($curl);
+        return json_decode($return, true);
+    }
+    function z_auth_new($version)
+    {
+        $jsonData = array(
+            "jsonrpc" => "2.0",
+            "method" => "user.login",
+            "params" => array(
+                "user" => self::ZABIX[$version]['user'],
+                "password" => self::ZABIX[$version]['password'],
+            ),
+            "id" => "1",
+            "auth" => "null"
+        );
+        $auth_arr = $this->my_curl_zabbix_new($jsonData, $version);
+        //print_r($auth_arr);
+        return $auth_arr['result'];
+    }
+    function z_get_hosts_new($filter_arr, $version)
+    {
+        $jsonData = array(
+            "method" => "host.get",
+            "params" => array(
+                "output" => array(
+                    "hostid",
+                    "host",
+                    "name"
+                ),
+                "selectInventory" => "name"
+            )
+        );
+        if ($filter_arr) {
+            $jsonData['params']['filter'] = $filter_arr;
+        }
+        $result = $this->my_curl_zabbix_new($jsonData, $version);
+        //print_r($result);
+        return $result['result'];
+    }
+    function z_update_hosts_new($host_id, $action, $version)
+    {
+        $jsonData = array(
+            "method" => "host.update",
+            "params" => array(
+                "hostid" => "{$host_id}"
+            )
+        );
+        switch ($action) {
+            case 'disable':
+                $jsonData['params']['status'] = 1;
+                break;
+            case 'enable':
+                $jsonData['params']['status'] = 0;
+                break;
+            default:
+                return false;
+        }
+        $result = $this->my_curl_zabbix_new($jsonData, $version);
+        //print_r($result);
+        //echo 123;
+        return $result;
+    }
+    function z_add_group_new($host_id, $group, $version)
+    {
+        $jsonData                                  = array(
+            "method" => "hostgroup.massadd"
+        );
+        $jsonData['params']['groups'][]['groupid'] = $group;
+        $jsonData['params']['hosts'][]['hostid']   = $host_id;
+        $result = $this->my_curl_zabbix_new($jsonData, $version);
+        //print_r($result) ;
+        return $result;
+    }
+    function z_remove_group_new($host_id, $group, $version)
+    {
+        $jsonData                       = array(
+            "method" => "hostgroup.massremove"
+        );
+        $jsonData['params']['groupids'] = $group;
+        $jsonData['params']['hostids']  = $host_id;
+        $result = $this->my_curl_zabbix_new($jsonData, $version);
+        //print_r($result) ;
+        return $result;
+    }
+    /**/
 
     //взять информацию по исходному чеклисту (ид чеклиста)
     function get_info_check($id)

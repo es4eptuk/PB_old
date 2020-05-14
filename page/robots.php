@@ -12,6 +12,17 @@ class Robots
     public $getEquipment;
     public $getOptions;
 
+    const LANGUAGE =[
+        "russian" => "Русский",
+        "english" => "Английский",
+        "spanish" => "Испаниский",
+        "turkish" => "Турецкий",
+        "arab" => "Арабский",
+        "portuguese" => "Португальский",
+        "german" => "Немецкий",
+    ];
+
+
 
     function __construct()
     {
@@ -145,7 +156,7 @@ class Robots
         $number = $number_str;
         $number_0 = ltrim($number, '0');
         $version = substr($number,0,1);
-        if ($version == 0) {
+        if ($version != '5' && $version != '6' && $version != '7') {
             $version = '4';
         }
 
@@ -235,7 +246,7 @@ class Robots
                 $user_id = 33;
 
                 if ($status != "OK" and preg_match("(2048|640|136|138)", "$problem") != true) {
-                    //не создавать версии для 6 и 7 версии роботов
+                    //не создавать тикеты для версии для 6 и 7 версии роботов
                     if ($version != 6 && $version != 7) {
                         $this->query = "INSERT INTO `tickets` (
                                                 `id`, 
@@ -305,15 +316,54 @@ class Robots
         if (isset($robot_array)) return $robot_array['0'];
     }
 
+    function print_info_robot($id)
+    {
+        $robot = $this->get_info_robot($id);
+        if (isset($robot)) {
+            $robot['version'] = $this->getEquipment[$robot['version']]['title'];
+
+            $customer = $this->get_customers()[$robot['customer']];
+            $robot['customer'] = $customer['name'];
+            $robot['fio'] = $customer['fio'];
+            $robot['email'] = $customer['email'];
+            $robot['phone'] = $customer['phone'];
+
+            $robot['brand'] = ($robot['brand'] == '') ? 'Нет' : $robot['brand'];
+            $robot['ikp'] = ($robot['ikp'] == '') ? 'Нет' : $robot['ikp'];
+            $robot['dop'] = ($robot['dop'] == '') ? 'Нет' : $robot['dop'];
+            $robot['battery'] = ($robot['battery'] == 1) ? 'Есть' : 'Нет';
+            $robot['language_robot'] = self::LANGUAGE[$robot['language_robot']];
+            $robot['language_doc'] = self::LANGUAGE[$robot['language_doc']];
+
+            $options = '';
+            foreach ($this->get_robot_options($robot['id']) as $option) {
+                if ($option['check'] == 1) {
+                    $options .= '+'.$option['title'].'<br>';
+                }
+            }
+            $robot['options'] = ($options == '') ? 'Нет' : $options;
+        }
+
+        return (isset($robot)) ? $robot : null;
+    }
+
     //добавить робота
     function add_robot($number, $name, $version, $options, $customer, $language_robot, $language_doc, $charger, $color, $brand, $ikp, $battery, $dop, $dop_manufactur, $date_start, $date_test, $send)
     {
         $date_start = new DateTime($date_start);
         $date_start = $date_start->format('Y-m-d H:i:s');
-        $date_test = new DateTime($date_test);
+        if ($date_test == null) {
+            $date_test = new DateTime($date_test);
+            $date_test->modify('+1 month');
+        } else {
+            $date_test = new DateTime($date_test);
+        }
         $date_test = $date_test->format('Y-m-d H:i:s');
         $date = date("Y-m-d H:i:s");
         $user_id = intval($_COOKIE['id']);
+        if ($number == '') {
+            $number = '9999';
+        }
         $number = str_pad($number, 4, "0", STR_PAD_LEFT);
         if (!is_array($options)) {
             $options = [];

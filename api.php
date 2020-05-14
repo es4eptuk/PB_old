@@ -108,7 +108,7 @@ if (isset($_POST['action'])) {
         echo $position->add_pos_provider($_POST['type'], $_POST['title']);
     }
     if ($_POST['action'] == "add_full_provider") {
-        echo $position->add_full_provider($_POST['type'], $_POST['title'], $_POST['phone'], $_POST['email'], $_POST['address'], $_POST['contact']);
+        echo $position->add_full_provider($_POST['type'], $_POST['title'], $_POST['name'], $_POST['phone'], $_POST['email'], $_POST['address'], $_POST['contact']);
     }
     //Добавление поставщика 
     if ($_POST['action'] == "add_customer") {
@@ -135,7 +135,7 @@ if (isset($_POST['action'])) {
     }
     //Редактирование контрагента
     if ($_POST['action'] == "edit_provider") {
-        echo json_encode($position->edit_provider($_POST['id'], $_POST['title'], $_POST['type'], $_POST['phone'], $_POST['email'], $_POST['address'], $_POST['contact']), JSON_UNESCAPED_UNICODE);
+        echo json_encode($position->edit_provider($_POST['id'], $_POST['title'], $_POST['name'], $_POST['type'], $_POST['phone'], $_POST['email'], $_POST['address'], $_POST['contact']), JSON_UNESCAPED_UNICODE);
     }
     //Удаление позиции
     if ($_POST['action'] == "delete_pos") {
@@ -402,6 +402,9 @@ if (isset($_POST['action'])) {
     }
     if ($_POST['action'] == "setPaymentStatus") {
         echo json_encode($orders->setPaymentStatus($_POST['id'],$_POST['value']), JSON_UNESCAPED_UNICODE);
+    }
+    if ($_POST['action'] == "print_info_robot") {
+        echo json_encode($robots->print_info_robot($_POST['id']), JSON_UNESCAPED_UNICODE);
     }
 }
 if (isset($_GET['action'])) {

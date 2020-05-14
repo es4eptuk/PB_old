@@ -69,6 +69,7 @@ include 'include/class.inc.php';
                   <th>Кем</th>
                   <th></th>
                   <th></th>
+                  <th></th>
                   
                   
                 </tr>
@@ -85,10 +86,9 @@ include 'include/class.inc.php';
                     
                     
                     $color = "#fff";
-                    
                     if ($robot['progress']>0) {$color = "#f1f7c1";}
                     if ($robot['progress']==100) {$color = "#c1f7cc";}
-                     
+                    if ($robot['number']=='9999') {$color = "#f5c5dd;";}
                     
                     $user_info = $user->get_info_user($robot['update_user']);
                     $robot_date = new DateTime($robot['date']);
@@ -96,26 +96,39 @@ include 'include/class.inc.php';
                      $num = str_pad($robot['number'], 4, "0", STR_PAD_LEFT);  
                      $remont = "";
                      if ($robot['remont']>0) {$remont = '<br><small class="label bg-red">Модернизация</small>';} 
-                     
-                    echo "
-                    <tr class='edit' id='".$robot['id']."' style='cursor: pointer; background: ".$color.";'>
-                     
-                        
-                        <td>".$robot['version'].".".$num."</td>
-                        <td>".$robot['name']." ".$remont." </td>
-                        <td>".$robot['progress']."</td>
-                        <td>".$position->getCategoryes[$robot['stage']]['title']."</td>
-                        <td>".$robot['last_operation']."</td>
-                        <td>".$robot_date->format('d.m.Y')."</td>
-                        
-                        <td>".$user_info['user_name']." </td>
-                        <td><i class='fa fa-2x fa-align-justify' style='cursor: pointer;' id='".$robot['id']."'></i></td>
-                        <td><a href='./edit_robot.php?id=".$robot['id']."'><i class='fa fa-2x fa-pencil' style='cursor: pointer;' id='".$robot['id']."'></i></a></td>
 
-                    </tr>
-                       
-                       
+                     if ($userdata['user_id'] == 75 || $userdata['user_id'] == 14 || $userdata['user_id'] == 17) {
+                         echo "
+                        <tr class='edit' id='".$robot['id']."' style='cursor: pointer; background: ".$color.";'>
+                            <td>".$robot['version'].".".$num."</td>
+                            <td>".$robot['name']." ".$remont." </td>
+                            <td>".$robot['progress']."</td>
+                            <td>".$position->getCategoryes[$robot['stage']]['title']."</td>
+                            <td>".$robot['last_operation']."</td>
+                            <td>".$robot_date->format('d.m.Y')."</td>
+                            <td>".$user_info['user_name']." </td>
+                            <td><i class='fa fa-2x fa-align-justify' style='cursor: pointer;' id='".$robot['id']."'></i></td>
+                            <td><a href='./edit_robot.php?id=".$robot['id']."'><i class='fa fa-2x fa-pencil' style='cursor: pointer;' id='".$robot['id']."'></i></a></td>
+                            <td><i class='fa fa-2x fa-print' style='cursor: pointer;' id='".$robot['id']."'></i></td>
+                        </tr>
                        ";
+                     } else {
+                         echo "
+                        <tr class='edit' id='".$robot['id']."' style='cursor: pointer; background: ".$color.";'>
+                            <td>".$robot['version'].".".$num."</td>
+                            <td>".$robot['name']." ".$remont." </td>
+                            <td>".$robot['progress']."</td>
+                            <td>".$position->getCategoryes[$robot['stage']]['title']."</td>
+                            <td>".$robot['last_operation']."</td>
+                            <td>".$robot_date->format('d.m.Y')."</td>
+                            <td>".$user_info['user_name']." </td>
+                            <td><i class='fa fa-2x fa-align-justify' style='cursor: pointer;' id='".$robot['id']."'></i></td>
+                            <td><i class='fa fa-2x fa-print' style='cursor: pointer;' id='".$robot['id']."'></i></td>
+                            <td></td>
+                        </tr>
+                       ";
+                     }
+
                     }
                 }
                 }
@@ -146,7 +159,6 @@ include 'include/class.inc.php';
   <div class="control-sidebar-bg"></div>
 </div>
 <!-- ./wrapper -->
-
 <!-- Modal -->
 <div class="modal fade" id="add_robot" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -156,6 +168,7 @@ include 'include/class.inc.php';
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             </div>
             <div class="modal-body">
+            <?php if ($userdata['user_id'] == 75 || $userdata['user_id'] == 14 || $userdata['user_id'] == 17) { /*вывод полной формы для избранных*/ ?>
                 <form role="form" data-toggle="validator" id="add_pos">
                     <!-- text input -->
                     <!-- select -->
@@ -277,11 +290,105 @@ include 'include/class.inc.php';
                         <button type="button" class="btn btn-primary btn-danger pull-right" name="" data-dismiss="modal" aria-label="Close">Закрыть</button>
                     </div>
                 </form>
+            <?php } else { /*вывод формы для остальных*/?>
+                <form role="form" data-toggle="validator" id="add_pos">
+                    <div class="form-group">
+                        <label>Версия</label>
+                        <select class="form-control" name="version" id="version">
+                            <?php
+                            foreach ($robots->getEquipment as &$version) {
+                                echo "<option value='" . $version['id'] . "'>" . $version['title'] . "</option>";
+                            }
+                            ?>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Кодовое имя</label>
+                        <input type="text" class="form-control" name="name" id="name">
+                    </div>
+                    <div class="form-group">
+                        <label>Заказчик <small>(<a href="#" data-toggle="modal" data-target="#add_customer">Добавить</a>)</small></label>
+                        <select class="form-control" name="customer" id="customer">
+                            <option value="0"></option>
+                            <?php
+                            $arr = $robots->get_customers();
+                            foreach ($arr as &$customer) {
+                                echo "<option value='" . $customer['id'] . "'>" . $customer['name'] . "</option>";
+                            }
+                            ?>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Язык на роботе</label>
+                        <select class="form-control" name="language_robot" id="language_robot">
+                            <option value="russian">Русский</option>
+                            <option value="english">Английский</option>
+                            <option value="spanish">Испаниский</option>
+                            <option value="turkish">Турецкий</option>
+                            <option value="arab">Арабский</option>
+                            <option value="portuguese">Португальский</option>
+                            <option value="german">Немецкий</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Язык инструкции</label>
+                        <select class="form-control" name="language_doc" id="language_doc">
+                            <option value="russian">Русский</option>
+                            <option value="english">Английский</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Напряжение зарядной станции</label>
+                        <select class="form-control" name="charger" id="charger">
+                            <option value="220">220</option>
+                            <option value="110">110</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputFile">Комплектация</label>
+                        <?php
+                        $options = $robots->get_robot_options();
+                        foreach ($options as &$value) {
+                            $check = ($value['check'] == 1) ? "checked" : "";
+                            echo '<div class="checkbox"><label><input type="checkbox" class="check" id="'.$value['id'].'" '.$check.'name="options" value='.$value['id'].'>'.$value['title'].'</label></div>';
+                        }
+                        ?>
+                    </div>
+                    <div class="form-group">
+                        <label>Цвет</label>
+                        <input type="text" class="form-control" name="color" id="color">
+                    </div>
+                    <div class="form-group">
+                        <label>Брендирование </label>
+                        <input type="text" class="form-control" name="brand" id="brand">
+                    </div>
+                    <div class="form-group">
+                        <label>ИКП</label>
+                        <input type="text" class="form-control" name="ikp" id="ikp">
+                    </div>
+                    <div class="form-group">
+                        <label>Наличие АКБ</label>
+                        <select class="form-control" name="battery" id="battery">
+                            <option value="1">Да</option>
+                            <option value="0">Нет</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Дополнительная информация</label>
+                        <input type="text" class="form-control" name="dop" id="dop">
+                    </div>
+                    <div id="update"></div>
+                    <div class="box-footer">
+                        <button type="submit" class="btn btn-primary" id="save_close" name="">Сохранить</button>
+                        <button type="button" class="btn btn-primary btn-danger pull-right" name="" data-dismiss="modal" aria-label="Close">Закрыть</button>
+                    </div>
+                </form>
+            <?php } ?>
+
             </div>
         </div>
     </div>
 </div>
-
 <div aria-hidden="true" aria-labelledby="exampleModalLabel" class="modal fade" id="add_customer" role="dialog" tabindex="-1">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -316,7 +423,7 @@ include 'include/class.inc.php';
         </div>
     </div>
 </div>
-
+<div id="print-content"></div>
 <?php include 'template/scripts.php'; ?>
 <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
@@ -409,6 +516,15 @@ include 'include/class.inc.php';
                 options.push($(this).val());
             }
         });
+        if (number === undefined) {
+            number = '';
+            dop_manufactur = '';
+            date_start = null;
+            date_test = null;
+            send = 0;
+        }
+        //console.log(date_start);
+        //return false;
         $.post("./api.php", {
             action: "add_robot",
             number: number,
@@ -482,6 +598,63 @@ include 'include/class.inc.php';
         "order": [[0, "desc"]]
     });
 
+    //отправляемся в робота
+    $(".fa-print").click(function () {
+        var id = $(this).attr("id");
+        CallPrint(id);
+    });
+    //функция печати
+    function CallPrint(id) {
+        $.post( "./api.php", {action: "print_info_robot", id: id})
+            .done(function(data, robot) {
+                var robot_info = jQuery.parseJSON (data);
+                var table = '<table class="robot-info" border="1" cellspacing="0" style="width:100%;font-size:12px">' +
+                    '<tr><td style="width:40%"><b>Версия</b></td><td>'+robot_info['version']+'</td></tr>' +
+                    '<tr><td><b>Номер робота</b></td><td>'+robot_info['number']+'</td></tr>' +
+                    '<tr><td><b>Кодовое имя</b></td><td>'+robot_info['name']+'</td></tr>' +
+                    '<tr><td><b>Заказчик</b></td><td>'+robot_info['customer']+'</td></tr>' +
+                    '<tr><td colspan="2" style="padding-left:150px"><b>Комплектация</b></td></tr>' +
+                    '<tr><td>Опции</td><td>'+robot_info['options']+'</td></tr>' +
+                    '<tr><td>Цвет</td><td>'+robot_info['color']+'</td></tr>' +
+                    '<tr><td>Брендирование</td><td>'+robot_info['brand']+'</td></tr>' +
+                    '<tr><td>ИКП</td><td>'+robot_info['ikp']+'</td></tr>' +
+                    '<tr><td>Дополнительная информация</td><td>'+robot_info['dop']+'</td></tr>' +
+                    '<tr><td colspan="2" style="padding-left:150px"><b>Информация о Заказчике</b></td></tr>' +
+                    '<tr><td>ФИО</td><td>'+robot_info['fio']+'</td></tr>' +
+                    '<tr><td>e-mail</td><td>'+robot_info['email']+'</td></tr>' +
+                    '<tr><td>Телефон</td><td>'+robot_info['phone']+'</td></tr>' +
+                    '<tr><td colspan="2" style="padding-left:150px"><b>Информация для отгрузки</b></td></tr>' +
+                    '<tr><td>Наличие АКБ</td><td>'+robot_info['battery']+'</td></tr>' +
+                    '<tr><td>Наличие колёс на кофре</td><td></td></tr>' +
+                    '<tr><td>Напряжение зарядной станции</td><td>'+robot_info['charger']+'</td></tr>' +
+                    '<tr><td>Язык (робота)</td><td>'+robot_info['language_robot']+'</td></tr>' +
+                    '<tr><td>Язык (инструкции)</td><td>'+robot_info['language_doc']+'</td></tr>' +
+                    '<tr><td>Наименование получателя</td><td>'+robot_info['customer']+'</td></tr>' +
+                    '<tr><td>Юридич. адрес получателя</td><td></td></tr>' +
+                    '<tr><td>ИНН получателя</td><td></td></tr>' +
+                    '<tr><td>Адрес доставки</td><td></td></tr>' +
+                    '<tr><td>Телефон, имя получателя</td><td>'+robot_info['phone']+' '+robot_info['fio']+'</td></tr>' +
+                    '<tr><td>Плательщик по доставке</td><td></td></tr>' +
+                    '<tr><td>Аэропорт доставки</td><td></td></tr>' +
+                    '</table>';
+                var prtContent = document.getElementById('print-content');
+                //var prtCSS = '<link rel="stylesheet" href="./dist/css/print.css" type="text/css" />';
+                var prtCSS = '<style>' +
+                             'td {padding:5px}' +
+                             '</style>';
+                var WinPrint = window.open('','','left=50,top=50,width=800,height=640,toolbar=0,scrollbars=1,status=0');
+                //console.log(table);
+                WinPrint.document.write('');
+                WinPrint.document.write(prtCSS);
+                WinPrint.document.write(prtContent.innerHTML=table);
+                WinPrint.document.write('');
+                WinPrint.document.close();
+                WinPrint.focus();
+                WinPrint.print();
+                WinPrint.close();
+                prtContent.innerHTML = '';
+            });
+    }
 </script>
 </body>
 </html>

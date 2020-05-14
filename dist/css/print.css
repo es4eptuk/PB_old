@@ -1,20 +1,23 @@
 @media print {
-  
-  
-  .box-footer, .quant_inp, .date_inp, .input-group-addon, .form-group, .box-title_p {
-    display: none;
+    .box-footer, .quant_inp, .date_inp, .input-group-addon, .form-group, .box-title_p {
+        display: none;
+    }
+    .input-group .form-control, .input-group-addon, .input-group-btn {
+        display: none;
+    }
+    .box-header > .fa, .box-header > .glyphicon, .box-header > .ion, .box-header .box-title_p {
+        display: none;
+
+    }
+    .print {
+        display: block;
+    }
 }
 
-.input-group .form-control, .input-group-addon, .input-group-btn {
-    display: none;
+.robot-info {
+    margin: 50px;
 }
-
-.box-header > .fa, .box-header > .glyphicon, .box-header > .ion, .box-header .box-title_p {
-    display: none;
-   
-}
-.print {
-    display: block;
-}
-  
+.robot-info>tr>td {
+    /*align: right;*/
+    /*padding: 20px;*/
 }
