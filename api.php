@@ -157,11 +157,7 @@ if (isset($_POST['action'])) {
     if ($_POST['action'] == "delete_robot") {
         echo json_encode($robots->del_robot($_POST['id']), JSON_UNESCAPED_UNICODE);
     }
-    //Получение информации о пользователе
-    if ($_POST['action'] == "get_info_user") {
-        echo json_encode($user->get_info_user($_POST['id']), JSON_UNESCAPED_UNICODE);
-    }
-    //Получение название категории по id  
+    //Получение название категории по id
     if ($_POST['action'] == "get_name_pos_category") {
         echo $position->get_name_pos_category($_POST['id']);
         // echo $_GET['id'];
@@ -422,7 +418,21 @@ if (isset($_POST['action'])) {
     }
     if ($_POST['action'] == "get_info_customer") {
         $customer = $robots->get_customers();
-        echo json_encode($customer[($_POST['id'])], JSON_UNESCAPED_UNICODE);
+        echo json_encode($customer[$_POST['id']], JSON_UNESCAPED_UNICODE);
+    }
+
+    //пользователи
+    if ($_POST['action'] == "add_user") {
+        echo json_encode($user->add_user($_POST['login'], $_POST['password'], $_POST['name'], $_POST['email'], $_POST['group']), JSON_UNESCAPED_UNICODE);
+    }
+    if ($_POST['action'] == "edit_user") {
+        echo json_encode($user->edit_user($_POST['id'], $_POST['name'], $_POST['email'], $_POST['group']), JSON_UNESCAPED_UNICODE);
+    }
+    if ($_POST['action'] == "del_user") {
+        echo json_encode($user->del_user($_POST['id']), JSON_UNESCAPED_UNICODE);
+    }
+    if ($_POST['action'] == "get_info_user") {
+        echo json_encode($user->get_info_user($_POST['id']), JSON_UNESCAPED_UNICODE);
     }
 }
 if (isset($_GET['action'])) {

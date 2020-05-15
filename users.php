@@ -15,7 +15,7 @@ include 'include/class.inc.php';
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <section class="content-header">
-      <h1>Покупатели</h1>
+      <h1>Пользователи</h1>
     </section>
 
     <!-- Main content -->
@@ -26,37 +26,33 @@ include 'include/class.inc.php';
 
           <div class="box">
             <div class="box-header">
-                <button type="submit" class="btn btn-primary"  data-toggle="modal" data-target="#add_customer">Добавить покупателя</button>
+                <button type="submit" class="btn btn-primary"  data-toggle="modal" data-target="#add_user">Добавить пользователя</button>
             </div>
             <!-- /.box-header -->
             <div class="box-body">
               <table id="pos" class="table table-bordered table-striped">
                 <thead>
                 <tr>
-                    <th>Наименование организации</th>
-                    <th>ИНН</th>
-                    <th>КЛ:ФИО</th>
-                    <th>КЛ:Телефон</th>
-                    <th>КЛ:Email</th>
-                    <th>Адрес</th>
+                    <th>Id</th>
+                    <th>ФИО</th>
+                    <th>Email</th>
+                    <th>Группа</th>
                     <th></th>
                     <th></th>
                 </tr>
                 </thead>
                 <tbody>
                 <?php 
-                    $arr = $robots->get_customers();
+                    $arr = $user->get_users();
                     foreach ($arr as &$pos) {
                        echo "
                            <tr >
-                              <td>".$pos['name']."</td>
-                              <td>".$pos['inn']."</td>
-                              <td>".$pos['fio']."</td>                                                          
-                              <td>".$pos['phone']."</td>
-                              <td>".$pos['email']."</td>
-                              <td>".$pos['address']."</td>
-                              <td><i class='fa fa-2x fa-pencil' style='cursor: pointer;' data-id='".$pos['id']."'></i></td>
-                              <td><i class='fa fa-2x fa-remove' style='cursor: pointer;' data-id='".$pos['id']."'></i></td>
+                              <td>".$pos['user_id']."</td>                           
+                              <td>".$pos['user_name']."</td>
+                              <td>".$pos['user_email']."</td>
+                              <td>".$user->getGroups[$pos['group']]['title']."</td>                                                          
+                              <td><i class='fa fa-2x fa-pencil' style='cursor: pointer;' data-id='".$pos['user_id']."'></i></td>
+                              <td><i class='fa fa-2x fa-remove' style='cursor: pointer;' data-id='".$pos['user_id']."'></i></td>
                            </tr>
                        ";
                     }
@@ -97,28 +93,22 @@ include 'include/class.inc.php';
                 <form role="form" data-toggle="validator" id="add_pos">
                     <!-- text input -->
                     <div class="form-group">
-                        <label>Наименование организации</label>
+                        <label>ФИО</label>
                         <input type="text" class="form-control" name="name" required="required" id="edit_name">
                     </div>
                     <div class="form-group">
-                        <label>ИНН</label>
-                        <input type="text" class="form-control" name="inn" id="edit_inn">
-                    </div>
-                    <div class="form-group">
-                        <label>Контактное лицо ФИО</label>
-                        <textarea class="form-control" rows="1" placeholder="Enter ..." id="edit_fio"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>Телефон</label>
-                        <textarea class="form-control" rows="1" placeholder="+7 ..." id="edit_phone"></textarea>
-                    </div>
-                    <div class="form-group">
                         <label>Email</label>
-                        <textarea class="form-control" rows="1" placeholder="@ ..." id="edit_email"></textarea>
+                        <input type="text" class="form-control" name="email" id="edit_email">
                     </div>
                     <div class="form-group">
-                        <label>Адрес</label>
-                        <textarea class="form-control" rows="3" placeholder="Россия ..." id="edit_address"></textarea>
+                        <label>Группа</label>
+                        <select class="form-control" name="group" id="edit_group">
+                            <?php
+                            foreach ($user->getGroups as $group) {
+                                echo "<option value='" . $group['id'] . "'>" . $group['title'] . "</option>";
+                            }
+                            ?>
+                        </select>
                     </div>
                     <div class="box-footer">
                         <button type="submit" class="btn btn-primary" id="save_close" name="">Сохранить</button>
@@ -129,7 +119,7 @@ include 'include/class.inc.php';
     </div>
 </div>
 
-<div class="modal fade" id="add_customer" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="add_user" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -139,34 +129,36 @@ include 'include/class.inc.php';
                 </button>
             </div>
             <div class="modal-body">
-                <form role="form" data-toggle="validator" id="add_customer_form">
+                <form role="form" data-toggle="validator" id="add_user_form">
                     <div class="form-group">
-                        <label>Наименование организации</label>
-                        <input type="text" class="form-control" name="name" id="name" required="required">
+                        <label>Логин</label>
+                        <input type="text" class="form-control" name="login" id="login">
                     </div>
                     <div class="form-group">
-                        <label>ИНН</label>
-                        <input type="text" class="form-control" name="inn" id="inn">
+                        <label>Пароль</label>
+                        <input type="text" class="form-control" name="password" id="password">
                     </div>
                     <div class="form-group">
-                        <label>Контактное лицо ФИО</label>
-                        <textarea class="form-control" rows="1" placeholder="Enter ..." id="fio"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>Телефон</label>
-                        <textarea class="form-control" rows="1" placeholder="+7 ..." id="phone"></textarea>
+                        <label>ФИО</label>
+                        <input type="text" class="form-control" name="name" required="required" id="name">
                     </div>
                     <div class="form-group">
                         <label>Email</label>
-                        <textarea class="form-control" rows="1" placeholder="@ ..." id="email"></textarea>
+                        <input type="text" class="form-control" name="email" id="email">
                     </div>
                     <div class="form-group">
-                        <label>Адрес</label>
-                        <textarea class="form-control" rows="3" placeholder="Россия ..." id="address"></textarea>
+                        <label>Группа</label>
+                        <select class="form-control" name="group" id="group">
+                            <?php
+                            foreach ($user->getGroups as $group) {
+                                echo "<option value='" . $group['id'] . "'>" . $group['title'] . "</option>";
+                            }
+                            ?>
+                        </select>
                     </div>
                     <div class="box-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
-                        <button type="button" class="btn btn-primary" id="btn_add_customer">Добавить</button>
+                        <button type="button" class="btn btn-primary" id="btn_add_user">Добавить</button>
                     </div>
                 </form>
             </div>
@@ -198,16 +190,13 @@ include 'include/class.inc.php';
         id_pos = $(this).data("id");
         $('#pos_edit').modal('show');
         $.post("./api.php", {
-            action: "get_info_customer",
+            action: "get_info_user",
             id: id_pos
         }).done(function (data) {
             var obj = jQuery.parseJSON(data);
-            $('#edit_name').val(obj['name']);
-            $('#edit_inn').val(obj['inn']);
-            $('#edit_fio').val(obj['fio']);
-            $('#edit_email').val(obj['email']);
-            $('#edit_phone').val(obj['phone']);
-            $('#edit_address').val(obj['address']);
+            $('#edit_name').val(obj['user_name']);
+            $('#edit_email').val(obj['user_email']);
+            $('#edit_group').val(obj['group']);
         });
     });
 
@@ -215,7 +204,7 @@ include 'include/class.inc.php';
         if (confirm("Ты хорошо подумал?")) {
             var id = $(this).data("id");
             $.post("./api.php", {
-                action: "del_customer",
+                action: "del_user",
                 id: id
             }).done(function (data) {
                 window.location.reload(true);
@@ -245,53 +234,42 @@ include 'include/class.inc.php';
 
     function save_close() {
         var name = $('#edit_name').val();
-        var inn = $('#edit_inn').val();
-        var fio = $('#edit_fio').val();
         var email = $('#edit_email').val();
-        var phone = $('#edit_phone').val();
-        var address = $('#edit_address').val();
-        if (name != "") {
-            $.post("./api.php", {
-                action: "edit_customer",
-                id: id_pos,
-                name: name,
-                fio: fio,
-                phone: phone,
-                email: email,
-                address: address,
-                inn: inn
-            }).done(function (data) {
-                if (data == "false") {
-                    alert("Data Loaded: " + data);
-                } else {
-                    window.location.reload(true);
-                }
-            });
-        } else {
-            return false;
-        }
+        var group = $('#edit_group').val();
+        $.post("./api.php", {
+            action: "edit_user",
+            id: id_pos,
+            name: name,
+            email: email,
+            group: group,
+        }).done(function (data) {
+            if (data == "false") {
+                alert("Data Loaded: " + data);
+            } else {
+                window.location.reload(true);
+            }
+        });
     }
 
-    $("#btn_add_customer").click(function () {
+    $("#btn_add_user").click(function () {
+        var login = $('#login').val();
+        var password = $('#password').val();
         var name = $('#name').val();
-        var inn = $('#inn').val();
-        var fio = $('#fio').val();
         var email = $('#email').val();
-        var phone = $('#phone').val();
-        var address = $('#address').val();
-        if (name != "") {
+        var group = $('#group').val();
+        if (login != "" && password != "") {
             $.post("./api.php", {
-                action: "add_full_customer",
+                action: "add_user",
+                login: login,
+                password: password,
                 name: name,
-                fio: fio,
-                phone: phone,
                 email: email,
-                address: address,
-                inn: inn
+                group: group
             }).done(function (data) {
-                //console.log(data);
-                if (data == "false") {
-                    alert("Data Loaded: " + data);
+                var obj = jQuery.parseJSON(data);
+                if (obj['result'] == false) {
+                    console.log(obj['err']);
+                    alert(obj['err']);
                     return false;
                 } else {
                     window.location.reload(true);
