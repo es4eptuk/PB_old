@@ -83,51 +83,44 @@ include 'include/class.inc.php';
                 foreach ($arr as &$robot) {
                     
                     if ($robot['progress']!=100 || isset($_GET['show_all'])=='on') {
-                    
-                    
-                    $color = "#fff";
-                    if ($robot['progress']>0) {$color = "#f1f7c1";}
-                    if ($robot['progress']==100) {$color = "#c1f7cc";}
-                    if ($robot['number']=='9999') {$color = "#f5c5dd;";}
-                    
-                    $user_info = $user->get_info_user($robot['update_user']);
-                    $robot_date = new DateTime($robot['date']);
-                    $robot_date_test = new DateTime($robot['date_test']);
-                     $num = str_pad($robot['number'], 4, "0", STR_PAD_LEFT);  
-                     $remont = "";
-                     if ($robot['remont']>0) {$remont = '<br><small class="label bg-red">Модернизация</small>';} 
 
-                     if ($userdata['user_id'] == 75 || $userdata['user_id'] == 14 || $userdata['user_id'] == 17) {
+                        $color = "#fff";
+                        if ($robot['progress']>0) {$color = "#f1f7c1";}
+                        if ($robot['progress']==100) {$color = "#c1f7cc";}
+                        if ($robot['delete']==2) {$color = "#f5c5dd;";}
+
+                        $user_info = $user->get_info_user($robot['update_user']);
+                        $robot_date = new DateTime($robot['date']);
+                        $robot_date_test = new DateTime($robot['date_test']);
+                         $num = str_pad($robot['number'], 4, "0", STR_PAD_LEFT);
+                         $remont = "";
+                         if ($robot['remont']>0) {$remont = '<br><small class="label bg-red">Модернизация</small>';}
+                         $edit = ($userdata['user_id'] == 75 || $userdata['user_id'] == 14 || $userdata['user_id'] == 17) ? "<a href='./edit_robot.php?id=".$robot['id']."'><i class='fa fa-2x fa-pencil' style='cursor: pointer;'></i></a>" : "";
+                         if ($robot['delete']==2) {
+                             $print = "";
+                             $check = "";
+                             if ($userdata['user_id'] == 75 || $userdata['user_id'] == 14 || $userdata['user_id'] == 17) {
+                                 $check = "<i class='fa fa-2x fa-play' style='cursor:pointer;color:#337ab7;' data-id='".$robot['id']."'></i>";
+                             }
+                         } else {
+                             $print = "<i class='fa fa-2x fa-print' style='cursor:pointer;color:#337ab7;' data-id='".$robot['id']."'></i>";
+                             $check = "<a href='./robot.php?id=".$robot['id']."'><i class='fa fa-2x fa-align-justify' style='cursor: pointer;'></i></a>";
+                         }
+
                          echo "
-                        <tr class='edit' id='".$robot['id']."' style='cursor: pointer; background: ".$color.";'>
-                            <td>".$robot['version'].".".$num."</td>
-                            <td>".$robot['name']." ".$remont." </td>
-                            <td>".$robot['progress']."</td>
-                            <td>".$position->getCategoryes[$robot['stage']]['title']."</td>
-                            <td>".$robot['last_operation']."</td>
-                            <td>".$robot_date->format('d.m.Y')."</td>
-                            <td>".$user_info['user_name']." </td>
-                            <td><i class='fa fa-2x fa-align-justify' style='cursor: pointer;' id='".$robot['id']."'></i></td>
-                            <td><a href='./edit_robot.php?id=".$robot['id']."'><i class='fa fa-2x fa-pencil' style='cursor: pointer;' id='".$robot['id']."'></i></a></td>
-                            <td><i class='fa fa-2x fa-print' style='cursor: pointer;' id='".$robot['id']."'></i></td>
-                        </tr>
-                       ";
-                     } else {
-                         echo "
-                        <tr class='edit' id='".$robot['id']."' style='cursor: pointer; background: ".$color.";'>
-                            <td>".$robot['version'].".".$num."</td>
-                            <td>".$robot['name']." ".$remont." </td>
-                            <td>".$robot['progress']."</td>
-                            <td>".$position->getCategoryes[$robot['stage']]['title']."</td>
-                            <td>".$robot['last_operation']."</td>
-                            <td>".$robot_date->format('d.m.Y')."</td>
-                            <td>".$user_info['user_name']." </td>
-                            <td><i class='fa fa-2x fa-align-justify' style='cursor: pointer;' id='".$robot['id']."'></i></td>
-                            <td><i class='fa fa-2x fa-print' style='cursor: pointer;' id='".$robot['id']."'></i></td>
-                            <td></td>
-                        </tr>
-                       ";
-                     }
+                            <tr class='edit' id='".$robot['id']."' style='cursor: pointer; background: ".$color.";'>
+                                <td>".$robot['version'].".".$num."</td>
+                                <td>".$robot['name']." ".$remont." </td>
+                                <td>".$robot['progress']."</td>
+                                <td>".$position->getCategoryes[$robot['stage']]['title']."</td>
+                                <td>".$robot['last_operation']."</td>
+                                <td>".$robot_date->format('d.m.Y')."</td>
+                                <td>".$user_info['user_name']."</td>
+                                <td>".$check."</td>
+                                <td>".$print."</td>
+                                <td>".$edit." </td>
+                            </tr>
+                         ";
 
                     }
                 }
@@ -263,7 +256,11 @@ include 'include/class.inc.php';
                     </div>
                     <div class="form-group">
                         <label>Информация от производства</label>
-                        <textarea rows="10" cols="45" class="form-control" name="dop_manufactur" id="dop_manufactur"></textarea>
+                        <textarea rows="5" cols="45" class="form-control" name="dop_manufactur" id="dop_manufactur"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Информация по доставке (наличие колёс на кофре, адрес доставки, телефон и имя получателя, плательщик по доставке, аэропорт доставки)</label>
+                        <textarea rows="5" cols="45" class="form-control" name="delivery" id="delivery"></textarea>
                     </div>
                     <div class="checkbox">
                         <label><input type="checkbox" id="send">Отправленный</label>
@@ -377,6 +374,10 @@ include 'include/class.inc.php';
                         <label>Дополнительная информация</label>
                         <input type="text" class="form-control" name="dop" id="dop">
                     </div>
+                    <div class="form-group">
+                        <label>Информация по доставке (наличие колёс на кофре, адрес доставки, телефон и имя получателя, плательщик по доставке, аэропорт доставки)</label>
+                        <textarea rows="5" cols="45" class="form-control" name="delivery" id="delivery"></textarea>
+                    </div>
                     <div id="update"></div>
                     <div class="box-footer">
                         <button type="submit" class="btn btn-primary" id="save_close" name="">Сохранить</button>
@@ -474,9 +475,30 @@ include 'include/class.inc.php';
     });
 
     //отправляемся в робота
-    $(".fa-align-justify").click(function () {
-        var id = $(this).attr("id");
+    /*$("#robots.fa-align-justify").click(function () {
+        var id = $(this).data("id");
         window.location.href = "./robot.php?id=" + id;
+    });*/
+
+    //отправляемся в робота
+    $("#robots").on('click', '.fa-print', function () {
+        var id = $(this).data("id");
+        CallPrint(id);
+    });
+
+    //запускаем робота в производство
+    $("#robots").on('click', '.fa-play', function () {
+        var id = $(this).data("id");
+        $.post("./api.php", {
+            action: "launch_production_robot",
+            id: id
+        }).done(function (data) {
+            if (data == "false") {
+                alert("Data Loaded: " + data);
+            } else {
+                window.location.href = "./robots.php";
+            }
+        });
     });
 
     //открывает модальное окно создать робота
@@ -507,6 +529,7 @@ include 'include/class.inc.php';
         var battery = $('#battery').val();
         var dop = $('#dop').val();
         var dop_manufactur = $('#dop_manufactur').val();
+        var delivery = $('#delivery').val();
         var date_start = $('#datepicker').val();
         var date_test = $('#datepicker2').val();
         var send = $('#send').is(':checked') ? 1 : 0;
@@ -516,6 +539,9 @@ include 'include/class.inc.php';
                 options.push($(this).val());
             }
         });
+        if (number === '') {
+            return false;
+        }
         if (number === undefined) {
             number = '';
             dop_manufactur = '';
@@ -543,15 +569,15 @@ include 'include/class.inc.php';
             dop_manufactur: dop_manufactur,
             date_start: date_start,
             date_test: date_test,
-            send: send
-        })
-            .done(function (data) {
-                if (data == "false") {
-                    alert("Data Loaded: " + data);
-                } else {
-                    window.location.href = "./robots.php";
-                }
-            });
+            send: send,
+            delivery: delivery
+        }).done(function (data) {
+            if (data == "false") {
+                alert("Data Loaded: " + data);
+            } else {
+                window.location.href = "./robots.php";
+            }
+        });
     }
 
     //отображать завершенных роботов
@@ -598,16 +624,13 @@ include 'include/class.inc.php';
         "order": [[0, "desc"]]
     });
 
-    //отправляемся в робота
-    $(".fa-print").click(function () {
-        var id = $(this).attr("id");
-        CallPrint(id);
-    });
     //функция печати
     function CallPrint(id) {
         $.post( "./api.php", {action: "print_info_robot", id: id})
-            .done(function(data, robot) {
-                var robot_info = jQuery.parseJSON (data);
+            .done(function(data) {
+                //console.log(data);
+                //return false;
+                var robot_info = jQuery.parseJSON(data);
                 var table = '<table class="robot-info" border="1" cellspacing="0" style="width:100%;font-size:12px">' +
                     '<tr><td style="width:40%"><b>Версия</b></td><td>'+robot_info['version']+'</td></tr>' +
                     '<tr><td><b>Номер робота</b></td><td>'+robot_info['number']+'</td></tr>' +
@@ -625,17 +648,13 @@ include 'include/class.inc.php';
                     '<tr><td>Телефон</td><td>'+robot_info['phone']+'</td></tr>' +
                     '<tr><td colspan="2" style="padding-left:150px"><b>Информация для отгрузки</b></td></tr>' +
                     '<tr><td>Наличие АКБ</td><td>'+robot_info['battery']+'</td></tr>' +
-                    '<tr><td>Наличие колёс на кофре</td><td></td></tr>' +
                     '<tr><td>Напряжение зарядной станции</td><td>'+robot_info['charger']+'</td></tr>' +
                     '<tr><td>Язык (робота)</td><td>'+robot_info['language_robot']+'</td></tr>' +
                     '<tr><td>Язык (инструкции)</td><td>'+robot_info['language_doc']+'</td></tr>' +
                     '<tr><td>Наименование получателя</td><td>'+robot_info['customer']+'</td></tr>' +
-                    '<tr><td>Юридич. адрес получателя</td><td></td></tr>' +
-                    '<tr><td>ИНН получателя</td><td></td></tr>' +
-                    '<tr><td>Адрес доставки</td><td></td></tr>' +
-                    '<tr><td>Телефон, имя получателя</td><td>'+robot_info['phone']+' '+robot_info['fio']+'</td></tr>' +
-                    '<tr><td>Плательщик по доставке</td><td></td></tr>' +
-                    '<tr><td>Аэропорт доставки</td><td></td></tr>' +
+                    '<tr><td>Юридич. адрес получателя</td><td>'+robot_info['address']+'</td></tr>' +
+                    '<tr><td>ИНН получателя</td><td></td>'+robot_info['inn']+'</tr>' +
+                    '<tr><td>Информация по доставке:<br>-наличие колёс на кофре<br>-адрес доставки<br>-телефон и имя получателя<br>-плательщик по доставке<br>-аэропорт доставки</td><td>'+robot_info['delivery']+'</td></tr>' +
                     '</table>';
                 var prtContent = document.getElementById('print-content');
                 //var prtCSS = '<link rel="stylesheet" href="./dist/css/print.css" type="text/css" />';

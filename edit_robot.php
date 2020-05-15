@@ -25,6 +25,8 @@ $robot_lidar = $robot_info['lidar'];
 $robot_other = $robot_info['other'];
 $robot_progress = $robot_info['progress'];
 $robot_date = $robot_info['date'];
+$delete = $robot_info['delete'];
+$delivery = $robot_info['delivery'];
 $robot_date = new DateTime($robot_date);
 $robot_date = $robot_date->format('d.m.Y');
 $robot_test = $robot_info['date_test'];
@@ -205,9 +207,13 @@ $robot_test = $robot_test->format('d.m.Y');
                     <label>Информация от производства</label>
                     <textarea rows="5" cols="45" class="form-control" name="dop_manufactur" id="dop_manufactur"><?php echo $robot_dop_manufactur ?></textarea>
                 </div>
+                <div class="form-group">
+                    <label>Информация по доставке (наличие колёс на кофре, адрес доставки, телефон и имя получателя, плательщик по доставке, аэропорт доставки)</label>
+                    <textarea rows="5" cols="45" class="form-control" name="delivery" id="delivery"><?php echo $delivery ?></textarea>
+                </div>
                 <div class="checkbox">
                     <label>
-                      <input type="checkbox" id="send" <?php echo ($robot_progress == 100) ? "checked" : ""; ?> <?php echo ($robot_progress == 0) ? "" : "disabled"; ?> >
+                      <input type="checkbox" id="send" <?php echo ($robot_progress == 100) ? "checked" : ""; ?> <?php echo ($robot_progress == 0 && $delete == 0) ? "" : "disabled"; ?> >
                       Отправленный
                     </label>
                   </div>
@@ -373,6 +379,7 @@ $robot_test = $robot_test->format('d.m.Y');
                 var battery = $('#battery').val();
                 var dop = $('#dop').val();
                 var dop_manufactur = $('#dop_manufactur').val();
+                var delivery = $('#delivery').val();
                 var date_start = $('#datepicker').val();
                 var date_test = $('#datepicker2').val();
                 var send = $('#send').is(':checked') ? 1 : 0;
@@ -401,7 +408,8 @@ $robot_test = $robot_test->format('d.m.Y');
                     dop_manufactur: dop_manufactur,
                     date_start: date_start,
                     date_test: date_test,
-                    send: send
+                    send: send,
+                    delivery: delivery
                 })
                     .done(function (data) {
                         if (data == "false") {

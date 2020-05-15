@@ -291,6 +291,7 @@ class Position
 
         return $result;
     }
+
     function get_pos_provider()
     {
         $query = 'SELECT * FROM pos_provider ORDER BY `title` ASC';
@@ -302,6 +303,7 @@ class Position
         if (isset($provider_array))
             return $provider_array;
     }
+
     function add_pos_provider($type, $title)
     {
         $date    = date("Y-m-d H:i:s");
@@ -318,7 +320,7 @@ class Position
         return $idd;
     }
     
-     function add_full_provider($type, $title, $name, $phone, $email, $address, $contact)
+    function add_full_provider($type, $title, $name, $phone, $email, $address, $contact)
     {
         $date    = date("Y-m-d H:i:s");
         $user_id = intval($_COOKIE['id']);
@@ -333,6 +335,7 @@ class Position
 
         return true;
     }
+
     function search($term)
     {
         $output  = '';

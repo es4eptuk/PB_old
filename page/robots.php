@@ -14,6 +14,7 @@ class Robots
 
     const LANGUAGE =[
         "russian" => "Русский",
+        "russian" => "Русский",
         "english" => "Английский",
         "spanish" => "Испаниский",
         "turkish" => "Турецкий",
@@ -88,18 +89,6 @@ class Robots
 
         //$this->sklad->unset_reserv($robots_array[0]['version']);
         return $result;
-    }
-
-    function get_customers()
-    {
-        $this->query  = "SELECT * FROM customers  ORDER BY `name` ASC";
-        $result = $this->pdo->query($this->query);
-        while ($line = $result->fetch())
-        {
-            $customer_array[] = $line;
-        }
-
-        if (isset($customer_array)) return $customer_array;
     }
 
     function get_log($id_robot)
@@ -303,8 +292,6 @@ class Robots
         $result = $this->pdo->query($this->query);
     }
 
-    public
-
     function get_info_robot($id)
     {
         $this->query = "SELECT * FROM robots WHERE id='$id'";
@@ -322,18 +309,29 @@ class Robots
         if (isset($robot)) {
             $robot['version'] = $this->getEquipment[$robot['version']]['title'];
 
-            $customer = $this->get_customers()[$robot['customer']];
-            $robot['customer'] = $customer['name'];
-            $robot['fio'] = $customer['fio'];
-            $robot['email'] = $customer['email'];
-            $robot['phone'] = $customer['phone'];
+            if ($robot['customer'] != 0) {
+                $customer = $this->get_customers()[$robot['customer']];
+                $robot['customer'] = $customer['name'];
+                $robot['fio'] = $customer['fio'];
+                $robot['email'] = $customer['email'];
+                $robot['phone'] = $customer['phone'];
+                $robot['address'] = $customer['address'];
+                $robot['inn'] = $customer['inn'];
+            } else {
+                $robot['customer'] = '';
+                $robot['fio'] = '';
+                $robot['email'] = '';
+                $robot['phone'] = '';
+                $robot['address'] = '';
+                $robot['inn'] = '';
+            }
 
             $robot['brand'] = ($robot['brand'] == '') ? 'Нет' : $robot['brand'];
             $robot['ikp'] = ($robot['ikp'] == '') ? 'Нет' : $robot['ikp'];
             $robot['dop'] = ($robot['dop'] == '') ? 'Нет' : $robot['dop'];
             $robot['battery'] = ($robot['battery'] == 1) ? 'Есть' : 'Нет';
-            $robot['language_robot'] = self::LANGUAGE[$robot['language_robot']];
-            $robot['language_doc'] = self::LANGUAGE[$robot['language_doc']];
+            $robot['language_robot'] = ($robot['language_robot'] != '') ? self::LANGUAGE[$robot['language_robot']] : '';
+            $robot['language_doc'] = ($robot['language_doc'] != '') ? self::LANGUAGE[$robot['language_doc']] : '';
 
             $options = '';
             foreach ($this->get_robot_options($robot['id']) as $option) {
@@ -342,13 +340,44 @@ class Robots
                 }
             }
             $robot['options'] = ($options == '') ? 'Нет' : $options;
+
         }
 
         return (isset($robot)) ? $robot : null;
     }
 
+    //запуск в производство робота
+    function launch_production_robot($id) {
+        $robot = $this->get_info_robot($id);
+        if ($robot['delete'] != 2) {
+            return false;
+        }
+        $query = "UPDATE `robots` SET `delete` = '0' WHERE `id` = $id";
+        $result = $this->pdo->query($query);
+        $options =[];
+        foreach ($this->get_robot_options($robot['id']) as $option) {
+            if ($option['check'] == 1) {
+                $options[] = $option['id'];
+            }
+        }
+        //собираем чеклисты привязанные к роботу
+        if ($result) {
+            //категории от 1 до 5
+            for ($i=1; $i<=5; $i++) {
+                $this->checks->add_robot_check($robot['version'], $i, $id);
+            }
+            //добавлем опции
+            foreach ($options as $option) {
+                $this->checks->add_option_check($option, $id, 1);
+            }
+            return true;
+        }
+
+        return false;
+    }
+
     //добавить робота
-    function add_robot($number, $name, $version, $options, $customer, $language_robot, $language_doc, $charger, $color, $brand, $ikp, $battery, $dop, $dop_manufactur, $date_start, $date_test, $send)
+    function add_robot($number, $name, $version, $options, $customer, $language_robot, $language_doc, $charger, $color, $brand, $ikp, $battery, $dop, $dop_manufactur, $date_start, $date_test, $send, $delivery)
     {
         $date_start = new DateTime($date_start);
         $date_start = $date_start->format('Y-m-d H:i:s');
@@ -361,8 +390,10 @@ class Robots
         $date_test = $date_test->format('Y-m-d H:i:s');
         $date = date("Y-m-d H:i:s");
         $user_id = intval($_COOKIE['id']);
+        $delete = 0;
         if ($number == '') {
             $number = '9999';
+            $delete = 2;
         }
         $number = str_pad($number, 4, "0", STR_PAD_LEFT);
         if (!is_array($options)) {
@@ -375,8 +406,8 @@ class Robots
         }
 
         $this->query = "INSERT 
-            INTO `robots` (`id`, `version`, `number`, `name`, `customer`, `language_robot`, `language_doc`, `charger`, `color`, `brand`, `ikp`, `battery`, `dop`, `dop_manufactur`, `progress`, `date`, `date_test`, `update_date`, `update_user`) 
-            VALUES (NULL, '$version', '$number', '$name', '$customer', '$language_robot', '$language_doc', '$charger', '$color', '$brand', '$ikp', '$battery', '$dop', '$dop_manufactur', '$progress', '$date_start', '$date_test', '$date', '$user_id')
+            INTO `robots` (`id`, `version`, `number`, `name`, `customer`, `language_robot`, `language_doc`, `charger`, `color`, `brand`, `ikp`, `battery`, `dop`, `dop_manufactur`, `progress`, `date`, `date_test`, `update_date`, `update_user`, `delete`, `delivery`) 
+            VALUES (NULL, '$version', '$number', '$name', '$customer', '$language_robot', '$language_doc', '$charger', '$color', '$brand', '$ikp', '$battery', '$dop', '$dop_manufactur', '$progress', '$date_start', '$date_test', '$date', '$user_id', '$delete', '$delivery')
         ";
         $result = $this->pdo->query($this->query);
 
@@ -385,12 +416,14 @@ class Robots
             $idd = $this->pdo->lastInsertId();
             //категории от 1 до 5
             for ($i=1; $i<=5; $i++) {
+                if ($delete == 2) {break;}
                 $this->checks->add_robot_check($version, $i, $idd);
             }
             //добавлем опции
             if (isset($options)) {
                 foreach ($options as $option) {
                     $this->add_options_on_robot($option, $idd);
+                    if ($delete == 2) {continue;}
                     $this->checks->add_option_check($option, $idd,1);
                 }
             }
@@ -478,7 +511,7 @@ class Robots
         //$this->sklad->set_reserv($version);
     }*/
 
-    function edit_robot($id, $number, $name, $version, $options, $customer, $language_robot, $language_doc, $charger, $color, $brand, $ikp, $battery, $dop, $dop_manufactur, $date_start, $date_test, $send)
+    function edit_robot($id, $number, $name, $version, $options, $customer, $language_robot, $language_doc, $charger, $color, $brand, $ikp, $battery, $dop, $dop_manufactur, $date_start, $date_test, $send, $delivery)
     {
         $date_start = new DateTime($date_start);
         $date_start = $date_start->format('Y-m-d H:i:s');
@@ -523,6 +556,7 @@ class Robots
         `progress`  = $progress,
         `date` = '$date_start',
         `date_test` = '$date_test',
+        `delivery` = '$delivery',
         `update_user` = '$user_id', 
         `update_date` = '$date' 
         WHERE `id` = $id";
@@ -539,21 +573,23 @@ class Robots
         if (!is_array($options)) {
             $options = [];
         }
-
+        $robot = $this->get_info_robot($id);
         //удаляем опции
         $del = array_diff($options_old, $options);
         if (isset($del)) {
             foreach ($del as $option) {
-                $this->checks->add_option_check($option, $id,0);
                 $this->del_options_on_robot($option, $id);
+                if ($robot['delete'] == 2) {continue;}
+                $this->checks->add_option_check($option, $id,0);
             }
         }
         //добавлем опции
         $add = array_diff($options, $options_old);
         if (isset($add)) {
             foreach ($add as $option) {
-                $this->checks->add_option_check($option, $id,1);
                 $this->add_options_on_robot($option, $id);
+                if ($robot['delete'] == 2) {continue;}
+                $this->checks->add_option_check($option, $id,1);
             }
         }
 
@@ -607,6 +643,7 @@ class Robots
         if (isset($robots_array)) return $robots_array;
     }
 
+    //создать покупателя
     function add_customer($name, $fio, $phone, $email, $address)
     {
         $date = date("Y-m-d H:i:s");
@@ -615,6 +652,42 @@ class Robots
         $result = $this->pdo->query($this->query);
         $idd = $this->pdo->lastInsertId();
         return $idd;
+    }
+
+    //создать покупателя все данные
+    function add_full_customer($name, $fio, $phone, $email, $address, $inn)
+    {
+        $query = "INSERT INTO `customers` (`id`, `name`, `fio`, `phone`, `email`, `address`, `inn`) VALUES (NULL, '$name', '$fio', '$phone', '$email', '$address', '$inn')";
+        $result = $this->pdo->query($query);
+        return ($result) ? true : false;
+    }
+
+    //редактировать покупателя
+    function edit_customer($id, $name, $fio, $phone, $email, $address, $inn)
+    {
+        $query = "UPDATE `customers` SET `name` = '$name', `fio` = '$fio', `phone` = '$phone', `email` = '$email', `address` = '$address', `inn` = '$inn' WHERE `id` = $id;";
+        $result = $this->pdo->query($query);
+        return ($result) ? true : false;
+    }
+
+    //удалить поставщика
+    function del_customer($id)
+    {
+        $query = "DELETE FROM `customers` WHERE `id` = $id";
+        $result = $this->pdo->query($query);
+        return ($result) ? true : false;
+    }
+
+    //все покупатели
+    function get_customers()
+    {
+        $query = "SELECT * FROM customers  ORDER BY `name` ASC";
+        $result = $this->pdo->query($query);
+        while ($line = $result->fetch()) {
+            $customer_array[$line['id']] = $line;
+        }
+
+        if (isset($customer_array)) return $customer_array;
     }
 
     function onRemont($robot)
