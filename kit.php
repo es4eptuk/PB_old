@@ -58,7 +58,8 @@ include 'include/class.inc.php';
                   <th>Версия</th>
                   <th>Название</th>
                   <th>Привязка</th>
-                   <th></th>
+                  <th></th>
+                  <th></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -80,7 +81,8 @@ include 'include/class.inc.php';
                         <td>".$pos['version']."</td>
                         <td>".$pos['kit_title']."</td>
                         <td>".$binding."</td>
-                        <td><i class='fa fa-2x fa-pencil' style='cursor: pointer;' id='".$pos['id_kit']."'></i></td>
+                        <td><i class='fa fa-2x fa-pencil' style='cursor: pointer;' data-id='".$pos['id_kit']."'></i></td>
+                        <td><i class='fa fa-2x fa-copy' style='cursor: pointer;' data-id='".$pos['id_kit']."'></i></td>                        
                     </tr>
                        
                        
@@ -131,13 +133,18 @@ include 'include/class.inc.php';
 <script src="../../dist/js/demo.js"></script>
 <!-- page script -->
 <script>
+    $(document).ready(function () {
 
-    $( "#items .fa-pencil" ).click(function() {
-            id_element = $(this).attr("id");
-            window.location.href = "./edit_kit.php?id=" + id_element;    
+        $("#items").on('click', '.fa-pencil', function () {
+                id_element = $(this).data("id");
+                window.location.href = "./edit_kit.php?id=" + id_element;
+        });
+        $("#items").on('click', '.fa-copy', function () {
+        id_element = $(this).data("id");
+        window.location.href = "./split_kit.php?id=" + id_element;
+        });
+
     });
-    
-
 </script>
 </body>
 </html>

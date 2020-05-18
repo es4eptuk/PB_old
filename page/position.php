@@ -882,7 +882,7 @@ class Position
         $idd   = $this->pdo->lastInsertId();
         
         if ($result) {
-             $this->log->add(__METHOD__,"Добавлена новый комплект №$idd - $title");
+             $this->log->add(__METHOD__,"Добавлен новый комплект №$idd - $title");
         }
         
         foreach ($kit_arr as &$value) {
@@ -892,6 +892,14 @@ class Position
             $result = $this->pdo->query($query);
         }
         return $result;
+    }
+
+    //разделение комплекта
+    function add_split_kit($kit1, $kit2)
+    {
+        $this->add_kit($kit1);
+        $this->add_kit($kit2);
+        return true;
     }
 
     //редактирование комплекта

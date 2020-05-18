@@ -207,6 +207,9 @@ if (isset($_POST['action'])) {
     if ($_POST['action'] == "add_kit") {
         $position->add_kit($_POST['json']);
     }
+    if ($_POST['action'] == "add_split_kit") {
+        $position->add_split_kit($_POST['kit1'], $_POST['kit2']);
+    }
     //Получение информации о заказе
     if ($_POST['action'] == "get_info_order") {
         echo json_encode($orders->get_info_order($_POST['id']), JSON_UNESCAPED_UNICODE);
