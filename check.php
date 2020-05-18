@@ -381,15 +381,13 @@ $category_id = $_GET['category'];
         var idd = str[1];
         var id_row = idd;
         var comment = $(this).find('textarea').val();
-        var value = $("#" + idd).val();
-
-        if ($("#" + idd).is(':checked')) {
+        var value = $(this).parent().parent().find('[data-id_row='+idd+']');
+        if (value.is(':checked')) {
             val = 1;
         } else {
             val = 0;
         }
 
-        //alert(val);
         if (comment != "") {
 
             $.post("./api.php", {
