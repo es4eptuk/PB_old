@@ -432,7 +432,7 @@ class Position
             $cnt_a =  $line['COUNT(*)']; 
             
             
-             $query = "SELECT * FROM `pos_kit_items` WHERE `id_pos` =  $pos_id";
+            $query = "SELECT * FROM `pos_kit_items` WHERE `id_pos` =  $pos_id";
             $result_kit = $this->pdo->query($query);
             while ($line_kit = $result_kit->fetch()) {
             $kit_array[] = $line_kit;
@@ -894,6 +894,18 @@ class Position
         return $result;
     }
 
+    //удаление комплекта
+    function del_kit($id)
+    {
+        $date    = date("Y-m-d H:i:s");
+        $user_id = intval($_COOKIE['id']);
+
+        $query  = "UPDATE `pos_kit` SET `delete` = 1, `update_user` = '$user_id', `update_date` = '$date' WHERE `id_kit` = $id";
+        $result = $this->pdo->query($query);
+
+        return $result;
+    }
+
     //разделение комплекта
     function add_split_kit($kit1, $kit2)
     {
@@ -908,9 +920,9 @@ class Position
         $date    = date("Y-m-d H:i:s");
         $user_id = intval($_COOKIE['id']);
         $kit_arr = json_decode($json);
-        $title         = $kit_arr['0']['0'];
-        $category         = $kit_arr['0']['1'];
-        $version         = $kit_arr['0']['2'];
+        $title = $kit_arr['0']['0'];
+        $category = $kit_arr['0']['1'];
+        $version = $kit_arr['0']['2'];
         array_shift($kit_arr);
         $query = "UPDATE `pos_kit` SET `kit_title` = '$title', `kit_category` = '$category' , `version` = '$version', `update_date` = '$date' , `update_user` = '$user_id' WHERE `id_kit`  = $id";
         $result = $this->pdo->query($query);
@@ -939,12 +951,12 @@ class Position
     {
         $where = "";
         
-        if ($category != 0) $where .= " AND pos_kit.kit_category = $category";
-        if ($version != -1) $where .= " AND pos_kit.version = $version";
-        if ($option != -1) $where .= " AND pos_kit.option = $option";
+        if ($category != 0) $where .= " AND `pos_kit`.`kit_category` = $category";
+        if ($version != -1) $where .= " AND `pos_kit`.`version` = $version";
+        if ($option != -1) $where .= " AND `pos_kit`.`option` = $option";
         
         
-        $query = "SELECT pos_kit.kit_title, pos_kit.id_kit, pos_kit.version,  pos_category.title FROM pos_kit JOIN pos_category ON pos_kit.kit_category = pos_category.id WHERE pos_kit.id_kit > 0  $where  ORDER BY pos_kit.version ASC, pos_kit.kit_title ASC";
+        $query = "SELECT `pos_kit`.`kit_title`, `pos_kit`.`id_kit`, `pos_kit`.`version`, `pos_category`.`title`, `pos_kit`.`delete` FROM `pos_kit` JOIN `pos_category` ON `pos_kit`.`kit_category` = `pos_category`.`id` WHERE `pos_kit`.`id_kit` > 0 $where ORDER BY `pos_kit`.`version` ASC, `pos_kit`.`kit_title` ASC";
       // echo $query;
 
         $result = $this->pdo->query($query);
@@ -959,9 +971,10 @@ class Position
             $kit_array[$cnt]['id_kit'] = $line['id_kit'];
             $kit_array[$cnt]['kit_title'] = $line['kit_title'];
             $kit_array[$cnt]['title'] = $line['title'];
-             $kit_array[$cnt]['version'] = $line['version'];
-            
+            $kit_array[$cnt]['version'] = $line['version'];
             $kit_array[$cnt]['count'] = $count;
+            $kit_array[$cnt]['delete'] = $line['delete'];
+
             
             $cnt++;
             
@@ -997,7 +1010,7 @@ class Position
             return $kit_array['0'];
     }
 
-    //взять позиции в коамплекте
+    //взять позиции в комплекте
     function get_pos_in_kit($id = 0)
     {
         $where = "";
@@ -1139,7 +1152,9 @@ class Position
             $id_kits = [];
             foreach ($kit_array as $kit) {
                 if (!in_array($kit['id_kit'], $id_kits)) {
-                    $result[] = $kit;
+                    if ($kit['delete'] == 0) {
+                        $result[] = $kit;
+                    }
                     $id_kits[] = $kit['id_kit'];
                 }
             }
@@ -1273,6 +1288,28 @@ class Position
         }
 
         return null;
+    }
+
+    //ограничения на изменение комплектов
+    function get_edit_eneble_kit($id)
+    {
+            $query = "SELECT COUNT(*) FROM `check` WHERE `id_kit` = $id";
+            $result  = $this->pdo->query($query);
+            $line = $result->fetch();
+            $count = $line['COUNT(*)'];
+
+            return ($count > 0) ? false : true;
+    }
+
+    //ограничения на удаление комплекта
+    function get_del_eneble_kit($id)
+    {
+        $query = "SELECT COUNT(*) FROM `check_items` WHERE `kit` = $id";
+        $result  = $this->pdo->query($query);
+        $line = $result->fetch();
+        $count = $line['COUNT(*)'];
+
+        return ($count > 0) ? false : true;
     }
 
     function __destruct()

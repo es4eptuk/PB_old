@@ -344,22 +344,21 @@ $robot_test = $robot_test->format('d.m.Y');
             }
         });
 
-
         $(document).ready(function () {
             //удаление робота
             $("#delete").click(function () {
                 $(this).last().addClass("disabled");
                 $.post("./api.php", {
-                    action: "delete_robot",
+                    action: "del_robot",
                     id: <?php echo $id ?>
-                })
-                    .done(function (data) {
-                        if (data == "false") {
-                            alert("Data Loaded: " + data);
-                        } else {
-                            window.location.href = "./robots.php";
-                        }
-                    });
+                }).done(function (data) {
+                    data = jQuery.parseJSON(data);
+                    if (data['result'] == false) {
+                        alert(data['err']);
+                    } else {
+                        window.location.href = "./robots.php";
+                    }
+                });
             });
 
             //сохранить изменения

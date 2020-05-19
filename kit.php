@@ -70,26 +70,28 @@ include 'include/class.inc.php';
                 $arr = $position->get_kit($category);
                 
                 if (isset($arr)) {
-                foreach ($arr as &$pos) {
-                    $binding = "";
-                    if ($pos['count'] != 0) {$binding = "Есть";} else {$binding = "Нет";}
-
-                       echo "
-                    <tr>
-                        <td>".$pos['id_kit']."</td>
-                        <td>".$pos['title']."</td>
-                        <td>".$pos['version']."</td>
-                        <td>".$pos['kit_title']."</td>
-                        <td>".$binding."</td>
-                        <td><i class='fa fa-2x fa-pencil' style='cursor: pointer;' data-id='".$pos['id_kit']."'></i></td>
-                        <td><i class='fa fa-2x fa-copy' style='cursor: pointer;' data-id='".$pos['id_kit']."'></i></td>                        
-                    </tr>
-                       
-                       
-                       ";
-                    
+                    foreach ($arr as &$pos) {
+                        if ($pos['delete'] == 0) {
+                            $binding = "";
+                            if ($pos['count'] != 0) {
+                                $binding = "Есть";
+                            } else {
+                                $binding = "Нет";
+                            }
+                            echo "
+                        <tr>
+                            <td>".$pos['id_kit']."</td>
+                            <td>".$pos['title']."</td>
+                            <td>".$pos['version']."</td>
+                            <td>".$pos['kit_title']."</td>
+                            <td>".$binding."</td>
+                            <td><i class='fa fa-2x fa-pencil' style='cursor: pointer;' data-id='".$pos['id_kit']."'></i></td>
+                            <td><i class='fa fa-2x fa-copy' style='cursor: pointer;' data-id='".$pos['id_kit']."'></i></td>                        
+                        </tr>
+                        ";
+                        }
+                    }
                 }
-                } 
                 ?>
               </table>
               

@@ -120,12 +120,56 @@ class Checks
         $title   = trim($title);
         //$date    = date("Y-m-d H:i:s");
         //$user_id = intval($_COOKIE['id']);
+        $query   = "SELECT * FROM `check_items` WHERE `id` = $id";
+        $result = $this->pdo->query($query);
+        $old_kit = $result->fetch()['kit'];
+
         $query   = "UPDATE `check_items` SET `title` = '$title ', `kit` = $kit, `version` = $version  WHERE `id` = $id";
         $result = $this->pdo->query($query);
-        //сомнительная операция, поменяет у всех чеклистов даже те у которые уже закрыты
-        $query = "UPDATE `check` SET `operation` = '$title', `id_kit` = '$kit'  WHERE `id_check` = $id";
+
+        if ($old_kit != $kit) {
+            //кол чеков со старым китом
+            $query = "
+            SELECT COUNT(*) FROM `check` 
+            JOIN `robots` ON `check`.`robot` = `robots`.`id` 
+            WHERE `check`.`id_check` = $id
+                AND `check`.`check` = 0 
+                AND `robots`.`writeoff` = 0 
+                AND `robots`.`remont` = 0 
+                AND `robots`.`delete` = 0
+            ";
+            $result = $this->pdo->query($query);
+            $count = $result->fetch()['COUNT(*)'];
+            $arr_kits = $this->plan->get_kits();
+            //убираем старое списание
+            if ($old_kit != 0) {
+                foreach ($arr_kits[$old_kit] as $id_pos => $total) {
+                    $del_res[$id_pos] = $total * $count;
+                }
+                $this->sklad->del_reserv($del_res);
+            }
+            //добавляем новое списание
+            if ($kit != 0) {
+                foreach ($arr_kits[$kit] as $id_pos => $total) {
+                    $new_res[$id_pos] = $total * $count;
+                }
+                $this->sklad->add_reserv($new_res);
+            }
+        }
+
+        //меняем текущие чеклисты
+        $query = "
+            UPDATE `check` 
+            JOIN `robots` ON `check`.`robot` = `robots`.`id`
+            SET `operation` = '$title', `id_kit` = '$kit'
+            WHERE `check`.`id_check` = $id
+                AND `check`.`check` = 0 
+                AND `robots`.`writeoff` = 0 
+                AND `robots`.`remont` = 0 
+                AND `robots`.`delete` = 0
+        ";
         $result = $this->pdo->query($query);
-        return $result;
+        return true;
     }
 
     function edit_check_on_option($id, $title, $category, $kit)
@@ -133,10 +177,62 @@ class Checks
         $title   = trim($title);
         //$date    = date("Y-m-d H:i:s");
         //$user_id = intval($_COOKIE['id']);
+        $query   = "SELECT * FROM `robot_options_checks` WHERE `check_id` = $id";
+        $result = $this->pdo->query($query);
+        $old_option = $result->fetch();
+        $old_kit = $old_option['id_kit'];
+        $id_option = $old_option['id_option'];
+        $check_category = $old_option['check_category'];
+        $check_title = trim($old_option['check_title']);
+
         $query   = "UPDATE `robot_options_checks` SET `check_title` = '$title ',  `check_category` = $category,  `id_kit` = $kit  WHERE `check_id` = $id";
         $result = $this->pdo->query($query);
-        /*$query = "UPDATE `check` SET `operation` = '$title',`id_kit` = '$kit' WHERE `category` = $category AND `operation` LIKE '$title' ";
-        $result = $this->pdo->query($query);*/
+
+        if ($old_kit != $kit) {
+            //кол чеков со старым китом
+            $query = "
+            SELECT COUNT(*) FROM `check` 
+            JOIN `robots` ON `check`.`robot` = `robots`.`id` 
+            WHERE `check`.`check` = 0 
+                AND `robots`.`writeoff` = 0 
+                AND `robots`.`remont` = 0 
+                AND `robots`.`delete` = 0
+                AND `check`.`option` = '$id_option' 
+                AND `check`.`category` = '$check_category' 
+                AND `check`.`operation` LIKE '$check_title'
+            ";
+            $result = $this->pdo->query($query);
+            $count = $result->fetch()['COUNT(*)'];
+            $arr_kits = $this->plan->get_kits();
+            //убираем старое списание
+            if ($old_kit != 0) {
+                foreach ($arr_kits[$old_kit] as $id_pos => $total) {
+                    $del_res[$id_pos] = $total * $count;
+                }
+                $this->sklad->del_reserv($del_res);
+            }
+            //добавляем новое списание
+            if ($kit != 0) {
+                foreach ($arr_kits[$kit] as $id_pos => $total) {
+                    $new_res[$id_pos] = $total * $count;
+                }
+                $this->sklad->add_reserv($new_res);
+            }
+        }
+
+        $query = "
+            UPDATE `check` 
+            JOIN `robots` ON `check`.`robot` = `robots`.`id`
+            SET `operation` = '$title', `id_kit` = '$kit', `category` = '$category'
+            WHERE `check`.`check` = 0 
+                AND `robots`.`writeoff` = 0 
+                AND `robots`.`remont` = 0 
+                AND `robots`.`delete` = 0
+                AND `check`.`option` = '$id_option' 
+                AND `check`.`category` = '$check_category' 
+                AND `check`.`operation` LIKE '$check_title'
+        ";
+        $result = $this->pdo->query($query);
         return true;
     }
 

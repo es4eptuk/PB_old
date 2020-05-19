@@ -2,11 +2,12 @@
 class Robots
 
 {
-    private $telegram;
-    private $sklad;
     private $query;
     private $pdo;
+    private $telegram;
+    private $sklad;
     private $checks;
+    private $plan;
 
     //списки
     public $getEquipment;
@@ -40,11 +41,12 @@ class Robots
 
     function init()
     {
-        global $telegramAPI, $position, $checks;
+        global $telegramAPI, $position, $checks, $plan;
 
         $this->telegram = $telegramAPI; //new TelegramAPI;
         $this->sklad = $position; //new Position;
         $this->checks = $checks;
+        $this->plan = $plan;
 
         //список версий роботов
         $query = "SELECT * FROM `robot_equipment` ORDER BY `title` DESC";
@@ -75,20 +77,46 @@ class Robots
         if (isset($robots_array)) return $robots_array;
     }
 
+    //удаление роботоа
     function del_robot($id)
     {
-        $this->query  = "UPDATE `robots` SET `delete` = '1' WHERE `id` = $id";
+        //получение данных по роботу
+        $this->query  = "SELECT * FROM `robots` WHERE `id` = $id";
         $result = $this->pdo->query($this->query);
+        $robot = $line = $result->fetch();
 
-        $this->query  = "SELECT version FROM `pos_items` WHERE `id` = $id";
-        $result = $this->pdo->query($this->query);
-        while ($line = $result->fetch())
-        {
-            $robots_array[] = $line;
+        //проверка отмеченных чек-листов
+        $query = "SELECT COUNT(*) FROM `check` WHERE `robot` = $id AND `check` = 1";
+        $result = $this->pdo->query($query);
+        $count = $result->fetch()['COUNT(*)'];
+
+        if ($count == 0) {
+            //удаляем все опции
+            $query = "DELETE FROM `robot_options_items` WHERE `id_robot` = $id";
+            $result = $this->pdo->query($query);
+            //списываем резервы
+            $arr_kits = $this->plan->get_kits();
+            $query = "
+            SELECT `id_kit` FROM `check` WHERE `robot` = $id AND `id_kit` != 0";
+            $result = $this->pdo->query($query);
+            $kits = [];
+            while ($line = $result->fetch()) {
+                $kits[] = $line['id_kit'];
+            }
+            foreach ($kits as $kit) {
+                $this->sklad->del_reserv($arr_kits[$kit]);
+            }
+            //удаляем все чек-листы
+            $query = "DELETE FROM `check` WHERE `robot` = $id";
+            $result = $this->pdo->query($query);
+            //удаляем самого робота
+            $query = "DELETE FROM `robots` WHERE `id` = $id";
+            $result = $this->pdo->query($query);
+            return ['result' => true, 'err' => 'Ошибок нет!'];
+        } else {
+            return ['result' => false, 'err' => 'Удалить невозможно: есть завершенные чек-листы - снемите отметку!'];
         }
 
-        //$this->sklad->unset_reserv($robots_array[0]['version']);
-        return $result;
     }
 
     function get_log($id_robot)

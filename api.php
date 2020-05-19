@@ -154,7 +154,7 @@ if (isset($_POST['action'])) {
         echo json_encode($position_warehouse->from_warehouse($_POST['id']), JSON_UNESCAPED_UNICODE);
     }
     //Удаление робота
-    if ($_POST['action'] == "delete_robot") {
+    if ($_POST['action'] == "del_robot") {
         echo json_encode($robots->del_robot($_POST['id']), JSON_UNESCAPED_UNICODE);
     }
     //Получение название категории по id
@@ -209,6 +209,9 @@ if (isset($_POST['action'])) {
     }
     if ($_POST['action'] == "add_split_kit") {
         $position->add_split_kit($_POST['kit1'], $_POST['kit2']);
+    }
+    if ($_POST['action'] == "del_kit") {
+        $position->del_kit($_POST['id']);
     }
     //Получение информации о заказе
     if ($_POST['action'] == "get_info_order") {
