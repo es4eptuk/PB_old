@@ -83,20 +83,15 @@ $current_month = date('m');
 										</select>
 									</div>
 								    <div class="form-group">
-										<label>Контрагент <small>(<a data-target="#add_provider" data-toggle="modal" href="#">Добавить</a>)</small></label> <select class="form-control select2" id="provider" name="provider" required="required">
-											<option value="0">
-												Веберите контррагента...
-											</option><?php 
-											                   $arr = $position->get_pos_provider();
-											                
-											                    foreach ($arr as &$provider) {
-											                       echo "
-											                       <option value='".$provider['id']."'>".$provider['title'].", ".$provider['type']."</option>
-											                       
-											                       ";
-											                    }
-											                   
-											                   ?>
+										<label>Контрагент <small>(<a data-target="#add_provider" data-toggle="modal" href="#">Добавить</a>)</small></label>
+                                        <select class="form-control select2" id="provider" name="provider" required="required">
+											<option value="0">Веберите контррагента...</option>
+                                            <?php
+                                               $arr = $position->get_pos_provider();
+                                                foreach ($arr as &$provider) {
+                                                   echo "<option value='".$provider['id']."'>".$provider['title'].", ".$provider['type']."</option>";
+                                                }
+											?>
 										</select>
 									</div>
                                     <p class="p-label">Добавить позицию</p>

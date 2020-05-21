@@ -7,6 +7,7 @@ $robot_version = $robot_info['version'];
 $robot_number = $robot_info['number'];
 $robot_name = $robot_info['name'];
 $robot_customer = $robot_info['customer'];
+$robot_owner = $robot_info['owner'];
 $robot_language_robot = $robot_info['language_robot'];
 $robot_language_doc = $robot_info['language_doc'];
 $robot_charger = $robot_info['charger'];
@@ -84,20 +85,36 @@ $robot_test = $robot_test->format('d.m.Y');
                   <input type="text" class="form-control" name="name" id="name" value="<?php echo $robot_name ?>">
                 </div>
                 <div class="form-group">
-                  <label>Заказчик <small>(<a href="#" data-toggle="modal" data-target="#add_customer">Добавить</a>)</small></label>
-                  <select class="form-control" name="customer" id="customer" <?php echo ($robot_progress == 100) ? "disabled" : ""; ?>>
-                      <option value="0"></option>
-                    <?php 
-                    $arr = $robots->get_customers();
-                    foreach ($arr as &$customer) {
-                        if ($customer['id']==$robot_customer) {
-                            echo "<option value='".$customer['id']."' selected>".$customer['name']."</option>";
-                        } else {
-                            echo "<option value='".$customer['id']."'>".$customer['name']."</option>";
+                    <label>Покупатель <small>(<a href="#" data-toggle="modal" data-target="#add_customer">Добавить</a>)</small></label>
+                    <select class="form-control select2" name="customer" id="customer" <?php echo ($robot_progress == 100) ? "disabled" : ""; ?>>
+                        <option value="0">Веберите покупателя...</option>
+                        <?php
+                        $arr = $robots->get_customers();
+                        foreach ($arr as &$customer) {
+                            if ($customer['id'] == $robot_customer) {
+                                echo "<option value='" . $customer['id'] . "' selected>" . $customer['name'] . "</option>";
+                            } else {
+                                echo "<option value='" . $customer['id'] . "'>" . $customer['name'] . "</option>";
+                            }
                         }
-                    }
-                    ?>
-                  </select>
+                        ?>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Владелец <small>(<a href="#" data-toggle="modal" data-target="#add_customer">Добавить</a>)</small></label>
+                    <select class="form-control select2" name="owner" id="owner" <?php echo ($robot_progress == 100) ? "disabled" : ""; ?>>
+                        <option value="0">Веберите владельца...</option>
+                        <?php
+                        $arr = $robots->get_customers();
+                        foreach ($arr as &$customer) {
+                            if ($customer['id'] == $robot_owner) {
+                                echo "<option value='" . $customer['id'] . "' selected>" . $customer['name'] . "</option>";
+                            } else {
+                                echo "<option value='" . $customer['id'] . "'>" . $customer['name'] . "</option>";
+                            }
+                        }
+                        ?>
+                    </select>
                 </div>
                 
                 <div class="form-group">
@@ -300,6 +317,8 @@ $robot_test = $robot_test->format('d.m.Y');
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <script src="./bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.js"></script>
     <script src="./bower_components/bootstrap-datepicker/dist/locales/bootstrap-datepicker.ru.min.js"></script>
+    <!-- Select2 -->
+    <script src="./bower_components/select2/dist/js/select2.full.min.js"></script>
 
     <script>
         //Date picker
@@ -315,6 +334,8 @@ $robot_test = $robot_test->format('d.m.Y');
             startDate: '-3d',
             autoclose: true
         })
+        //Select2
+        $('.select2').select2();
 
         //создать клиента
         $("#btn_add_customer").click(function () {
@@ -369,6 +390,7 @@ $robot_test = $robot_test->format('d.m.Y');
                 var name = $('#name').val();
                 var version = $('#version').val();
                 var customer = $('#customer').val();
+                var owner = $('#owner').val();
                 var language_robot = $('#language_robot').val();
                 var language_doc = $('#language_doc').val();
                 var charger = $('#charger').val();
@@ -396,6 +418,7 @@ $robot_test = $robot_test->format('d.m.Y');
                     name: name,
                     options: options,
                     customer: customer,
+                    owner: owner,
                     language_robot: language_robot,
                     language_doc: language_doc,
                     charger: charger,

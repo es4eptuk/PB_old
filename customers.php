@@ -35,6 +35,7 @@ include 'include/class.inc.php';
                 <tr>
                     <th>Наименование организации</th>
                     <th>ИНН</th>
+                    <th>Идентификатор</th>
                     <th>КЛ:ФИО</th>
                     <th>КЛ:Телефон</th>
                     <th>КЛ:Email</th>
@@ -51,10 +52,11 @@ include 'include/class.inc.php';
                            <tr >
                               <td>".$pos['name']."</td>
                               <td>".$pos['inn']."</td>
+                              <td>".$pos['ident']."</td>                               
                               <td>".$pos['fio']."</td>                                                          
                               <td>".$pos['phone']."</td>
                               <td>".$pos['email']."</td>
-                              <td>".$pos['address']."</td>
+                              <td>".$pos['address']."</td>                            
                               <td><i class='fa fa-2x fa-pencil' style='cursor: pointer;' data-id='".$pos['id']."'></i></td>
                               <td><i class='fa fa-2x fa-remove' style='cursor: pointer;' data-id='".$pos['id']."'></i></td>
                            </tr>
@@ -105,6 +107,10 @@ include 'include/class.inc.php';
                         <input type="text" class="form-control" name="inn" id="edit_inn">
                     </div>
                     <div class="form-group">
+                        <label>Идентификатор (чат, лингва, производство)</label>
+                        <input type="text" class="form-control" name="ident" required="required" id="edit_ident">
+                    </div>
+                    <div class="form-group">
                         <label>Контактное лицо ФИО</label>
                         <textarea class="form-control" rows="1" placeholder="Enter ..." id="edit_fio"></textarea>
                     </div>
@@ -147,6 +153,10 @@ include 'include/class.inc.php';
                     <div class="form-group">
                         <label>ИНН</label>
                         <input type="text" class="form-control" name="inn" id="inn">
+                    </div>
+                    <div class="form-group">
+                        <label>Идентификатор (чат, лингва, производство)</label>
+                        <input type="text" class="form-control" name="ident" id="ident">
                     </div>
                     <div class="form-group">
                         <label>Контактное лицо ФИО</label>
@@ -204,6 +214,7 @@ include 'include/class.inc.php';
             var obj = jQuery.parseJSON(data);
             $('#edit_name').val(obj['name']);
             $('#edit_inn').val(obj['inn']);
+            $('#edit_ident').val(obj['ident']);
             $('#edit_fio').val(obj['fio']);
             $('#edit_email').val(obj['email']);
             $('#edit_phone').val(obj['phone']);
@@ -246,6 +257,7 @@ include 'include/class.inc.php';
     function save_close() {
         var name = $('#edit_name').val();
         var inn = $('#edit_inn').val();
+        var ident = $('#edit_ident').val();
         var fio = $('#edit_fio').val();
         var email = $('#edit_email').val();
         var phone = $('#edit_phone').val();
@@ -259,7 +271,8 @@ include 'include/class.inc.php';
                 phone: phone,
                 email: email,
                 address: address,
-                inn: inn
+                inn: inn,
+                ident: ident
             }).done(function (data) {
                 if (data == "false") {
                     alert("Data Loaded: " + data);
@@ -275,6 +288,7 @@ include 'include/class.inc.php';
     $("#btn_add_customer").click(function () {
         var name = $('#name').val();
         var inn = $('#inn').val();
+        var ident = $('#ident').val();
         var fio = $('#fio').val();
         var email = $('#email').val();
         var phone = $('#phone').val();
@@ -287,7 +301,8 @@ include 'include/class.inc.php';
                 phone: phone,
                 email: email,
                 address: address,
-                inn: inn
+                inn: inn,
+                ident: ident
             }).done(function (data) {
                 //console.log(data);
                 if (data == "false") {

@@ -336,7 +336,7 @@ class Robots
         $robot = $this->get_info_robot($id);
         if (isset($robot)) {
             $robot['version'] = $this->getEquipment[$robot['version']]['title'];
-
+            //заполняем покупателя
             if ($robot['customer'] != 0) {
                 $customer = $this->get_customers()[$robot['customer']];
                 $robot['customer'] = $customer['name'];
@@ -352,6 +352,15 @@ class Robots
                 $robot['phone'] = '';
                 $robot['address'] = '';
                 $robot['inn'] = '';
+            }
+            //заполняем владельца
+            if ($robot['owner'] != 0) {
+                $owner = $this->get_customers()[$robot['owner']];
+                $robot['owner'] = $owner['name'];
+                $robot['ident'] = $owner['ident'];
+            } else {
+                $robot['owner'] = '';
+                $robot['ident'] = '';
             }
 
             $robot['brand'] = ($robot['brand'] == '') ? 'Нет' : $robot['brand'];
@@ -405,7 +414,7 @@ class Robots
     }
 
     //добавить робота
-    function add_robot($number, $name, $version, $options, $customer, $language_robot, $language_doc, $charger, $color, $brand, $ikp, $battery, $dop, $dop_manufactur, $date_start, $date_test, $send, $delivery)
+    function add_robot($number, $name, $version, $options, $customer, $owner, $language_robot, $language_doc, $charger, $color, $brand, $ikp, $battery, $dop, $dop_manufactur, $date_start, $date_test, $send, $delivery)
     {
         $date_start = new DateTime($date_start);
         $date_start = $date_start->format('Y-m-d H:i:s');
@@ -434,8 +443,8 @@ class Robots
         }
 
         $this->query = "INSERT 
-            INTO `robots` (`id`, `version`, `number`, `name`, `customer`, `language_robot`, `language_doc`, `charger`, `color`, `brand`, `ikp`, `battery`, `dop`, `dop_manufactur`, `progress`, `date`, `date_test`, `update_date`, `update_user`, `delete`, `delivery`) 
-            VALUES (NULL, '$version', '$number', '$name', '$customer', '$language_robot', '$language_doc', '$charger', '$color', '$brand', '$ikp', '$battery', '$dop', '$dop_manufactur', '$progress', '$date_start', '$date_test', '$date', '$user_id', '$delete', '$delivery')
+            INTO `robots` (`id`, `version`, `number`, `name`, `customer`, `owner`, `language_robot`, `language_doc`, `charger`, `color`, `brand`, `ikp`, `battery`, `dop`, `dop_manufactur`, `progress`, `date`, `date_test`, `update_date`, `update_user`, `delete`, `delivery`) 
+            VALUES (NULL, '$version', '$number', '$name', '$customer', '$owner', '$language_robot', '$language_doc', '$charger', '$color', '$brand', '$ikp', '$battery', '$dop', '$dop_manufactur', '$progress', '$date_start', '$date_test', '$date', '$user_id', '$delete', '$delivery')
         ";
         $result = $this->pdo->query($this->query);
 
@@ -539,7 +548,7 @@ class Robots
         //$this->sklad->set_reserv($version);
     }*/
 
-    function edit_robot($id, $number, $name, $version, $options, $customer, $language_robot, $language_doc, $charger, $color, $brand, $ikp, $battery, $dop, $dop_manufactur, $date_start, $date_test, $send, $delivery)
+    function edit_robot($id, $number, $name, $version, $options, $customer, $owner, $language_robot, $language_doc, $charger, $color, $brand, $ikp, $battery, $dop, $dop_manufactur, $date_start, $date_test, $send, $delivery)
     {
         $date_start = new DateTime($date_start);
         $date_start = $date_start->format('Y-m-d H:i:s');
@@ -571,7 +580,8 @@ class Robots
         `version` = '$version', 
         `number` = '$number', 
         `name` = '$name', 
-        `customer` = '$customer', 
+        `customer` = '$customer',
+        `owner` = '$owner',
         `language_robot` = '$language_robot', 
         `language_doc` = '$language_doc', 
         `charger` = '$charger', 
@@ -683,17 +693,17 @@ class Robots
     }
 
     //создать покупателя все данные
-    function add_full_customer($name, $fio, $phone, $email, $address, $inn)
+    function add_full_customer($name, $fio, $phone, $email, $address, $inn, $ident)
     {
-        $query = "INSERT INTO `customers` (`id`, `name`, `fio`, `phone`, `email`, `address`, `inn`) VALUES (NULL, '$name', '$fio', '$phone', '$email', '$address', '$inn')";
+        $query = "INSERT INTO `customers` (`id`, `name`, `fio`, `phone`, `email`, `address`, `inn`, `ident`) VALUES (NULL, '$name', '$fio', '$phone', '$email', '$address', '$inn', '$ident')";
         $result = $this->pdo->query($query);
         return ($result) ? true : false;
     }
 
     //редактировать покупателя
-    function edit_customer($id, $name, $fio, $phone, $email, $address, $inn)
+    function edit_customer($id, $name, $fio, $phone, $email, $address, $inn, $ident)
     {
-        $query = "UPDATE `customers` SET `name` = '$name', `fio` = '$fio', `phone` = '$phone', `email` = '$email', `address` = '$address', `inn` = '$inn' WHERE `id` = $id;";
+        $query = "UPDATE `customers` SET `name` = '$name', `fio` = '$fio', `phone` = '$phone', `email` = '$email', `address` = '$address', `inn` = '$inn', `ident` = '$ident' WHERE `id` = $id;";
         $result = $this->pdo->query($query);
         return ($result) ? true : false;
     }

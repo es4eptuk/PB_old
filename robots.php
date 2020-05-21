@@ -57,21 +57,17 @@ include 'include/class.inc.php';
               <table id="robots" class="table  table-hover">
                 <thead>
                 <tr>
-                  
                   <th>Номер</th>
-                  <th style="width: 15%;">Кодовое имя</th>
-                  <th style="width: 10%;">Готовность, %</th>
-                  <th style="width: 10%;">Этап</th>
+                  <th style="width: 12%;">Владелец</th>
+                  <th style="width: 12%;">Кодовое имя</th>
+                  <th style="width: 8%;">Готовность, %</th>
+                  <th style="width: 8%;">Этап</th>
                   <th style="width: 20%;">Последняя операция</th>
-                  
                   <th>Начало производства</th>
-
                   <th>Кем</th>
                   <th></th>
                   <th></th>
                   <th></th>
-                  
-                  
                 </tr>
                 </thead>
                 <tbody>
@@ -106,10 +102,19 @@ include 'include/class.inc.php';
                              $print = "<i class='fa fa-2x fa-print' style='cursor:pointer;color:#337ab7;' data-id='".$robot['id']."'></i>";
                              $check = "<a href='./robot.php?id=".$robot['id']."'><i class='fa fa-2x fa-align-justify' style='cursor: pointer;'></i></a>";
                          }
+                         if ($robot['owner'] != 0) {
+                             $owner = $robots->get_customers()[$robot['owner']];
+                             $name = $owner['name'];
+                             $ident = $owner['ident'];
+                         } else {
+                             $name = '';
+                             $ident = '';
+                         }
 
                          echo "
                             <tr class='edit' id='".$robot['id']."' style='cursor: pointer; background: ".$color.";'>
                                 <td>".$robot['version'].".".$num."</td>
+                                <td><span data-toggle='tooltip' data-html='true' data-delay='{\"show\":\"100\", \"hide\":\"300\"}' data-placement='bottom' title='".$ident."'>".$name."</span></td>
                                 <td>".$robot['name']." ".$remont." </td>
                                 <td>".$robot['progress']."</td>
                                 <td>".$position->getCategoryes[$robot['stage']]['title']."</td>
@@ -152,8 +157,8 @@ include 'include/class.inc.php';
   <div class="control-sidebar-bg"></div>
 </div>
 <!-- ./wrapper -->
-<!-- Modal -->
-<div class="modal fade" id="add_robot" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<!-- Modal tabindex="-1"  -->
+<div class="modal fade" id="add_robot" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -184,9 +189,21 @@ include 'include/class.inc.php';
                         <input type="text" class="form-control" name="name" id="name">
                     </div>
                     <div class="form-group">
-                        <label>Заказчик <small>(<a href="#" data-toggle="modal" data-target="#add_customer">Добавить</a>)</small></label>
-                        <select class="form-control" name="customer" id="customer">
-                            <option value="0"></option>
+                        <label>Покупатель <small>(<a href="#" data-toggle="modal" data-target="#add_customer">Добавить</a>)</small></label>
+                        <select class="form-control select2" name="customer" id="customer">
+                            <option value="0">Веберите покупателя...</option>
+                            <?php
+                            $arr = $robots->get_customers();
+                            foreach ($arr as &$customer) {
+                                echo "<option value='" . $customer['id'] . "'>" . $customer['name'] . "</option>";
+                            }
+                            ?>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Владелец <small>(<a href="#" data-toggle="modal" data-target="#add_customer">Добавить</a>)</small></label>
+                        <select class="form-control select2" name="owner" id="owner">
+                            <option value="0">Веберите владельца...</option>
                             <?php
                             $arr = $robots->get_customers();
                             foreach ($arr as &$customer) {
@@ -304,9 +321,21 @@ include 'include/class.inc.php';
                         <input type="text" class="form-control" name="name" id="name">
                     </div>
                     <div class="form-group">
-                        <label>Заказчик <small>(<a href="#" data-toggle="modal" data-target="#add_customer">Добавить</a>)</small></label>
-                        <select class="form-control" name="customer" id="customer">
-                            <option value="0"></option>
+                        <label>Покупатель <small>(<a href="#" data-toggle="modal" data-target="#add_customer">Добавить</a>)</small></label>
+                        <select class="form-control select2" name="customer" id="customer">
+                            <option value="0">Веберите покупателя...</option>
+                            <?php
+                            $arr = $robots->get_customers();
+                            foreach ($arr as &$customer) {
+                                echo "<option value='" . $customer['id'] . "'>" . $customer['name'] . "</option>";
+                            }
+                            ?>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Владелец <small>(<a href="#" data-toggle="modal" data-target="#add_customer">Добавить</a>)</small></label>
+                        <select class="form-control select2" name="owner" id="owner">
+                            <option value="0">Веберите владельца...</option>
                             <?php
                             $arr = $robots->get_customers();
                             foreach ($arr as &$customer) {
@@ -426,254 +455,274 @@ include 'include/class.inc.php';
 </div>
 <div id="print-content"></div>
 <?php include 'template/scripts.php'; ?>
-<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 <script src="./bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.js"></script>
 <script src="./bower_components/bootstrap-datepicker/dist/locales/bootstrap-datepicker.ru.min.js"></script>
+<!-- Select2 -->
+<script src="./bower_components/select2/dist/js/select2.full.min.js"></script>
 
 <script>
-    //Date picker
-    $('#datepicker').datepicker({
-        format: 'dd.mm.yyyy',
-        language: 'ru-Ru',
-        startDate: '-3d',
-        autoclose: true
-    })
-    $('#datepicker2').datepicker({
-        format: 'dd.mm.yyyy',
-        language: 'ru-Ru',
-        startDate: '-3d',
-        autoclose: true
-    })
+    $('body').on('shown.bs.modal', '.modal', function() {
+        $(this).find('.select2').each(function() {
+            var dropdownParent = $(document.body);
+            if ($(this).parents('.modal.in:first').length !== 0) {
+                dropdownParent = $(this).parents('.modal.in:first');
+            }
+            $(this).select2();
+        });
+    });
 
-    //создать клиента
-    $("#btn_add_customer").click(function () {
-        var name_cust = $('#name_cust').val();
-        var fio = $('#fio').val();
-        var email = $('#email').val();
-        var phone = $('#phone').val();
-        var address = $('#address').val();
-        if (name_cust != "") {
+    $(document).ready(function() {
+        //Date picker
+        $('#datepicker').datepicker({
+            format: 'dd.mm.yyyy',
+            language: 'ru-Ru',
+            startDate: '-3d',
+            autoclose: true
+        })
+        $('#datepicker2').datepicker({
+            format: 'dd.mm.yyyy',
+            language: 'ru-Ru',
+            startDate: '-3d',
+            autoclose: true
+        })
+        //Select2
+
+        //$('.select2').select2();
+
+        //создать покупателя
+        $("#btn_add_customer").click(function () {
+            var name_cust = $('#name_cust').val();
+            var fio = $('#fio').val();
+            var email = $('#email').val();
+            var phone = $('#phone').val();
+            var address = $('#address').val();
+            if (name_cust != "") {
+                $.post("./api.php", {
+                    action: "add_customer",
+                    name: name_cust,
+                    fio: fio,
+                    email: email,
+                    phone: phone,
+                    address: address
+                }).done(function (data) {
+                    console.log(data);
+                    if (data == "false") {
+                        alert("Data Loaded: " + data);
+                        return false;
+                    } else {
+                        $('#customer').append("<option value='" + data + "' selected>" + name_cust + "<\/option>");
+                        $('#owner').append("<option value='" + data + "' selected>" + name_cust + "<\/option>");
+                        $('#add_customer').modal('hide');
+                    }
+                });
+            }
+        });
+
+        //отправляемся в робота
+        /*$("#robots.fa-align-justify").click(function () {
+            var id = $(this).data("id");
+            window.location.href = "./robot.php?id=" + id;
+        });*/
+
+        //отправляемся в робота
+        $("#robots").on('click', '.fa-print', function () {
+            var id = $(this).data("id");
+            CallPrint(id);
+        });
+
+        //запускаем робота в производство
+        $("#robots").on('click', '.fa-play', function () {
+            var id = $(this).data("id");
             $.post("./api.php", {
-                action: "add_customer",
-                name: name_cust,
-                fio: fio,
-                email: email,
-                phone: phone,
-                address: address
+                action: "launch_production_robot",
+                id: id
             }).done(function (data) {
-                console.log(data);
                 if (data == "false") {
                     alert("Data Loaded: " + data);
-                    return false;
                 } else {
-                    $('#customer').append("<option value='" + data + "' selected>" + name_cust + "<\/option>");
-                    $('#add_customer').modal('hide');
+                    window.location.href = "./robots.php";
+                }
+            });
+        });
+
+        //открывает модальное окно создать робота
+        $("#btn_add_robot").click(function () {
+            $('#add_robot').modal('show');
+        });
+
+        //кнопка запуска создания робота
+        $("#save_close").click(function () {
+            save_close();
+            return false;
+        });
+
+        //функция создания робота
+        function save_close() {
+            $(this).last().addClass("disabled");
+            var options = [];
+            var number = $('#number').val();
+            var name = $('#name').val();
+            var version = $('#version').val();
+            var customer = $('#customer').val();
+            var owner = $('#owner').val();
+            var language_robot = $('#language_robot').val();
+            var language_doc = $('#language_doc').val();
+            var charger = $('#charger').val();
+            var color = $('#color').val();
+            var brand = $('#brand').val();
+            var ikp = $('#ikp').val();
+            var battery = $('#battery').val();
+            var dop = $('#dop').val();
+            var dop_manufactur = $('#dop_manufactur').val();
+            var delivery = $('#delivery').val();
+            var date_start = $('#datepicker').val();
+            var date_test = $('#datepicker2').val();
+            var send = $('#send').is(':checked') ? 1 : 0;
+            //собираем отмеченные опции
+            $('input[name=options]').each(function () {
+                if (this.checked) {
+                    options.push($(this).val());
+                }
+            });
+            if (number === '') {
+                return false;
+            }
+            if (number === undefined) {
+                number = '';
+                dop_manufactur = '';
+                date_start = null;
+                date_test = null;
+                send = 0;
+            }
+            //console.log(date_start);
+            //return false;
+            $.post("./api.php", {
+                action: "add_robot",
+                number: number,
+                version: version,
+                name: name,
+                options: options,
+                customer: customer,
+                owner: owner,
+                language_robot: language_robot,
+                language_doc: language_doc,
+                charger: charger,
+                color: color,
+                brand: brand,
+                ikp: ikp,
+                battery: battery,
+                dop: dop,
+                dop_manufactur: dop_manufactur,
+                date_start: date_start,
+                date_test: date_test,
+                send: send,
+                delivery: delivery
+            }).done(function (data) {
+                if (data == "false") {
+                    alert("Data Loaded: " + data);
+                } else {
+                    window.location.href = "./robots.php";
                 }
             });
         }
-    });
 
-    //отправляемся в робота
-    /*$("#robots.fa-align-justify").click(function () {
-        var id = $(this).data("id");
-        window.location.href = "./robot.php?id=" + id;
-    });*/
-
-    //отправляемся в робота
-    $("#robots").on('click', '.fa-print', function () {
-        var id = $(this).data("id");
-        CallPrint(id);
-    });
-
-    //запускаем робота в производство
-    $("#robots").on('click', '.fa-play', function () {
-        var id = $(this).data("id");
-        $.post("./api.php", {
-            action: "launch_production_robot",
-            id: id
-        }).done(function (data) {
-            if (data == "false") {
-                alert("Data Loaded: " + data);
-            } else {
-                window.location.href = "./robots.php";
+        //отображать завершенных роботов
+        $('#check_show_all').change(function () {
+            if ($(this).is(":checked")) {
+                //var returnVal = confirm("Are you sure?");
+                $(this).attr("checked", true);
             }
+            // alert($(this).is(':checked'));
+            $("#show_all").submit();
+
         });
-    });
 
-    //открывает модальное окно создать робота
-    $("#btn_add_robot").click(function () {
-        $('#add_robot').modal('show');
-    });
-
-    //кнопка запуска создания робота
-    $("#save_close").click(function () {
-        save_close();
-        return false;
-    });
-
-    //функция создания робота
-    function save_close() {
-        $(this).last().addClass("disabled");
-        var options = [];
-        var number = $('#number').val();
-        var name = $('#name').val();
-        var version = $('#version').val();
-        var customer = $('#customer').val();
-        var language_robot = $('#language_robot').val();
-        var language_doc = $('#language_doc').val();
-        var charger = $('#charger').val();
-        var color = $('#color').val();
-        var brand = $('#brand').val();
-        var ikp = $('#ikp').val();
-        var battery = $('#battery').val();
-        var dop = $('#dop').val();
-        var dop_manufactur = $('#dop_manufactur').val();
-        var delivery = $('#delivery').val();
-        var date_start = $('#datepicker').val();
-        var date_test = $('#datepicker2').val();
-        var send = $('#send').is(':checked') ? 1 : 0;
-        //собираем отмеченные опции
-        $('input[name=options]').each(function () {
-            if (this.checked) {
-                options.push($(this).val());
-            }
-        });
-        if (number === '') {
-            return false;
-        }
-        if (number === undefined) {
-            number = '';
-            dop_manufactur = '';
-            date_start = null;
-            date_test = null;
-            send = 0;
-        }
-        //console.log(date_start);
-        //return false;
-        $.post("./api.php", {
-            action: "add_robot",
-            number: number,
-            version: version,
-            name: name,
-            options: options,
-            customer: customer,
-            language_robot: language_robot,
-            language_doc: language_doc,
-            charger: charger,
-            color: color,
-            brand: brand,
-            ikp: ikp,
-            battery: battery,
-            dop: dop,
-            dop_manufactur: dop_manufactur,
-            date_start: date_start,
-            date_test: date_test,
-            send: send,
-            delivery: delivery
-        }).done(function (data) {
-            if (data == "false") {
-                alert("Data Loaded: " + data);
-            } else {
-                window.location.href = "./robots.php";
-            }
-        });
-    }
-
-    //отображать завершенных роботов
-    $('#check_show_all').change(function () {
-        if ($(this).is(":checked")) {
-            //var returnVal = confirm("Are you sure?");
-            $(this).attr("checked", true);
-        }
-        // alert($(this).is(':checked'));
-        $("#show_all").submit();
-
-    });
-
-    //??? вроде нет ничего
-    $("#robots1 tbody").sortable({
-        stop: function (event, ui) {
-            var arr_robot = [];
-            var id_ = 'robots tbody';
-            var cols_ = document.querySelectorAll('#' + id_ + ' tr');
-            $.each(cols_, function (key, value) {
-                var idd = $(value).attr('id');
-                arr_robot.push(idd);
-            });
-            JSON.stringify(arr_robot);
-            $.post("./api.php", {
-                action: "sortable",
-                json: arr_robot
-            })
-                .done(function (data) {
-                    if (data == "false") {
-                        alert("Data Loaded: " + data);
-                    } else {
-                        window.location.href = "./robots.php";
-                    }
+        //??? вроде нет ничего
+        $("#robots1 tbody").sortable({
+            stop: function (event, ui) {
+                var arr_robot = [];
+                var id_ = 'robots tbody';
+                var cols_ = document.querySelectorAll('#' + id_ + ' tr');
+                $.each(cols_, function (key, value) {
+                    var idd = $(value).attr('id');
+                    arr_robot.push(idd);
                 });
-            console.log(arr_robot);
-        },
-        connectWith: ".connectedSortable"
-    }).disableSelection();
+                JSON.stringify(arr_robot);
+                $.post("./api.php", {
+                    action: "sortable",
+                    json: arr_robot
+                })
+                    .done(function (data) {
+                        if (data == "false") {
+                            alert("Data Loaded: " + data);
+                        } else {
+                            window.location.href = "./robots.php";
+                        }
+                    });
+                console.log(arr_robot);
+            },
+            connectWith: ".connectedSortable"
+        }).disableSelection();
 
-    //??? вроде нет ничего
-    $('#robots').DataTable({
-        "iDisplayLength": 100,
-        "order": [[0, "desc"]]
+        //??? вроде нет ничего
+        $('#robots').DataTable({
+            "iDisplayLength": 100,
+            "order": [[0, "desc"]]
+        });
+
+        //функция печати
+        function CallPrint(id) {
+            $.post("./api.php", {action: "print_info_robot", id: id})
+                .done(function (data) {
+                    //console.log(data);
+                    //return false;
+                    var robot_info = jQuery.parseJSON(data);
+                    var table = '<table class="robot-info" border="1" cellspacing="0" style="width:100%;font-size:12px">' +
+                        '<tr><td style="width:40%"><b>Версия</b></td><td>' + robot_info['version'] + '</td></tr>' +
+                        '<tr><td><b>Номер робота</b></td><td>' + robot_info['number'] + '</td></tr>' +
+                        '<tr><td><b>Кодовое имя</b></td><td>' + robot_info['name'] + '</td></tr>' +
+                        '<tr><td><b>Покупатель</b></td><td>' + robot_info['customer'] + '</td></tr>' +
+                        '<tr><td><b>Владелец</b></td><td>' + robot_info['owner'] + '</td></tr>' +
+                        '<tr><td><b>Чат, лингва, производство</b></td><td>' + robot_info['ident'] + '</td></tr>' +
+                        '<tr><td colspan="2" style="padding-left:150px"><b>Комплектация</b></td></tr>' +
+                        '<tr><td>Опции</td><td>' + robot_info['options'] + '</td></tr>' +
+                        '<tr><td>Цвет</td><td>' + robot_info['color'] + '</td></tr>' +
+                        '<tr><td>Брендирование</td><td>' + robot_info['brand'] + '</td></tr>' +
+                        '<tr><td>ИКП</td><td>' + robot_info['ikp'] + '</td></tr>' +
+                        '<tr><td>Дополнительная информация</td><td>' + robot_info['dop'] + '</td></tr>' +
+                        '<tr><td colspan="2" style="padding-left:150px"><b>Информация о Покупателе</b></td></tr>' +
+                        '<tr><td>ФИО</td><td>' + robot_info['fio'] + '</td></tr>' +
+                        '<tr><td>e-mail</td><td>' + robot_info['email'] + '</td></tr>' +
+                        '<tr><td>Телефон</td><td>' + robot_info['phone'] + '</td></tr>' +
+                        '<tr><td colspan="2" style="padding-left:150px"><b>Информация для отгрузки</b></td></tr>' +
+                        '<tr><td>Наличие АКБ</td><td>' + robot_info['battery'] + '</td></tr>' +
+                        '<tr><td>Напряжение зарядной станции</td><td>' + robot_info['charger'] + '</td></tr>' +
+                        '<tr><td>Язык (робота)</td><td>' + robot_info['language_robot'] + '</td></tr>' +
+                        '<tr><td>Язык (инструкции)</td><td>' + robot_info['language_doc'] + '</td></tr>' +
+                        '<tr><td>Наименование получателя</td><td>' + robot_info['customer'] + '</td></tr>' +
+                        '<tr><td>Юридич. адрес получателя</td><td>' + robot_info['address'] + '</td></tr>' +
+                        '<tr><td>ИНН получателя</td><td>' + robot_info['inn'] + '</td></tr>' +
+                        '<tr><td>Информация по доставке:<br>-наличие колёс на кофре<br>-адрес доставки<br>-телефон и имя получателя<br>-плательщик по доставке<br>-аэропорт доставки</td><td>' + robot_info['delivery'] + '</td></tr>' +
+                        '</table>';
+                    var prtContent = document.getElementById('print-content');
+                    //var prtCSS = '<link rel="stylesheet" href="./dist/css/print.css" type="text/css" />';
+                    var prtCSS = '<style>' +
+                        'td {padding:5px}' +
+                        '</style>';
+                    var WinPrint = window.open('', '', 'left=50,top=50,width=800,height=640,toolbar=0,scrollbars=1,status=0');
+                    //console.log(table);
+                    WinPrint.document.write('');
+                    WinPrint.document.write(prtCSS);
+                    WinPrint.document.write(prtContent.innerHTML = table);
+                    WinPrint.document.write('');
+                    WinPrint.document.close();
+                    WinPrint.focus();
+                    WinPrint.print();
+                    WinPrint.close();
+                    prtContent.innerHTML = '';
+                });
+        }
     });
-
-    //функция печати
-    function CallPrint(id) {
-        $.post( "./api.php", {action: "print_info_robot", id: id})
-            .done(function(data) {
-                //console.log(data);
-                //return false;
-                var robot_info = jQuery.parseJSON(data);
-                var table = '<table class="robot-info" border="1" cellspacing="0" style="width:100%;font-size:12px">' +
-                    '<tr><td style="width:40%"><b>Версия</b></td><td>'+robot_info['version']+'</td></tr>' +
-                    '<tr><td><b>Номер робота</b></td><td>'+robot_info['number']+'</td></tr>' +
-                    '<tr><td><b>Кодовое имя</b></td><td>'+robot_info['name']+'</td></tr>' +
-                    '<tr><td><b>Заказчик</b></td><td>'+robot_info['customer']+'</td></tr>' +
-                    '<tr><td colspan="2" style="padding-left:150px"><b>Комплектация</b></td></tr>' +
-                    '<tr><td>Опции</td><td>'+robot_info['options']+'</td></tr>' +
-                    '<tr><td>Цвет</td><td>'+robot_info['color']+'</td></tr>' +
-                    '<tr><td>Брендирование</td><td>'+robot_info['brand']+'</td></tr>' +
-                    '<tr><td>ИКП</td><td>'+robot_info['ikp']+'</td></tr>' +
-                    '<tr><td>Дополнительная информация</td><td>'+robot_info['dop']+'</td></tr>' +
-                    '<tr><td colspan="2" style="padding-left:150px"><b>Информация о Заказчике</b></td></tr>' +
-                    '<tr><td>ФИО</td><td>'+robot_info['fio']+'</td></tr>' +
-                    '<tr><td>e-mail</td><td>'+robot_info['email']+'</td></tr>' +
-                    '<tr><td>Телефон</td><td>'+robot_info['phone']+'</td></tr>' +
-                    '<tr><td colspan="2" style="padding-left:150px"><b>Информация для отгрузки</b></td></tr>' +
-                    '<tr><td>Наличие АКБ</td><td>'+robot_info['battery']+'</td></tr>' +
-                    '<tr><td>Напряжение зарядной станции</td><td>'+robot_info['charger']+'</td></tr>' +
-                    '<tr><td>Язык (робота)</td><td>'+robot_info['language_robot']+'</td></tr>' +
-                    '<tr><td>Язык (инструкции)</td><td>'+robot_info['language_doc']+'</td></tr>' +
-                    '<tr><td>Наименование получателя</td><td>'+robot_info['customer']+'</td></tr>' +
-                    '<tr><td>Юридич. адрес получателя</td><td>'+robot_info['address']+'</td></tr>' +
-                    '<tr><td>ИНН получателя</td><td></td>'+robot_info['inn']+'</tr>' +
-                    '<tr><td>Информация по доставке:<br>-наличие колёс на кофре<br>-адрес доставки<br>-телефон и имя получателя<br>-плательщик по доставке<br>-аэропорт доставки</td><td>'+robot_info['delivery']+'</td></tr>' +
-                    '</table>';
-                var prtContent = document.getElementById('print-content');
-                //var prtCSS = '<link rel="stylesheet" href="./dist/css/print.css" type="text/css" />';
-                var prtCSS = '<style>' +
-                             'td {padding:5px}' +
-                             '</style>';
-                var WinPrint = window.open('','','left=50,top=50,width=800,height=640,toolbar=0,scrollbars=1,status=0');
-                //console.log(table);
-                WinPrint.document.write('');
-                WinPrint.document.write(prtCSS);
-                WinPrint.document.write(prtContent.innerHTML=table);
-                WinPrint.document.write('');
-                WinPrint.document.close();
-                WinPrint.focus();
-                WinPrint.print();
-                WinPrint.close();
-                prtContent.innerHTML = '';
-            });
-    }
 </script>
 </body>
 </html>
