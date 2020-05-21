@@ -82,8 +82,9 @@ class Plan
         while ($line = $result->fetch()) {
             $year = date('Y', strtotime($line['date']));
             $month = date('m', strtotime($line['date']));
-            $day = date('d', strtotime($line['date']));
-            $id = $line['id'];
+            //$day = date('d', strtotime($line['date']));
+            //$id = $line['id'];
+            //$number = $line['number'];
             $version = $line['version'];
             $date = $year . "." . $month;
             if (!isset($robot[$date][$version])) {
@@ -94,6 +95,26 @@ class Plan
         return $robot;
     }
 
+    //собирает номера роботов
+    function get_robot_inprocess_num()
+    {
+        $query = "SELECT * FROM `robots` WHERE `writeoff` = 0 AND `remont` = 0 AND `delete` = 0 AND `progress` != 100";
+        $result = $this->pdo->query($query);
+        while ($line = $result->fetch()) {
+            $year = date('Y', strtotime($line['date']));
+            $month = date('m', strtotime($line['date']));
+            //$day = date('d', strtotime($line['date']));
+            //$id = $line['id'];
+            $number = $line['number'];
+            $version = $line['version'];
+            $date = $year . "." . $month;
+            /*if (!isset($robot[$date][$version])) {
+                $robot[$date][$version] = [];
+            }*/
+            $robot[$date][$version][]=$number;
+        }
+        return $robot;
+    }
 
     function get_operation($id_pos)
     {
@@ -219,7 +240,6 @@ class Plan
     }
 
     /** NEW PLAN **/
-
     //собираем все активные чеклисты у которых есть кит (дата, версия)
     function get_check_in_process_by_version($date, $version)
     {

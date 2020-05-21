@@ -49,6 +49,8 @@ if (isset($_GET['copy'])) {
                                             <option value="Не прокатило">Не прокатило</option>
                                             <option value="Производство">Производство</option>
                                             <option value="ThermoControl">ThermoControl</option>
+                                            <option value="Удалннный склад">Удалннный склад</option>
+                                            <option value="Медкейс">Медкейс</option>
 										</select>
 									</div>
 								   

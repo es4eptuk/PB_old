@@ -118,14 +118,17 @@ foreach ($arr_eq as $eq) {
                     //подготовка плана производства роботов по месяцам
                     $version = $robots->getEquipment;
                     $arr_robot = $plan->get_robot_inprocess();
+                    $arr_robot_num = $plan->get_robot_inprocess_num();
+
                     $arr_robot = (isset($arr_robot)) ? $arr_robot : [];
                     ksort($arr_robot);
                     foreach ($arr_robot as $k => $v) {
                         echo "<dt>$k</dt>";
                         foreach ($v as $kv => $vv) {
                             if (in_array($kv, $v_filtr) || $v_filtr == []) {
-                                $name = $version[$kv]['title'];
-                                echo "<dd>&nbsp;&nbsp; $name - $vv</dd>";
+                                $name = trim($version[$kv]['title']);
+                                $robots = implode(',', $arr_robot_num[$k][$kv]);
+                                echo "<dd><span style='display:inline-block;width:70px;padding-left:10px'>$name</span> - $vv ($robots)</dd>";
                             }
                         }
                     }

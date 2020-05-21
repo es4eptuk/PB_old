@@ -48,6 +48,8 @@ $writeoff_user_id = $writeoff1['update_user'];
                                                     "Не прокатило",
                                                     "Производство",
                                                     "ThermoControl",
+                                                    "Удалннный склад",
+                                                    "Медкейс",
                                                 ];
 											foreach ($arr as &$value) {
                                                if ($writeoff_category == $value) {

@@ -30,9 +30,6 @@ class Writeoff
         $this->position = $position;
     }
 
-
-
-
     //создать списание
     function add_writeoff($json)
     {
