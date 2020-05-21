@@ -70,7 +70,7 @@ foreach ($arr_eq as $eq) {
             
            
             
-            <div class="box-body table-responsive">
+            <div class="box-body table-responsive no-padding">
                 <div class="margin">
                     <!--
                     <div class="btn-group">
@@ -127,8 +127,8 @@ foreach ($arr_eq as $eq) {
                         foreach ($v as $kv => $vv) {
                             if (in_array($kv, $v_filtr) || $v_filtr == []) {
                                 $name = trim($version[$kv]['title']);
-                                $robots = implode(',', $arr_robot_num[$k][$kv]);
-                                echo "<dd><span style='display:inline-block;width:70px;padding-left:10px'>$name</span> - $vv ($robots)</dd>";
+                                $robots = implode(', ', $arr_robot_num[$k][$kv]);
+                                echo "<dd><span style='display:block;float:left;width:110px;padding-left:10px'>$name</span><span style='display:inline-block;width:80%;'> - $vv ($robots)</span></dd>";
                             }
                         }
                     }
@@ -145,11 +145,12 @@ foreach ($arr_eq as $eq) {
                     //на основе дат собираем шапку таблицы
                     foreach ($arr_robot as $k => $v) {
                         $out .= '<th colspan="3"><b>'.$k.'</b> <button type="button" class="btn btn-block btn-primary btn-xs add_order" data-date="'.$k.'">Заказ</button></th>';
-                        $out2 .= '<th style="width: 47px"><b>надо</b></th><th style="width: 47px"><b>есть</b></th><th style="width: 86px"><b>статус</b></th>';
+                        //$out2 .= '<th style="width: 47px"><b>надо</b></th><th style="width: 47px"><b>есть</b></th><th style="width: 86px"><b>статус</b></th>';
+                        $out2 .= '<th><b>надо</b></th><th><b>есть</b></th><th><b>статус</b></th>';
                     }
                 ?>
                     
-              <table class="table table-bordered table-striped ">
+              <table class="table table-bordered">
                   <thead>
                   <tr>
                     <th colspan="3"><b>Номенклатура</b></th>
