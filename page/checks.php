@@ -493,7 +493,8 @@ class Checks
             }
         }
         if ($count_check != 0) {
-            $progress = round($finish_check * 100 / $count_check);
+            $progress = floor(round(($finish_check * 100) / $count_check, 2, PHP_ROUND_HALF_DOWN));
+            //$progress = round($finish_check * 100 / $count_check);
             return $progress;
         } else {
             return false;

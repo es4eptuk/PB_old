@@ -795,9 +795,9 @@ class Robots
         return $result;
     }
 
-    function get_robot_options($robot = 0)
+    function get_robot_options($robot = 0, $status = 1)
     {
-        $this->query = "SELECT * FROM `robot_options`";
+        $this->query = "SELECT * FROM `robot_options` WHERE `status` = $status";
         $result = $this->pdo->query($this->query);
         $n = 0;
         while ($line = $result->fetch())
