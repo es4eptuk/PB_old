@@ -38,6 +38,7 @@ $robot_number = $robot_info['number'];
                                 <tbody>
                                 <tr>
                                     <th>posID</th>
+                                    <th>Сборка</th>
                                     <th>Артикул</th>
                                     <th>Наименование</th>
                                     <th>Количество</th>
@@ -49,17 +50,17 @@ $robot_number = $robot_info['number'];
                                     return strcmp($a["title"], $b["title"]);
                                 });
                                 foreach ($arr_pos as $pos) {
-                                    if ($pos['assembly'] == 0) {
-                                        echo '   
-                                        <tr> 
-                                            <td>'.$pos['pos_id'].'</td>
-                                            <td>'.$pos['vendor_code'].'</td>
-                                            <td>'.$pos['title'].'</td> 
-                                            <td class="quant"><span style="position:absolute;font-size:14px;font-weight:700;color:#c71616;">'.$pos['count'].'</span></td>
-                                            <td><i class="fa fa-2x fa-remove" style="cursor:pointer;"></i></td> 
-                                        </tr>
-                                    ';
-                                    }
+                                    $assembly = ($pos['assembly'] == 0) ? '' :  '<i class="fa fa-check"></i>';
+                                    echo '   
+                                    <tr> 
+                                        <td>'.$pos['pos_id'].'</td>
+                                        <td>'.$assembly.'</td>
+                                        <td>'.$pos['vendor_code'].'</td>
+                                        <td>'.$pos['title'].'</td> 
+                                        <td class="quant"><span style="position:absolute;font-size:14px;font-weight:700;color:#c71616;">'.$pos['count'].'</span></td>
+                                        <td><i class="fa fa-2x fa-remove" style="cursor:pointer;"></i></td> 
+                                    </tr>
+                                ';
                                 }
                                 ?>
                                 </tbody>
