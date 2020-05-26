@@ -68,27 +68,35 @@ include 'include/class.inc.php';
                 if (!isset($_GET['category'])) {$category = 0;} else {$category = $_GET['category'];}
                 
                 $arr = $position->get_kit($category);
-                
+                /*print_r('<pre>');
+                print_r($arr);
+                print_r('</pre>');
+                die;*/
                 if (isset($arr)) {
                     foreach ($arr as &$pos) {
                         if ($pos['delete'] == 0) {
-                            $binding = "";
-                            if ($pos['count'] != 0) {
-                                $binding = "Есть";
-                            } else {
-                                $binding = "Нет";
+                            $binding = (count($pos['checks'])>0) ? 'Есть' : '-';
+                            $info = '';
+                            if (count($pos['checks'])>0) {
+                                foreach ($pos['checks'] as $vid => $arr_checks) {
+                                    foreach ($arr_checks as $id => $title) {
+                                        if ($vid == 'check_items') {$tip = 'робот';}
+                                        if ($vid == 'check_options') {$tip = 'опция';}
+                                        $info .= '#'.$id.' - '.$title.' ('.$tip.')<br>';
+                                    }
+                                }
                             }
                             echo "
-                        <tr>
-                            <td>".$pos['id_kit']."</td>
-                            <td>".$pos['title']."</td>
-                            <td>".$pos['version']."</td>
-                            <td>".$pos['kit_title']."</td>
-                            <td>".$binding."</td>
-                            <td><i class='fa fa-2x fa-pencil' style='cursor: pointer;' data-id='".$pos['id_kit']."'></i></td>
-                            <td><i class='fa fa-2x fa-copy' style='cursor: pointer;' data-id='".$pos['id_kit']."'></i></td>                        
-                        </tr>
-                        ";
+                            <tr>
+                                <td>".$pos['id_kit']."</td>
+                                <td>".$pos['title']."</td>
+                                <td>".$pos['version']."</td>
+                                <td>".$pos['kit_title']."</td>
+                                <td><span data-toggle='tooltip' data-html='true' data-delay='{\"show\":\"100\", \"hide\":\"300\"}' data-placement='bottom' title='".$info."'>".$binding."</span></td>
+                                <td><i class='fa fa-2x fa-pencil' style='cursor: pointer;' data-id='".$pos['id_kit']."'></i></td>
+                                <td><i class='fa fa-2x fa-copy' style='cursor: pointer;' data-id='".$pos['id_kit']."'></i></td>                        
+                            </tr>
+                            ";
                         }
                     }
                 }

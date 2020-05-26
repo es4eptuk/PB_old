@@ -422,7 +422,7 @@ class Checks
             //списание резерва
             $this->sklad->del_reserv($arr_kits[$kit]);
         }
-        if ($result && $kit != 0 && $value == 0) {
+        if ($result && $kit != 0 && $value == 0 && $remont==0) {
             //отмена списания комплекта
             $this->sklad->unset_writeoff_kit($robot_version, $number, $kit, $id, $robot);
             //восстановить резерв

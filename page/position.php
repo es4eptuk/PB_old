@@ -961,18 +961,37 @@ class Position
 
         $result = $this->pdo->query($query);
         $cnt=0;
-            while ($line = $result->fetch()) {
+        while ($line = $result->fetch()) {
             $idd = $line['id_kit'];
-            $query2 = "SELECT COUNT(*) FROM `check` WHERE `id_kit` = $idd";
+            $checks = [];
+            $query1 = "SELECT * FROM `check_items` WHERE `kit` = $idd";
+            $result1 = $this->pdo->query($query1);
+            while ($line1 = $result1->fetch()) {
+                $checks['check_items'][$line1['id']] = $line1['title'];
+            }
+            $query2 = "SELECT * FROM `robot_options_checks` WHERE `id_kit` = $idd";
+            $result2 = $this->pdo->query($query2);
+            while ($line2 = $result2->fetch()) {
+                $checks['check_options'][$line2['check_id']] = $line2['check_title'];
+            }
+            /*
+            $count = 0;
+            $query2 = "SELECT COUNT(*) FROM `check_items` WHERE `kit` = $idd";
             $result2 = $this->pdo->query($query2);
             $line2 = $result2->fetch();
-            $count = $line2['COUNT(*)'];
+            $count = $count + $line2['COUNT(*)'];
+            $query3 = "SELECT COUNT(*) FROM `robot_options_checks` WHERE `id_kit` = $idd";
+            $result3 = $this->pdo->query($query3);
+            $line3 = $result3->fetch();
+            $count = $count + $line3['COUNT(*)'];
+            */
             
             $kit_array[$cnt]['id_kit'] = $line['id_kit'];
             $kit_array[$cnt]['kit_title'] = $line['kit_title'];
             $kit_array[$cnt]['title'] = $line['title'];
             $kit_array[$cnt]['version'] = $line['version'];
-            $kit_array[$cnt]['count'] = $count;
+            //$kit_array[$cnt]['count'] = $count;
+            $kit_array[$cnt]['checks'] = $checks;
             $kit_array[$cnt]['delete'] = $line['delete'];
 
             

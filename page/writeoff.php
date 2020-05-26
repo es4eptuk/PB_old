@@ -7,6 +7,7 @@ class Writeoff
     private $orders;
     private $mail;
     private $position;
+    private $plan;
 
     function __construct()
     {
@@ -22,12 +23,13 @@ class Writeoff
 
     function init()
     {
-        global $log, $orders, $mail, $position;
+        global $log, $orders, $mail, $position, $plan;
 
         $this->log = $log;//new Log;
         $this->orders = $orders;//new Orders;
         $this->mail = $mail;//new Mail;
         $this->position = $position;
+        $this->plan= $plan;
     }
 
     //создать списание
@@ -105,9 +107,11 @@ class Writeoff
             $title = $value['2'];
             $count = $value['3'];
             $price = $value['4'];
+
             /*$log = date('Y-m-d H:i:s') . ' ' . print_r($value, true);
             file_put_contents(__DIR__ . '/log.txt', $log . PHP_EOL, FILE_APPEND);
             die;*/
+
             $subcategory = 0;
 
             if ($pos_id != "") {
@@ -409,17 +413,70 @@ class Writeoff
         
     }
 
+    //информация по списаниям для бухгалтера
     function get_writeoff_on_robot($robot) {
-        $writeoff_pos_arr = Array();
-        $writeoff_price = 0;
-        $writoff_robot = $this->get_writeoff($robot);
+        //информация по сборкам
+        $arr_assemble = $this->plan->get_assemblyes_items();
+        //добавляем инфу по позициям
+        $this->query = "SELECT * FROM `pos_items`";
+        $result = $this->pdo->query($this->query);
+        while($line = $result->fetch()){
+            $arr_pos[$line['id']] = $line;
+        }
+        //набраем все списания по роботу
+        $this->query = "SELECT * FROM `writeoff_items` 
+            JOIN `writeoff` ON `writeoff_items`.`writeoff_id` = `writeoff`.`id`
+            JOIN `pos_items` ON `writeoff_items`.`pos_id` = `pos_items`.`id` 
+            WHERE `writeoff`.`robot` = $robot";
+        $result = $this->pdo->query($this->query);
+        $arr = [];
+        while($line = $result->fetch()){
+            if (isset($arr[$line['pos_id']])) {
+                $arr[$line['pos_id']]['count'] += $line['pos_count'];
+            } else {
+                $arr[$line['pos_id']]['pos_id'] = $line['pos_id'];
+                $arr[$line['pos_id']]['vendor_code'] = $line['vendor_code'];
+                $arr[$line['pos_id']]['title'] = $line['title'];
+                $arr[$line['pos_id']]['assembly'] = $line['assembly'];
+                $arr[$line['pos_id']]['count'] = $line['pos_count'];
+            }
+            //если позиция сборка
+            if ($line['assembly'] != 0) {
+                foreach ($arr_assemble[$line['assembly']] as $pos_id => $count ) {
+                    if (isset($arr[$pos_id])) {
+                        $arr[$pos_id]['count'] += $count * $line['pos_count'];
+                    } else {
+                        $arr[$pos_id]['pos_id'] = $arr_pos[$pos_id]['id'];
+                        $arr[$pos_id]['vendor_code'] = $arr_pos[$pos_id]['vendor_code'];
+                        $arr[$pos_id]['title'] = $arr_pos[$pos_id]['title'];
+                        $arr[$pos_id]['assembly'] = $arr_pos[$pos_id]['assembly'];
+                        $arr[$pos_id]['count'] = $count * $line['pos_count'];
+                    }
+                }
+            }
+        }
+
+        //добавляем инфу по позициям
+        /*$this->query = "SELECT * FROM `pos_items`";
+        $result = $this->pdo->query($this->query);
+        while($line = $result->fetch()){
+            $arr_pos[$line['id']] = $line;
+        }*/
+        //обрабатываем массив
+        /*foreach ($arr as $id => $info) {
+            $arr[$id]['vendor_code'] = $arr_pos[$id]['vendor_code'];
+            $arr[$id]['title'] = $arr_pos[$id]['title'];
+            $arr[$id]['assembly'] = $arr_pos[$id]['assembly'];
+        }*/
+
+        /*$writoff_robot = $this->get_writeoff($robot);
 
         foreach ($writoff_robot as $key => $item) {
             //$writeoff_price += $item['total_price'];
             $pos_arr = $this->get_pos_in_writeoff($item['id']);
             $writeoff_pos_arr = array_merge($writeoff_pos_arr, $pos_arr);
-        }
-    return $writeoff_pos_arr;
+        }*/
+        return $arr;
     }
 
     function __destruct() {
