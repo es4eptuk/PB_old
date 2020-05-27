@@ -3,6 +3,7 @@
         "longman/telegram-bot": "^0.54.0",
         "telegram-bot/api": "^2.3",
         "irazasyed/telegram-bot-sdk": "^2.0",
-        "ext-mysqli": "*"
+        "ext-mysqli": "*",
+        "mesilov/bitrix24-php-sdk": "^0.6.1"
     }
 }

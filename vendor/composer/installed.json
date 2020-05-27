@@ -483,6 +483,60 @@
         ]
     },
     {
+        "name": "mesilov/bitrix24-php-sdk",
+        "version": "0.6.1",
+        "version_normalized": "0.6.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/mesilov/bitrix24-php-sdk.git",
+            "reference": "4d975336fd0af8937a9c09b01b617925748bf47b"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/mesilov/bitrix24-php-sdk/zipball/4d975336fd0af8937a9c09b01b617925748bf47b",
+            "reference": "4d975336fd0af8937a9c09b01b617925748bf47b",
+            "shasum": ""
+        },
+        "require": {
+            "ext-curl": "*",
+            "ext-json": "*",
+            "php": ">=5.3.2",
+            "psr/log": "^1.0"
+        },
+        "require-dev": {
+            "jakub-onderka/php-console-highlighter": "~0.3",
+            "jakub-onderka/php-parallel-lint": "0.9",
+            "phpunit/phpunit": "~4.8",
+            "phpunit/phpunit-mock-objects": "2.3.0"
+        },
+        "time": "2019-03-19T21:42:18+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "classmap": [
+                "src/"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Maxim Mesilov",
+                "homepage": "https://github.com/mesilov/"
+            }
+        ],
+        "description": "A powerfull PHP library for the Bitrix24 REST API",
+        "homepage": "https://github.com/mesilov/bitrix24-php-sdk",
+        "keywords": [
+            "Bitrix24",
+            "api",
+            "php",
+            "rest"
+        ]
+    },
+    {
         "name": "monolog/monolog",
         "version": "1.23.0",
         "version_normalized": "1.23.0.0",
