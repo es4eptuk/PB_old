@@ -104,8 +104,8 @@ class Checks
                          '0',
                          '$sort',
                          '$kit',
-                         '', 
-                         '')";
+                         NULL, 
+                         '0')";
             $result = $this->pdo->query($query);
             //добавляем резерв
             $this->sklad->add_reserv($arr_kits[$kit]);

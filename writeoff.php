@@ -15,85 +15,60 @@ include 'include/class.inc.php';
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <section class="content-header">
-      <h1>
-       Списания
-        
-      </h1>
-      
+      <h1>Списания</h1>
     </section>
-
     <!-- Main content -->
     <section class="content">
       <div class="row">
         <div class="col-xs-12">
-          
-
           <div class="box">
-           
-            <!-- /.box-header -->
-
-              <div class="box-header">
-                  <a href="./add_writeoff.php" class="btn btn-primary" >Добавить списание</a>
-                  <!--<a href="./add_writeoff_kit.php" class="btn btn-primary" >Списать комплект</a>-->
-              </div>
+            <div class="box-header">
+                <a href="./add_writeoff.php" class="btn btn-primary" >Добавить списание</a>
+                <!--<a href="./add_writeoff_kit.php" class="btn btn-primary" >Списать комплект</a>-->
+            </div>
             <div class="box-body">
-             
-                
-              <table id="orders" class="table table-bordered table-striped">
+                <table id="writeoffs" class="table table-responsive">
                 <thead>
-                <tr>
-                 
-                  <th>Номер</th>
-                  <th>Дата составления</th>
-                  <th>Категория</th>
-                  <th>Описание</th>
-                  <th>Сумма</th>
-                  <th>Пользователь</th>
-                  <th></th>
-                  <th></th>
-                </tr>
+                    <tr>
+                        <th>Номер</th>
+                        <th>Дата составления</th>
+                        <th>Категория</th>
+                        <th>Описание</th>
+                        <th>Сумма</th>
+                        <th>Пользователь</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
                 </thead>
                 <tbody>
-                <?php 
+                <?php
                 if (isset($_GET['robot'])) {$robot= $_GET['robot'];} else {$robot = 0;}
                 $arr = $writeoff->get_writeoff($robot);
-                
                 if (isset($arr)) {
-                foreach ($arr as &$pos) {
-                    
-                  
-                    
-                    
+                    foreach ($arr as &$pos) {
                         $user_info = $user->get_info_user($pos['update_user']);
                         $create_date = new DateTime($pos['update_date']);
-                       
-
-                       echo "
-                    <tr>
-                        <td>".$pos['id']."</td>
-                        <td>".$create_date->format('d.m.Y')."</td>
-                        <td>".$pos['category']."</td>
-                         <td>".$pos['description']."</td>
-                        <td>".$pos['total_price']."</td>
-                        <td>".$user_info['user_name']."</td>
-                        <td><i class='fa fa-2x fa-pencil' style='cursor: pointer;' id='".$pos['id']."'></i></td>
-                        <td><i class='fa fa-2x fa-copy' style='cursor: pointer;' id='".$pos['id']."'></i></td>
-                    </tr>
-                       
-                       
-                       ";
-                    
+                        echo "
+                            <tr>
+                                <td>".$pos['id']."</td>
+                                <td>".$create_date->format('d.m.Y')."</td>
+                                <td>".$pos['category']."</td>
+                                <td>".$pos['description']."</td>
+                                <td>".$pos['total_price']."</td>
+                                <td>".$user_info['user_name']."</td>
+                                <td><i class='fa fa-2x fa-pencil' style='cursor: pointer;' data-id='".$pos['id']."'></i></td>
+                                <td><i class='fa fa-2x fa-copy' style='cursor: pointer;' data-id='".$pos['id']."'></i></td>
+                            </tr>
+                        ";
+                    }
                 }
-                } 
                 ?>
               </table>
-              
             </div>
-            
-              <div class="box-footer">
-                    <a href="./add_writeoff.php" class="btn btn-primary" >Добавить списание</a>
-                  <a href="./add_writeoff_kit.php" class="btn btn-primary" >Списать комплект</a>
-                </div>
+            <div class="box-footer">
+                <a href="./add_writeoff.php" class="btn btn-primary" >Добавить списание</a>
+                <a href="./add_writeoff_kit.php" class="btn btn-primary" >Списать комплект</a>
+            </div>
             <!-- /.box-body -->
           </div>
           <!-- /.box -->
@@ -113,7 +88,7 @@ include 'include/class.inc.php';
 </div>
 <!-- ./wrapper -->
 <!-- Modal -->
-<div class="modal fade" id="order_edit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -124,92 +99,8 @@ include 'include/class.inc.php';
       </div>
       <div class="modal-body">
           
-          <form role="form" data-toggle="validator" id="add_pos">
-                <!-- text input -->
-                <!-- select -->
-                <div class="form-group">
-                  <label>Категория</label>
-                  <select class="form-control" name="category" placeholder="Веберите категорию" id="category" required="required">
-                   <option>Веберите категорию...</option>
-                   <?php 
-                   $arr = $position->getCategoryes;
-                
-                    foreach ($arr as &$category) {
-                       echo "
-                       <option value='".$category['id']."'>".$category['title']."</option>
-                       
-                       ";
-                    }
-                   
-                   ?>
-                  </select>
-                </div>
 
-                
-                 <div class="form-group">
-                  <label>Поставщик <small>(<a href="#" data-toggle="modal" data-target="#add_provider">Добавить</a>)</small></label>
-                  <select class="form-control" name="provider" placeholder="Веберите категорию" id="provider" required="required">
-                   <option>Веберите поставщика...</option>
-                   <?php 
-                   $arr = $position->get_pos_provider();
-                
-                    foreach ($arr as &$provider) {
-                       echo "
-                       <option value='".$provider['id']."'>".$provider['type']." ".$provider['title']."</option>
-                       
-                       ";
-                    }
-                   
-                   ?>
-                  </select>
-                  
-                  
-                </div>
-                
-                <div class="form-group">
-                  <label>Статус </label>
-                  <select class="form-control" name="status" placeholder="Веберите статус" id="status" required="required">
-                   
-                    <option value="0">Новый</option>
-                    <option value="1">Отгружен</option>
-                    <option value="2">Отменен</option>
-                  </select>
-                  
-                  
-                </div>
-                
-                <div class="form-group">
-                  <label>Ответственный </label>
-                  <select class="form-control" name="responsible" placeholder="Веберите пользователя" id="responsible" required="required">
-                   <option>Веберите пользователя...</option>
-                   <?php 
-                   $arr = $user->get_users($group = 0);
-                
-                    foreach ($arr as &$user) {
-                       echo "
-                       <option value='".$user['user_id']."'>".$user['user_name']."</option>
-                       
-                       ";
-                    }
-                   
-                   ?>
-                  </select>
-                  
-                  
-                </div>
-                
-                
-                
-                <div id="update"></div>
-                
-                <div class="box-footer">
-                    <button type="submit" class="btn btn-primary" id="save_close" name="">Сохранить</button>
-                    <button type="button" class="btn btn-primary btn-danger pull-right" id="delete" name="">Удалить</button>
-                </div>
-              </form>
-         
       </div>
-      
     </div>
   </div>
 </div>
@@ -230,123 +121,116 @@ include 'include/class.inc.php';
 <script src="../../dist/js/demo.js"></script>
 <!-- page script -->
 <script>
-var id_order=0;
 
+    $(document).ready(function () {
 
-    $( "#orders .fa-pencil" ).click(function() {
-            id_order = $(this).attr("id");
-            window.location.href = "./edit_writeoff.php?id=" + id_order;    
-         
-    });
-    
-   
-  
-  $( "#save_close" ).click(function() { 
-  save_close();
-  return false;
-  });
-  
-    $( "#delete" ).click(function() { 
-  delete_pos();
-  return false;
-  });
-  
-   function delete_pos() {
-     var category =  $('#category').val();
-     $.post( "./api.php", { 
-        action: "delete_pos", 
-        id: id_pos
-        
-        
-    } )
-          .done(function( data ) {
-              if (data=="false") {alert( "Data Loaded: " + data ); }
-              else {
-                window.location.href = "./pos.php?id="+category;  
-              }
-          });
-    
-   }
-   
-   $( "#orders .fa-copy" ).click(function() {
-            id_writeoff = $(this).attr("id");
-            window.location.href = "./add_writeoff.php?copy=" + id_writeoff;    
-         
-    });
-  
-  function save_close() {
-    var title =  $('#title').val();
-    var longtitle =  $('#longtitle').val();
-    var category =  $('#category').val();
-    var subcategory =  $('#subcategory').val();
-    var vendorcode =  $('#vendorcode').val();
-    var provider =  $('#provider').val();
-    var price =  $('#price').val();
-    var quant_robot =  $('#quant_robot').val(); 
-    var quant_total =  $('#quant_total').val();
-    
-    
-      $.post( "./api.php", { 
-        action: "edit_pos", 
-        id: id_pos,
-        title: title,
-        longtitle: longtitle ,
-        category: category ,
-        subcategory: subcategory ,
-        vendorcode: vendorcode ,
-        provider: provider ,
-        price: price ,
-        quant_robot: quant_robot ,
-        quant_total: quant_total 
-    } )
-          .done(function( data ) {
-              if (data=="false") {alert( "Data Loaded: " + data ); }
-              else {
-                window.location.href = "./pos.php?id="+category;  
-              }
-          });
-    
- }
- 
- function get_info_user(id) {
-     
-      $.post( "./api.php", { 
-        action: "get_info_user", 
-        id: id
-    } )
-          .done(function( data ) {
-              if (data=="false") {alert( "Data Loaded: " + data ); }
-              else {
-                var obj = jQuery.parseJSON (data);
-                //console.log(obj['user_name']);  
-                return obj['user_name'] ; 
-              }
-          });
-          
-    $("#orders").on("click", "td .fa-copy", function() {
-       
-        return false;
-   });  
-   
-  
-     
- }
- 
- $('#check_show_all').change(function() {
-        if($(this).is(":checked")) {
-            //var returnVal = confirm("Are you sure?");
-            $(this).attr("checked", true);
+        var table = $('#writeoffs').DataTable({
+            "iDisplayLength": 100,
+            "lengthMenu": [[10, 25, 100, -1], [10, 25, 100, "All"]],
+            "order": [[0, 'desc']],
+            stateSave: true
+        });
+
+        $("#writeoffs").on('click', '.fa-copy', function () {
+            id_writeoff = $(this).data("id");
+            window.location.href = "./add_writeoff.php?copy=" + id_writeoff;
+        });
+
+        $("#writeoffs").on('click', '.fa-pencil', function () {
+            id_writeoff = $(this).data("id");
+            window.location.href = "./edit_writeoff.php?id=" + id_writeoff;
+        });
+        /*
+        $("#save_close").click(function () {
+            save_close();
+            return false;
+        });
+
+        $("#delete").click(function () {
+            delete_pos();
+            return false;
+        });
+
+        function delete_pos() {
+            var category = $('#category').val();
+            $.post("./api.php", {
+                action: "delete_pos",
+                id: id_pos
+            }).done(function (data) {
+                if (data == "false") {
+                    alert("Data Loaded: " + data);
+                } else {
+                    window.location.href = "./pos.php?id=" + category;
+                }
+            });
         }
-       // alert($(this).is(':checked')); 
-        $("#show_all").submit();
-        
+        */
+
+        /*function save_close() {
+            var title = $('#title').val();
+            var longtitle = $('#longtitle').val();
+            var category = $('#category').val();
+            var subcategory = $('#subcategory').val();
+            var vendorcode = $('#vendorcode').val();
+            var provider = $('#provider').val();
+            var price = $('#price').val();
+            var quant_robot = $('#quant_robot').val();
+            var quant_total = $('#quant_total').val();
+            $.post("./api.php", {
+                action: "edit_pos",
+                id: id_pos,
+                title: title,
+                longtitle: longtitle,
+                category: category,
+                subcategory: subcategory,
+                vendorcode: vendorcode,
+                provider: provider,
+                price: price,
+                quant_robot: quant_robot,
+                quant_total: quant_total
+            }).done(function (data) {
+                if (data == "false") {
+                    alert("Data Loaded: " + data);
+                } else {
+                    window.location.href = "./pos.php?id=" + category;
+                }
+            });
+        }*/
+
+        /*
+        function get_info_user(id) {
+            $.post("./api.php", {
+                action: "get_info_user",
+                id: id
+            }).done(function (data) {
+                if (data == "false") {
+                    alert("Data Loaded: " + data);
+                } else {
+                    var obj = jQuery.parseJSON(data);
+                    //console.log(obj['user_name']);
+                    return obj['user_name'];
+                }
+            });
+            $("#orders").on("click", "td .fa-copy", function () {
+                return false;
+            });
+        }*/
+
+        /*$('#check_show_all').change(function () {
+            if ($(this).is(":checked")) {
+                //var returnVal = confirm("Are you sure?");
+                $(this).attr("checked", true);
+            }
+            // alert($(this).is(':checked'));
+            $("#show_all").submit();
+
+        });*/
+
+        /*$('#orders').DataTable({
+            "iDisplayLength": 100,
+            "order": [[0, "desc"]]
+        });*/
     });
- 
-  $('#orders').DataTable({
-       "iDisplayLength": 100,
-        "order": [[ 0, "desc" ]]
-    } );
-  
   
 </script>
 </body>

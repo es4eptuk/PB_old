@@ -1,5 +1,6 @@
 <?php 
 include 'include/class.inc.php';
+$today = date('Y-m-d');
 ?>
 
 <?php include 'template/head.php' ?>
@@ -58,16 +59,13 @@ include 'include/class.inc.php';
                 <thead>
                 <tr>
                   <th>Номер</th>
-                  <th style="width: 12%;">Владелец</th>
-                  <th style="width: 12%;">Кодовое имя</th>
-                  <th style="width: 8%;">Готовность, %</th>
-                  <th style="width: 8%;">Этап</th>
-                  <th style="width: 20%;">Последняя операция</th>
-                  <th>Начало производства</th>
-                  <th>Кем</th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
+                  <th>Владелец</th>
+                  <th>Кодовое имя</th>
+                  <th style="width:100px;">Готовность, %</th>
+                  <th style="width:100px;">Этап</th>
+                  <th style="width:150px;">Начало производства</th>
+                  <th style="width:150px;">Дата отгрузки</th>
+                  <th style="width:100px;"></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -82,12 +80,23 @@ include 'include/class.inc.php';
 
                         $color = "#fff";
                         if ($robot['progress']>0) {$color = "#f1f7c1";}
+                        if ($robot['date_send'] != null && $robot['date_send'] <= $today) {$color = "#c5d6f5;";}
                         if ($robot['progress']==100) {$color = "#c1f7cc";}
                         if ($robot['delete']==2) {$color = "#f5c5dd;";}
 
-                        $user_info = $user->get_info_user($robot['update_user']);
-                        $robot_date = new DateTime($robot['date']);
-                        $robot_date_test = new DateTime($robot['date_test']);
+
+                        //$user_info = $user->get_info_user($robot['update_user']);
+                        $date = new DateTime($robot['date']);
+                        $robot_date = $date->format('d.m.Y');
+                        //$robot_date_test = new DateTime($robot['date_test']);
+                        if ($robot['date_send'] != null) {
+                            $date = new DateTime($robot['date_send']);
+                            $robot_date_send = $date->format('d.m.Y');
+                            //$robot_date_send = $robot['date_send'];
+                        } else {
+                            $robot_date_send = '';
+                        }
+                        unset($date);
                          $num = str_pad($robot['number'], 4, "0", STR_PAD_LEFT);
                          $remont = "";
                          if ($robot['remont']>0) {$remont = '<br><small class="label bg-red">Модернизация</small>';}
@@ -118,12 +127,9 @@ include 'include/class.inc.php';
                                 <td>".$robot['name']." ".$remont." </td>
                                 <td>".$robot['progress']."</td>
                                 <td>".$position->getCategoryes[$robot['stage']]['title']."</td>
-                                <td>".$robot['last_operation']."</td>
-                                <td>".$robot_date->format('d.m.Y')."</td>
-                                <td>".$user_info['user_name']."</td>
-                                <td>".$check."</td>
-                                <td>".$print."</td>
-                                <td>".$edit." </td>
+                                <td>".$robot_date."</td>
+                                <td>".$robot_date_send."</td>                                
+                                <td>".$check.'&nbsp;&nbsp;&nbsp;&nbsp;'.$print.'&nbsp;&nbsp;&nbsp;&nbsp;'.$edit."</td>
                             </tr>
                          ";
 
@@ -288,7 +294,6 @@ include 'include/class.inc.php';
                             <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
                             <input type="text" class="form-control pull-right" class="datepicker" id="datepicker" value="">
                         </div>
-                        <!-- /.input group -->
                     </div>
                     <div class="form-group">
                         <label>Первый тест:</label>
@@ -296,7 +301,13 @@ include 'include/class.inc.php';
                             <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
                             <input type="text" class="form-control pull-right" class="datepicker" id="datepicker2" value="">
                         </div>
-                        <!-- /.input group -->
+                    </div>
+                    <div class="form-group">
+                        <label>Дата отгрузки:</label>
+                        <div class="input-group date">
+                            <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+                            <input type="text" class="form-control pull-right" class="datepicker" id="datepicker3" value="">
+                        </div>
                     </div>
                     <div id="update"></div>
                     <div class="box-footer">
@@ -407,6 +418,13 @@ include 'include/class.inc.php';
                         <label>Информация по доставке (наличие колёс на кофре, адрес доставки, телефон и имя получателя, плательщик по доставке, аэропорт доставки)</label>
                         <textarea rows="5" cols="45" class="form-control" name="delivery" id="delivery"></textarea>
                     </div>
+                    <div class="form-group">
+                        <label>Дата отгрузки:</label>
+                        <div class="input-group date">
+                            <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+                            <input type="text" class="form-control pull-right" class="datepicker" id="datepicker3" value="">
+                        </div>
+                    </div>
                     <div id="update"></div>
                     <div class="box-footer">
                         <button type="submit" class="btn btn-primary" id="save_close" name="">Сохранить</button>
@@ -483,6 +501,12 @@ include 'include/class.inc.php';
             format: 'dd.mm.yyyy',
             language: 'ru-Ru',
             startDate: '-3d',
+            autoclose: true
+        })
+        $('#datepicker3').datepicker({
+            format: 'dd.mm.yyyy',
+            language: 'ru-Ru',
+            startDate: 'd',
             autoclose: true
         })
         //Select2
@@ -577,6 +601,7 @@ include 'include/class.inc.php';
             var delivery = $('#delivery').val();
             var date_start = $('#datepicker').val();
             var date_test = $('#datepicker2').val();
+            var date_send = $('#datepicker3').val();
             var send = $('#send').is(':checked') ? 1 : 0;
             //собираем отмеченные опции
             $('input[name=options]').each(function () {
@@ -593,6 +618,9 @@ include 'include/class.inc.php';
                 date_start = null;
                 date_test = null;
                 send = 0;
+            }
+            if (date_send === '') {
+                date_send = null;
             }
             //console.log(date_start);
             //return false;
@@ -615,6 +643,7 @@ include 'include/class.inc.php';
                 dop_manufactur: dop_manufactur,
                 date_start: date_start,
                 date_test: date_test,
+                date_send: date_send,
                 send: send,
                 delivery: delivery
             }).done(function (data) {
@@ -651,15 +680,14 @@ include 'include/class.inc.php';
                 $.post("./api.php", {
                     action: "sortable",
                     json: arr_robot
-                })
-                    .done(function (data) {
-                        if (data == "false") {
-                            alert("Data Loaded: " + data);
-                        } else {
-                            window.location.href = "./robots.php";
-                        }
-                    });
-                console.log(arr_robot);
+                }).done(function (data) {
+                    if (data == "false") {
+                        alert("Data Loaded: " + data);
+                    } else {
+
+                    }
+                });
+                //console.log(arr_robot);
             },
             connectWith: ".connectedSortable"
         }).disableSelection();
@@ -699,6 +727,7 @@ include 'include/class.inc.php';
                         '<tr><td>Напряжение зарядной станции</td><td>' + robot_info['charger'] + '</td></tr>' +
                         '<tr><td>Язык (робота)</td><td>' + robot_info['language_robot'] + '</td></tr>' +
                         '<tr><td>Язык (инструкции)</td><td>' + robot_info['language_doc'] + '</td></tr>' +
+                        '<tr><td>Дата отгрузки</td><td>' + robot_info['date_send'] + '</td></tr>' +
                         '<tr><td>Наименование получателя</td><td>' + robot_info['customer'] + '</td></tr>' +
                         '<tr><td>Юридич. адрес получателя</td><td>' + robot_info['address'] + '</td></tr>' +
                         '<tr><td>ИНН получателя</td><td>' + robot_info['inn'] + '</td></tr>' +

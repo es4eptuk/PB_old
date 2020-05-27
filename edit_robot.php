@@ -17,22 +17,15 @@ $robot_ikp = $robot_info['ikp'];
 $robot_battery = $robot_info['battery'];
 $robot_dop = $robot_info['dop'];
 $robot_dop_manufactur = $robot_info['dop_manufactur'];
-$robot_photo = $robot_info['photo'];
-$robot_termo = $robot_info['termo'];
-$robot_dispenser = $robot_info['dispenser'];
-$robot_terminal = $robot_info['terminal'];
-$robot_kaznachey = $robot_info['kaznachey'];
-$robot_lidar = $robot_info['lidar'];
-$robot_other = $robot_info['other'];
 $robot_progress = $robot_info['progress'];
-$robot_date = $robot_info['date'];
 $delete = $robot_info['delete'];
 $delivery = $robot_info['delivery'];
-$robot_date = new DateTime($robot_date);
+$robot_date = new DateTime($robot_info['date']);
 $robot_date = $robot_date->format('d.m.Y');
-$robot_test = $robot_info['date_test'];
-$robot_test = new DateTime($robot_test);
+$robot_test = new DateTime($robot_info['date_test']);
 $robot_test = $robot_test->format('d.m.Y');
+$robot_date_send = new DateTime($robot_info['date_send']);
+$robot_date_send = ($robot_info['date_send'] == null) ? '' : $robot_date_send->format('d.m.Y');
 ?>
 <?php include 'template/head.php' ?>
 
@@ -59,212 +52,195 @@ $robot_test = $robot_test->format('d.m.Y');
 								<h3 class="box-title">Редактирование робота <?php echo $robot_version.".".$robot_number; ?></h3>
 							</div><!-- /.box-header -->
 							<div class="box-body">
-                <!-- text input -->
-                <!-- select -->
-                 <div class="form-group">
-                  <label>Версия</label>
-                  <select class="form-control" name="version" id="version" disabled>
-                      <?php
-                          foreach ($robots->getEquipment as &$version) {
-                              if ($version['id'] == $robot_version) {
-                                  echo "<option value='" . $version['id'] . "' selected>" . $version['title'] . "</option>";
-                              } else {
-                                  echo "<option value='" . $version['id'] . "'>" . $version['title'] . "</option>";
-                              }
-                          }
-                      ?>
-                  </select>
-                </div>
-                
-                 <div class="form-group">
-                  <label>Номер робота</label></label>
-                  <input type="text" class="form-control" name="number" required="required" id="number" value="<?php echo $robot_number ?>" <?php echo ($robot_progress == 100) ? "disabled" : ""; ?>>
-                </div>
-                <div class="form-group">
-                  <label>Кодовое имя</label>
-                  <input type="text" class="form-control" name="name" id="name" value="<?php echo $robot_name ?>">
-                </div>
-                <div class="form-group">
-                    <label>Покупатель <small>(<a href="#" data-toggle="modal" data-target="#add_customer">Добавить</a>)</small></label>
-                    <select class="form-control select2" name="customer" id="customer" <?php echo ($robot_progress == 100) ? "disabled" : ""; ?>>
-                        <option value="0">Веберите покупателя...</option>
-                        <?php
-                        $arr = $robots->get_customers();
-                        foreach ($arr as &$customer) {
-                            if ($customer['id'] == $robot_customer) {
-                                echo "<option value='" . $customer['id'] . "' selected>" . $customer['name'] . "</option>";
-                            } else {
-                                echo "<option value='" . $customer['id'] . "'>" . $customer['name'] . "</option>";
-                            }
-                        }
-                        ?>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Владелец <small>(<a href="#" data-toggle="modal" data-target="#add_customer">Добавить</a>)</small></label>
-                    <select class="form-control select2" name="owner" id="owner" <?php echo ($robot_progress == 100) ? "disabled" : ""; ?>>
-                        <option value="0">Веберите владельца...</option>
-                        <?php
-                        $arr = $robots->get_customers();
-                        foreach ($arr as &$customer) {
-                            if ($customer['id'] == $robot_owner) {
-                                echo "<option value='" . $customer['id'] . "' selected>" . $customer['name'] . "</option>";
-                            } else {
-                                echo "<option value='" . $customer['id'] . "'>" . $customer['name'] . "</option>";
-                            }
-                        }
-                        ?>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                  <label>Язык на роботе</label>
-                  <select class="form-control" name="language_robot" id="language_robot" <?php echo ($robot_progress == 100) ? "disabled" : ""; ?>>
-                       <?php
-                        $language_robot = [
-                            "russian" => "Русский",
-                            "english" => "Английский",
-                            "spanish" => "Испаниский",
-                            "turkish" => "Турецкий",
-                            "arab" => "Арабский",
-                            "portuguese" => "Португальский",
-                            "german" => "Немецкий"
-                        ];
-                        foreach ($language_robot as $key => $value) {
-                            if ( $key == $robot_language_robot ) {
-                                    echo "<option value='".$key."' selected>".$value."</option>";
-                                } else {
-                                    echo "<option value='".$key."'>".$value."</option>";
-                            }
-                        }
-                      ?>
-                  </select>
-                </div>
-                
-                <div class="form-group">
-                  <label>Язык инструкции</label>
-                  <select class="form-control" name="language_doc" id="language_doc" <?php echo ($robot_progress == 100) ? "disabled" : ""; ?>>
-                     <?php 
-                        $language_doc = ["russian" => "Русский", "english" => "Английский"];
-                         foreach ($language_doc as $key => $value) {
-								if ( $key == $robot_language_doc ) {  
-                                    echo "<option value='".$key."' selected>".$value."</option>";
-									} else {
-									echo "<option value='".$key."'>".$value."</option>"; 
-											}
-									}                                            
-                      ?>
-                  </select>
-                </div>
-                
-                 <div class="form-group">
-                  <label>Напряжение зарядной станции</label>
-                  <select class="form-control" name="charger" id="charger" <?php echo ($robot_progress == 100) ? "disabled" : ""; ?>>
-                    <?php
-                    $charger= ["220" => "220", "110" => "110"];
-                    foreach ($charger as $key => $value) {
-                        if ( $key == $robot_charger ) {
-                            echo "<option value='".$key."' selected>".$value."</option>";
-                        } else {
-                            echo "<option value='".$key."'>".$value."</option>";
-                        }
-                    }
-                    ?>
-                  </select>
-                </div>
-
-                <div class="form-group" id="allOptions">
-                    <label for="exampleInputFile">Комплектация</label>
-                    <?php
-                    $options = $robots->get_robot_options($id);
-                    foreach ($options as &$value) {
-                        $check = ($value['check'] ==1) ? "checked" : "";
-                        $disabled = ($robots->get_dis_check_option($value['id'], $id) || $robot_progress == 100) ? "disabled" : "";
-                        echo '<div class="checkbox"><label><input type="checkbox" class="check" id="'.$value['id'].'" name="options" value='.$value['id'].' '.$check.' '.$disabled.'>'.$value['title'].'</label></div>';
-                    }
-                    ?>
-                </div>
-                
-                <div class="form-group">
-                  <label>Цвет</label>
-                  <input type="text" class="form-control" name="color" id="color" value="<?php echo $robot_color ?>" <?php echo ($robot_progress == 100) ? "disabled" : ""; ?>>
-                </div>
-                
-                <div class="form-group">
-                  <label>Брендирование </label>
-                  <input type="text" class="form-control" name="brand" id="brand" value="<?php echo $robot_brand ?>" <?php echo ($robot_progress == 100) ? "disabled" : ""; ?>>
-                </div>
-                
-                <div class="form-group">
-                  <label>ИКП</label>
-                  <input type="text" class="form-control" name="ikp" id="ikp" value="<?php echo $robot_ikp ?>" <?php echo ($robot_progress == 100) ? "disabled" : ""; ?>>
-                </div>
-                
-                 <div class="form-group">
-                  <label>Наличие АКБ</label>
-                  <select class="form-control" name="battery" id="battery" <?php echo ($robot_progress == 100) ? "disabled" : ""; ?>>
-                       <?php
-                       $battery= [1 => "Да", 0 => "Нет"];
-                       foreach ($battery as $key => $value) {
-                            if ( $key == $robot_battery ) {
-                                echo "<option  value='".$key."' selected>".$value."</option>";
-                            } else {
-                                echo "<option  value='".$key."'>".$value."</option>";
-                            }
-                       }
-                       ?>
-                  </select>
-                </div>
-                
-                <div class="form-group">
-                  <label>Дополнительная информация</label>
-                  <input type="text" class="form-control" name="dop" id="dop" value="<?php echo $robot_dop ?>" <?php echo ($robot_progress == 100) ? "disabled" : ""; ?>>
-                </div>
-                <div class="form-group">
-                    <label>Информация от производства</label>
-                    <textarea rows="5" cols="45" class="form-control" name="dop_manufactur" id="dop_manufactur"><?php echo $robot_dop_manufactur ?></textarea>
-                </div>
-                <div class="form-group">
-                    <label>Информация по доставке (наличие колёс на кофре, адрес доставки, телефон и имя получателя, плательщик по доставке, аэропорт доставки)</label>
-                    <textarea rows="5" cols="45" class="form-control" name="delivery" id="delivery"><?php echo $delivery ?></textarea>
-                </div>
-                <div class="checkbox">
-                    <label>
-                      <input type="checkbox" id="send" <?php echo ($robot_progress == 100) ? "checked" : ""; ?> <?php echo ($robot_progress == 0 && $delete == 0) ? "" : "disabled"; ?> >
-                      Отправленный
-                    </label>
-                  </div>
-                  
-                  <div class="form-group">
-                <label>Начало производства:</label>
-
-                <div class="input-group date">
-                  <div class="input-group-addon">
-                    <i class="fa fa-calendar"></i>
-                  </div>
-                  <input type="text" class="form-control pull-right" id="datepicker" class="datepicker" value="<?php echo $robot_date ?>" <?php echo ($robot_progress == 100) ? "disabled" : ""; ?>>
-                </div>
-                <!-- /.input group -->
-              </div> 
-              
-               <div class="form-group">
-                <label>Первый тест:</label>
-
-                <div class="input-group date">
-                  <div class="input-group-addon">
-                    <i class="fa fa-calendar"></i>
-                  </div>
-                  <input type="text" class="form-control pull-right" id="datepicker2" class="datepicker" value="<?php echo $robot_test ?>" <?php echo ($robot_progress == 100) ? "disabled" : ""; ?>>
-                </div>
-                <!-- /.input group -->
-              </div> 
-                
-                <div id="update"></div>
-                
-                <div class="box-footer">
-                    <button type="submit" class="btn btn-primary" id="save_close" name="" >Сохранить</button>
-                    <button type="button" class="btn btn-primary btn-danger pull-right" id="delete" name="">Удалить</button>
-                </div>
+                                <div class="form-group">
+                                    <label>Версия</label>
+                                    <select class="form-control" name="version" id="version" disabled>
+                                        <?php
+                                        foreach ($robots->getEquipment as &$version) {
+                                            if ($version['id'] == $robot_version) {
+                                                echo "<option value='" . $version['id'] . "' selected>" . $version['title'] . "</option>";
+                                            } else {
+                                                echo "<option value='" . $version['id'] . "'>" . $version['title'] . "</option>";
+                                            }
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Номер робота</label></label>
+                                    <input type="text" class="form-control" name="number" required="required" id="number" value="<?php echo $robot_number ?>" <?php echo ($robot_progress == 100) ? "disabled" : ""; ?>>
+                                </div>
+                                <div class="form-group">
+                                    <label>Кодовое имя</label>
+                                    <input type="text" class="form-control" name="name" id="name" value="<?php echo $robot_name ?>">
+                                </div>
+                                <div class="form-group">
+                                    <label>Покупатель <small>(<a href="#" data-toggle="modal" data-target="#add_customer">Добавить</a>)</small></label>
+                                    <select class="form-control select2" name="customer" id="customer" <?php echo ($robot_progress == 100) ? "disabled" : ""; ?>>
+                                        <option value="0">Веберите покупателя...</option>
+                                        <?php
+                                        $arr = $robots->get_customers();
+                                        foreach ($arr as &$customer) {
+                                            if ($customer['id'] == $robot_customer) {
+                                                echo "<option value='" . $customer['id'] . "' selected>" . $customer['name'] . "</option>";
+                                            } else {
+                                                echo "<option value='" . $customer['id'] . "'>" . $customer['name'] . "</option>";
+                                            }
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Владелец <small>(<a href="#" data-toggle="modal" data-target="#add_customer">Добавить</a>)</small></label>
+                                    <select class="form-control select2" name="owner" id="owner" <?php echo ($robot_progress == 100) ? "disabled" : ""; ?>>
+                                        <option value="0">Веберите владельца...</option>
+                                        <?php
+                                        $arr = $robots->get_customers();
+                                        foreach ($arr as &$customer) {
+                                            if ($customer['id'] == $robot_owner) {
+                                                echo "<option value='" . $customer['id'] . "' selected>" . $customer['name'] . "</option>";
+                                            } else {
+                                                echo "<option value='" . $customer['id'] . "'>" . $customer['name'] . "</option>";
+                                            }
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Язык на роботе</label>
+                                    <select class="form-control" name="language_robot" id="language_robot" <?php echo ($robot_progress == 100) ? "disabled" : ""; ?>>
+                                        <?php
+                                        $language_robot = [
+                                            "russian" => "Русский",
+                                            "english" => "Английский",
+                                            "spanish" => "Испаниский",
+                                            "turkish" => "Турецкий",
+                                            "arab" => "Арабский",
+                                            "portuguese" => "Португальский",
+                                            "german" => "Немецкий"
+                                        ];
+                                        foreach ($language_robot as $key => $value) {
+                                            if ($key == $robot_language_robot) {
+                                                echo "<option value='" . $key . "' selected>" . $value . "</option>";
+                                            } else {
+                                                echo "<option value='" . $key . "'>" . $value . "</option>";
+                                            }
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Язык инструкции</label>
+                                    <select class="form-control" name="language_doc" id="language_doc" <?php echo ($robot_progress == 100) ? "disabled" : ""; ?>>
+                                        <?php
+                                        $language_doc = ["russian" => "Русский", "english" => "Английский"];
+                                        foreach ($language_doc as $key => $value) {
+                                            if ($key == $robot_language_doc) {
+                                                echo "<option value='" . $key . "' selected>" . $value . "</option>";
+                                            } else {
+                                                echo "<option value='" . $key . "'>" . $value . "</option>";
+                                            }
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Напряжение зарядной станции</label>
+                                    <select class="form-control" name="charger" id="charger" <?php echo ($robot_progress == 100) ? "disabled" : ""; ?>>
+                                        <?php
+                                        $charger = ["220" => "220", "110" => "110"];
+                                        foreach ($charger as $key => $value) {
+                                            if ($key == $robot_charger) {
+                                                echo "<option value='" . $key . "' selected>" . $value . "</option>";
+                                            } else {
+                                                echo "<option value='" . $key . "'>" . $value . "</option>";
+                                            }
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
+                                <div class="form-group" id="allOptions">
+                                    <label for="exampleInputFile">Комплектация</label>
+                                    <?php
+                                    $options = $robots->get_robot_options($id);
+                                    foreach ($options as &$value) {
+                                        $check = ($value['check'] == 1) ? "checked" : "";
+                                        $disabled = ($robots->get_dis_check_option($value['id'], $id) || $robot_progress == 100) ? "disabled" : "";
+                                        echo '<div class="checkbox"><label><input type="checkbox" class="check" id="' . $value['id'] . '" name="options" value=' . $value['id'] . ' ' . $check . ' ' . $disabled . '>' . $value['title'] . '</label></div>';
+                                    }
+                                    ?>
+                                </div>
+                                <div class="form-group">
+                                    <label>Цвет</label>
+                                    <input type="text" class="form-control" name="color" id="color" value="<?php echo $robot_color ?>" <?php echo ($robot_progress == 100) ? "disabled" : ""; ?>>
+                                </div>
+                                <div class="form-group">
+                                    <label>Брендирование </label>
+                                    <input type="text" class="form-control" name="brand" id="brand" value="<?php echo $robot_brand ?>" <?php echo ($robot_progress == 100) ? "disabled" : ""; ?>>
+                                </div>
+                                <div class="form-group">
+                                    <label>ИКП</label>
+                                    <input type="text" class="form-control" name="ikp" id="ikp" value="<?php echo $robot_ikp ?>" <?php echo ($robot_progress == 100) ? "disabled" : ""; ?>>
+                                </div>
+                                <div class="form-group">
+                                    <label>Наличие АКБ</label>
+                                    <select class="form-control" name="battery" id="battery" <?php echo ($robot_progress == 100) ? "disabled" : ""; ?>>
+                                        <?php
+                                        $battery = [1 => "Да", 0 => "Нет"];
+                                        foreach ($battery as $key => $value) {
+                                            if ($key == $robot_battery) {
+                                                echo "<option  value='" . $key . "' selected>" . $value . "</option>";
+                                            } else {
+                                                echo "<option  value='" . $key . "'>" . $value . "</option>";
+                                            }
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Дополнительная информация</label>
+                                    <input type="text" class="form-control" name="dop" id="dop" value="<?php echo $robot_dop ?>" <?php echo ($robot_progress == 100) ? "disabled" : ""; ?>>
+                                </div>
+                                <div class="form-group">
+                                    <label>Информация от производства</label>
+                                    <textarea rows="5" cols="45" class="form-control" name="dop_manufactur" id="dop_manufactur"><?php echo $robot_dop_manufactur ?></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label>Информация по доставке (наличие колёс на кофре, адрес доставки, телефон и имя получателя, плательщик по доставке, аэропорт доставки)</label>
+                                    <textarea rows="5" cols="45" class="form-control" name="delivery" id="delivery"><?php echo $delivery ?></textarea>
+                                </div>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" id="send" <?php echo ($robot_progress == 100) ? "checked" : ""; ?> <?php echo ($robot_progress == 0 && $delete == 0) ? "" : "disabled"; ?> >
+                                        Отправленный
+                                    </label>
+                                </div>
+                                <div class="form-group">
+                                    <label>Начало производства:</label>
+                                    <div class="input-group date">
+                                        <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+                                        <input type="text" class="form-control pull-right" id="datepicker" class="datepicker" value="<?php echo $robot_date ?>" <?php echo ($robot_progress == 100) ? "disabled" : ""; ?>>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Первый тест:</label>
+                                    <div class="input-group date">
+                                        <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+                                        <input type="text" class="form-control pull-right" id="datepicker2" class="datepicker" value="<?php echo $robot_test ?>" <?php echo ($robot_progress == 100) ? "disabled" : ""; ?>>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Первый тест:</label>
+                                    <div class="input-group date">
+                                        <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+                                        <input type="text" class="form-control pull-right" id="datepicker3" class="datepicker" value="<?php echo $robot_date_send ?>" <?php echo ($robot_progress == 100) ? "disabled" : ""; ?>>
+                                    </div>
+                                </div>
+                                <div id="update"></div>
+                                <div class="box-footer">
+                                    <button type="submit" class="btn btn-primary" id="save_close" name="">Сохранить</button>
+                                    <button type="button" class="btn btn-primary btn-danger pull-right" id="delete" name="">Удалить</button>
+                                </div>
              
 							</div><!-- /.box-body -->
 						</div>
@@ -325,13 +301,16 @@ $robot_test = $robot_test->format('d.m.Y');
         $('#datepicker').datepicker({
             format: 'dd.mm.yyyy',
             language: 'ru-Ru',
-            startDate: '-3d',
             autoclose: true
         })
         $('#datepicker2').datepicker({
             format: 'dd.mm.yyyy',
             language: 'ru-Ru',
-            startDate: '-3d',
+            autoclose: true
+        })
+        $('#datepicker3').datepicker({
+            format: 'dd.mm.yyyy',
+            language: 'ru-Ru',
             autoclose: true
         })
         //Select2
@@ -403,6 +382,7 @@ $robot_test = $robot_test->format('d.m.Y');
                 var delivery = $('#delivery').val();
                 var date_start = $('#datepicker').val();
                 var date_test = $('#datepicker2').val();
+                var date_send = $('#datepicker3').val();
                 var send = $('#send').is(':checked') ? 1 : 0;
                 //собираем отмеченные опции
                 $('input[name=options]').each(function () {
@@ -410,6 +390,9 @@ $robot_test = $robot_test->format('d.m.Y');
                         options.push($(this).val());
                     }
                 });
+                if (date_send === '') {
+                    date_send = null;
+                }
                 $.post("./api.php", {
                     action: "edit_robot",
                     id: <?php echo $id ?>,
@@ -430,16 +413,16 @@ $robot_test = $robot_test->format('d.m.Y');
                     dop_manufactur: dop_manufactur,
                     date_start: date_start,
                     date_test: date_test,
+                    date_send: date_send,
                     send: send,
                     delivery: delivery
-                })
-                    .done(function (data) {
-                        if (data == "false") {
-                            alert("Data Loaded: " + data);
-                        } else {
-                            window.location.href = "./robots.php";
-                        }
-                    });
+                }).done(function (data) {
+                    if (data == "false") {
+                        alert("Data Loaded: " + data);
+                    } else {
+                        window.location.href = "./robots.php";
+                    }
+                });
             });
         });
 

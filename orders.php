@@ -126,11 +126,11 @@ include 'include/class.inc.php';
                         <td>".$pos['order_status']."</td>
                         <td>".$pos['order_prosecution']. "</td>
                        
-                        <td><div style=\"text-align: center;\"><input type='checkbox' id='" .$pos['order_id']."' class='payment' ".$checkPayment." ></div></td>
-                         <td>".$user_info['user_name']."</td>
+                        <td><div style='text-align: center;'><input type='checkbox' data-id='" .$pos['order_id']."' class='payment' ".$checkPayment." ></div></td>
+                        <td>".$user_info['user_name']."</td>
                          
-                        <td><i class='fa fa-2x fa-copy' style='cursor: pointer;' id='".$pos['order_id']."'></i></td>
-                        <td><i class='fa fa-2x fa-pencil' style='cursor: pointer;' id='".$pos['order_id']."'></i></td>
+                        <td><i class='fa fa-2x fa-copy' style='cursor: pointer;' data-id='".$pos['order_id']."'></i></td>
+                        <td><i class='fa fa-2x fa-pencil' style='cursor: pointer;' data-id='".$pos['order_id']."'></i></td>
                        
                        
                     </tr>
@@ -179,164 +179,140 @@ include 'include/class.inc.php';
 <script src="../../dist/js/demo.js"></script>
 <!-- page script -->
 <script>
-var id_order=0;
-paramStorage = localStorage;
+    var id_order = 0;
+    paramStorage = localStorage;
 
-
-    $( "#orders .fa-pencil" ).click(function() {
-            id_order = $(this).attr("id");
-            window.location.href = "./edit_order.php?id=" + id_order;   
-            paramStorage.searchStr = $('#orders_filter input').val();
-            
-         
-    });
-    
-     $( "#orders .fa-copy" ).click(function() {
-            id_order = $(this).attr("id");
-            window.location.href = "./copy_order.php?id=" + id_order;    
-         
+    $("#orders").on('click', '.fa-pencil', function () {
+        id_order = $(this).data("id");
+        window.location.href = "./edit_order.php?id=" + id_order;
+        paramStorage.searchStr = $('#orders_filter input').val();
     });
 
+    $("#orders").on('click', '.fa-copy', function () {
+        id_order = $(this).data("id");
+        window.location.href = "./copy_order.php?id=" + id_order;
+    });
 
-
- 
-  
-  
-  $( "#save_close" ).click(function() { 
-  save_close();
-  return false;
-  });
-  
-    $( "#delete" ).click(function() { 
-  delete_pos();
-  return false;
-  });
-  
-   function delete_pos() {
-     var category =  $('#category').val();
-     $.post( "./api.php", { 
-        action: "delete_pos", 
-        id: id_pos
-        
-        
-    } )
-          .done(function( data ) {
-              if (data=="false") {alert( "Data Loaded: " + data ); }
-              else {
-                window.location.href = "./pos.php?id="+category;  
-              }
-          });
-    
-   }
-  
-  function save_close() {
-    var title =  $('#title').val();
-    var longtitle =  $('#longtitle').val();
-    var category =  $('#category').val();
-    var subcategory =  $('#subcategory').val();
-    var vendorcode =  $('#vendorcode').val();
-    var provider =  $('#provider').val();
-    var price =  $('#price').val();
-    var quant_robot =  $('#quant_robot').val(); 
-    var quant_total =  $('#quant_total').val();
-    
-    
-      $.post( "./api.php", { 
-        action: "edit_pos", 
-        id: id_pos,
-        title: title,
-        longtitle: longtitle ,
-        category: category ,
-        subcategory: subcategory ,
-        vendorcode: vendorcode ,
-        provider: provider ,
-        price: price ,
-        quant_robot: quant_robot ,
-        quant_total: quant_total 
-    } )
-          .done(function( data ) {
-              if (data=="false") {alert( "Data Loaded: " + data ); }
-              else {
-                window.location.href = "./pos.php?id="+category;  
-              }
-          });
-    
- }
- 
- function get_info_user(id) {
-     
-      $.post( "./api.php", { 
-        action: "get_info_user", 
-        id: id
-    } )
-          .done(function( data ) {
-              if (data=="false") {alert( "Data Loaded: " + data ); }
-              else {
-                var obj = jQuery.parseJSON (data);
-                //console.log(obj['user_name']);  
-                return obj['user_name'] ; 
-              }
-          });
-          
-    $("#orders").on("click", "td .fa-copy", function() {
-        alert('ХУЙ');
+    /*$("#save_close").click(function () {
+        save_close();
         return false;
-   });  
-   
-  
-     
- }
- 
- $('#check_show_all').change(function() {
-        if($(this).is(":checked")) {
+    });*/
+
+    /*$("#delete").click(function () {
+        delete_pos();
+        return false;
+    });*/
+
+    /*function delete_pos() {
+        var category = $('#category').val();
+        $.post("./api.php", {
+            action: "delete_pos",
+            id: id_pos
+        }).done(function (data) {
+            if (data == "false") {
+                alert("Data Loaded: " + data);
+            } else {
+                window.location.href = "./pos.php?id=" + category;
+            }
+        });
+    }*/
+
+    /*function save_close() {
+        var title = $('#title').val();
+        var longtitle = $('#longtitle').val();
+        var category = $('#category').val();
+        var subcategory = $('#subcategory').val();
+        var vendorcode = $('#vendorcode').val();
+        var provider = $('#provider').val();
+        var price = $('#price').val();
+        var quant_robot = $('#quant_robot').val();
+        var quant_total = $('#quant_total').val();
+
+        $.post("./api.php", {
+            action: "edit_pos",
+            id: id_pos,
+            title: title,
+            longtitle: longtitle,
+            category: category,
+            subcategory: subcategory,
+            vendorcode: vendorcode,
+            provider: provider,
+            price: price,
+            quant_robot: quant_robot,
+            quant_total: quant_total
+        }).done(function (data) {
+            if (data == "false") {
+                alert("Data Loaded: " + data);
+            } else {
+                window.location.href = "./pos.php?id=" + category;
+            }
+        });
+    }*/
+
+    /*function get_info_user(id) {
+        $.post("./api.php", {
+            action: "get_info_user",
+            id: id
+        }).done(function (data) {
+            if (data == "false") {
+                alert("Data Loaded: " + data);
+            } else {
+                var obj = jQuery.parseJSON(data);
+                //console.log(obj['user_name']);  
+                return obj['user_name'];
+            }
+        });
+        $("#orders").on("click", ".fa-copy", function () {
+            alert('ХУЙ');
+            return false;
+        });
+    }*/
+
+    $('#check_show_all').change(function () {
+        if ($(this).is(":checked")) {
             //var returnVal = confirm("Are you sure?");
             $(this).attr("checked", true);
         }
-       // alert($(this).is(':checked')); 
+        // alert($(this).is(':checked'));
         $("#show_all").submit();
-        
     });
 
-$('.payment').change(function() {
-    var id =  $(this).attr("id");
-    //var returnVal = confirm("Вы уверены что хотите изменить статус оплаты?");
-    var returnVal = true;
-    var val;
-    if(this.checked) {
-       val = 1;
-    } else {
-       val = 0;
-    }
-
-    if (returnVal) {
-        $.post("./api.php", {
-            action: "setPaymentStatus",
-            id: id,
-            value: val
-        })
-            .done(function (data) {
+    $('.payment').change(function () {
+        var id = $(this).data("id");
+        //var returnVal = confirm("Вы уверены что хотите изменить статус оплаты?");
+        var returnVal = true;
+        var val;
+        if (this.checked) {
+            val = 1;
+        } else {
+            val = 0;
+        }
+        if (returnVal) {
+            $.post("./api.php", {
+                action: "setPaymentStatus",
+                id: id,
+                value: val
+            }).done(function (data) {
                 if (data == "false") {
                     alert("Data Loaded: " + data);
                 } else {
+                    window.location.reload(true);
                 }
             });
-    } else {
-        return false;
-    }
+        } else {
+            return false;
+        }
+        //console.log(returnVal);
+        //console.log(id);
+    });
 
+    $('#orders').DataTable({
+        "iDisplayLength": 100,
+        "order": [[1, "desc"]]
+    });
 
-    console.log(returnVal);
-    console.log(id);
-
-});
- 
-  $('#orders').DataTable({
-       "iDisplayLength": 100,
-        "order": [[ 1, "desc" ]]
-    } );
-  
-  $('#orders_filter input').val(paramStorage.getItem('searchStr'));
-  $('#orders_filter input').keyup(); 
+    $('#orders_filter input').val(paramStorage.getItem('searchStr'));
+    $('#orders_filter input').keyup();
   
 </script>
 </body>

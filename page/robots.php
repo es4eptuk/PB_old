@@ -369,6 +369,7 @@ class Robots
             $robot['battery'] = ($robot['battery'] == 1) ? 'Есть' : 'Нет';
             $robot['language_robot'] = ($robot['language_robot'] != '') ? self::LANGUAGE[$robot['language_robot']] : '';
             $robot['language_doc'] = ($robot['language_doc'] != '') ? self::LANGUAGE[$robot['language_doc']] : '';
+            $robot['date_send'] = ($robot['date_send'] != null) ? date('d.m.Y', strtotime($robot['date_send'])) : '';
 
             $options = '';
             foreach ($this->get_robot_options($robot['id']) as $option) {
@@ -414,17 +415,24 @@ class Robots
     }
 
     //добавить робота
-    function add_robot($number, $name, $version, $options, $customer, $owner, $language_robot, $language_doc, $charger, $color, $brand, $ikp, $battery, $dop, $dop_manufactur, $date_start, $date_test, $send, $delivery)
+    function add_robot($number, $name, $version, $options, $customer, $owner, $language_robot, $language_doc, $charger, $color, $brand, $ikp, $battery, $dop, $dop_manufactur, $date_start, $date_test, $date_send, $send, $delivery)
     {
         $date_start = new DateTime($date_start);
         $date_start = $date_start->format('Y-m-d H:i:s');
         if ($date_test == null) {
-            $date_test = new DateTime($date_test);
+            $date_test = new DateTime($date_start);
             $date_test->modify('+1 month');
         } else {
             $date_test = new DateTime($date_test);
         }
+        if ($date_send == null) {
+            $date_send = new DateTime($date_start);
+            $date_send->modify('+1 month');
+        } else {
+            $date_send = new DateTime($date_send);
+        }
         $date_test = $date_test->format('Y-m-d H:i:s');
+        $date_send = $date_send->format('Y-m-d H:i:s');
         $date = date("Y-m-d H:i:s");
         $user_id = intval($_COOKIE['id']);
         $delete = 0;
@@ -443,8 +451,8 @@ class Robots
         }
 
         $this->query = "INSERT 
-            INTO `robots` (`id`, `version`, `number`, `name`, `customer`, `owner`, `language_robot`, `language_doc`, `charger`, `color`, `brand`, `ikp`, `battery`, `dop`, `dop_manufactur`, `progress`, `date`, `date_test`, `update_date`, `update_user`, `delete`, `delivery`) 
-            VALUES (NULL, '$version', '$number', '$name', '$customer', '$owner', '$language_robot', '$language_doc', '$charger', '$color', '$brand', '$ikp', '$battery', '$dop', '$dop_manufactur', '$progress', '$date_start', '$date_test', '$date', '$user_id', '$delete', '$delivery')
+            INTO `robots` (`id`, `version`, `number`, `name`, `customer`, `owner`, `language_robot`, `language_doc`, `charger`, `color`, `brand`, `ikp`, `battery`, `dop`, `dop_manufactur`, `progress`, `date`, `date_test`, `date_send`, `update_date`, `update_user`, `delete`, `delivery`) 
+            VALUES (NULL, '$version', '$number', '$name', '$customer', '$owner', '$language_robot', '$language_doc', '$charger', '$color', '$brand', '$ikp', '$battery', '$dop', '$dop_manufactur', '$progress', '$date_start', '$date_test', '$date_send', '$date', '$user_id', '$delete', '$delivery')
         ";
         $result = $this->pdo->query($this->query);
 
@@ -548,13 +556,21 @@ class Robots
         //$this->sklad->set_reserv($version);
     }*/
 
-    function edit_robot($id, $number, $name, $version, $options, $customer, $owner, $language_robot, $language_doc, $charger, $color, $brand, $ikp, $battery, $dop, $dop_manufactur, $date_start, $date_test, $send, $delivery)
+    function edit_robot($id, $number, $name, $version, $options, $customer, $owner, $language_robot, $language_doc, $charger, $color, $brand, $ikp, $battery, $dop, $dop_manufactur, $date_start, $date_test, $date_send, $send, $delivery)
     {
         $date_start = new DateTime($date_start);
         $date_start = $date_start->format('Y-m-d H:i:s');
 
         $date_test = new DateTime($date_test);
         $date_test = $date_test->format('Y-m-d H:i:s');
+
+        if ($date_send == null) {
+            $date_send = new DateTime($date_start);
+            $date_send->modify('+1 month');
+        } else {
+            $date_send = new DateTime($date_send);
+        }
+        $date_send = $date_send->format('Y-m-d H:i:s');
 
         $date = date("Y-m-d H:i:s");
         $user_id = intval($_COOKIE['id']);
@@ -594,6 +610,7 @@ class Robots
         `progress`  = $progress,
         `date` = '$date_start',
         `date_test` = '$date_test',
+        `date_send` = '$date_send',
         `delivery` = '$delivery',
         `update_user` = '$user_id', 
         `update_date` = '$date' 
