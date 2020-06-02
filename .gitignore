@@ -1,0 +1,23 @@
+# log telegram
+/log_telegram1.txt
+/log_telegram.txt
+
+# настройки бд
+/include/config.inc.php
+
+#
+/.htaccess
+/log.txt
+
+#
+/1c/
+/orders/
+/img/
+/inv/
+/files/
+/import/
+
+#script for change tabel bd
+/bd_script.php
+/b24_test.php
+/robot_script.php
