@@ -7,6 +7,33 @@ $robot_name= $robot_info['name'];
 $robot_version= $robot_info['version'];
 $robot_id= $robot_info['id'];
 $robot_progress= $robot_info['progress'];
+
+//время сборки текущее
+$robot_statistics = $statistics->get_robot_production_statistics($robot_id);
+if ($robot_statistics != null) {
+    $statistics_status = 'start';
+    $end_time = time();
+    $time_p = ($robot_statistics['time_pause'] != null) ? $robot_statistics['time_pause'] : 0;
+    if ($robot_statistics['start_pause'] != null) {
+        $statistics_status = 'pause';
+        $end_time = $robot_statistics['start_pause'];
+        $time_pause = $statistics->get_time_spent($robot_statistics['start_pause'], time());
+        $hh_pause = intval($time_pause/3600);
+        $mm_pause = intval(($time_pause - $hh_pause * 3600)/60);
+        $statistics_time_pause = $hh_pause.':'.$mm_pause;
+    }
+    if ($robot_statistics['date_end'] != null) {
+        $statistics_status = 'stop';
+        $end_time = $robot_statistics['date_end'];
+    }
+    $time = $statistics->get_time_spent($robot_statistics['date_start'], $end_time) - $time_p;
+    $hh = intval($time/3600);
+    $mm = intval(($time - $hh * 3600)/60);
+    $statistics_time = $hh.':'.$mm;
+} else {
+    $statistics_status = 'no';
+}
+
 ?>
 
 <?php include 'template/head.php' ?>
@@ -22,17 +49,11 @@ $robot_progress= $robot_info['progress'];
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <section class="content-header">
-      <h1>
-       Promobot <?php echo $robot_version.".".$robot_number; ?>
-      </h1>
-      
+      <h1>Promobot <?php echo $robot_version.".".$robot_number; ?></h1>
     </section>
 
     <!-- Main content -->
     <section class="content">
-        
-        
-        
       <div class="row">
         <div class="col-xs-12">
           <div class="box">
@@ -40,14 +61,10 @@ $robot_progress= $robot_info['progress'];
               <h3 class="box-title"><?php echo $robot_name; ?></h3>
             </div>
             <!-- /.box-header -->
-            
-            
-            
             <div class="box-body table-responsive">
-               
                <div class="row">
 
-        <a href="./check.php?category=1&robot=<?php echo $robot_id; ?>">           
+        <a <?= ($statistics_status == 'pause') ? 'onclick="onPause();"' : 'href="./check.php?category=1&robot='.$robot_id.'"'?>>
         <div class="col-md-3 col-sm-6 col-xs-12" >
           <div class="info-box bg-aqua">
             <span class="info-box-icon"><i class="fa fa-gear"></i></span>
@@ -65,14 +82,11 @@ $robot_progress= $robot_info['progress'];
                 <div class="progress-bar" style="width: <?php echo ($mh !== false) ? $mh : '100'; ?>%"></div>
               </div>
             </div>
-            <!-- /.info-box-content -->
           </div>
-          <!-- /.info-box -->
         </div>
         </a>
-        <!-- /.col -->
 
-         <a href="./check.php?category=2&robot=<?php echo $robot_id; ?>"> 
+        <a <?= ($statistics_status == 'pause') ? 'onclick="onPause();"' : 'href="./check.php?category=2&robot='.$robot_id.'"'?>>
         <div class="col-md-3 col-sm-6 col-xs-12" >
           <div class="info-box bg-green">
             <span class="info-box-icon"><i class="fa fa-laptop"></i></span>
@@ -90,14 +104,11 @@ $robot_progress= $robot_info['progress'];
                 <div class="progress-bar" style="width: <?php echo ($hp !== false) ? $hp : '100'; ?>%"></div>
               </div>
             </div>
-            <!-- /.info-box-content -->
           </div>
-          <!-- /.info-box -->
         </div>
         </a>
-        <!-- /.col -->
 
-         <a href="./check.php?category=5&robot=<?php echo $robot_id; ?>"> 
+         <a <?= ($statistics_status == 'pause') ? 'onclick="onPause();"' : 'href="./check.php?category=5&robot='.$robot_id.'"'?>>
          <div class="col-md-3 col-sm-6 col-xs-12" >
           <div class="info-box bg-purple-active">
             <span class="info-box-icon"><i class="fa fa-sliders"></i></span>
@@ -115,13 +126,11 @@ $robot_progress= $robot_info['progress'];
                 <div class="progress-bar" style="width: <?php echo ($hs !== false) ? $hs : '100'; ?>%"></div>
               </div>
             </div>
-            <!-- /.info-box-content -->
           </div>
-          <!-- /.info-box -->
         </div>
         </a>
-        
-         <a href="./check.php?category=3&robot=<?php echo $robot_id; ?>"> 
+
+        <a <?= ($statistics_status == 'pause') ? 'onclick="onPause();"' : 'href="./check.php?category=3&robot='.$robot_id.'"'?>>
         <div class="col-md-3 col-sm-6 col-xs-12" >
           <div class="info-box bg-yellow">
             <span class="info-box-icon"><i class="fa fa-random"></i></span>
@@ -139,14 +148,11 @@ $robot_progress= $robot_info['progress'];
                 <div class="progress-bar" style="width: <?php echo ($bd !== false) ? $bd : '100'; ?>%"></div>
               </div>
             </div>
-            <!-- /.info-box-content -->
           </div>
-          <!-- /.info-box -->
         </div>
         </a>
-        
-         <a href="./check.php?category=4&robot=<?php echo $robot_id; ?>"> 
-        <!-- /.col -->
+
+        <a <?= ($statistics_status == 'pause') ? 'onclick="onPause();"' : 'href="./check.php?category=4&robot='.$robot_id.'"'?>>
         <div class="col-md-3 col-sm-6 col-xs-12" >
           <div class="info-box bg-red">
             <span class="info-box-icon"><i class="glyphicon glyphicon-briefcase"></i></span>
@@ -164,9 +170,7 @@ $robot_progress= $robot_info['progress'];
                 <div class="progress-bar" style="width: <?php echo ($up !== false) ? $up : '100'; ?>%"></div>
               </div>
             </div>
-            <!-- /.info-box-content -->
           </div>
-          <!-- /.info-box -->
         </div>
         </a>
         
@@ -186,22 +190,52 @@ $robot_progress= $robot_info['progress'];
             
             <form role="form" class="comment">
               <div class="box-body">
-                  <div class="form-group">
-                  <a class="btn btn-app" onclick="onRemont();">
-                   <span class="badge bg-yellow"><?php echo $robots->countRemont($robot_id);?></span>
-                   <i class="fa fa-wrench"></i> Ремонт
-                  </a>
+                  <div class="row">
+                      <?php
+                      if ($userdata['user_id'] == 75 || $userdata['user_id'] == 14 || $userdata['user_id'] == 17) {
+                          //предварительные расчеты
+
+                          //расчеты для вывода
+                          if ($statistics_status != 'no') {
+                              $pause = '';
+                              if ($statistics_status == 'start') {
+                                  $icon = 'fa fa-pause';
+                              }
+                              if ($statistics_status == 'stop') {
+                                  $icon = 'fa fa-stop';
+                              }
+                              if ($statistics_status == 'pause') {
+                                  $icon = 'fa fa-play';
+                                  $pause = '<span class="badge bg-yellow">' . $statistics_time_pause . '</span>';
+                              }
+                              echo '
+                              <div class="form-group" style="float:left;margin-right:10px">
+                                  <a class="btn btn-app" id="robot_production_statistics">
+                                      ' . $pause . '
+                                      <i class="' . $icon . '"></i>' . $statistics_time . '
+                                  </a>
+                              </div>
+                              ';
+                          }
+                      }
+                      ?>
+                      <div class="form-group">
+                          <a class="btn btn-app" onclick="onRemont();">
+                              <span class="badge bg-yellow"><?php echo $robots->countRemont($robot_id); ?></span>
+                              <i class="fa fa-wrench"></i> Ремонт
+                          </a>
+                      </div>
                   </div>
-                <div class="form-group">
-                  <label>Тип</label>
-                  <select class="form-control" id="level" required="required">
-                    <option value="WARNING">Проблема</option>
-                    <option value="MODERN">Доработка</option>
-                    <option value="INFO">Комментарий</option>
-                   
-                  
-                  </select>
-                </div>
+                  <div class="form-group">
+                      <label>Тип</label>
+                      <select class="form-control" id="level" required="required">
+                          <option value="WARNING">Проблема</option>
+                          <option value="MODERN">Доработка</option>
+                          <option value="INFO">Комментарий</option>
+
+
+                      </select>
+                  </div>
                 <div class="form-group">
                   <label>Описание</label>
                   <textarea class="form-control" rows="3" placeholder="Введите описание ..." name="comment" id="comment" required="required"></textarea>
@@ -321,72 +355,67 @@ $robot_progress= $robot_info['progress'];
 <script src="../../dist/js/demo.js"></script>
 <!-- page script -->
 <script>
- // $('.comment').validator();   
- var robot =  <?php echo $robot_id; ?>;  
- 
- $('.comment').submit(function(){
-    
-  var level= $(this).find('#level').val();
-  var comment = $(this).find('#comment').val();
-  
-  
-  
-  
-  
-   $.post( "./api.php", { 
-        action: "add_log", 
-        robot: robot,
-        level: level,
-        comment: comment,
-        number: <?php echo (int)$robot_number; ?>
-        
-    } )
-          .done(function( data ) {
-              if (data=="false") {alert( "Data Loaded: " + data ); }
-              else {
-                window.location.href = "./robot.php?id="+robot;
-                
-              }
-          });
-  
-  
-  return false;
-});
-    
-    
-     $( ".fa-times" ).click(function() {
-               
-                id_log = $(this).attr("id");
-                
-               
-                
-                $.post( "./api.php", { 
-                    action: "delete_log", 
-                    id: id_log
-                        } )
-                  .done(function( data ) {
-                      window.location.reload(true);
-                     
-                  });
-               
+    // $('.comment').validator();
+    var robot =  <?php echo $robot_id; ?>;
 
+    $('.comment').submit(function () {
+        var level = $(this).find('#level').val();
+        var comment = $(this).find('#comment').val();
+        $.post("./api.php", {
+            action: "add_log",
+            robot: robot,
+            level: level,
+            comment: comment,
+            number: <?php echo (int)$robot_number; ?>
+        }).done(function (data) {
+            if (data == "false") {
+                alert("Data Loaded: " + data);
+            } else {
+                window.location.href = "./robot.php?id=" + robot;
+            }
+        });
+        return false;
     });
-    
+
+    $("body").on('click', '.fa-times', function () {
+        id_log = $(this).attr("id");
+        $.post("./api.php", {
+            action: "delete_log",
+            id: id_log
+        }).done(function (data) {
+            window.location.reload(true);
+        });
+    });
+
+    $("body").on('click', '#robot_production_statistics', function () {
+        $.post("./api.php", {
+            action: "change_status_robot_production_statistics",
+            id: robot
+        }).done(function (data) {
+            console.log(data);
+            if (data == 'true') {
+                window.location.reload(true);
+            } else {
+                return false;
+            }
+        });
+    });
+
     function onRemont() {
         var isRemont = confirm("Вы действительно хотите перевести робота в ремонт? Все чек-листы будут сброшены.");
         var progress = <?php echo $robot_progress;?>;
-
-        if (isRemont && progress===100) {
-            
-           $.post( "./api.php", { 
-                    action: "robot_remont", 
-                    robot: robot
-                        } )
-                  .done(function( data ) {
-                      window.location.reload(true);
-                  });
-            
+        if (isRemont && progress === 100) {
+            $.post("./api.php", {
+                action: "robot_remont",
+                robot: robot
+            }).done(function (data) {
+                window.location.reload(true);
+            });
         }
+    }
+
+    function onPause() {
+        alert("Сборка стоит на паузе, для активации обратитесь к начальнику производства!");
     }
     
 </script>

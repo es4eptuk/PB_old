@@ -440,6 +440,14 @@ if (isset($_POST['action'])) {
     if ($_POST['action'] == "get_info_user") {
         echo json_encode($user->get_info_user($_POST['id']), JSON_UNESCAPED_UNICODE);
     }
+
+    //статистика сборки
+    if ($_POST['action'] == "change_status_robot_production_statistics") {
+        echo json_encode($statistics->change_status_robot_production_statistics($_POST['id']), JSON_UNESCAPED_UNICODE);
+    }
+    if ($_POST['action'] == "del_robot_production_statistics") {
+        echo json_encode($statistics->del_robot_production_statistics($_POST['id']), JSON_UNESCAPED_UNICODE);
+    }
 }
 if (isset($_GET['action'])) {
     //поиск позиций

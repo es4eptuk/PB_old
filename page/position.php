@@ -539,7 +539,7 @@ class Position
         }
         //print_r($json);
         $this->writeoff->add_writeoff(json_encode($json));
-        return $result;
+        return true;
     }
 
     //удаляет списание

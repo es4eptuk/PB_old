@@ -10,6 +10,7 @@ class Checks
     private $sklad;
     private $mail;
     private $plan;
+    private $statistics;
 
     const ZABIX = [
         '2' => ['url' => '', 'user' => '', 'password' => '', 'Manufacture' => '', 'Manufacture_test' => '', 'host' => ''],
@@ -36,13 +37,14 @@ class Checks
 
     function init()
     {
-        global $telegramAPI, $robots, $position, $mail, $plan;
+        global $telegramAPI, $robots, $position, $mail, $plan, $statistics;
 
         $this->telegram = $telegramAPI; //new TelegramAPI;
         $this->robot = $robots; //new Robots;
         $this->sklad = $position; //new Position;
         $this->mail = $mail; //new Mail;
         $this->plan = $plan;
+        $this->statistics = $statistics;
         //$this -> robot = new Robots;
     }
 
@@ -263,6 +265,11 @@ class Checks
     //
     function add_check_on_robot($id_row, $robot, $id, $value, $number, $remont, $kit)
     {
+        //запуск учета времени сборки
+        if ($this->statistics->get_robot_production_statistics($robot) == null && $remont == 0) {
+            $this->statistics->add_robot_production_statistics($robot);
+        }
+
         $date    = date("Y-m-d H:i:s");
         $user_id = intval($_COOKIE['id']);
         $arr_kits = $this->plan->get_kits();
@@ -342,11 +349,17 @@ class Checks
             $this->telegram->sendNotify("sale", $telegram_str);
         }
 
-        /* при отметке чека 104(Упаковка) отправка сообщения в телегу и на почту*/
-        /* при отметке чека 308(Проверить робота в Zabbix) отправка сообщения в телегу и на почту*/
+        /* при отметке чека 104(Упаковка V4) отправка сообщения в телегу и на почту*/
+        /* при отметке чека 313(Упаковка v2) отправка сообщения в телегу и на почту*/
         /* при отметке чека 552(упаковка/наклеить транспортировочные наклейки) отправка сообщения в телегу и на почту*/
         /* при отметке чека 547(упаковка/наклеить транспортировочные наклейки) отправка сообщения в телегу и на почту*/
-        if (($id == 104 || $id ==308 || $id ==552 || $id ==547) && $value == 1) {
+        if (($id == 104 || $id ==313 || $id ==552 || $id ==547) && $value == 1) {
+            //завершаем учет рабочего времени
+            $statistics = $this->statistics->get_robot_production_statistics($robot);
+            if ($statistics != null && $statistics['date_end'] == null) {
+                $this->statistics->stop_robot_production_statistics($robot);
+            }
+            //теперь остальная логика
             $query = "SELECT * FROM robots WHERE id='$robot'";
             $result = $this->pdo->query($query);
             while ($line = $result->fetch()) {

@@ -381,7 +381,7 @@ $category_id = $_GET['category'];
         var idd = str[1];
         var id_row = idd;
         var comment = $(this).find('textarea').val();
-        var value = $(this).parent().parent().find('[data-id_row='+idd+']');
+        var value = $(this).parent().parent().find('[data-id_row=' + idd + ']');
         if (value.is(':checked')) {
             val = 1;
         } else {
@@ -398,16 +398,15 @@ $category_id = $_GET['category'];
                 value: val,
                 comment: comment,
                 number: <?php echo (int)$robot_number; ?>
-            })
-                .done(function (data) {
-                    if (data == "false") {
-                        alert("Data Loaded: " + data);
-                    } else {
-                        //window.location.href = "./robots.php";
-                        $('#btn_' + idd).hide();
-                        //console.log('btn_'+idd);
-                    }
-                });
+            }).done(function (data) {
+                if (data == "false") {
+                    alert("Data Loaded: " + data);
+                } else {
+                    //window.location.href = "./robots.php";
+                    $('#btn_' + idd).hide();
+                    //console.log('btn_'+idd);
+                }
+            });
         }
         return false;
     });
@@ -416,20 +415,15 @@ $category_id = $_GET['category'];
     $(".check").change(function () {
         $(".check").prop('disabled', true);
         var category = <?php echo $category_id; ?> ;
-
         //if (category == 4 && (finish_hs!=100  ||  finish_mh!=100 || finish_hp!=100 )) {alert("Не выполнены все операции в предыдущих отделах!"); $(this).prop( "checked", false ); return false;}
-
         var id = $(this).attr("id");
         var id_row = $(this).data('id_row');
         var kit = $('select[data-id_row=' + id_row + ']').val(); //$(this).data('kit');
-
         if (kit == undefined) {
             kit = 0;
         }
-
         //alert(id);
         //console.log(kit);
-
         if (this.checked) {
             val = 1;
             //отключает смену набора
@@ -439,11 +433,8 @@ $category_id = $_GET['category'];
             //включает смену набора
             $('select[data-id_row=' + id_row + ']').prop('disabled', false);
         }
-
         var robot =  <?php echo $robot_id; ?>;
         var remont = <?php echo $robot_remont; ?>;
-
-
         $.post("./api.php", {
             action: "add_check_on_robot",
             id_row: id_row,
@@ -453,28 +444,23 @@ $category_id = $_GET['category'];
             number: <?php echo (int)$robot_number; ?>,
             remont: remont,
             kit: kit
-
-        })
-            .done(function (data) {
-                if (data == "false") {
-                    alert("Data Loaded: " + data);
-                } else {
-                    //window.location.href = "./robots.php";
-                    $(".check").prop('disabled', false);
-                }
-            });
-
+        }).done(function (data) {
+            if (data == "false") {
+                alert("Data Loaded: " + data);
+            } else {
+                //window.location.href = "./robots.php";
+                $(".check").prop('disabled', false);
+            }
+        });
     });
 
     //смена комплекта
     $(".kit").on('change', function () {
         var id_row = $(this).data('id_row');
         var id_kit = $(this).val();
-
         $('input[data-id_row=' + id_row + ']').attr('data-kit', id_kit);
         //console.log(th);
     });
-
 
 </script>
 </body>

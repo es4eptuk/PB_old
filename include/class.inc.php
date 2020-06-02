@@ -3,8 +3,8 @@ error_reporting(E_ALL);
 ini_set('display_startup_errors', 1);
 ini_set('display_errors', '1');
 
-
 include_once ('include/config.inc.php');
+include_once (PATCH_DIR . '/vendor/autoload.php');
 include_once ('page/log.php');
 include_once ('page/telegram.php');
 include_once ('page/mail.php');
@@ -21,6 +21,8 @@ include_once ('page/tickets.php');
 include_once ('page/plan.php');
 include_once ('page/1c.php');
 include_once ('page/settings.php');
+include_once ('page/bitrix.php');
+include_once ('page/statistics.php');
 
 //создание экземпляров
 $log = new Log();
@@ -39,6 +41,8 @@ $tickets = new Tickets();
 $plan = new Plan();
 $oneC = new OneC();
 $settings = new Settings();
+$bitrixAPI = new Bitrix();
+$statistics = new Statistics();
 
 //инициализация
 $log->init();
@@ -57,6 +61,8 @@ $tickets->init();
 $plan->init();
 $oneC->init();
 $settings->init();
+$bitrixAPI->init();
+$statistics->init();
 
 
 $i = $_SERVER['REQUEST_URI'];

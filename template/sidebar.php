@@ -333,7 +333,30 @@
        
        ';
        }
-       
+
+       if ($userdata['group'] == 1) {
+           echo '    
+        
+        <li class="treeview">
+          <a href="#">
+            <i class="fa fa-area-chart"></i> <span>Статистика</span>
+            <span class="pull-right-container">
+            </span>
+          </a>
+          <ul class="treeview-menu">
+            <li class="treeview"><a href=""><i class="fa fa-android"></i>Роботы</a>
+                    <ul class="treeview-menu">
+                         <li><a href="./robot_production_statistics.php"><i class="fa fa-circle-o"></i>Время сборки</a></li>
+                    </ul>
+            </li>
+          </ul>
+         
+          
+        </li>
+        
+        ';
+       }
+
        if ($userdata['group'] == 1 || $userdata['group'] == 5) {
        echo ' 
        
