@@ -15,6 +15,7 @@ $robot_color = $robot_info['color'];
 $robot_brand = $robot_info['brand'];
 $robot_ikp = $robot_info['ikp'];
 $robot_battery = $robot_info['battery'];
+$robot_commissioning = $robot_info['commissioning'];
 $robot_dop = $robot_info['dop'];
 $robot_dop_manufactur = $robot_info['dop_manufactur'];
 $robot_progress = $robot_info['progress'];
@@ -186,7 +187,7 @@ $robot_date_send = ($robot_info['date_send'] == null) ? '' : $robot_date_send->f
                                     <label>Наличие АКБ</label>
                                     <select class="form-control" name="battery" id="battery" <?php echo ($robot_progress == 100) ? "disabled" : ""; ?>>
                                         <?php
-                                        $battery = [1 => "Да", 0 => "Нет"];
+                                        $battery = [0 => "Нет", 1 => "Да"];
                                         foreach ($battery as $key => $value) {
                                             if ($key == $robot_battery) {
                                                 echo "<option  value='" . $key . "' selected>" . $value . "</option>";
@@ -204,6 +205,21 @@ $robot_date_send = ($robot_info['date_send'] == null) ? '' : $robot_date_send->f
                                 <div class="form-group">
                                     <label>Информация от производства</label>
                                     <textarea rows="5" cols="45" class="form-control" name="dop_manufactur" id="dop_manufactur"><?php echo $robot_dop_manufactur ?></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label>Пусконаладка</label>
+                                    <select class="form-control" name="commissioning" id="commissioning" <?php echo ($robot_progress == 100) ? "disabled" : ""; ?>>
+                                        <?php
+                                        $commissioning = [0 => "Нет", 1 => "Да"];
+                                        foreach ($commissioning as $key => $value) {
+                                            if ($key == $robot_commissioning) {
+                                                echo "<option  value='" . $key . "' selected>" . $value . "</option>";
+                                            } else {
+                                                echo "<option  value='" . $key . "'>" . $value . "</option>";
+                                            }
+                                        }
+                                        ?>
+                                    </select>
                                 </div>
                                 <div class="form-group">
                                     <label>Информация по доставке (наличие колёс на кофре, адрес доставки, телефон и имя получателя, плательщик по доставке, аэропорт доставки)</label>
@@ -377,6 +393,7 @@ $robot_date_send = ($robot_info['date_send'] == null) ? '' : $robot_date_send->f
                 var brand = $('#brand').val();
                 var ikp = $('#ikp').val();
                 var battery = $('#battery').val();
+                var commissioning = $('#commissioning').val();
                 var dop = $('#dop').val();
                 var dop_manufactur = $('#dop_manufactur').val();
                 var delivery = $('#delivery').val();
@@ -415,7 +432,8 @@ $robot_date_send = ($robot_info['date_send'] == null) ? '' : $robot_date_send->f
                     date_test: date_test,
                     date_send: date_send,
                     send: send,
-                    delivery: delivery
+                    delivery: delivery,
+                    commissioning: commissioning
                 }).done(function (data) {
                     if (data == "false") {
                         alert("Data Loaded: " + data);

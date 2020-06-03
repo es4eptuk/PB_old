@@ -269,8 +269,8 @@ $today = date('Y-m-d');
                     <div class="form-group">
                         <label>Наличие АКБ</label>
                         <select class="form-control" name="battery" id="battery">
-                            <option value="1">Да</option>
                             <option value="0">Нет</option>
+                            <option value="1">Да</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -280,6 +280,13 @@ $today = date('Y-m-d');
                     <div class="form-group">
                         <label>Информация от производства</label>
                         <textarea rows="5" cols="45" class="form-control" name="dop_manufactur" id="dop_manufactur"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Пусконаладка</label>
+                        <select class="form-control" name="commissioning" id="commissioning">
+                            <option value="0">Нет</option>
+                            <option value="1">Да</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label>Информация по доставке (наличие колёс на кофре, адрес доставки, телефон и имя получателя, плательщик по доставке, аэропорт доставки)</label>
@@ -406,13 +413,20 @@ $today = date('Y-m-d');
                     <div class="form-group">
                         <label>Наличие АКБ</label>
                         <select class="form-control" name="battery" id="battery">
-                            <option value="1">Да</option>
                             <option value="0">Нет</option>
+                            <option value="1">Да</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label>Дополнительная информация</label>
                         <input type="text" class="form-control" name="dop" id="dop">
+                    </div>
+                    <div class="form-group">
+                        <label>Пусконаладка</label>
+                        <select class="form-control" name="commissioning" id="commissioning">
+                            <option value="0">Нет</option>
+                            <option value="1">Да</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label>Информация по доставке (наличие колёс на кофре, адрес доставки, телефон и имя получателя, плательщик по доставке, аэропорт доставки)</label>
@@ -603,6 +617,7 @@ $today = date('Y-m-d');
             var date_test = $('#datepicker2').val();
             var date_send = $('#datepicker3').val();
             var send = $('#send').is(':checked') ? 1 : 0;
+            var commissioning = $('#commissioning').val();
             //собираем отмеченные опции
             $('input[name=options]').each(function () {
                 if (this.checked) {
@@ -645,7 +660,8 @@ $today = date('Y-m-d');
                 date_test: date_test,
                 date_send: date_send,
                 send: send,
-                delivery: delivery
+                delivery: delivery,
+                commissioning: commissioning
             }).done(function (data) {
                 if (data == "false") {
                     alert("Data Loaded: " + data);
@@ -728,6 +744,7 @@ $today = date('Y-m-d');
                         '<tr><td>Язык (робота)</td><td>' + robot_info['language_robot'] + '</td></tr>' +
                         '<tr><td>Язык (инструкции)</td><td>' + robot_info['language_doc'] + '</td></tr>' +
                         '<tr><td>Дата отгрузки</td><td>' + robot_info['date_send'] + '</td></tr>' +
+                        '<tr><td>Пусконаладка</td><td>' + robot_info['commissioning'] + '</td></tr>' +
                         '<tr><td>Наименование получателя</td><td>' + robot_info['customer'] + '</td></tr>' +
                         '<tr><td>Юридич. адрес получателя</td><td>' + robot_info['address'] + '</td></tr>' +
                         '<tr><td>ИНН получателя</td><td>' + robot_info['inn'] + '</td></tr>' +

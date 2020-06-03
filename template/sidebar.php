@@ -293,7 +293,21 @@
         
         ';
         }
-        
+       if ($userdata['group'] == 1 || $userdata['group'] == 4) {
+           echo ' 
+           <li class="treeview">
+              <a href="#">
+                <i class="fa fa-thumbs-up"></i> <span>Аккаунтинг</span>
+                <span class="pull-right-container">
+                </span>
+              </a>
+              <ul class="treeview-menu">
+                <li><a href="./commissioning.php"><i class="fa fa-rocket"></i> Пусконаладка</a></li>
+              </ul>
+            </li>
+           ';
+       }
+
     if ($userdata['group'] == 1 || $userdata['group'] == 4) {
        echo ' 
        

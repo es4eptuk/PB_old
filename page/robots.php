@@ -367,6 +367,7 @@ class Robots
             $robot['ikp'] = ($robot['ikp'] == '') ? 'Нет' : $robot['ikp'];
             $robot['dop'] = ($robot['dop'] == '') ? 'Нет' : $robot['dop'];
             $robot['battery'] = ($robot['battery'] == 1) ? 'Есть' : 'Нет';
+            $robot['commissioning'] = ($robot['commissioning'] == 1) ? 'Есть' : 'Нет';
             $robot['language_robot'] = ($robot['language_robot'] != '') ? self::LANGUAGE[$robot['language_robot']] : '';
             $robot['language_doc'] = ($robot['language_doc'] != '') ? self::LANGUAGE[$robot['language_doc']] : '';
             $robot['date_send'] = ($robot['date_send'] != null) ? date('d.m.Y', strtotime($robot['date_send'])) : '';
@@ -415,7 +416,7 @@ class Robots
     }
 
     //добавить робота
-    function add_robot($number, $name, $version, $options, $customer, $owner, $language_robot, $language_doc, $charger, $color, $brand, $ikp, $battery, $dop, $dop_manufactur, $date_start, $date_test, $date_send, $send, $delivery)
+    function add_robot($number, $name, $version, $options, $customer, $owner, $language_robot, $language_doc, $charger, $color, $brand, $ikp, $battery, $dop, $dop_manufactur, $date_start, $date_test, $date_send, $send, $delivery, $commissioning)
     {
         $date_start = new DateTime($date_start);
         $date_start = $date_start->format('Y-m-d H:i:s');
@@ -451,8 +452,8 @@ class Robots
         }
 
         $this->query = "INSERT 
-            INTO `robots` (`id`, `version`, `number`, `name`, `customer`, `owner`, `language_robot`, `language_doc`, `charger`, `color`, `brand`, `ikp`, `battery`, `dop`, `dop_manufactur`, `progress`, `date`, `date_test`, `date_send`, `update_date`, `update_user`, `delete`, `delivery`) 
-            VALUES (NULL, '$version', '$number', '$name', '$customer', '$owner', '$language_robot', '$language_doc', '$charger', '$color', '$brand', '$ikp', '$battery', '$dop', '$dop_manufactur', '$progress', '$date_start', '$date_test', '$date_send', '$date', '$user_id', '$delete', '$delivery')
+            INTO `robots` (`id`, `version`, `number`, `name`, `customer`, `owner`, `language_robot`, `language_doc`, `charger`, `color`, `brand`, `ikp`, `battery`, `dop`, `dop_manufactur`, `progress`, `date`, `date_test`, `date_send`, `update_date`, `update_user`, `delete`, `delivery`, `commissioning`) 
+            VALUES (NULL, '$version', '$number', '$name', '$customer', '$owner', '$language_robot', '$language_doc', '$charger', '$color', '$brand', '$ikp', '$battery', '$dop', '$dop_manufactur', '$progress', '$date_start', '$date_test', '$date_send', '$date', '$user_id', '$delete', '$delivery', '$commissioning')
         ";
         $result = $this->pdo->query($this->query);
 
@@ -556,7 +557,7 @@ class Robots
         //$this->sklad->set_reserv($version);
     }*/
 
-    function edit_robot($id, $number, $name, $version, $options, $customer, $owner, $language_robot, $language_doc, $charger, $color, $brand, $ikp, $battery, $dop, $dop_manufactur, $date_start, $date_test, $date_send, $send, $delivery)
+    function edit_robot($id, $number, $name, $version, $options, $customer, $owner, $language_robot, $language_doc, $charger, $color, $brand, $ikp, $battery, $dop, $dop_manufactur, $date_start, $date_test, $date_send, $send, $delivery, $commissioning)
     {
         $date_start = new DateTime($date_start);
         $date_start = $date_start->format('Y-m-d H:i:s');
@@ -604,7 +605,8 @@ class Robots
         `color` = '$color', 
         `brand` = '$brand', 
         `ikp` = '$ikp', 
-        `battery` = '$battery', 
+        `battery` = '$battery',
+        `commissioning` = '$commissioning',
         `dop` = '$dop', 
         `dop_manufactur` = '$dop_manufactur',
         `progress`  = $progress,
