@@ -1,11 +1,39 @@
 <?php
 class Tickets
 {
+    const CLASS_TICKET = [
+        "I" => "Консультация",
+        "P" => "Проблема",
+        "FR" => "Пожелание",
+    ];
+    const SOURCE_TICKET = [
+        "0" => "Неизвестно",
+        //11-19 - системные источники (автомат)
+        "11" => "Система",
+        "12" => "Zabbix",
+        "13" => "Кабинет клиента",
+        //21-29 - выбор источника (ручной)
+        "21" => "Телефон",
+        "22" => "Telegram",
+        "23" => "Email",
+        "24" => "Техпод Zabbix",
+    ];
+    const PRIORITY_TICKET = [
+        "1" => "Низкий",
+        "2" => "Средний",
+        "3" => "Высокий",
+    ];
+
     private $user;
     private $robot;
     private $link_ticket;
     private $query;
     private $pdo;
+
+    public $listClassTikets;
+    public $listSourceTikets;
+    public $listPriorityTikets;
+
     /**
      * @var string
      */
@@ -30,6 +58,12 @@ class Tickets
         //Подключение внешних классов
         $this->robot = $robots; //new Robots;
         $this->user = $user; //new User;
+
+        $this->listClassTikets = self::CLASS_TICKET;
+        $this->listSourceTikets = self::SOURCE_TICKET;
+        $this->listPriorityTikets = self::PRIORITY_TICKET;
+
+
     }
 
     //Получение списка возможных статусов тикетов
@@ -110,14 +144,16 @@ class Tickets
      * @param $comment
      * @return false|PDOStatement
      */
-    function add($robot, $class, $category, $subcategory, $status, $comment)
+    function add($robot, $source, $priority, $class, $category, $subcategory, $status, $comment)
     {
         $date    = date("Y-m-d H:i:s");
         $user_id = intval($_COOKIE['id']);
         $this->query   = "INSERT INTO `tickets` (
             `id`, 
             `robot`, 
-            `class`,
+            `source`,
+            `priority`,
+            `class`,                        
             `category`, 
             `subcategory`, 
             `description`, 
@@ -128,7 +164,9 @@ class Tickets
             `update_date`) 
             VALUES (
                 NULL, 
-                '$robot', 
+                '$robot',
+                '$source',
+                '$priority',                                
                 '$class', 
                 '$category', 
                 '$subcategory', 
@@ -141,7 +179,7 @@ class Tickets
         $result = $this->pdo->query($this->query);
         $idd   = $this->pdo->lastInsertId();
 
-        $this->query  = "INSERT INTO `robot_log` (`id`, `robot_id`,`source`, `level`, `comment`, `ticket_id`,`update_user`, `update_date`) VALUES (NULL, $robot, 'TICKET',1, '$comment', $idd,  $user_id, '$date')";
+        $this->query  = "INSERT INTO `robot_log` (`id`, `robot_id`,`source`, `level`, `comment`, `ticket_id`,`update_user`, `update_date`) VALUES (NULL, $robot, 'TICKET', 1, '$comment', $idd,  $user_id, '$date')";
         $result = $this->pdo->query($this->query);
 
         return $result;
@@ -178,11 +216,22 @@ class Tickets
         while ($line = $result->fetch()) {
             $ticket_comments[] = $line;
         }
-
-        if (isset($ticket_comments))
-            return $ticket_comments;
+        return (isset($ticket_comments)) ? $ticket_comments : [];
     }
-    
+
+    /**
+     * @param $id
+     * @return array
+     */
+    public function get_comments_customers($id)
+    {
+        $this->query = "SELECT * FROM tickets_comments_customers WHERE `ticket` =  $id ORDER BY `update_date` DESC";
+        $result = $this->pdo->query($this->query);
+        while ($line = $result->fetch()) {
+            $ticket_comments[] = $line;
+        }
+        return (isset($ticket_comments)) ? $ticket_comments : [];
+    }
     //Получение информации о категории тикета по ее ID
     public function get_info_category($id)
     {
@@ -222,7 +271,7 @@ class Tickets
             return $status_array['0'];
     }
     
-    //Добавление комментария к тикету
+    //Добавление комментария к тикету для техпод
     // $robot - id робота
     // $ticket - id тикета
     // $comment - комментарий
@@ -248,7 +297,30 @@ class Tickets
         //echo $query;
         return $result;
     }
-    
+
+    //Добавление комментария к тикету для клиента
+    // $robot - id робота
+    // $ticket - id тикета
+    // $comment - комментарий
+    function add_comment_customers($robot, $ticket, $comment)
+    {
+        $date    = date("Y-m-d H:i:s");
+        $user_id = intval($_COOKIE['id']);
+        $this->query = "INSERT INTO `tickets_comments_customers` (
+            `id`, 
+            `ticket`, 
+            `comment`, 
+            `update_user`, 
+            `update_date`) VALUES (
+                NULL, 
+                $ticket, 
+                '$comment', 
+                $user_id, 
+                '$date');";
+        $result = $this->pdo->query($this->query);
+        return $result;
+    }
+
     // Получение списка тикетов
     // $robot - id робота 
     // $user - пользовтель (создатель)
@@ -344,6 +416,8 @@ class Tickets
             // if ($line_kanban['assign']==0) {$ticket_array[$i]['assign']  = "<span class='text-red'>".$user_info['user_name']."</span>";}
             $ticket_commets                  = $this->get_comments($line_kanban['id']);
             $ticket_array[$i]['comments']    = count($ticket_commets);
+            $ticket_commets_customers        = $this->get_comments_customers($line_kanban['id']);
+            $ticket_array[$i]['comments_customers'] = count($ticket_commets_customers);
         }
 
         if (isset($ticket_array))
@@ -471,14 +545,28 @@ class Tickets
         $result = $this->pdo->query($this->query);
         $line        = $result->fetch();
         $assign_time = $line['assign_time'];
-        if ($assign_time == "0000-00-00 00:00:00") {
+        if ($assign_time == "0000-00-00 00:00:00" || $assign_time == null) {
             $assign_time = $date;
         }
         $this->query = "UPDATE `tickets` SET `assign` = '$assign',`assign_time` = '$assign_time', `update_user` = $user_id, `update_date` = '$date' WHERE `id` = $id";
         $result = $this->pdo->query($this->query);
         return $result;
     }
-    
+    //
+    public function change_priority($id, $priority)
+    {
+        $this->query = "UPDATE `tickets` SET `priority` = '$priority' WHERE `id` = $id";
+        $result = $this->pdo->query($this->query);
+        return $result;
+    }
+    //
+    public function change_source($id, $source)
+    {
+        $this->query = "UPDATE `tickets` SET `source` = '$source' WHERE `id` = $id";
+        $result = $this->pdo->query($this->query);
+        return $result;
+    }
+
     //Добавление категории тикетов в справочник
     //$title - название
     //$cat_class - класс категории 

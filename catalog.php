@@ -40,52 +40,50 @@ include 'include/class.inc.php';
                   <th>Подгруппа</th>
                   <th>Артикул</th>
                   <th>Наименование</th>
-                  <th>Кол-во на складе</th>
+                  <th>На складе</th>
                   <th>В резерве</th>
                   <th>Свободно</th>
                   <th>Заказ</th>
                   <th>Поставщик</th>
                   <th>Стоимость</th>
-               <th>Лог</th>
+                  <th>Лог</th>
+                  <th>Изображение</th>
                 </tr>
                 </thead>
                 <tbody>
                 <?php 
-                
                 $arr = $position->get_pos_in_category($_GET['id']);
-               
-                
                 foreach ($arr as &$pos) {
-                     $provider = $position->get_info_pos_provider($pos['provider']);
-                     $real = $pos['total']-$pos['reserv'];
-                     $order_date = $orders->orderDate($pos['id']);
-                     $assembly_out = "";
-                     if ($pos['assembly']!=0) {
-                         $assembly_out = "<a href='edit_assembly.php?id=".$pos['assembly']."'><i class='fa fa-2x fa-codepen'></i></a>";
-                     }
-                     
-                       echo "
-                       <tr>
-                          <td>".$position->getSubcategoryes[$pos['subcategory']]['title']."</td>
-                          <td>".$pos['vendor_code']."</td>
-                          <td>".$pos['title']."</td>
-                          <td>".$pos['total']."</td>
-                          <td>".$pos['reserv']."</td>
-                          <td><b>".$real."</b></td>
-                          <td>".$order_date."</td>
-                          <td>".$provider['title'].", ".$provider['type']."</td>
-                          <td>".$pos['price']."</td>
-                          <td><a href='pos_log.php?id=".$pos['id']."'><i class='fa fa-2x fa-list-alt'></i></a></td>
+                    $provider = $position->get_info_pos_provider($pos['provider']);
+                    $real = $pos['total']-$pos['reserv'];
+                    $order_date = $orders->orderDate($pos['id']);
+                    $assembly_out = "";
+                    if ($pos['assembly']!=0) {
+                        $assembly_out = "<a href='edit_assembly.php?id=".$pos['assembly']."'><i class='fa fa-2x fa-codepen'></i></a>";
+                    }
+                    $filename = 'img/catalog/'.$_GET['id'].'/'.$pos['vendor_code'].".jpg";
+                    $filename_thumb = 'img/catalog/'.$_GET['id'].'/thumb/'.$pos['vendor_code'].".jpg";
+                    if (file_exists($filename_thumb)) {
+                        $img =  '<a class="fancybox" href="'.$filename.'" target="_blank"><img alt="'.$pos['vendor_code'].'" src="'.$filename_thumb.'" /></a>';
+                    } else {
+                        $img =  "<img src='/img/no-image.png' width='100'></img>";
+                    }
+                    echo "
+                        <tr>
+                            <td>".$position->getSubcategoryes[$pos['subcategory']]['title']."</td>
+                            <td>".$pos['vendor_code']."</td>
+                            <td>".$pos['title']."</td>
+                            <td>".$pos['total']."</td>
+                            <td>".$pos['reserv']."</td>
+                            <td><b>".$real."</b></td>
+                            <td>".$order_date."</td>
+                            <td>".$provider['title'].", ".$provider['type']."</td>
+                            <td>".$pos['price']."</td>
+                            <td><a href='pos_log.php?id=".$pos['id']."'><i class='fa fa-2x fa-list-alt'></i></a></td>
+                            <td>".$img."</td>
                         </tr>
-                       
-                       
-                       ";
-                    }  
-                    
-                    
-                     
-                    
-                 
+                    ";
+                }
                 ?>
               </table>
             </div>

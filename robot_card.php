@@ -46,90 +46,97 @@ $robot_dop_manufactur= $robot_info['dop_manufactur'];
             
             
             <div class="box-body table-responsive">
-               
-              
-      
-     
-          
-          <div class="box box-primary">
-            <div class="box-header with-border">
-              <h3 class="box-title">Добавить событие</h3>
-            </div>
-            <!-- /.box-header -->
-            <!-- form start -->
-            <form role="form" class="comment">
-              <div class="box-body">
 
-                  <i><?php echo $robot_dop_manufactur; ?></i>
 
-                    <div class="form-group">
-                  <label>Класс обращения </label>
-                  <select class="form-control" id="ticket_class" required="required">
-                      <option value="">Веберите класс...</option>
-                      <option value="I">Консультация</option>
-                      <option value="P">Проблема</option>
-                      <option value="FR">Пожелание</option>
-                   
-											                       
-                  </select>
-                </div>
-                  
-                <div class="form-group" id="form_category">
-                  <label>Категория <small>(<a href="#" data-toggle="modal" data-target="#add_category">Добавить</a>)</small></label>
-                  <select class="form-control" id="category" >
-                      <option value="0">Веберите категорию...</option>
-                     <?php 
-											                   $arr = $tickets->get_category();
-											                
-											                    foreach ($arr as &$category) {
-											                       echo "
-											                       <option value='".$category['id']."'>".$category['title']."</option>
-											                       
-											                       ";
-											                    }
-											                   
-											                   ?>
-                  </select>
-                </div>
-                
-                <div class="form-group" id="form_subcategory">
-                  <label>Уточнение <small>(<a href="#" data-toggle="modal" data-target="#add_subcategory">Добавить</a>)</small></label>
-                  <select class="form-control" id="subcategory" >
-                  </select>
-                </div>
-                
-                
-                <div class="form-group">
-                  <label>Описание</label>
-                  <textarea class="form-control" rows="3" placeholder="Введите описание ..." name="comment" id="comment" required="required"></textarea>
-                </div>
-             
-              
-              
-              <div class="form-group">
-                  <label>Статус</label>
-                  <select class="form-control" id="status" required="required">
-                                             <?php 
-											                   $arr = $tickets->get_status();
-											                
-											                    foreach ($arr as &$status) {
-											                       echo "
-											                       <option value='".$status['id']."'>".$status['title']."</option>
-											                       
-											                       ";
-											                    }
-											                   
-											                   ?>
-                  </select>
-                </div>
-               </div>
-              <!-- /.box-body -->
+                <div class="box box-primary">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Добавить событие</h3>
+                    </div>
+                    <form role="form" class="comment">
+                        <div class="box-body">
 
-              <div class="box-footer">
-                <button type="submit" class="btn btn-primary">Добавить</button>
-              </div>
-            </form>
-          </div>
+                            <i><?php echo $robot_dop_manufactur; ?></i>
+
+                            <div class="form-group">
+                                <label>Источник </label>
+                                <select class="form-control" id="ticket_source" required="required">
+                                    <option value="">Веберите источник...</option>
+                                    <?php
+                                    foreach ($tickets->listSourceTikets as $id => $class) {
+                                        if ($id > 20 && $id < 30) {
+                                            echo "<option value='" . $id . "'>" . $class . "</option>";
+                                        }
+                                    }
+                                    ?>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Приоритет </label>
+                                <select class="form-control" id="ticket_priority" required="required">
+                                    <?php
+                                    foreach ($tickets->listPriorityTikets as $id => $class) {
+                                        $selected = ($id == 2) ? 'selected' : '';
+                                        echo "<option value='" . $id . "' " . $selected . ">" . $class . "</option>";
+                                    }
+                                    ?>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Класс обращения </label>
+                                <select class="form-control" id="ticket_class" required="required">
+                                    <option value="">Веберите класс...</option>
+                                    <?php
+                                    foreach ($tickets->listClassTikets as $id => $class) {
+                                        echo "<option value='" . $id . "'>" . $class . "</option>";
+                                    }
+                                    ?>
+                                </select>
+                            </div>
+
+                            <div class="form-group" id="form_category">
+                                <label>Категория <small>(<a href="#" data-toggle="modal" data-target="#add_category">Добавить</a>)</small></label>
+                                <select class="form-control" id="category">
+                                    <option value="0">Веберите категорию...</option>
+                                    <?php
+                                        $arr = $tickets->get_category();
+                                        foreach ($arr as &$category) {
+                                            echo "<option value='" . $category['id'] . "'>" . $category['title'] . "</option>";
+                                        }
+                                    ?>
+                                </select>
+                            </div>
+
+                            <div class="form-group" id="form_subcategory">
+                                <label>Уточнение <small>(<a href="#" data-toggle="modal" data-target="#add_subcategory">Добавить</a>)</small></label>
+                                <select class="form-control" id="subcategory">
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Описание</label>
+                                <textarea class="form-control" rows="3" placeholder="Введите описание ..." name="comment" id="comment" required="required"></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Статус</label>
+                                <select class="form-control" id="status" required="required">
+                                    <?php
+                                        $arr = $tickets->get_status();
+                                        foreach ($arr as &$status) {
+                                            echo "<option value='" . $status['id'] . "'>" . $status['title'] . "</option>";
+                                        }
+                                    ?>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="box-footer">
+                            <button type="submit" class="btn btn-primary">Добавить</button>
+                        </div>
+                    </form>
+                </div>
                 
                 
                 <div class="col-md-12">
@@ -177,9 +184,13 @@ $robot_dop_manufactur= $robot_info['dop_manufactur'];
                     $subcategory_info = $tickets->get_info_subcategory($ticket['subcategory']);
                     $ticket_subcategory = $subcategory_info['title'];
 
-                    $user_info = $user->get_info_user($ticket['assign']);
-                    $ticket_assign = $user_info['user_name'];
-                    
+                    if ($ticket['assign'] != 0) {
+                        $user_info = $user->get_info_user($ticket['assign']);
+                        $ticket_assign = $user_info['user_name'];
+                    } else {
+                        $ticket_assign = 'Не назначен';
+                    }
+
                     $status_info = $tickets->get_info_status($ticket['status']);
                     $ticket_status_str = $status_info['title'];
                     $color = $status_info['color'];
@@ -197,7 +208,7 @@ $robot_dop_manufactur= $robot_info['dop_manufactur'];
                         
                         <td>".$ticket['class']."-".$ticket['id']."</td>
                         <td>".$ticket_category."</td>
-                         <td>".$ticket_subcategory."</td>
+                        <td>".$ticket_subcategory."</td>
                         <td>".$ticket_status_str."</td>
                         <td>".$ticket_assign."</td>
                         <td>".$ticket_create->format('d.m.Y H:i:s')." </td>
@@ -229,7 +240,7 @@ $robot_dop_manufactur= $robot_info['dop_manufactur'];
                   <th>Статус</th>
                   <th>Пользователь</th>
                   <th>Дата</th>
-                   <th ></th>
+                  <th></th>
                   <?php if ($userdata['group']==1) {echo '<th>Удалить</th>';} ?>
                  
                 </tr>
@@ -441,239 +452,174 @@ $robot_dop_manufactur= $robot_info['dop_manufactur'];
 <script src="../../dist/js/adminlte.min.js"></script>
 <!-- AdminLTE for demo purposes -->
 <script src="../../dist/js/demo.js"></script>
+
 <!-- page script -->
 <script>
-$('#form_category').hide();
-$('#form_subcategory').hide();
 
-$("#btn_add_category").click(function() {
- 
- 	var title = $('#category_title').val();
-    var ticket_class =  $('#ticket_class').val();
- 	if (title != "") {
- 		$.post("./api.php", {
- 			action: "ticket_add_category",
- 			title: title,
- 			cat_class: ticket_class
- 		}).done(function(data) {
- 			
- 			if (data == "false") {
- 				alert("Data Loaded: " + data);
- 				return false;
- 			} else {
- 			   
- 				$('#category').append("<option value='" + data + "' selected>" + title + "<\/option>");
- 				
- 			      $('option', $("#subcategory")).remove();
- 				
- 				$('#add_category').modal('hide');
- 				//return false;
- 			}
- 		});
- 	}
- });
-
-$("#btn_add_subcategory").click(function() {
-    
-    var category = $('#category').val();
- 	var title = $('#subcategory_title').val();
- 	console.log(category);
- 	
- 	if (category==0) {return false;}
- 
- 	if (title != "") {
- 		$.post("./api.php", {
- 			action: "ticket_add_subcategory",
- 			category: category,
- 			title: title
- 		}).done(function(data) {
- 			
- 			if (data == "false") {
- 				alert("Data Loaded: " + data);
- 				return false;
- 			} else {
- 			   
- 				$('#subcategory').append("<option value='" + data + "' selected>" + title + "<\/option>");
- 				$('#add_subcategory').modal('hide');
- 				//return false;
- 			}
- 		});
- 	}
- });
-
- $( ".fa-align-justify" ).click(function() {
-   var id = $(this).attr("id");
-     window.location.href = "./ticket.php?id="+id;
+    $('#form_category').hide();
+    $('#form_subcategory').hide();
+    $("#btn_add_category").click(function () {
+        var title = $('#category_title').val();
+        var ticket_class = $('#ticket_class').val();
+        if (title != "") {
+            $.post("./api.php", {
+                action: "ticket_add_category",
+                title: title,
+                cat_class: ticket_class
+            }).done(function (data) {
+                if (data == "false") {
+                    alert("Data Loaded: " + data);
+                    return false;
+                } else {
+                    $('#category').append("<option value='" + data + "' selected>" + title + "<\/option>");
+                    $('option', $("#subcategory")).remove();
+                    $('#add_category').modal('hide');
+                    //return false;
+                }
+            });
+        }
     });
 
-$( "#ticket_class" )
-  .change(function () {
-   var ticket_class =  $('#ticket_class').val();
-    
-    switch(ticket_class) {
-              case 'I':  
-                //alert ('I');
+    $("#btn_add_subcategory").click(function () {
+        var category = $('#category').val();
+        var title = $('#subcategory_title').val();
+        console.log(category);
+        if (category == 0) {
+            return false;
+        }
+        if (title != "") {
+            $.post("./api.php", {
+                action: "ticket_add_subcategory",
+                category: category,
+                title: title
+            }).done(function (data) {
+                if (data == "false") {
+                    alert("Data Loaded: " + data);
+                    return false;
+                } else {
+                    $('#subcategory').append("<option value='" + data + "' selected>" + title + "<\/option>");
+                    $('#add_subcategory').modal('hide');
+                    //return false;
+                }
+            });
+        }
+    });
+
+    $(".fa-align-justify").click(function () {
+        var id = $(this).attr("id");
+        window.location.href = "./ticket.php?id=" + id;
+    });
+
+    $("#ticket_class").change(function () {
+        var ticket_class = $('#ticket_class').val();
+        switch (ticket_class) {
+            case 'I':
                 $('#form_category').show();
                 $('#form_subcategory').hide();
                 break;
-            
-              case 'P':  
+            case 'P':
                 $('#form_category').show();
                 $('#form_subcategory').show();
-                //alert ('P');
                 break;
-            
-              case 'FR': 
+            case 'FR':
                 $('#form_category').show();
                 $('#form_subcategory').hide();
-                //alert ('FR');
                 break;
+        }
+    });
+
+    // $('.comment').validator();
+    $('.comment').submit(function () {
+        var robot =  <?php echo $robot_id; ?>;
+        var ticket_source = $('#ticket_source').val();
+        var ticket_priority = $('#ticket_priority').val();
+        var ticket_class = $('#ticket_class').val();
+        switch (ticket_class) {
+            case 'I':
+                var category = $('#category').val();
+                var subcategory = 0;
+                break;
+            case 'P':
+                var category = $('#category').val();
+                var subcategory = $('#subcategory').val();
+                var category_str = $('#category option:selected').text();
+                var subcategory_str = $('#subcategory option:selected').text();
+                if (subcategory == null) {
+                    subcategory = 0;
+                }
+                break;
+            case 'FR':
+                var category = $('#category').val();
+                var subcategory = 0;
+                break;
+        }
+        var comment = $(this).find('#comment').val();
+        var status = $('#status').val();
+        $.post("./api.php", {
+            action: "ticket_add",
+            robot: robot,
+            category: category,
+            subcategory: subcategory,
+            ticket_source: ticket_source,
+            ticket_priority: ticket_priority,
+            ticket_class: ticket_class,
+            status: status,
+            comment: comment
+        }).done(function (data) {
+            if (data == "false") {
+                alert("Data Loaded: " + data);
+            } else {
+                window.location.href = "./robot_card.php?id=" + robot;
             }
-
-    });
- 
- 
- 
-
- // $('.comment').validator();    
- $('.comment').submit(function(){
-  var robot =  <?php echo $robot_id; ?>;    
-  
-  var ticket_class =  $('#ticket_class').val();
-  
-              switch(ticket_class) {
-              case 'I':  
-               // alert ('I');
-               var category =  $('#category').val();
-                var subcategory =  "";
-                break;
-            
-              case 'P':  
-               
-                
-                var category =  $('#category').val();
-                var subcategory =  $('#subcategory').val();
-                var category_str =  $('#category option:selected').text();
-                var subcategory_str =  $('#subcategory option:selected').text();
-                //alert ('P');
-                break;
-            
-              case 'FR': 
-                var category =  $('#category').val();
-                var subcategory =  "";
-                //alert ('FR');
-                break;
-            }
-  
-  
-  
- 
-  var comment = $(this).find('#comment').val();
-  var status = $('#status').val();
-  
-  //comment = category_str + ': ' + subcategory_str;
-  
-  
-  
-  
-   $.post( "./api.php", { 
-        action: "ticket_add", 
-        robot: robot,
-        category: category ,
-        subcategory: subcategory ,
-        ticket_class: ticket_class ,
-        status: status, 
-        comment: comment
-        
-    } )
-          .done(function( data ) {
-              if (data=="false") {alert( "Data Loaded: " + data ); }
-              else {
-                window.location.href = "./robot_card.php?id="+robot;
-                
-              }
-          });
-  
-  
-  return false;
-});
-    
-    
-     $( ".fa-times" ).click(function() {
-               
-                id_log = $(this).attr("id");
-                
-               
-                
-                $.post( "./api.php", { 
-                    action: "delete_log", 
-                    id: id_log
-                        } )
-                  .done(function( data ) {
-                      window.location.reload(true);
-                     
-                  });
-               
-
-    });
-    
-$( "#category" )
-  .change(function () {
-    var id = "";
-    var ticket_class =  $('#ticket_class').val();
-    $( "#category option:selected" ).each(function() {
-      id = $( this ).val();
-    });
- 
-    $.post( "./api.php", { action: "ticket_get_subcategory", category: id, cat: ticket_class } )
-    .done(function( data ) {
-        $('option', $("#subcategory")).remove();
-         $('#subcategory').append("<option value='0' selected>Неизвестно<\/option>");
-        var obj = jQuery.parseJSON(data);
-        console.log(data);
-        $.each( obj, function( key, value ) {
-         
-          $('#subcategory')
-         .append($("<option></option>")
-                    .attr("value",value['id'])
-                    .text(value['title'])); 
-                    
-                    
         });
+        return false;
+    });
 
-    });
- 
- 
-  });    
-    
-$( "#ticket_class" )
-  .change(function () {
-    var type = "";
-   
-    $( "#ticket_class option:selected" ).each(function() {
-      type = $( this ).val();
-    });
- 
-    $.post( "./api.php", { action: "ticket_get_category", type: type} )
-    .done(function( data ) {
-        $('option', $("#category")).remove();
-         $('#category').append("<option value='0' selected>Неизвестно<\/option>");
-        var obj = jQuery.parseJSON(data);
-        console.log(data);
-        $.each( obj, function( key, value ) {
-         
-          $('#category')
-         .append($("<option></option>")
-                    .attr("value",value['id'])
-                    .text(value['title'])); 
-                    
-                    
+    $(".fa-times").click(function () {
+        id_log = $(this).attr("id");
+        $.post("./api.php", {
+            action: "delete_log",
+            id: id_log
+        }).done(function (data) {
+            window.location.reload(true);
         });
-
     });
- 
- 
-  });
+
+    $("#category").change(function () {
+        var id = "";
+        var ticket_class = $('#ticket_class').val();
+        $("#category option:selected").each(function () {
+            id = $(this).val();
+        });
+        $.post("./api.php", {action: "ticket_get_subcategory", category: id, cat: ticket_class})
+            .done(function (data) {
+                $('option', $("#subcategory")).remove();
+                $('#subcategory').append("<option value='0' selected>Неизвестно<\/option>");
+                var obj = jQuery.parseJSON(data);
+                console.log(data);
+                $.each(obj, function (key, value) {
+                    $('#subcategory').append($("<option></option>").attr("value", value['id']).text(value['title']));
+                });
+            });
+    });
+
+    $("#ticket_class").change(function () {
+        var type = "";
+        $("#ticket_class option:selected").each(function () {
+            type = $(this).val();
+        });
+        $.post("./api.php", {action: "ticket_get_category", type: type})
+            .done(function (data) {
+                $('option', $("#category")).remove();
+                $('#category').append("<option value='0' selected>Неизвестно<\/option>");
+                var obj = jQuery.parseJSON(data);
+                console.log(data);
+                $.each(obj, function (key, value) {
+                    $('#category').append($("<option></option>").attr("value", value['id']).text(value['title']));
+                });
+            });
+    });
+
 </script>
 </body>
 </html>

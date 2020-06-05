@@ -9,7 +9,6 @@ function print_r2($val)
     echo '</pre>';
 }
 
-
 $arr = $robots->get_robots();
 //$paramRobot = (isset($_GET['robot']) ? $_GET['robot'] : 0);
 
@@ -33,94 +32,71 @@ $date_Today = date("Y-m-d");
 
 //считаем созданные сегодня
 $ticketsTodayArr = $tickets->get_tickets(0, null, 0, 'update_date', 'DESC', 'date_create', $date_Today . " 00:00:00", $date_Today . " 23:59:59");
-if (!isset($ticketsTodayArr))
-{$ticketsTodayArr = 0;}
-else {$ticketsToday = count($ticketsTodayArr);}
-
-
-
-
-
-//                print_r2($arr_tickets[0]);
+if (!isset($ticketsTodayArr)) {
+    $ticketsTodayArr = 0;
+} else {
+    $ticketsToday = count($ticketsTodayArr);
+}
+//print_r2($arr_tickets[0]);
 
 foreach ($arr_tickets as &$ticket) {
     $ticket_status = $ticket['status'];
     $ticket_robot = $ticket['robot'];
     $ticket_assign = $ticket['assign'];
-
+    //завершенных
     if ($ticket_status == 3 || $ticket_status == 6) {
-//                        $finish[$ticket_robot] = isset($finish[$ticket_robot] ) + 1;
-
+    //$finish[$ticket_robot] = isset($finish[$ticket_robot] ) + 1;
         //если по ключу массив пустой, задаем ему 0
         if (isset($finish[$ticket_robot]) == false) {
             $finish[$ticket_robot] = 0;
         }
         $finish[$ticket_robot]++;
-
     }
-
+    //открытые тикеты
     if ($ticket_status == 1 || $ticket_status == 2 || $ticket_status == 4 || $ticket_status == 5) {
-//                       $inprocess[$ticket_robot] = isset($inprocess[$ticket_robot] ) + 1;
-
+        //$inprocess[$ticket_robot] = isset($inprocess[$ticket_robot] ) + 1;
         if (isset($inProcess[$ticket_robot]) == false) {
             $inProcess[$ticket_robot] = 0;
         }
         $inProcess[$ticket_robot]++;
-
         $open_tickets++;
     }
-
+    //не назначенные
     if ($ticket_status == 4) {
-//                       $remont[$ticket_robot]['count'] = isset($remont[$ticket_robot] ) + 1;
-
+        //$remont[$ticket_robot]['count'] = isset($remont[$ticket_robot] ) + 1;
         //если по ключу массив пустой, задаем ему 0
         if (isset($awaitingRepair[$ticket_robot]['count']) == false) {
             $awaitingRepair[$ticket_robot]['count'] = 0;
         }
-
-
         $awaitingRepair[$ticket_robot]['count']++;
-
-
         if (isset($awaitingRepair[$ticket_robot]['date']) == false) {
             $awaitingRepair[$ticket_robot]['date'] = "";
         }
-
         $date_finish = new DateTime($ticket['finish_date']);
-
         $awaitingRepair[$ticket_robot]['date'] = $date_finish->format('d.m.Y');
-
-
         $awaitingRepair_tickets++;
     }
-
+    //в процессе
     if ($ticket_status == 2) {
-//                       $process[$ticket_robot] = isset($process[$ticket_robot] ) + 1;
-
+        //$process[$ticket_robot] = isset($process[$ticket_robot] ) + 1;
         //если по ключу массив пустой, задаем ему 0
         if (isset($process[$ticket_robot]) == false) {
             $process[$ticket_robot] = 0;
         }
         $process[$ticket_robot]++;
-
         $process_tickets++;
-
     }
-
-
-    if ($ticket_status == 7) {
-//                       $wait[$ticket_robot] = isset($wait[$ticket_robot] ) + 1;
-
+    //уже вроде как не используется!!!
+    /*if ($ticket_status == 7) {
+        //$wait[$ticket_robot] = isset($wait[$ticket_robot] ) + 1;
         //если по ключу массив пустой, задаем ему 0
         if (isset($wait[$ticket_robot]) == false) {
             $wait[$ticket_robot] = 0;
         }
         $wait[$ticket_robot]++;
-    }
-
+    }*/
+    //не назначенных
     if ($ticket_assign == 0 and ($ticket_status == 1 || $ticket_status == 2 || $ticket_status == 4 || $ticket_status == 5)) {
-
-
         //если по ключу массив пустой, задаем ему 0
         if (isset($unAssigned[$ticket_robot]) == false) {
             $unAssigned[$ticket_robot] = 0;
@@ -128,50 +104,30 @@ foreach ($arr_tickets as &$ticket) {
         $unAssigned[$ticket_robot]++;
         $unAssigned_tickets++;
     }
-
-
     //назначенные диме
-    if ($ticket_assign == 31 and ($ticket_status == 1 || $ticket_status == 2 || $ticket_status == 4 || $ticket_status == 5)) {
-
-
+    if ($ticket_assign == 31 && ($ticket_status == 1 || $ticket_status == 2 || $ticket_status == 4 || $ticket_status == 5) && $ticket['finish_date'] != null) {
         $date_finish = new DateTime($ticket['finish_date']);
         $date_finish_formatted = $date_finish->format('d.m.Y');
-
-
         if ($date_finish_formatted === $currentDate) {
             $assign_Dima++;
         }
-
     }
-
-
     //назначенные дане
-    if ($ticket_assign == 32 and ($ticket_status == 1 || $ticket_status == 2 || $ticket_status == 4 || $ticket_status == 5)) {
-
-
+    if ($ticket_assign == 32 && ($ticket_status == 1 || $ticket_status == 2 || $ticket_status == 4 || $ticket_status == 5) && $ticket['finish_date'] != null) {
         $date_finish = new DateTime($ticket['finish_date']);
         $date_finish_formatted = $date_finish->format('d.m.Y');
-
-
         if ($date_finish_formatted === $currentDate) {
             $assign_Danil++;
         }
-
     }
-
-
     //назначенные эдьдару
-    if ($ticket_assign == 44 and ($ticket_status == 1 || $ticket_status == 2 || $ticket_status == 4 || $ticket_status == 5)) {
-
+    if ($ticket_assign == 44 && ($ticket_status == 1 || $ticket_status == 2 || $ticket_status == 4 || $ticket_status == 5) && $ticket['finish_date'] != null) {
         $date_finish = new DateTime($ticket['finish_date']);
         $date_finish_formatted = $date_finish->format('d.m.Y');
-
-
         if ($date_finish_formatted === $currentDate) {
             $assign_Eldar++;
         }
     }
-
 }
 //                print_r($unAsighned);
 //print_r($finish);
@@ -191,11 +147,7 @@ foreach ($arr_tickets as &$ticket) {
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
         <section class="content-header">
-            <h1>
-                KANBAN
-
-            </h1>
-
+            <h1>KANBAN</h1>
         </section>
 
         <!-- Main content -->
@@ -209,7 +161,6 @@ foreach ($arr_tickets as &$ticket) {
 
                     <div class="col-xs-6">
                         <p class="lead">На сегодня <?php echo date("d.m.Y"); ?></p>
-
                         <div class="table-responsive">
                             <table class="table">
                                 <tbody>
@@ -230,12 +181,9 @@ foreach ($arr_tickets as &$ticket) {
                                 </tr>
                                 <tr>
                                     <th>Проблемных роботов:</th>
-                                    <td class="dop"><?php echo count($inProcess); ?> <i
-                                                class="fa fa-fw fa-plus-circle pull-right text-green"
-                                                style="cursor: pointer;"></i>
+                                    <td class="dop"><?php echo count($inProcess); ?> <i class="fa fa-fw fa-plus-circle pull-right text-green" style="cursor: pointer;"></i>
                                         <div class="robots" style="display: none">
                                             <ul>
-
                                                 <?php
                                                 $count = 0;
                                                 foreach ($inProcess as $key => $value) {
@@ -248,12 +196,10 @@ foreach ($arr_tickets as &$ticket) {
                                                     $inprocess_sort[$count]['name'] = $name;
                                                     $count++;
                                                 }
-
                                                 function cmp($a, $b)
                                                 {
                                                     return strcmp($a["number"], $b["number"]);
                                                 }
-
                                                 usort($inprocess_sort, "cmp");
                                                 foreach ($inprocess_sort as $key => $value) {
                                                     echo "<li><a href='./robot_card.php?id=" . $value['id'] . "'  >" . $value['number'] . " (" . $value['sum'] . ")</a></li>";
@@ -267,9 +213,7 @@ foreach ($arr_tickets as &$ticket) {
 
                                 <tr>
                                     <th>В процессе решения:</th>
-                                    <td class="dop"><?php echo $process_tickets; ?> <i
-                                                class="fa fa-fw fa-plus-circle pull-right text-green"
-                                                style="cursor: pointer;"></i>
+                                    <td class="dop"><?php echo $process_tickets; ?> <i class="fa fa-fw fa-plus-circle pull-right text-green" style="cursor: pointer;"></i>
                                         <div class="robots" style="display: none">
                                             <ul>
                                                 <?php
@@ -285,9 +229,7 @@ foreach ($arr_tickets as &$ticket) {
                                 </tr>
                                 <tr>
                                     <th>Ожидают ремонта:</th>
-                                    <td class="dop"> <?php echo $awaitingRepair_tickets; ?> <i
-                                                class="fa fa-fw fa-plus-circle pull-right text-green"
-                                                style="cursor: pointer;"></i>
+                                    <td class="dop"> <?php echo $awaitingRepair_tickets; ?> <i class="fa fa-fw fa-plus-circle pull-right text-green" style="cursor: pointer;"></i>
                                         <div class="robots" style="display: none">
                                             <ul>
                                                 <?php
@@ -311,18 +253,16 @@ foreach ($arr_tickets as &$ticket) {
                                 </tr>
                                 <tr>
                                     <th>Не назначенных</th>
-                                    <td class="dop"><?php echo $unAssigned_tickets; ?> <i
-                                                class="fa fa-fw fa-plus-circle pull-right text-green"
-                                                style="cursor: pointer;"></i>
+                                    <td class="dop"><?php echo $unAssigned_tickets; ?> <i class="fa fa-fw fa-plus-circle pull-right text-green" style="cursor: pointer;"></i>
                                         <div class="robots" style="display: none">
                                             <ul>
                                                 <?php
-                                                //                              print_r($unAsighned);
-                                                //                              $count = 0;
+                                                //print_r($unAsighned);
+                                                //$count = 0;
                                                 foreach ($unAssigned as $key => $value) {
                                                     $robot_info = $robots->get_info_robot($key);
                                                     $number = $robot_info['version'] . "." . $robot_info['number'];
-//                                  $count++;
+                                                    //$count++;
                                                     echo "<li><a href='./robot_card.php?id=" . $key . "'>" . $number . " (" . $value . ")</a></li>";
                                                 }
                                                 ?>
@@ -355,34 +295,26 @@ foreach ($arr_tickets as &$ticket) {
                         <?php
                         $date_min = date("Y-m-d", strtotime("yesterday"));
                         $date_max = date("Y-m-d");
-
                         $date_minPr = date("Y-m-d", time() - 86400 * 1);
                         $date_maxPr = date("Y-m-d", time() - 86400 * 1);
                         $date_Today = date("Y-m-d");
                         //             echo $date_minPr . PHP_EOL;
                         //             echo $date_Today . PHP_EOL;
-
                         $countNew24Pr = 0;
                         $countNew24 = 0;
                         $countResh24 = 0;
                         $arr_new24 = $tickets->get_tickets(0, 0, 0, "update_date", "DESC", "date_create", $date_min, $date_max, "P");
                         //print_r($arr_new24);
                         if (isset($arr_new24)) {
-
                             foreach ($arr_new24 as &$value) {
                                 $arr_new24_sort[] = $value['robot'];
                                 //echo $value['robot']." ";
                             }
                             $arr_new24_sort = array_unique($arr_new24_sort);
-
                             $countNew24 = count($arr_new24_sort);
                         }
-
-
                         $arr_new24Pr = $tickets->get_tickets(0, 0, 0, "update_date", "DESC", "date_create", $date_minPr, $date_maxPr, "P");
-
                         if (isset($arr_new24Pr)) {
-
                             foreach ($arr_new24Pr as &$value) {
                                 $arr_new24Pr_sort[] = $value['robot'];
                                 //echo $value['robot']." ";
@@ -390,17 +322,11 @@ foreach ($arr_tickets as &$ticket) {
                             $arr_new24Pr_sort = array_unique($arr_new24Pr_sort);
                             $countNew24Pr = count($arr_new24Pr_sort);
                         }
-
-
                         $rNew = $countNew24 - $countNew24Pr;
-
-
                         $arr_Resh24 = $tickets->get_tickets(0, 0, 0, "update_date", "DESC", "inwork", $date_minPr . " 00:00:00", $date_maxPr . " 23:59:59", "P");
                         //print_r($arr_Resh24);
                         if (isset($arr_Resh24)) {
                             foreach ($arr_Resh24 as &$value) {
-
-
                                 $robot_info = $robots->get_info_robot($value['robot']);
                                 $number = $robot_info['version'] . "." . $robot_info['number'];
                                 $arrTicketRobotNoProblem[$value['robot']] = $number;
@@ -409,14 +335,11 @@ foreach ($arr_tickets as &$ticket) {
                             $countResh24 = count($arr_Resh24);
                             // print_r($arr_Resh24);
                         }
-
                         //решенные сегодня
                         $arr_ReshToday = $tickets->get_tickets(0, 0, 0, "update_date", "DESC", "inwork", $date_Today . " 00:00:00", $date_Today . " 23:59:59", "P");
                         //print_r($arr_Resh24);
                         if (isset($arr_ReshToday)) {
                             foreach ($arr_ReshToday as &$value) {
-
-
                                 $robot_info = $robots->get_info_robot($value['robot']);
                                 $number = $robot_info['version'] . "." . $robot_info['number'];
                                 $arrTicketRobotNoProblemToday[$value['robot']] = $number;
@@ -424,21 +347,16 @@ foreach ($arr_tickets as &$ticket) {
                             $countReshToday = count($arr_ReshToday);
                             // print_r($arr_Resh24);
                         }
-
                         /*$arr_new24 = $tickets->get_tickets(0,0,0,"update_date","DESC","date_create",$date_min,$date_max);
                         $arr_new24Pr = $tickets->get_tickets(0,0,0,"update_date","DESC","date_create",$date_minPr,$date_maxPr);
                         $countNew24 = count($arr_new24);
                         $countNew24Pr = count($arr_new24Pr);
-
                         $procNew = $countNew24Pr*100/$countNew24;
-
                         $arr_finish24 = $tickets->get_tickets(0,0,3,"update_date","DESC","update_date",$date_min,$date_max);
                         $arr_finish24Pr = $tickets->get_tickets(0,0,3,"update_date","DESC","update_date",$date_minPr,$date_maxPr);
                         $countfinish24 = count($arr_finish24);
                         $countfinish24Pr = count($arr_finish24Pr);
-
                         $procFinish = $countfinish24Pr*100/$countfinish24;
-
                        */
                         // $arr_finish24 = $tickets->get_tickets(0,0,3,"update_date","DESC",$date_min,$date_max);
                         // $arr_process24 = $tickets->get_tickets(0,0,3,"update_date","DESC",$date_min,$date_max);
@@ -454,7 +372,6 @@ foreach ($arr_tickets as &$ticket) {
                                            style="cursor: pointer;"></i>
                                         <div class="robots" style="display: none">
                                             <ul>
-
                                                 <?php
                                                 $count = 0;
                                                 //print_r($remont);
@@ -463,24 +380,23 @@ foreach ($arr_tickets as &$ticket) {
                                                     $number = $robot_info['version'] . "." . $robot_info['number'];
                                                     echo "<li><a href='./robot_card.php?id=" . $value . "'>" . $number . "</a></li>";
                                                 }
-
                                                 ?>
                                             </ul>
                                         </div>
 
                                     </td>
                                 </tr>
-
                                 <tr>
                                     <th style="width:50%">Исправленных роботов:</th>
                                     <td class="dop">
                                         <?php
-                                            if (!isset($arrTicketRobotNoProblem))
-                                            {$arrTicketRobotNoProblem = [];}
-                                            else {echo count($arrTicketRobotNoProblem);}
+                                            if (!isset($arrTicketRobotNoProblem)) {
+                                                $arrTicketRobotNoProblem = [];
+                                            } else {
+                                                echo count($arrTicketRobotNoProblem);
+                                            }
                                         ?>
-                                        <i class="fa fa-fw fa-plus-circle pull-right text-green"
-                                              style="cursor: pointer;"></i>
+                                        <i class="fa fa-fw fa-plus-circle pull-right text-green" style="cursor: pointer;"></i>
                                         <div class="robots" style="display: none">
                                             <ul>
                                                 <?php
@@ -493,12 +409,8 @@ foreach ($arr_tickets as &$ticket) {
                                                 ?>
                                             </ul>
                                         </div>
-
-
                                     </td>
                                 </tr>
-
-
                                 </tbody>
                             </table>
                         </div>
@@ -513,14 +425,18 @@ foreach ($arr_tickets as &$ticket) {
                                 <th style="width:50%">Исправленных роботов:</th>
                                 <td class="dop">
                                     <?php
-                                        if (!isset($arrTicketRobotNoProblemToday))
-                                        {$arrTicketRobotNoProblemToday = [];}
-                                        else {echo count($arrTicketRobotNoProblemToday);}
-
-
-                                    if (!isset($arr_comments)) {$arr_count_comments = 0;} else {$arr_count_comments = count($arr_comments);}
-                                    ?> <i class="fa fa-fw fa-plus-circle pull-right text-green"
-                                          style="cursor: pointer;"></i>
+                                        if (!isset($arrTicketRobotNoProblemToday)) {
+                                            $arrTicketRobotNoProblemToday = [];
+                                        } else {
+                                            echo count($arrTicketRobotNoProblemToday);
+                                        }
+                                        if (!isset($arr_comments)) {
+                                            $arr_count_comments = 0;
+                                        } else {
+                                            $arr_count_comments = count($arr_comments);
+                                        }
+                                    ?>
+                                    <i class="fa fa-fw fa-plus-circle pull-right text-green" style="cursor: pointer;"></i>
                                     <div class="robots" style="display: none">
                                         <ul>
                                             <?php
@@ -538,7 +454,6 @@ foreach ($arr_tickets as &$ticket) {
                         </table>
                     </div>
 
-
                 </div>
                 <!-- /.box-body -->
             </div>
@@ -547,9 +462,7 @@ foreach ($arr_tickets as &$ticket) {
                 <div class="box-header with-border">
                     <h3 class="box-title">Фильтр</h3>
                     <div class="box-tools pull-right">
-                        <button type="button" class="btn btn-box-tool" data-widget="collapse"><i
-                                    class="fa fa-minus"></i></button>
-
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
                     </div>
                 </div>
                 <!-- /.box-header -->
@@ -564,22 +477,11 @@ foreach ($arr_tickets as &$ticket) {
                                     $arr_user = $user->get_users(4);
                                     //echo $ticket_assign_id;
                                     foreach ($arr_user as &$user_assign) {
-
-
-                                        echo "
-											                       <option value='" . $user_assign['user_id'] . "' >" . $user_assign['user_name'] . "</option>
-											                       
-											                       ";
+                                        echo "<option value='" . $user_assign['user_id'] . "' >" . $user_assign['user_name'] . "</option>";
                                     }
-
                                     ?>
                                 </select>
-
-
                             </div>
-                            <!-- /.form-group -->
-
-                            <!-- /.form-group -->
                             <a href="./kanban.php">Сбросить фильтр</a>
                         </div>
                         <!-- /.col -->
@@ -589,36 +491,25 @@ foreach ($arr_tickets as &$ticket) {
                                 <select class="form-control select3" style="width: 100%;" id="filter_robot">
                                     <option value="0">Выберите робота</option>
                                     <?php
-//                                    $arr_robots = $robots->get_robots();
-//                                    print_r2($inprocess_sort);
-
-
+                                    //$arr_robots = $robots->get_robots();
+                                    //print_r2($inprocess_sort);
                                     if (isset($inprocess_sort)) {
                                         foreach ($inprocess_sort as &$robot) {
-
                                                 echo '<option value="' . $robot['id'] . '"> ' . $robot['number'] . '( ' . $robot['name'] . ')'.'</option>';
-
-
                                         }
                                     }
-
                                     ?>
                                 </select>
                             </div>
                         </div>
-
                         <!-- /.col -->
                     </div>
                     <!-- /.row -->
                 </div>
                 <!-- /.box-body -->
-
             </div>
 
-
             <div class="row">
-
-
                 <?php
                 $arr = $tickets->get_status(0);
                 if (isset($arr)) {
@@ -628,11 +519,9 @@ foreach ($arr_tickets as &$ticket) {
                         $title = $status['title'];
                         $id = $status['id'];
                         $arhiv = $id == 2 ? 'exp1' : 'exp2';
-
                         $arr_tickets = $tickets->get_tickets();
                         //$count[$id] = count($arr_tickets);
                         //echo count($arr_tickets);
-
                         if (isset($arr_tickets)) {
                             //var_dump(count($arr_tickets));
                             //print_r($arr_tickets);
@@ -641,115 +530,101 @@ foreach ($arr_tickets as &$ticket) {
                             foreach ($arr_tickets as &$ticket) {
                                 if ($ticket['status'] == $id) {
                                     $user_info = $user->get_info_user($ticket['assign']);
-
                                     $username_assign = $user_info['user_name'];
                                     $ticket_date = new DateTime($ticket['update_date']);
                                     $status = $ticket['status'];
-
                                     $status_info = $tickets->get_info_status($status);
                                     $status = $status_info['title'];
-
                                     $robot_info = $robots->get_info_robot($ticket['robot']);
                                     $robot_number = $robot_info['number'];
                                     $robot_version = $robot_info['version'];
-
                                     $ticket_category = $ticket['category'];
                                     $category_info = $tickets->get_info_category($ticket_category);
                                     $ticket_category = $category_info['title'];
-
                                     $ticket_subcategory = $ticket['subcategory'];
                                     $subcategory_info = $tickets->get_info_subcategory($ticket_subcategory);
                                     $ticket_subcategory = $subcategory_info['title'];
-
                                     $ticket_description = $ticket['description'];
                                     $ticket_class = $ticket['class'];
-
                                     $arr_comments = $tickets->get_comments($ticket['id']);
-                                    if (!isset($arr_comments)) {$arr_count_comments = 0;} else {$arr_count_comments = count($arr_comments);}
+                                    if (!isset($arr_comments)) {
+                                        $arr_count_comments = 0;
+                                    } else {
+                                        $arr_count_comments = count($arr_comments);
+                                    }
+                                    $arr_comments_customers = $tickets->get_comments_customers($ticket['id']);
+                                    if (!isset($arr_comments_customers)) {
+                                        $arr_count_comments_customers = 0;
+                                    } else {
+                                        $arr_count_comments_customers = count($arr_comments_customers);
+                                    }
                                     $lng = mb_strlen($ticket_description, 'UTF-8');
                                     if ($lng > 100) {
                                         $ticket_description = mb_substr($ticket_description, 0, 100) . "...";
                                     }
                                     $str_date_finish = "";
-                                    if ($ticket['finish_date'] != '0000-00-00') {
+                                    if ($ticket['finish_date'] != '0000-00-00' && $ticket['finish_date'] != null) {
                                         $date_finish = new DateTime($ticket['finish_date']);
                                         $str_date_finish = 'Ремонт назначен на <b>' . $date_finish->format('d.m.Y') . '</b><br><br>';
                                     }
+                                    $tiket_color = '#e6e8ff'; //fffcd8 - желт для 2, e6e8ff
+                                    if ($ticket['priority'] == 2) {$tiket_color = '#f9f9f9';}
+                                    if ($ticket['priority'] == 3) {$tiket_color = '#ffd5d5';}
                                     $out .= '
-                        <div class="box box-solid" style="background-color: #f9f9f9;" id="' . $ticket['id'] . '" data-robot="' . $ticket['robot'] . '">
-                                    <div class="box-body">
-                                      <b>' . $username_assign . '</b> <span class="pull-right text-muted">' . $robot_version . '.' . $robot_number . ' </span></br>
-                                      <b><a href="./ticket.php?id=' . $ticket['id'] . '"><span class="ticket_class">' . $ticket_class . '</span>-' . $ticket['id'] . ' ' . $ticket_category . ':<span class="subcategory"> ' . $ticket_subcategory . '</span></a></b> 
-                                      <p>' . $ticket_description . '</p>
-                                      ' . $str_date_finish . '
-                                      <span class="pull-right text-muted"><i class="fa fa-paperclip"></i> 0 <i class="fa fa-comments"></i> ' . $arr_count_comments . '</span>
-                                      <span class="pull-left text-muted"><i class="fa fa-calendar-o"></i> ' . $ticket_date->format('d.m.y H:i') . '</span>
-                                    </div>
-                            </div>
-                        ';
+                                        <div class="box box-solid" style="background-color: '.$tiket_color.'" id="' . $ticket['id'] . '" data-robot="' . $ticket['robot'] . '">
+                                            <div class="box-body">
+                                              <b>' . $username_assign . '</b> <span class="pull-right text-muted">' . $robot_version . '.' . $robot_number . ' </span></br>
+                                              <b><a href="./ticket.php?id=' . $ticket['id'] . '"><span class="ticket_class">' . $ticket_class . '</span>-' . $ticket['id'] . ' ' . $ticket_category . ':<span class="subcategory"> ' . $ticket_subcategory . '</span></a></b> 
+                                              <p>' . $ticket_description . '</p>
+                                              ' . $str_date_finish . '
+                                              <span class="pull-right text-muted"><i class="fa fa-paperclip" style="margin-right:2px;"></i>0&nbsp;&nbsp;<i class="fa fa-commenting-o" style="margin-right:2px;"></i>' . $arr_count_comments . '&nbsp;&nbsp;<i class="fa fa-comments-o" style="margin-right:2px;"></i>' . $arr_count_comments_customers . '</span>
+                                              <span class="pull-left text-muted"><i class="fa fa-calendar-o"></i> ' . $ticket_date->format('d.m.y H:i') . '</span>
+                                            </div>
+                                            </div>
+                                    ';
                                     $cnt[$id]++;
                                 }
-
-
                             }
                         }
-
-
                         echo '
-                    <div class="col-md-2">
-                      <div class="box box-default box-solid" style="border-color: ' . $bg_color . ';" id="overlay' . $id . '">
-                        <div class="box-header with-border" style="background-color: ' . $bg_color . '; background: ' . $bg_color . '; color: ' . $font_color . ';" >
-                          <h4 class="box-title" style="font-size: 14px;">' . $title . ' (' . $cnt[$id] . ')</h4>
-                          <span class="pull-right dropdown"><i class="fa fa-ellipsis-h" data-toggle="dropdown"></i>
-                          <ul class="dropdown-menu dropdown-menu-right">
-                         
-                            <li class="dropdown-header">По дате создания карточки</li>
-                            <li class="divider"></li>
-                            <li><a href="#" class="sort" data-sortby="date_create" data-sortdir="ASC" data-status="' . $id . '">сначала старые</a></li>
-                            <li><a href="#" class="sort" data-sortby="date_create" data-sortdir="DESC" data-status="' . $id . '">сначала новые</a></li>
-                            <li class="divider"></li>
-                            <li class="dropdown-header">По дате изменения карточки</li>
-                            <li class="divider"></li>
-                             <li><a href="#" class="sort" data-sortby="update_date" data-sortdir="ASC" data-status="' . $id . '">сначала старые</a></li>
-                            <li><a href="#" class="sort" data-sortby="update_date" data-sortdir="DESC" data-status="' . $id . '">сначала новые</a></li>
-                            <li class="dropdown-header"></li>
-                            <li class="divider"></li>
-                            <li><a data-status="' . $id . '" href="#" class="' . ($id == 3 ? 'arhiv' : '') . '">Архивировать все карточки списка</a></li>
-                          </ul>
-                          </span>
-                          <!-- /.box-tools -->
-                        </div>
-                        <!-- /.box-header -->
-                        <div class="box-body connectedSortable sortable" id="' . $id . '">
-                ';
-
-
+                            <div class="col-md-2">
+                              <div class="box box-default box-solid" style="border-color: ' . $bg_color . ';" id="overlay' . $id . '">
+                                <div class="box-header with-border" style="background-color: ' . $bg_color . '; background: ' . $bg_color . '; color: ' . $font_color . ';" >
+                                  <h4 class="box-title" style="font-size: 14px;">' . $title . ' (' . $cnt[$id] . ')</h4>
+                                  <span class="pull-right dropdown"><i class="fa fa-ellipsis-h" data-toggle="dropdown"></i>
+                                  <ul class="dropdown-menu dropdown-menu-right">
+                                    <li class="dropdown-header">По дате создания карточки</li>
+                                    <li class="divider"></li>
+                                    <li><a href="#" class="sort" data-sortby="date_create" data-sortdir="ASC" data-status="' . $id . '">сначала старые</a></li>
+                                    <li><a href="#" class="sort" data-sortby="date_create" data-sortdir="DESC" data-status="' . $id . '">сначала новые</a></li>
+                                    <li class="divider"></li>
+                                    <li class="dropdown-header">По дате изменения карточки</li>
+                                    <li class="divider"></li>
+                                     <li><a href="#" class="sort" data-sortby="update_date" data-sortdir="ASC" data-status="' . $id . '">сначала старые</a></li>
+                                    <li><a href="#" class="sort" data-sortby="update_date" data-sortdir="DESC" data-status="' . $id . '">сначала новые</a></li>
+                                    <li class="dropdown-header"></li>
+                                    <li class="divider"></li>
+                                    <li><a data-status="' . $id . '" href="#" class="' . ($id == 3 ? 'arhiv' : '') . '">Архивировать все карточки списка</a></li>
+                                  </ul>
+                                  </span>
+                                </div>
+                                <div class="box-body connectedSortable sortable" id="' . $id . '">
+                        ';
                         echo $out;
-
                         echo '  
-                        </div>
-                        <!-- /.box-body -->
-                      </div>
-                      <!-- /.box -->
-                    </div>
-                ';
-
+                                </div>
+                              </div>
+                            </div>
+                        ';
                     }
-
-
                 }
                 ?>
-
-
             </div>
-
-
             <!-- /.row -->
         </section>
         <!-- /.content -->
     </div>
     <!-- /.content-wrapper -->
-
 
     <!-- Add the sidebar's background. This div must be placed
          immediately after the control sidebar -->
@@ -805,7 +680,6 @@ foreach ($arr_tickets as &$ticket) {
         </div>
     </div>
 
-
     <!--    модальное assign-->
     <div class="modal fade" id="assign" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
          aria-hidden="true">
@@ -824,29 +698,23 @@ foreach ($arr_tickets as &$ticket) {
                             <?php
                             $user_info = $user->get_info_user($ticket_info['assign']);
                             $ticket_assign_id = $user_info['user_id'];
-
                             $arr_user = $user->get_users(4);
                             //echo $ticket_assign_id;
                             foreach ($arr_user as &$user_assign) {
-
-                                if ($user_assign['user_id']==$ticket_assign_id) {$selected = "selected";} else {$selected = "";}
-                                echo "
-											                       <option value='".$user_assign['user_id']."' ".$selected.">".$user_assign['user_name']."</option>
-											                       
-											                       ";
+                                if ($user_assign['user_id']==$ticket_assign_id) {
+                                    $selected = "selected";
+                                } else {
+                                    $selected = "";
+                                }
+                                echo "<option value='".$user_assign['user_id']."' ".$selected.">".$user_assign['user_name']."</option>";
                             }
-
                             ?>
-
-
                         </select>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-
 
     <div class="modal fade" id="add_date" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
          aria-hidden="true">
@@ -972,7 +840,6 @@ foreach ($arr_tickets as &$ticket) {
         /*if (typeof date !== 'undefined') {
             console.log('задана');
             console.log(date);
-
         } else {
             console.log('не задана');
         }*/
@@ -1018,7 +885,7 @@ foreach ($arr_tickets as &$ticket) {
                                     <b>' + value['assign'] + '</b> <span class="pull-right text-muted">' + value['robot'] + '</span></br> \
                                       <b><a href="./ticket.php?id=' + value['id'] + '">' + value['class'] + '-' + value['id'] + ' ' + value['category'] + ': ' + value['subcategory'] + '</a></b> \
                                       <p>' + value['description'] + '</p> \
-                                      <span class="pull-right text-muted"><i class="fa fa-paperclip"></i> 0 <i class="fa fa-comments"></i> ' + value['comments'] + '</span> \
+                                      <span class="pull-right text-muted"><i class="fa fa-paperclip" style="margin-right:2px;"></i>0&nbsp;&nbsp;<i class="fa fa-commenting-o" style="margin-right:2px;"></i>' + value['comments'] + '&nbsp;&nbsp;<i class="fa fa-comments-o" style="margin-right:2px;"></i>' + value['comments_customers'] + '</span> \
                                       <span class="pull-left text-muted"><i class="fa fa-calendar-o"></i> ' + value['update_date'] + '</span> \
                                     </div>\
                             </div>');

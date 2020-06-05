@@ -15,7 +15,7 @@ $arr_robots = $robots->get_robots();
 //$paramRobot = (isset($_GET['robot']) ? $_GET['robot'] : 0);
 
 //даты
-$period_day = 30;
+$period_day = 7;
 $date_now = date('Y-m-d', time());
 $date_befo = date('Y-m-d', time()-$period_day*24*3600);
 $date_after = date('Y-m-d', time()+$period_day*24*3600);

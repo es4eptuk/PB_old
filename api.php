@@ -355,13 +355,19 @@ if (isset($_POST['action'])) {
         echo json_encode($tickets->get_category($_POST['type']), JSON_UNESCAPED_UNICODE);
     }
     if ($_POST['action'] == "ticket_add") {
-        echo json_encode($tickets->add($_POST['robot'], $_POST['ticket_class'], $_POST['category'], $_POST['subcategory'], $_POST['status'], $_POST['comment']), JSON_UNESCAPED_UNICODE);
+        echo json_encode($tickets->add($_POST['robot'], $_POST['ticket_source'], $_POST['ticket_priority'], $_POST['ticket_class'], $_POST['category'], $_POST['subcategory'], $_POST['status'], $_POST['comment']), JSON_UNESCAPED_UNICODE);
     }
     if ($_POST['action'] == "ticket_edit") {
         echo json_encode($tickets->edit($_POST['id'], $_POST['category'], $_POST['subcategory'], $_POST['description']), JSON_UNESCAPED_UNICODE);
     }
+    //создать комментарий для техпод
     if ($_POST['action'] == "ticket_add_comment") {
         echo json_encode($tickets->add_comment($_POST['robot'], $_POST['id'], $_POST['comment']), JSON_UNESCAPED_UNICODE);
+        echo $_POST['comment'];
+    }
+    //создать комментарий для клиента
+    if ($_POST['action'] == "ticket_add_comment_customers") {
+        echo json_encode($tickets->add_comment_customers($_POST['robot'], $_POST['id'], $_POST['comment']), JSON_UNESCAPED_UNICODE);
         echo $_POST['comment'];
     }
     if ($_POST['action'] == "ticket_change_status") {
@@ -390,6 +396,14 @@ if (isset($_POST['action'])) {
     }
     if ($_POST['action'] == "ticket_info") {
         echo json_encode($tickets->info($_POST['id']), JSON_UNESCAPED_UNICODE);
+    }
+    //изменение приоритета чеклиста
+    if ($_POST['action'] == "ticket_change_priority") {
+        echo json_encode($tickets->change_priority($_POST['id'], $_POST['priority']), JSON_UNESCAPED_UNICODE);
+    }
+    //изменение источника чеклиста
+    if ($_POST['action'] == "ticket_change_source") {
+        echo json_encode($tickets->change_source($_POST['id'], $_POST['source']), JSON_UNESCAPED_UNICODE);
     }
     //удаление чеклиста
     if ($_POST['action'] == "del_check") {

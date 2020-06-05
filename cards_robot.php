@@ -18,33 +18,27 @@ include 'include/class.inc.php';
                 foreach ($arr_tickets as &$ticket) {
                     $ticket_status = $ticket['status'];
                     $ticket_robot = $ticket['robot'];
-                    
                     if ($ticket_status==3 || $ticket_status==6) {
-                       // if(isset($finish[$ticket_robot])) {$finish[$ticket_robot]}
-                        $finish[$ticket_robot] = isset($finish[$ticket_robot] ) + 1;
+                       //if(isset($finish[$ticket_robot])) {$finish[$ticket_robot]}
+                       $finish[$ticket_robot] = isset($finish[$ticket_robot] ) + 1;
                     } 
-                    
                     if ($ticket_status==1 || $ticket_status==2 || $ticket_status==4 || $ticket_status==5) {
                        $inprocess[$ticket_robot] = isset($inprocess[$ticket_robot] ) + 1;
                        $open_tickets++;
                     }
-                    
                     if ($ticket_status==4) {
                        $remont[$ticket_robot]['count'] = isset($remont[$ticket_robot] ) + 1;
-                        $date_finish = new DateTime($ticket['finish_date']);
+                       $date_finish = new DateTime($ticket['finish_date']);
                        $remont[$ticket_robot]['date'] = $date_finish->format('d.m.Y');
                        $remont_tickets++;
                        
                     }
-                    
                     if ($ticket_status==2) {
                        $process[$ticket_robot] = isset($process[$ticket_robot] ) + 1;
                        $process_tickets++;
                        
                     }
-                    
-                    
-                     if ($ticket_status==7 ) {
+                    if ($ticket_status==7 ) {
                        $wait[$ticket_robot] = isset($wait[$ticket_robot] ) + 1;
                     }
                 }
