@@ -14,14 +14,17 @@ $pdo = new PDO($dsn, $database_user, $database_password, $opt);
 $id_pos = 125;
 //$pos_assambly = $position->get_pos_in_assembly($id_pos);
 
-$query = "SELECT robots.id FROM `check` INNER JOIN robots ON check.robot = robots.id WHERE check.update_date >= '2019-11-01 00:00:00' AND id_check = 105";
+$date_robots = date('Y-m-d H:i:s', mktime(0,0,0,date('m')-3,1,date('Y')));
+$date_tikets = date('Y-m-d H:i:s', mktime(0,0,0,date('m')-1,1,date('Y')));
+
+$query = "SELECT robots.id FROM `check` INNER JOIN robots ON check.robot = robots.id WHERE check.update_date >= '$date_robots' AND id_check = 105";
 $result = $pdo->query($query);
 echo "<table border=1>";
 while ($line = $result->fetch()) {
            // $id_assembly = $line['id_assembly'];
             //$kit_array_count[$id_pos][$id_kit0] = $line['count'];
             $id = $line['id'];
-            $query2 = "SELECT robots.version, robots.number, robots.name, tickets.description, tickets.result_description, tickets.date_create FROM tickets INNER JOIN robots ON tickets.robot = robots.id WHERE tickets.robot = $id AND tickets.date_create > '2020-02-01 00:00:00' AND tickets.assign_time != '0000-00-00 00:00:00'";
+            $query2 = "SELECT robots.version, robots.number, robots.name, tickets.description, tickets.result_description, tickets.date_create FROM tickets INNER JOIN robots ON tickets.robot = robots.id WHERE tickets.robot = $id AND tickets.date_create > '$date_tikets' AND tickets.assign_time != '0000-00-00 00:00:00'";
             $result2 = $pdo->query($query2);
             while ($line2 = $result2->fetch()) {
                 $ticket_array[] = $line2;
