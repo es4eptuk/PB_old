@@ -724,8 +724,8 @@ class Tickets
                 $date_end = strtotime($line['assign_time']);
                 $time = $this->statistics->get_time_spent($date_start, $date_end, self::TIME_TEXPOD);
                 $time_d = intval($time/$work_time);
-                $time_h = intval(($time - $time_d*$work_time)/60);
-                $time_m = intval(($time - $time_d*$work_time - $time_h*60)/60);
+                $time_h = intval(($time - $time_d*$work_time)/3600);
+                $time_m = intval(($time - $time_d*$work_time - $time_h*3600)/60);
                 $time_inwork = $time_d."д ".$time_h."ч ".$time_m."м";
             } else {
                 $time_inwork = "";
