@@ -16,6 +16,7 @@
 /inv/
 /files/
 /import/
+/report/
 
 #script for change tabel bd
 /bd_script.php

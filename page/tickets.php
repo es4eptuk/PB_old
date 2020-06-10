@@ -1,6 +1,12 @@
 <?php
 class Tickets
 {
+    const TIME_TEXPOD = [
+        'time_start' => '09:00',
+        'time_end' => '21:00',
+        'days_week' => [1,2,3,4,5,6,7],
+    ];
+
     const CLASS_TICKET = [
         "I" => "Консультация",
         "P" => "Проблема",
@@ -26,6 +32,7 @@ class Tickets
 
     private $user;
     private $robot;
+    private $statistics;
     private $link_ticket;
     private $query;
     private $pdo;
@@ -33,6 +40,8 @@ class Tickets
     public $listClassTikets;
     public $listSourceTikets;
     public $listPriorityTikets;
+    public $listStatusTikets;
+
 
     /**
      * @var string
@@ -53,16 +62,17 @@ class Tickets
 
     function init()
     {
-        global $user, $robots;
+        global $user, $robots, $statistics;
 
         //Подключение внешних классов
         $this->robot = $robots; //new Robots;
         $this->user = $user; //new User;
+        $this->statistics = $statistics;
 
         $this->listClassTikets = self::CLASS_TICKET;
         $this->listSourceTikets = self::SOURCE_TICKET;
         $this->listPriorityTikets = self::PRIORITY_TICKET;
-
+        $this->listStatusTikets = $this->get_status();
 
     }
 
@@ -80,7 +90,7 @@ class Tickets
         $this->query = "SELECT * FROM tickets_status $where ORDER BY `sort` ASC ";
         $result = $this->pdo->query($this->query);
         while ($line = $result->fetch()) {
-            $ticket_status_array[] = $line;
+            $ticket_status_array[$line['id']] = $line;
         }
         
         if (isset($ticket_status_array))
@@ -95,10 +105,11 @@ class Tickets
      */
     public function get_category($type = "P")
     {
-        $this->query = "SELECT * FROM tickets_category WHERE `class` = '$type' ORDER BY `title` ASC";
+        $where = ($type == 0) ? "" : "WHERE `class` = $type";
+        $this->query = "SELECT * FROM `tickets_category` $where ORDER BY `title` ASC";
         $result = $this->pdo->query($this->query);
         while ($line = $result->fetch()) {
-            $ticket_category_array[] = $line;
+            $ticket_category_array[$line['id']] = $line;
         }
 
         if (isset($ticket_category_array))
@@ -118,10 +129,10 @@ class Tickets
         } else {
             $where = "";
         }
-        $this->query  = "SELECT * FROM tickets_subcategory $where  ORDER BY `title` ASC";
+        $this->query  = "SELECT * FROM `tickets_subcategory` $where ORDER BY `title` ASC";
         $result = $this->pdo->query($this->query);
         while ($line = $result->fetch()) {
-            $ticket_subcategory_array[] = $line;
+            $ticket_subcategory_array[$line['id']] = $line;
         }
 
         if (isset($ticket_subcategory_array))
@@ -630,7 +641,141 @@ class Tickets
         $result = $this->pdo->query($this->query);
         return $result;
     }
-    
+
+    //отчет по владельцу
+    function get_report_owner($owner_id, $interval) {
+
+        //создаем файлы
+        //для папок
+        $f_date = date('Y-m-d_H:i:s');
+        $folder = $owner_id;
+        if (!file_exists(PATCH_DIR."/report/")) {
+            mkdir(PATCH_DIR."/report/", 0777);
+        }
+        $excel_name = PATCH_DIR."/report/".$f_date.".xlsx";
+        require_once ('excel/Classes/PHPExcel.php');
+        require_once ('excel/Classes/PHPExcel/IOFactory.php');
+        $objPHPExcel = new PHPExcel();
+        // Add some data
+        $objPHPExcel->setActiveSheetIndex(0);
+        //задаем заголовки
+        $objPHPExcel->getActiveSheet()->setCellValue("A1", 'ID');
+        $objPHPExcel->getActiveSheet()->setCellValue("B1", 'Дата создания');
+        $objPHPExcel->getActiveSheet()->setCellValue("C1", 'Дата решения');
+        $objPHPExcel->getActiveSheet()->setCellValue("D1", 'Дата ремонта');
+        $objPHPExcel->getActiveSheet()->setCellValue("E1", 'Время в работе');
+        $objPHPExcel->getActiveSheet()->setCellValue("F1", 'Источник');
+        $objPHPExcel->getActiveSheet()->setCellValue("G1", 'Робот');
+        $objPHPExcel->getActiveSheet()->setCellValue("H1", 'Статус');
+        $objPHPExcel->getActiveSheet()->setCellValue("I1", 'Класс');
+        $objPHPExcel->getActiveSheet()->setCellValue("J1", 'Категория');
+        $objPHPExcel->getActiveSheet()->setCellValue("K1", 'Подкатегория');
+        $objPHPExcel->getActiveSheet()->setCellValue("L1", 'Приоритет');
+        $objPHPExcel->getActiveSheet()->setCellValue("M1", 'Исполнитель');
+        $objPHPExcel->getActiveSheet()->setCellValue("N1", 'Описание');
+        $objPHPExcel->getActiveSheet()->setCellValue("O1", 'Решение');
+
+        $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('E')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('F')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('G')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('H')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('I')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('J')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('K')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('L')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('M')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('N')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('O')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getStyle("A1:O1")->getFont()->setBold(true);
+
+        $where = '';
+        if ($interval != '') {
+            $date = explode(' - ', $interval);
+            $date_start = $date[0] . ' 00:00:00';
+            $date_end = $date[1] . ' 23:59:59';
+            $where = $where . "AND `t`.`date_create` >= '$date_start' AND `t`.`date_create` <= '$date_end'";
+        }
+        $query = "SELECT *, `t`.`id` AS `tid`, `t`.`status` AS `tstatus`, `t`.`update_date` AS `tupdate_date` FROM `tickets` t
+            JOIN `robots` r ON `t`.`robot` = `r`.`id`
+            WHERE `r`.`owner` = '$owner_id'
+                AND `t`.`id` > 0 $where ORDER BY `t`.`date_create` DESC
+        ";
+        $result = $this->pdo->query($query);
+        $listCategoryTikets = $this->get_category(0);
+        $listSubCategoryTikets = $this->get_subcategory(0);
+        $listUsers = $this->user->get_users();
+        $schedule =  self::TIME_TEXPOD;
+        $time_work_start = explode(':', $schedule['time_start']);
+        $time_work_end = explode(':', $schedule['time_end']);
+        $work_time = (($time_work_end[0]*60+$time_work_end[1])-($time_work_start[0]*60+$time_work_start[1]))*60;
+        $row = 1;
+        while ($line = $result->fetch()) {
+            $row++;
+            $objPHPExcel->getActiveSheet()->setCellValue("A" . $row, $line['tid']);
+            $objPHPExcel->getActiveSheet()->setCellValue("B" . $row, $line['date_create']);
+            $objPHPExcel->getActiveSheet()->setCellValue("C" . $row, $line['assign_time']);
+            $objPHPExcel->getActiveSheet()->setCellValue("D" . $row, $line['finish_date']);
+            if ($line['assign_time'] != null) {
+                $date_start = strtotime($line['date_create']);
+                $date_end = strtotime($line['assign_time']);
+                $time = $this->statistics->get_time_spent($date_start, $date_end, self::TIME_TEXPOD);
+                $time_d = intval($time/$work_time);
+                $time_h = intval(($time - $time_d*$work_time)/60);
+                $time_m = intval(($time - $time_d*$work_time - $time_h*60)/60);
+                $time_inwork = $time_d."д ".$time_h."ч ".$time_m."м";
+            } else {
+                $time_inwork = "";
+            }
+            $objPHPExcel->getActiveSheet()->setCellValue("E" . $row, $time_inwork);
+            $source = self::SOURCE_TICKET[$line['source']];
+            $objPHPExcel->getActiveSheet()->setCellValue("F" . $row, $source);
+            $robot_number = str_pad($line['number'], 4, "0", STR_PAD_LEFT);
+            $robot = $line['version'] . "_" . $robot_number;
+            $objPHPExcel->getActiveSheet()->setCellValue("G" . $row, $robot);
+            $status = $this->listStatusTikets[$line['tstatus']]['title'];
+            $objPHPExcel->getActiveSheet()->setCellValue("H" . $row, $status);
+            $class = self::CLASS_TICKET[$line['class']];
+            $objPHPExcel->getActiveSheet()->setCellValue("I" . $row, $class);
+            $category = ($line['category'] != 0) ? $listCategoryTikets[$line['category']]['title'] : "";
+            $objPHPExcel->getActiveSheet()->setCellValue("J" . $row, $category);
+            $subcategory = ($line['subcategory'] != 0) ? $listSubCategoryTikets[$line['subcategory']]['title'] : "";
+            $objPHPExcel->getActiveSheet()->setCellValue("K" . $row, $subcategory);
+            $priority = self::PRIORITY_TICKET[$line['priority']];
+            $objPHPExcel->getActiveSheet()->setCellValue("L" . $row, $priority);
+            $user = ($line['assign'] != 0) ? $listUsers[$line['assign']]['user_name'] : "";
+            $objPHPExcel->getActiveSheet()->setCellValue("M" . $row, $user);
+            $description = ($line['description'] != "") ? $line['description'] : "";
+            $objPHPExcel->getActiveSheet()->setCellValue("N" . $row, $description);
+            $result_description = ($line['result_description'] != "") ? $line['result_description'] : "";
+            $objPHPExcel->getActiveSheet()->setCellValue("O" . $row, $result_description);
+        }
+
+        $styleArray = [
+            'borders' => [
+                'outline' => [
+                    'style' => PHPExcel_Style_Border::BORDER_THIN,
+                    'color' => ['argb' => 'FF000000'],
+                ],
+                'inside' => [
+                    'style' => PHPExcel_Style_Border::BORDER_THIN,
+                    'color' => ['argb' => 'FF000000'],
+                ],
+            ],
+        ];
+        $objPHPExcel->getActiveSheet()->getStyle("A1:O".$row)->applyFromArray($styleArray);
+
+
+        // Save Excel 2007 file
+        $objWriter = new PHPExcel_Writer_Excel2007($objPHPExcel);
+        $objWriter->save($excel_name);
+
+        return $excel_name;
+    }
+
     //херня какая то непомню зачем
     function get_tickets_live()
     {
@@ -640,6 +785,9 @@ class Tickets
         return $line['id_row'];
         //echo "11";
     }
+
+
+
     function __destruct()
     {
 
