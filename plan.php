@@ -143,7 +143,13 @@ foreach ($arr_eq as $eq) {
                     $out ="";
                     $out2="";
                     //на основе дат собираем шапку таблицы
-                    foreach ($arr_robot as $k => $v) {
+
+                    //переворачиваем массив
+                    $m_arr_robot = $arr_robot;
+                    krsort($m_arr_robot);
+                    //енд переворота
+
+                    foreach ($m_arr_robot as $k => $v) {
                         $out .= '<th colspan="3"><b>'.$k.'</b> <button type="button" class="btn btn-block btn-primary btn-xs add_order" data-date="'.$k.'">Заказ</button></th>';
                         //$out2 .= '<th style="width: 47px"><b>надо</b></th><th style="width: 47px"><b>есть</b></th><th style="width: 86px"><b>статус</b></th>';
                         $out2 .= '<th><b>надо</b></th><th><b>есть</b></th><th><b>статус</b></th>';
@@ -348,6 +354,13 @@ foreach ($arr_eq as $eq) {
                       foreach ($v['orders'] as $id => $info) {
                           $orders .= "<a href='./edit_order.php?id=".$id."'>".$info['date']." - ".$info['count']." шт.</a><br>";
                       }
+
+                      //переворачиваем массив
+                      $mas_edit = $v['month'];
+                      krsort($mas_edit);
+                      $v['month'] = $mas_edit;
+                      //енд переворота
+
                       //создаем шапку слева
                       echo '
                         <td>'.$v['subcategory'].'</td>

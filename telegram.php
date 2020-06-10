@@ -19,10 +19,8 @@ require_once __DIR__ . "/vendor/autoload.php";
 
     use Telegram\Bot\Api;
 
-
-
-
-    $telegram = new Api('583056708:AAFzy7OX6VwV9SFllhMW9pUeY50MwAU89QI'); //Устанавливаем токен, полученный у BotFather
+    global $telegram_settings;
+    $telegram = new Api($telegram_settings['token']); //Устанавливаем токен, полученный у BotFather
     $result = $telegram -> getWebhookUpdates(); //Передаем в переменную $result полную информацию о сообщении пользователя
 
     $telegram->addCommand(Telegram\Bot\Commands\HelpCommand::class);
