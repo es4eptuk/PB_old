@@ -250,7 +250,8 @@
               </a>
               <ul class="treeview-menu">
                 <li><a href="./customers.php"><i class="fa fa-compress"></i><span> Покупатели</span></a></li>
-                <li><a href="./equipment.php"><i class="fa fa-th-list"></i><span> Комплектации</span></a></li>
+                <li><a href="./equipment.php"><i class="fa fa-th-large"></i><span> Версии</span></a></li>
+                <li><a href="./subversion.php"><i class="fa fa-th"></i><span> Подверсии</span></a></li>
                 <li class="treeview">
                     <a href="#"><i class="fa fa-list"></i> Чек - листы (Комплектации)</a>
                     <ul class="treeview-menu">

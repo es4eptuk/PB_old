@@ -11,6 +11,7 @@ class Robots
 
     //списки
     public $getEquipment;
+    public $getSubVersion;
     public $getOptions;
 
     const LANGUAGE =[
@@ -56,6 +57,14 @@ class Robots
         }
         $this->getEquipment = (isset($equipment)) ? $equipment : [];
 
+        //список подверсий роботов
+        $query = "SELECT * FROM `robot_subversion` ORDER BY `title` DESC";
+        $result = $this->pdo->query($query);
+        while ($line = $result->fetch()) {
+            $subversion[$line['id']] = $line;
+        }
+        $this->getSubVersion = (isset($subversion)) ? $subversion : [];
+
         //список опций
         $query = "SELECT * FROM `robot_options` ORDER BY `title` ASC";
         $result = $this->pdo->query($query);
@@ -65,6 +74,53 @@ class Robots
         $this->getOptions = (isset($options)) ? $options : [];
 
     }
+    //создать версию
+    function add_version($title)
+    {
+        $date = date("Y-m-d H:i:s");
+        $user_id = intval($_COOKIE['id']);
+        $query = "INSERT INTO `robot_equipment` (`id`, `title`, `update_user`, `update_date`) VALUES (NULL, '$title', '$user_id', '$date')";
+        $result = $this->pdo->query($query);
+        return ($result) ? true : false;
+    }
+    //редактировать версию
+    function edit_version($id, $title)
+    {
+        $date = date("Y-m-d H:i:s");
+        $user_id = intval($_COOKIE['id']);
+        $query = "UPDATE `robot_equipment` SET `title` = '$title', `update_user` = '$user_id', `update_date` = '$date' WHERE `id` = $id;";
+        $result = $this->pdo->query($query);
+        return ($result) ? true : false;
+    }
+
+    /** НАЧАЛО ПОДВЕРСИИ **/
+    //взять подверсии
+    function get_subversion($version_id = 0)
+    {
+        $where = ($version_id != 0) ? "WHERE `id_version` = '$version_id'" : "";
+        $query = "SELECT * FROM `robot_subversion` $where ORDER BY `title` DESC";
+        $result = $this->pdo->query($query);
+        while ($line = $result->fetch()) {
+            $array[$line['id']] = $line;
+        }
+        return (isset($array)) ? $array : [];
+    }
+    //создать подверсию
+    function add_subversion($id_version, $title)
+    {
+        $query = "INSERT INTO `robot_subversion` (`id`, `title`, `id_version`) VALUES (NULL, '$title', '$id_version')";
+        $result = $this->pdo->query($query);
+        return ($result) ? true : false;
+    }
+    //редактировать подверсию
+    function edit_subversion($id, $title)
+    {
+        $query = "UPDATE `robot_subversion` SET `title` = '$title' WHERE `id` = $id;";
+        $result = $this->pdo->query($query);
+        return ($result) ? true : false;
+    }
+    /** КОНЕЦ ПОДВЕРСИИ **/
+
 
     function get_robots()
     {
@@ -407,7 +463,7 @@ class Robots
         if ($result) {
             //категории от 1 до 5
             for ($i=1; $i<=5; $i++) {
-                $this->checks->add_robot_check($robot['version'], $i, $id);
+                $this->checks->add_robot_check($robot['subversion'], $i, $id);
             }
             //добавлем опции
             foreach ($options as $option) {
@@ -420,8 +476,9 @@ class Robots
     }
 
     //добавить робота
-    function add_robot($number, $name, $version, $options, $customer, $owner, $language_robot, $language_doc, $charger, $color, $brand, $ikp, $battery, $dop, $dop_manufactur, $date_start, $date_test, $date_send, $send, $delivery, $commissioning)
+    function add_robot($number, $name, $subversion, $options, $customer, $owner, $language_robot, $language_doc, $charger, $color, $brand, $ikp, $battery, $dop, $dop_manufactur, $date_start, $date_test, $date_send, $send, $delivery, $commissioning)
     {
+        $version = $this->getSubVersion[$subversion]['id_version'];
         $date_start = new DateTime($date_start);
         $date_start = $date_start->format('Y-m-d H:i:s');
         if ($date_test == null) {
@@ -456,8 +513,8 @@ class Robots
         }
 
         $this->query = "INSERT 
-            INTO `robots` (`id`, `version`, `number`, `name`, `customer`, `owner`, `language_robot`, `language_doc`, `charger`, `color`, `brand`, `ikp`, `battery`, `dop`, `dop_manufactur`, `progress`, `date`, `date_test`, `date_send`, `update_date`, `update_user`, `delete`, `delivery`, `commissioning`) 
-            VALUES (NULL, '$version', '$number', '$name', '$customer', '$owner', '$language_robot', '$language_doc', '$charger', '$color', '$brand', '$ikp', '$battery', '$dop', '$dop_manufactur', '$progress', '$date_start', '$date_test', '$date_send', '$date', '$user_id', '$delete', '$delivery', '$commissioning')
+            INTO `robots` (`id`, `version`, `subversion`, `number`, `name`, `customer`, `owner`, `language_robot`, `language_doc`, `charger`, `color`, `brand`, `ikp`, `battery`, `dop`, `dop_manufactur`, `progress`, `date`, `date_test`, `date_send`, `update_date`, `update_user`, `delete`, `delivery`, `commissioning`) 
+            VALUES (NULL, '$version', '$subversion', '$number', '$name', '$customer', '$owner', '$language_robot', '$language_doc', '$charger', '$color', '$brand', '$ikp', '$battery', '$dop', '$dop_manufactur', '$progress', '$date_start', '$date_test', '$date_send', '$date', '$user_id', '$delete', '$delivery', '$commissioning')
         ";
         $result = $this->pdo->query($this->query);
 
@@ -467,7 +524,7 @@ class Robots
             //категории от 1 до 5
             for ($i=1; $i<=5; $i++) {
                 if ($delete == 2) {break;}
-                $this->checks->add_robot_check($version, $i, $idd);
+                $this->checks->add_robot_check($subversion, $i, $idd);
             }
             //добавлем опции
             if (isset($options)) {
@@ -488,81 +545,10 @@ class Robots
         return false;
     }
 
-    /*старый код
-    function add_robot($number, $name, $version, $photo, $termo, $dispenser, $terminal, $kaznachey, $lidar, $other, $customer, $language_robot, $language_doc, $charger, $color, $brand, $ikp, $battery, $dop, $dop_manufactur, $send, $date_start, $date_test)
+    function edit_robot($id, $number, $name, $subversion, $options, $customer, $owner, $language_robot, $language_doc, $charger, $color, $brand, $ikp, $battery, $dop, $dop_manufactur, $date_start, $date_test, $date_send, $send, $delivery, $commissioning)
     {
-        $date_start = new DateTime($date_start);
-        $date_start = $date_start->format('Y-m-d H:i:s');
+        $version = $this->getSubVersion[$subversion]['id_version'];
 
-        $date_test = new DateTime($date_test);
-        $date_test = $date_test->format('Y-m-d H:i:s');
-
-        $date = date("Y-m-d H:i:s");
-        $user_id = intval($_COOKIE['id']);
-        $number = str_pad($number, 4, "0", STR_PAD_LEFT);
-
-        if ($send == 1) {
-            $progress = 100;
-        } else {
-            $progress = 0;
-        }
-
-        $this->query = "INSERT
-            INTO `robots` (`id`, `version`, `number`, `photo`, `termo`, `dispenser`,  `terminal`, `kaznachey`, `lidar`, `other`, `name`, `customer`, `language_robot`, `language_doc`, `charger`, `color`, `brand`, `ikp`, `battery`, `dop`, `dop_manufactur`, `progress`, `date`, `date_test`, `update_date`, `update_user`)
-            VALUES (NULL, '$version', '$number', '$photo', '$termo', '$dispenser', '$terminal', '$kaznachey', '$lidar', '$other', '$name', '$customer', '$language_robot', '$language_doc', '$charger', '$color', '$brand', '$ikp', '$battery', '$dop', '$dop_manufactur', '$progress', '$date_start', '$date_test', '$date', '$user_id')
-        ";
-        $result = $this->pdo->query($this->query);
-        $idd = $this->pdo->lastInsertId();
-
-        //собираем чеклисты привязанные к роботу
-        $arr_mh = Array();
-        $arr_hp = Array();
-        $arr_bd = Array();
-        $arr_up = Array();
-        $arr_hs = Array();
-        $this->query = "SELECT * FROM check_items WHERE category='1' AND version=$version ORDER BY `sort` ASC";
-        $result = $this->pdo->query($this->query);
-        while ($line = $result->fetch()) {
-            $arr_mh[] = $line;
-        }
-        $this->query = "SELECT * FROM check_items WHERE category='2' AND version=$version ORDER BY `sort` ASC";
-        $result = $this->pdo->query($this->query);
-        while ($line = $result->fetch()) {
-            $arr_hp[] = $line;
-        }
-        $this->query = "SELECT * FROM check_items WHERE category='3' AND version=$version ORDER BY `sort` ASC";
-        $result = $this->pdo->query($this->query);
-        while ($line = $result->fetch()) {
-            $arr_bd[] = $line;
-        }
-        $this->query = "SELECT * FROM check_items WHERE category='4' AND version=$version ORDER BY `sort` ASC";
-        $result = $this->pdo->query($this->query);
-        while ($line = $result->fetch()) {
-            $arr_up[] = $line;
-        }
-        $this->query = "SELECT * FROM check_items WHERE category='5' AND version=$version ORDER BY `sort` ASC";
-        $result = $this->pdo->query($this->query);
-        while ($line = $result->fetch()) {
-            $arr_hs[] = $line;
-        }
-        $result_arr = array_merge($arr_mh, $arr_hp, $arr_bd, $arr_up, $arr_hs);
-
-        //создаем чеклисты по новому роботу
-        foreach ($result_arr as & $value) {
-            $operation = $value['title'];
-            $category = $value['category'];
-            $group = $value['group'];
-            $sort = $value['sort'];
-            $id_check = $value['id'];
-            $id_kit = $value['kit'];
-            $this->query = "INSERT INTO `check` (`id`, `id_check`, `robot`, `operation`, `category`, `group`, `check`, `sort`, `id_kit`, `update_user` ) VALUES (NULL, '$id_check', '$idd', '$operation', '$category', '$group', '0', '$sort', '$id_kit', '0')";
-            $result = $this->pdo->query($this->query);
-        }
-        //$this->sklad->set_reserv($version);
-    }*/
-
-    function edit_robot($id, $number, $name, $version, $options, $customer, $owner, $language_robot, $language_doc, $charger, $color, $brand, $ikp, $battery, $dop, $dop_manufactur, $date_start, $date_test, $date_send, $send, $delivery, $commissioning)
-    {
         $date_start = new DateTime($date_start);
         $date_start = $date_start->format('Y-m-d H:i:s');
 
@@ -590,15 +576,10 @@ class Robots
             $robot_old = false;
         }
 
-        /*if ($send == 1) {
-            $progress = 100;
-        } else {
-            $progress = $this->get_info_robot($id)['progress'];
-        }*/
-
         //вносим изменения в робота
         $this->query = "UPDATE `robots` SET 
-        `version` = '$version', 
+        `version` = '$version',
+        `subversion` = '$subversion',        
         `number` = '$number', 
         `name` = '$name', 
         `customer` = '$customer',
@@ -659,38 +640,6 @@ class Robots
             $this->checks->checked_all_check_in_robot($id);
         }
 
-        /*$text = 'add -'.$option;
-        $log = date('Y-m-d H:i:s') . ' ' . print_r($text, true);
-        file_put_contents(__DIR__ . '/log111.txt', $log . PHP_EOL, FILE_APPEND);
-        die;*/
-
-        //это старый код
-
-        //$idd = $this->pdo->lastInsertId();
-        //удаляем все опции у робота и если что то удалилось переписываем опции
-        /*$this->query = "DELETE FROM `robot_options_items` WHERE `id_robot` = $id";
-        $result = $this->pdo->query($this->query);
-        if ($result) {
-            foreach ($options as &$value) {
-                $this->add_options_on_robot($value,$id);
-            }
-        }*/
-
-        //$robot_info= $this->get_info_robot($id);
-        //если сменился заказчик отправляем сообщение телеграм не работает
-        /*$old_name = $robot_info['name'];
-        if($name!=$old_name) {
-            $comment      = "У робота $version.$number изменен заказчик на - $name";
-            $telegram_str = $comment;
-            $this->telegram->sendNotify("sale", $telegram_str);
-        }*/
-        //пока не работает по этому выключил
-        /*$old_date = $robot_info['name'];
-        if($name!=$old_name) {
-            $comment      = "У робота $version.$number изменен заказчик на - $name";
-            $telegram_str = $comment;
-            $this->telegram->sendNotify("sale", $telegram_str);
-        }*/
     }
 
     function sortable($json)

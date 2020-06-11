@@ -1,6 +1,9 @@
 <?php 
 include 'include/class.inc.php';
+global $userdata;
+
 $today = date('Y-m-d');
+$subversions = $robots->getSubVersion;
 ?>
 
 <?php include 'template/head.php' ?>
@@ -177,10 +180,11 @@ $today = date('Y-m-d');
                     <!-- text input -->
                     <!-- select -->
                     <div class="form-group">
-                        <label>Версия</label>
-                        <select class="form-control" name="version" id="version">
+                        <label>Подверсия робота</label>
+                        <select class="form-control" name="version" id="version" required="required">
+                            <option value="0">Веберите подверсию...</option>
                             <?php
-                            foreach ($robots->getEquipment as &$version) {
+                            foreach ($subversions as &$version) {
                                 echo "<option value='" . $version['id'] . "'>" . $version['title'] . "</option>";
                             }
                             ?>
@@ -188,7 +192,7 @@ $today = date('Y-m-d');
                     </div>
                     <div class="form-group">
                         <label>Номер робота</label></label>
-                        <input type="text" class="form-control" name="number" required="required" id="number">
+                        <input type="text" class="form-control" name="number" id="number" required="required">
                     </div>
                     <div class="form-group">
                         <label>Кодовое имя</label>
@@ -325,10 +329,11 @@ $today = date('Y-m-d');
             <?php } else { /*вывод формы для остальных*/?>
                 <form role="form" data-toggle="validator" id="add_pos">
                     <div class="form-group">
-                        <label>Версия</label>
-                        <select class="form-control" name="version" id="version">
+                        <label>Подверсия робота</label>
+                        <select class="form-control" name="version" id="version" required="required">
+                            <option value="0">Веберите подверсию...</option>
                             <?php
-                            foreach ($robots->getEquipment as &$version) {
+                            foreach ($subversions as &$version) {
                                 echo "<option value='" . $version['id'] . "'>" . $version['title'] . "</option>";
                             }
                             ?>
@@ -624,7 +629,7 @@ $today = date('Y-m-d');
                     options.push($(this).val());
                 }
             });
-            if (number === '') {
+            if (number === '' || version == 0) {
                 return false;
             }
             if (number === undefined) {

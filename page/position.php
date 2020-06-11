@@ -947,13 +947,14 @@ class Position
     }
 
     //список комплектов по категории, версии, опции
-    function get_kit($category=0,$version = -1,$option = -1)
+    function get_kit($category=0,$version = -1,$option = -1, $del = 0)
     {
         $where = "";
         
         if ($category != 0) $where .= " AND `pos_kit`.`kit_category` = $category";
         if ($version != -1) $where .= " AND `pos_kit`.`version` = $version";
         if ($option != -1) $where .= " AND `pos_kit`.`option` = $option";
+        if ($del == 1) $where .= " AND `pos_kit`.`delete` = 0";
         
         
         $query = "SELECT `pos_kit`.`kit_title`, `pos_kit`.`id_kit`, `pos_kit`.`version`, `pos_category`.`title`, `pos_kit`.`delete` FROM `pos_kit` JOIN `pos_category` ON `pos_kit`.`kit_category` = `pos_category`.`id` WHERE `pos_kit`.`id_kit` > 0 $where ORDER BY `pos_kit`.`version` ASC, `pos_kit`.`kit_title` ASC";

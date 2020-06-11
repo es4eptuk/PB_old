@@ -3,7 +3,7 @@ include 'include/class.inc.php';
 
 $id = $_GET['id'];
 $robot_info = $robots->get_info_robot($id);
-$robot_version = $robot_info['version'];
+$robot_version = $robot_info['subversion'];
 $robot_number = $robot_info['number'];
 $robot_name = $robot_info['name'];
 $robot_customer = $robot_info['customer'];
@@ -27,6 +27,7 @@ $robot_test = new DateTime($robot_info['date_test']);
 $robot_test = $robot_test->format('d.m.Y');
 $robot_date_send = new DateTime($robot_info['date_send']);
 $robot_date_send = ($robot_info['date_send'] == null) ? '' : $robot_date_send->format('d.m.Y');
+$subversions = $robots->getSubVersion;
 ?>
 <?php include 'template/head.php' ?>
 
@@ -57,7 +58,7 @@ $robot_date_send = ($robot_info['date_send'] == null) ? '' : $robot_date_send->f
                                     <label>Версия</label>
                                     <select class="form-control" name="version" id="version" disabled>
                                         <?php
-                                        foreach ($robots->getEquipment as &$version) {
+                                        foreach ($subversions as &$version) {
                                             if ($version['id'] == $robot_version) {
                                                 echo "<option value='" . $version['id'] . "' selected>" . $version['title'] . "</option>";
                                             } else {

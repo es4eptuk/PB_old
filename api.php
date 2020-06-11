@@ -462,6 +462,28 @@ if (isset($_POST['action'])) {
     if ($_POST['action'] == "del_robot_production_statistics") {
         echo json_encode($statistics->del_robot_production_statistics($_POST['id']), JSON_UNESCAPED_UNICODE);
     }
+
+    //версии
+    if ($_POST['action'] == "add_version") {
+        echo json_encode($robots->add_version($_POST['title']), JSON_UNESCAPED_UNICODE);
+    }
+    if ($_POST['action'] == "edit_version") {
+        echo json_encode($robots->edit_version($_POST['id'], $_POST['title']), JSON_UNESCAPED_UNICODE);
+    }
+    if ($_POST['action'] == "get_info_version") {
+        echo json_encode($robots->getEquipment[$_POST['id']], JSON_UNESCAPED_UNICODE);
+    }
+
+    //сабверсии
+    if ($_POST['action'] == "add_subversion") {
+        echo json_encode($robots->add_subversion($_POST['version'], $_POST['title']), JSON_UNESCAPED_UNICODE);
+    }
+    if ($_POST['action'] == "edit_subversion") {
+        echo json_encode($robots->edit_subversion($_POST['id'], $_POST['title']), JSON_UNESCAPED_UNICODE);
+    }
+    if ($_POST['action'] == "get_info_subversion") {
+        echo json_encode($robots->getSubVersion[$_POST['id']], JSON_UNESCAPED_UNICODE);
+    }
 }
 if (isset($_GET['action'])) {
     //поиск позиций

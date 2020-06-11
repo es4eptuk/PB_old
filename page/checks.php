@@ -48,9 +48,10 @@ class Checks
         //$this -> robot = new Robots;
     }
 
-    function get_checks_in_cat($category, $version = 4)
+    function get_checks_in_cat($category, $subversion = 0)
     {
-        $query = "SELECT * FROM check_items WHERE category='$category' AND version = $version ORDER BY `sort` ASC";
+        $and = ($subversion != 0) ? "AND subversion = $subversion" : "";
+        $query = "SELECT * FROM `check_items` WHERE `category` = '$category' $and ORDER BY `sort` ASC";
         $result = $this->pdo->query($query);
         while ($line = $result->fetch()) {
             $checks_array[] = $line;
@@ -70,16 +71,18 @@ class Checks
             return $group_array;
     }
 
-    function add_check($category, $title, $sort, $version = 4, $kit)
+    function add_check($category, $title, $sort, $subversion, $kit)
     {
+        $version = $this->robot->getSubVersion[$subversion]['id_version'];
         $title   = trim($title);
         $date    = date("Y-m-d H:i:s");
         $user_id = intval($_COOKIE['id']);
-        $query   = "INSERT INTO `check_items` (`id`, `name`, `title`, `category`, `sort` , `version`, `kit`) VALUES (NULL, '', '$title', '$category',  '$sort', $version, $kit)";
+        $query   = "INSERT INTO `check_items` (`id`, `name`, `title`, `category`, `sort` , `version`, `subversion`, `kit`) VALUES (NULL, '', '$title', '$category',  '$sort', $version, $subversion, $kit)";
         $result = $this->pdo->query($query);
         $idd   = $this->pdo->lastInsertId();
-        $query = "SELECT * FROM robots WHERE version = $version AND progress != 100 ORDER BY `sort` ASC";
+        $query = "SELECT * FROM `robots` WHERE `subversion` = $subversion AND `progress` != 100 ORDER BY `sort` ASC";
         $result = $this->pdo->query($query);
+        $robots_array = [];
         while ($line = $result->fetch()) {
             $robots_array[] = $line;
         }
@@ -102,7 +105,6 @@ class Checks
                          '$id_robot', 
                          '$title', 
                          '$category',
-                         
                          '0',
                          '$sort',
                          '$kit',
@@ -111,14 +113,14 @@ class Checks
             $result = $this->pdo->query($query);
             //добавляем резерв
             $this->sklad->add_reserv($arr_kits[$kit]);
-
         }
 
         return $result;
     }
 
-    function edit_check($id, $title, $kit, $version = 4)
+    function edit_check($id, $title, $kit, $subversion)
     {
+        $version = $this->robot->getSubVersion[$subversion]['id_version'];
         $title   = trim($title);
         //$date    = date("Y-m-d H:i:s");
         //$user_id = intval($_COOKIE['id']);
@@ -126,7 +128,7 @@ class Checks
         $result = $this->pdo->query($query);
         $old_kit = $result->fetch()['kit'];
 
-        $query   = "UPDATE `check_items` SET `title` = '$title ', `kit` = $kit, `version` = $version  WHERE `id` = $id";
+        $query   = "UPDATE `check_items` SET `title` = '$title ', `kit` = $kit, `version` = $version, `subversion` = $subversion  WHERE `id` = $id";
         $result = $this->pdo->query($query);
 
         if ($old_kit != $kit) {
@@ -936,11 +938,11 @@ class Checks
         }
     }
 
-    //создание чеклистов для робота (ид_версии, ид_категории, ид_робота)
-    public function add_robot_check($version, $category, $robot)
+    //создание чеклистов для робота (ид_подверсии, ид_категории, ид_робота)
+    public function add_robot_check($subversion, $category, $robot)
     {
         //выборка из бд чеклисты по ид_категории и ид_версии
-        $query = "SELECT * FROM `check_items` WHERE `category`=$category AND `version`=$version ORDER BY `sort` ASC";
+        $query = "SELECT * FROM `check_items` WHERE `category`=$category AND `subversion`=$subversion ORDER BY `sort` ASC";
         $result = $this->pdo->query($query);
         $arr = [];
         while ($line = $result->fetch()) {
