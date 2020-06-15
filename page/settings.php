@@ -6,14 +6,15 @@ class Settings
     
     function __construct()
     {
-        global $database_server, $database_user, $database_password, $dbase;
+        global $database_server, $database_user, $database_password, $dbase, $dbconnect;
         $dsn = "mysql:host=$database_server;dbname=$dbase;charset=utf8";
         $opt = [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
             PDO::ATTR_EMULATE_PREPARES => false,
         ];
-        $this->pdo = new PDO($dsn, $database_user, $database_password, $opt);
+        //$this->pdo = new PDO($dsn, $database_user, $database_password, $opt);
+        $this->pdo = &$dbconnect->pdo;
     }
 
     function init()

@@ -25,14 +25,15 @@ class Checks
 
     function __construct()
     {
-        global $database_server, $database_user, $database_password, $dbase;
+        global $database_server, $database_user, $database_password, $dbase, $dbconnect;
         $dsn = "mysql:host=$database_server;dbname=$dbase;charset=utf8";
         $opt = [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
             PDO::ATTR_EMULATE_PREPARES => false,
         ];
-        $this->pdo = new PDO($dsn, $database_user, $database_password, $opt);
+        //$this->pdo = new PDO($dsn, $database_user, $database_password, $opt);
+        $this->pdo = &$dbconnect->pdo;
     }
 
     function init()
@@ -990,6 +991,74 @@ class Checks
         $result = $this->pdo->query($query);
         return ($result) ? true : false;
     }
+
+    /** ДЛЯ ВЫБОРА ПОДВЕРСИИ **/
+    //
+    function get_difference_pos_by_version ($version, $count) {
+        $subversions = $this->get_pos_by_version($version);
+        reset($subversions);
+        $general = current($subversions);
+        foreach ($subversions as $subversion) {
+            $general = array_intersect_key($general, $subversion);
+        }
+        foreach ($general as $id => $vol) {
+            $general[$id] = 0;
+        }
+        $result['general'] = $general;
+        foreach ($subversions as $id => $subversion) {
+            $result['private'][$id] = array_diff_key($subversion, $general);
+        }
+        $pos_arr = $this->sklad->get_pos_all();
+        foreach ($result['private'] as $id => $pos) {
+            foreach ($pos as $pos_id => $pos_count) {
+                unset($result['private'][$id][$pos_id]);
+                $result['private'][$id][$pos_id]['need'] = $pos_count * $count;
+                $result['private'][$id][$pos_id]['category'] = $pos_arr[$pos_id]['category'];
+                $result['private'][$id][$pos_id]['subcategory'] = $pos_arr[$pos_id]['subcategory'];
+                $result['private'][$id][$pos_id]['vendor_code'] = $pos_arr[$pos_id]['vendor_code'];
+                $result['private'][$id][$pos_id]['title'] = $pos_arr[$pos_id]['title'];
+                $result['private'][$id][$pos_id]['total'] = $pos_arr[$pos_id]['total'];
+                $result['private'][$id][$pos_id]['reserv'] = $pos_arr[$pos_id]['reserv'];
+            }
+        }
+        unset($pos_arr);
+        return $result;
+    }
+    //собрать общее по версии
+    function get_pos_by_version($version) {
+        $query = "SELECT * FROM `robot_subversion` WHERE `id_version` = $version";
+        $result = $this->pdo->query($query);
+        $arr = [];
+        while ($line = $result->fetch()) {
+            $arr[$line['id']] = $this->get_pos_by_subversion($line['id']);
+        }
+
+        return $arr;
+    }
+    //собрать частное по версии
+    function get_pos_by_subversion($subversion) {
+        $arr_kit_items = $this->plan->get_kits();
+        $query = "SELECT * FROM `check_items` WHERE `subversion` = $subversion AND `kit` != 0";
+        $result = $this->pdo->query($query);
+        $arr_pos = [];
+        while ($line = $result->fetch()) {
+            foreach ($arr_kit_items[$line['kit']] as $id => $pos) {
+                if (isset($arr_pos[$id])) {
+                    $arr_pos[$id] = $arr_pos[$id] + $pos;
+                } else {
+                    $arr_pos[$id] = $pos;
+                }
+            }
+        }
+
+        return $arr_pos;
+    }
+    //
+    function get_mass($sub) {
+        $arr_kit_items = $this->plan->get_kits();
+        return true;
+    }
+    /** КОНЕЦ ДЛЯ ВЫБОРА ПОДВЕРСИИ **/
 
     function __destruct()
     {

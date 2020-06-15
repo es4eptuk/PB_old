@@ -5,6 +5,7 @@ ini_set('display_errors', '1');
 
 include_once ('include/config.inc.php');
 include_once (PATCH_DIR . '/vendor/autoload.php');
+include_once ('page/dbconnect.php');
 include_once ('page/log.php');
 include_once ('page/telegram.php');
 include_once ('page/mail.php');
@@ -25,6 +26,7 @@ include_once ('page/bitrix.php');
 include_once ('page/statistics.php');
 
 //создание экземпляров
+$dbconnect = new Dbconnect();
 $log = new Log();
 $telegramAPI = new TelegramAPI();
 $mail = new Mail();

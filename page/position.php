@@ -12,15 +12,15 @@ class Position
 
     function __construct()
     {
-        global $database_server, $database_user, $database_password, $dbase;
+        global $database_server, $database_user, $database_password, $dbase, $dbconnect;
         $dsn = "mysql:host=$database_server;dbname=$dbase;charset=utf8";
         $opt = [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
             PDO::ATTR_EMULATE_PREPARES => false,
-            PDO::MYSQL_ATTR_INIT_COMMAND => "SET sql_mode='';",
         ];
-        $this->pdo = new PDO($dsn, $database_user, $database_password, $opt);
+        //$this->pdo = new PDO($dsn, $database_user, $database_password, $opt);
+        $this->pdo = &$dbconnect->pdo;
     }
 
     function init()
@@ -144,6 +144,18 @@ class Position
 
         if (isset($pos_array))
             return $pos_array;
+    }
+
+    //все позиции
+    function get_pos_all()
+    {
+        $query = "SELECT * FROM `pos_items`";
+        $result = $this->pdo->query($query);
+        while ($line = $result->fetch()) {
+            $pos_array[$line['id']] = $line;
+        }
+
+        return (isset($pos_array)) ? $pos_array : [];
     }
 
     function get_pos_in_category($category, $subcategory = 0, $version = 0, $archive = 0)

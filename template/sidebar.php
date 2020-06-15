@@ -143,6 +143,11 @@
             <i class="fa fa-money"></i> <span>Оплаченные счета</span>
           </a>
        </li>
+        <li>
+          <a href="./select_subvers.php">
+            <i class="fa fa-android"></i> <span>Выбор подверсии</span>
+          </a>
+       </li>       
        <li class="treeview">
            <a href="#">
                <i class="fa fa-archive"></i> <span>Удаленный склад</span>

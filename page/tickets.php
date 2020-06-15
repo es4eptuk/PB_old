@@ -23,6 +23,7 @@ class Tickets
         "22" => "Telegram",
         "23" => "Email",
         "24" => "Техпод Zabbix",
+        "25" => "Сотрудник PromoBot",
     ];
     const PRIORITY_TICKET = [
         "1" => "Низкий",
@@ -50,14 +51,15 @@ class Tickets
 
     public function __construct()
     {
-        global $database_server, $database_user, $database_password, $dbase;
+        global $database_server, $database_user, $database_password, $dbase, $dbconnect;
         $dsn = "mysql:host=$database_server;dbname=$dbase;charset=utf8";
         $opt = [
-            PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-            PDO::ATTR_EMULATE_PREPARES   => false,
+            PDO::ATTR_EMULATE_PREPARES => false,
         ];
-        $this->pdo = new PDO($dsn, $database_user, $database_password, $opt);
+        //$this->pdo = new PDO($dsn, $database_user, $database_password, $opt);
+        $this->pdo = &$dbconnect->pdo;
     }
 
     function init()
@@ -440,6 +442,9 @@ class Tickets
     //$status - id статуса
     public function ticket_change_status($id, $status)
     {
+        //добавить метку смены статуса
+        $this->set_time_change_status($id, $status);
+
         $date    = date("Y-m-d H:i:s");
         $user_id = intval($_COOKIE['id']);
         if ($status == 3) {
@@ -480,6 +485,9 @@ class Tickets
     //$result - текст резултата
     public function ticket_add_result($id, $result)
     {
+        //добавить метку смены статуса
+        $this->set_time_change_status($id, 3);
+
         $date    = date("Y-m-d H:i:s");
         $user_id = intval($_COOKIE['id']);
         $this->query = "UPDATE `tickets` SET `status` = '3', `inwork` = '$date',`result_description` = '$result', `update_user` = $user_id, `update_date` = '$date' WHERE `id` = $id";
@@ -514,6 +522,9 @@ class Tickets
     //$date_finish - дата в формате 01.01.2019
     public function ticket_add_date($id, $date_finish)
     {
+        //добавить метку смены статуса
+        $this->set_time_change_status($id, 4);
+
         $date    = date("Y-m-d H:i:s");
         $user_id = intval($_COOKIE['id']);
         $newDate = date("Y-m-d", strtotime($date_finish));
@@ -623,6 +634,13 @@ class Tickets
     //$id - колонки (статуса) канбан
     function arhiv($id)
     {
+        //добавить метку смены статуса
+        $this->query = "SELECT * FROM `tickets` WHERE `status` = $id";
+        $result = $this->pdo->query($this->query);
+        while ($line = $result->fetch()) {
+            $this->set_time_change_status($line['id'], 6);
+        }
+
         $date    = date("Y-m-d H:i:s");
         $user_id = intval($_COOKIE['id']);
         $this->query = "UPDATE `tickets` SET `status` = 6, `update_user` = $user_id, `update_date` = '$date' WHERE `status` = $id";
@@ -780,12 +798,37 @@ class Tickets
     function get_tickets_live()
     {
         $this->query = "SELECT * from ticket_log WHERE id_row=( SELECT max(id_row) FROM ticket_log )";
-       $result = $this->pdo->query($this->query);
+        $result = $this->pdo->query($this->query);
         $line = $result->fetch();
         return $line['id_row'];
         //echo "11";
     }
 
+    //запись смены статуса
+    function set_time_change_status($id_ticket, $id_new_status) {
+        $query = "SELECT * FROM `tickets_statistics` WHERE `id_ticket` = $id_ticket ORDER BY `date_change` DESC LIMIT 1";
+        $result = $this->pdo->query($query);
+        while ($line = $result->fetch()) {
+            $tickets_statistics[] = $line;
+        }
+        if (isset($tickets_statistics)) {
+            $date_start = $tickets_statistics[0]['date_change'];
+            $id_old_status = $tickets_statistics[0]['new_status'];
+        } else {
+            $query = "SELECT * FROM `tickets` WHERE id = $id_ticket LIMIT 1";
+            $result = $this->pdo->query($query);
+            $line = $result->fetch();
+            $date_start = strtotime($line['date_create']);
+            $id_old_status = $line['status'];
+        }
+        $date_end = time();
+        $in_work = $this->statistics->get_time_spent($date_start, $date_end, self::TIME_TEXPOD);
+        $in_time = $date_end - $date_start;
+
+        $this->query = "INSERT INTO `tickets_statistics` (`id`, `id_ticket`, `old_status`, `new_status`, `date_change`, `in_work`, `in_time`) VALUES (NULL, '$id_ticket', '$id_old_status', '$id_new_status', '$date_end', '$in_work', '$in_time')";
+        $result = $this->pdo->query($this->query);
+        return true;
+    }
 
 
     function __destruct()
