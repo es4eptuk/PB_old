@@ -123,11 +123,17 @@ $subversions = $robots->getSubVersion;
                              $name = '';
                              $ident = '';
                          }
+                         //искл для в3 подв3
+                         if ($robot['subversion'] == 3) {
+                             $sub = 'v3';
+                         } else{
+                             $sub = $subversions[$robot['subversion']]['title'];
+                         }
 
                          echo "
                             <tr class='edit' id='".$robot['id']."' style='cursor: pointer; background: ".$color.";'>
                                 <td>".$robot['version'].".".$num."</td>
-                                <td>".$subversions[$robot['subversion']]['title']."</td>
+                                <td>".$sub."</td>
                                 <td><span data-toggle='tooltip' data-html='true' data-delay='{\"show\":\"100\", \"hide\":\"300\"}' data-placement='bottom' title='".$ident."'>".$name."</span></td>
                                 <td>".$robot['name']." ".$remont." </td>
                                 <td>".$robot['progress']."</td>
