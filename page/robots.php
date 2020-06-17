@@ -847,6 +847,35 @@ class Robots
         return (count($check) == 0) ? false : true;
     }
 
+    //двигаем роботов по дате производства
+    function change_date_robot() {
+        $day_now = date('d');
+        $month_now = date('m');
+        $year_now = date('Y');
+        $date_old = date('Y-m-d', mktime(0,0,0, $month_now, $day_now - 1, $year_now));
+        $date_new = date('Y-m-d', mktime(0,0,0, $month_now, $day_now, $year_now));
+        $query = "
+            SELECT * FROM `robots` 
+            WHERE `date` = '$date_old'
+                AND `robots`.`progress`!=100 
+                AND `robots`.`remont`=0 
+                AND `robots`.`delete`=0 
+                AND `robots`.`writeoff`=0 
+        ";
+        $result = $this->pdo->query($query);
+        while ($line = $result->fetch()) {
+            $robots[] = $line;
+        }
+        if (isset($robots)) {
+            foreach ($robots as $robot) {
+                $id = $robot['id'];
+                $query = "UPDATE `robots` SET `date` = '$date_new' WHERE `id` = $id";
+                $result = $this->pdo->query($query);
+            }
+        }
+
+        return true;
+    }
 
     function __destruct()
     {

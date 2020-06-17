@@ -1,4 +1,6 @@
 <?php include 'include/class.inc.php';
+//двигаем роботов
+$robots->change_date_robot();
 //списки
 $versions = $robots->getEquipment;
 $subversions = $robots->getSubVersion;
@@ -46,7 +48,9 @@ foreach ($arr_pos as $k => $v) {
     unset($arr_pos[$k]['update_date']);
     unset($arr_pos[$k]['update_user']);
     $arr_pos[$k]['orders'] = (isset($arr_orders[$k])) ? $arr_orders[$k] : [];
-    $stok = ($arr_pos[$k]['total']>0) ? $arr_pos[$k]['total'] : 0;
+    //-на складе как 0 $stok = ($arr_pos[$k]['total']>0) ? $arr_pos[$k]['total'] : 0;
+    //- на складе как -
+    $stok = $arr_pos[$k]['total'];
     $need_summ = 0;
     foreach ($arr_need as $date => $versions) {
         $need_summ_all_vers = 0;

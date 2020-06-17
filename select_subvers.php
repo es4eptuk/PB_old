@@ -11,6 +11,20 @@ $subcategory = $position->getSubcategoryes;
         if (!empty($count) && !empty($version)) {
             $result = $checks->get_difference_pos_by_version($version, $count);
         }
+        //собираем все позиции в заказе, пока без категории $_GET['id']
+        $orders = $orders->get_orders_items_inprocess();
+        //создаем массив заказов [id_pos => [id_order => in_order]]
+        foreach ($orders as $v) {
+            $in_order = $v['pos_count'] - $v['pos_count_finish'];
+            $pos_date = date('d.m.Y', strtotime($v['pos_date']));
+            if ($in_order > 0) {
+                $arr_orders[$v['pos_id']][$v['order_id']] = [
+                    'count' => $in_order,
+                    'date' => $pos_date,
+                ];
+            }
+        }
+        unset($orders);
     }
 ?>
 
@@ -72,6 +86,7 @@ $subcategory = $position->getSubcategoryes;
                                             <th>На роботов</th>
                                             <th>Нужное кол.</th>
                                             <th>На складе</th>
+                                            <th>В заказах</th>
                                             <th>Свободно</th>
                                             <th>Не хватает</th>
                                         </tr>
@@ -79,7 +94,16 @@ $subcategory = $position->getSubcategoryes;
                                         <tbody>
                                 ';
                             foreach ($arr_pos as $id_pos => $info) {
-                                $still = $info['total'] - $info['reserv'];
+
+                                //в заказах
+                                $arr_inorders = (isset($arr_orders[$id_pos])) ? $arr_orders[$id_pos] : [];
+                                $inorder = array_sum (array_column($arr_inorders, 'count'));
+                                $info_inorders = "";
+                                foreach ($arr_inorders as $id_order => $info_order) {
+                                    $info_inorders .= "<a href='./edit_order.php?id=".$id_order."'>".$info_order['date']." - ".$info_order['count']." шт.</a><br>";
+                                }
+
+                                $still = $info['total'] + $inorder - $info['reserv'];
                                 $still = ($still < 0) ? 0 : $still;
                                 $order = ($still - $info['need']);
                                 $order = ($order > 0) ? 0 : $order * (-1);
@@ -90,6 +114,7 @@ $subcategory = $position->getSubcategoryes;
                                 }
                                 if ($onrobot == $count) {
                                     $color="#c1f7cc;";
+                                    $info_inorders = "";
                                 }
                                 if ($onrobot < $count && $onrobot > 0) {
                                     $color="#f1f7c1;";
@@ -105,8 +130,13 @@ $subcategory = $position->getSubcategoryes;
                                             <td>'.$onrobot.'</td>                                            
                                             <td>'.$info['need'].'</td>
                                             <td>'.$info['total'].'</td>
+                                            <td>'.$inorder.'</td>
                                             <td>'.$still.'</td>
-                                            <td>'.$order.'</td>   
+                                            <td>
+                                                <span style="font-weight:800;" data-toggle="tooltip" data-html="true" data-delay=\'{"show":"100", "hide":"3000"}\' data-placement="bottom" title="'.$info_inorders.'">
+                                                '.$order.'
+                                                </span>
+                                            </td>   
                                         </tr>                                         
                                     ';
                             }
