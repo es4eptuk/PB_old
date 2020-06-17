@@ -121,7 +121,7 @@ include 'include/class.inc.php';
 						</div>
 						
 						<select class="form-control" id="category_class" required="required">
-                                  <option value="">Веберите класс...</option>
+                                  <option value="">Выберите класс...</option>
                                   <option value="I">Консультация</option>
                                   <option value="P">Проблема</option>
                                   <option value="FR">Пожелание</option>

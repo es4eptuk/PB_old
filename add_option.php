@@ -24,7 +24,7 @@ include 'include/class.inc.php';
                             <form data-toggle="validator" id="add" name="add" role="form" method="post">
                                 <div class="form-group">
                                     <label>Версия робота</label>
-                                    <select class="form-control" name="version" placeholder="Веберите категорию" id="version" required="required">
+                                    <select class="form-control" name="version" placeholder="Выберите категорию" id="version" required="required">
                                         <option value="0">Для любой версии</option>
                                         <?php
                                             $arr = $robots->getEquipment;

@@ -106,7 +106,7 @@ $listVersion = $robots->getEquipment;
                 <form role="form" data-toggle="validator" id="add_pos">
                     <div class="form-group">
                         <label>Подверсия робота</label>
-                        <select class="form-control" name="group" placeholder="Веберите версию" id="version" required="required">
+                        <select class="form-control" name="group" placeholder="Выберите версию" id="version" required="required">
                             <option></option>
                             <?php
                             foreach ($subversions as &$version) {
@@ -163,7 +163,7 @@ $listVersion = $robots->getEquipment;
             <div class="modal-body">
                 <div class="form-group">
                     <label>Подверсия робота</label>
-                    <select class="form-control" name="version" placeholder="Веберите версию" id="version_edit" required="required">
+                    <select class="form-control" name="version" placeholder="Выберите версию" id="version_edit" required="required">
                         <?php
                         foreach ($subversions as &$version) {
                             echo "<option value='" . $version['id'] . "'>" . $version['title'] . "</option>";

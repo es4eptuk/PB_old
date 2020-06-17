@@ -47,7 +47,7 @@ $del_eneble = $position->get_del_eneble_kit($id);
 									</div>
 									<div class="form-group">
                                       <label>Версия робота</label>
-                                      <select class="form-control" name="version" placeholder="Веберите версию" id="version_edit" required="required">
+                                      <select class="form-control" name="version" placeholder="Выберите версию" id="version_edit" required="required">
                                           <?php
                                           $versions = $robots->getEquipment;
                                           foreach ($versions as &$version) {
@@ -63,7 +63,7 @@ $del_eneble = $position->get_del_eneble_kit($id);
 									<div class="form-group">
 										<label>Категория</label>
                                         <select class="form-control" id="category" name="category" required="required" >
-											<option>Веберите категорию...</option>
+											<option>Выберите категорию...</option>
                                             <?php
                                             $arr = $position->getCategoryes;
                                             foreach ($arr as &$category) {

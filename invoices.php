@@ -129,8 +129,8 @@ include 'include/class.inc.php';
                     <!-- select -->
                     <div class="form-group">
                         <label>Категория</label>
-                        <select class="form-control" name="category" placeholder="Веберите категорию" id="category" required="required">
-                            <option>Веберите категорию...</option>
+                        <select class="form-control" name="category" placeholder="Выберите категорию" id="category" required="required">
+                            <option>Выберите категорию...</option>
                             <?php
                             $arr = $position->getCategoryes;
 
@@ -148,8 +148,8 @@ include 'include/class.inc.php';
 
                     <div class="form-group">
                         <label>Поставщик <small>(<a href="#" data-toggle="modal" data-target="#add_provider">Добавить</a>)</small></label>
-                        <select class="form-control" name="provider" placeholder="Веберите категорию" id="provider" required="required">
-                            <option>Веберите поставщика...</option>
+                        <select class="form-control" name="provider" placeholder="Выберите категорию" id="provider" required="required">
+                            <option>Выберите поставщика...</option>
                             <?php
                             $arr = $position->get_pos_provider();
 
@@ -168,7 +168,7 @@ include 'include/class.inc.php';
 
                     <div class="form-group">
                         <label>Статус </label>
-                        <select class="form-control" name="status" placeholder="Веберите статус" id="status" required="required">
+                        <select class="form-control" name="status" placeholder="Выберите статус" id="status" required="required">
 
                             <option value="0">Новый</option>
                             <option value="1">Отгружен</option>
@@ -180,8 +180,8 @@ include 'include/class.inc.php';
 
                     <div class="form-group">
                         <label>Ответственный </label>
-                        <select class="form-control" name="responsible" placeholder="Веберите пользователя" id="responsible" required="required">
-                            <option>Веберите пользователя...</option>
+                        <select class="form-control" name="responsible" placeholder="Выберите пользователя" id="responsible" required="required">
+                            <option>Выберите пользователя...</option>
                             <?php
                             $arr = $user->get_users($group = 0);
 

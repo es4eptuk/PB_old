@@ -115,8 +115,8 @@ include 'include/class.inc.php';
                 <!-- select -->
                 <div class="form-group">
                   <label>Категория</label>
-                  <select class="form-control" name="category" placeholder="Веберите категорию" id="category" required="required">
-                   <option>Веберите категорию...</option>
+                  <select class="form-control" name="category" placeholder="Выберите категорию" id="category" required="required">
+                   <option>Выберите категорию...</option>
                    <?php 
                    $arr = $position->getCategoryes;
                 
@@ -146,8 +146,8 @@ include 'include/class.inc.php';
                 
                  <div class="form-group">
                   <label>Поставщик <small>(<a href="#" data-toggle="modal" data-target="#add_provider">Добавить</a>)</small></label>
-                  <select class="form-control" name="provider" placeholder="Веберите категорию" id="provider" required="required">
-                   <option>Веберите поставщика...</option>
+                  <select class="form-control" name="provider" placeholder="Выберите категорию" id="provider" required="required">
+                   <option>Выберите поставщика...</option>
                    <?php 
                    $arr = $position->get_pos_provider();
                 

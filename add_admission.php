@@ -26,7 +26,7 @@ include 'include/class.inc.php';
 									<div class="form-group">
 										<label>Категория</label> <select class="form-control" id="category" name="category" required="required" >
 											<option value="0">
-												Веберите категорию...
+												Выберите категорию...
 											</option><?php 
 											                   $arr = $position->getCategoryes;
 											                
@@ -43,7 +43,7 @@ include 'include/class.inc.php';
 								    <div class="form-group">
 										<label>Заказ № </label> <select class="form-control" id="order" name="order" required="required">
 											<option value="0">
-												Веберите заказ...
+												Выберите заказ...
 											</option>
 										</select>
 									</div>

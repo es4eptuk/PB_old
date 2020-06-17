@@ -311,8 +311,8 @@ $category_id = $_GET['category'];
                 <!-- select -->
                 <div class="form-group">
                   <label>Группа</label>
-                  <select class="form-control" name="group" placeholder="Веберите группу" id="group" required="required">
-                   <option>Веберите группу...</option>
+                  <select class="form-control" name="group" placeholder="Выберите группу" id="group" required="required">
+                   <option>Выберите группу...</option>
                    <?php 
                   /* $arr = $position->getCategoryes;
                 

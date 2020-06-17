@@ -126,8 +126,8 @@ $title_option = $option_info['title'];
                 <!-- select -->
                 <div class="form-group">
                   <label>Категория</label>
-                  <select class="form-control" name="category" placeholder="Веберите категорию" id="category" required="required">
-                   <option value="0">Веберите категорию...</option>
+                  <select class="form-control" name="category" placeholder="Выберите категорию" id="category" required="required">
+                   <option value="0">Выберите категорию...</option>
                    <?php 
                    $arr = $position->getCategoryes;
                 
@@ -194,8 +194,8 @@ $title_option = $option_info['title'];
           
               <div class="form-group">
                   <label>Категория</label>
-                  <select class="form-control" name="category" placeholder="Веберите категорию" id="category_edit" required="required">
-                   <option value="0">Веберите категорию...</option>
+                  <select class="form-control" name="category" placeholder="Выберите категорию" id="category_edit" required="required">
+                   <option value="0">Выберите категорию...</option>
                    <?php 
                    $arr = $position->getCategoryes;
                 

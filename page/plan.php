@@ -6,6 +6,7 @@ class Plan
     private $pdo;
     private $orders;
     private $position;
+    private $robots;
 
 
     function __construct()
@@ -23,10 +24,12 @@ class Plan
 
     function init()
     {
-        global $orders, $position;
+        global $orders, $position, $robots;
 
         $this->orders = $orders;
         $this->position = $position;
+        $this->robots = $robots;
+
     }
 
     function get_ordered_items($id)
@@ -528,4 +531,51 @@ class Plan
         return "orders/".$date_folder."/orders_".$id_category.".zip";
 
     }
+    /** ОПЕРАТИВНЫЙ ПЛАН **/
+    //сбор роботов по дням
+    function get_robot_operational_plan($days, $start = 0) {
+        $day_now = date('d');
+        $month_now = date('m');
+        $year_now = date('Y');
+        $date_start = date('Y-m-d', mktime(0,0,0, $month_now, $day_now + $start, $year_now));
+        $date_end = date('Y-m-d', mktime(0,0,0, $month_now, $day_now + $start + $days - 1, $year_now));
+        $versions = $this->robots->getEquipment;
+        //собираем даты и версии
+        $arr_robots = [];
+        for ($i = 0; $i < $days; $i++) {
+            $date = date('Y-m-d', mktime(0,0,0, $month_now, $day_now + $start + $i, $year_now));
+            foreach ($versions as $id_ver => $value) {
+                $arr_robots[$date][$id_ver] = [];
+            }
+        }
+        //собираем потребность по версиям
+        $arr_kit_items = $this->get_kits();
+        $query = "
+            SELECT *, `robots`.`id` AS `rid` FROM `check` 
+            JOIN `robots` ON `check`.`robot` = `robots`.`id`
+            WHERE `robots`.`date` >= '$date_start'
+                AND `robots`.`date` <= '$date_end'   
+                AND `robots`.`progress`!=100 
+                AND `robots`.`remont`=0 
+                AND `robots`.`delete`=0 
+                AND `robots`.`writeoff`=0 
+                AND `check`.`check`=0 
+                AND `check`.`id_kit`!=0
+        ";
+        $result = $this->pdo->query($query);
+        while ($line = $result->fetch()) {
+            foreach ($arr_kit_items[$line['id_kit']] as $pos_id => $count ) {
+                if (isset($arr_robots[$line['date']][$line['version']][$pos_id])) {
+                    $arr_robots[$line['date']][$line['version']][$pos_id] = $arr_robots[$line['date']][$line['version']][$pos_id] + $count;
+                } else {
+                    $arr_robots[$line['date']][$line['version']][$pos_id] = $count;
+                }
+            }
+
+        }
+
+        return $arr_robots;
+    }
+
+    /** КОНЕЦ ОПЕРАТИВНЫЙ ПЛАН **/
 }

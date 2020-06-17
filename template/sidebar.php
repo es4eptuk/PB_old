@@ -143,11 +143,6 @@
             <i class="fa fa-money"></i> <span>Оплаченные счета</span>
           </a>
        </li>
-        <li>
-          <a href="./select_subvers.php">
-            <i class="fa fa-android"></i> <span>Выбор подверсии</span>
-          </a>
-       </li>       
        <li class="treeview">
            <a href="#">
                <i class="fa fa-archive"></i> <span>Удаленный склад</span>
@@ -163,7 +158,18 @@
                <li><a href="./pos_warehouse.php?id=7"><i class="fa fa-circle-o"></i> Листовые материалы</a></li>
            </ul>
 
-       </li>        
+       </li>
+        <li class="treeview">
+          <a href="#">
+            <i class="fa fa-android"></i> <span>Роботы</span>
+            <span class="pull-right-container">
+            </span>
+          </a>
+          <ul class="treeview-menu">
+            <li><a href="./plan_operational.php"><i class="fa fa-circle-o"></i> Оперативный план</a></li>
+            <li><a href="./select_subvers.php"><i class="fa fa-circle-o"></i> Выбор подверсии</a></li>
+          </ul>
+        </li>        
        </ul>
        </li>
        ';

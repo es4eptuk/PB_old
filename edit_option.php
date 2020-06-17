@@ -31,7 +31,7 @@ $option_kit = $option['id_kit'];
 								<form data-toggle="validator" id="edit" name="edit" role="form" method="post">
                                     <div class="form-group">
                                         <label>Версия робота</label>
-                                        <select class="form-control" name="version" placeholder="Веберите категорию" id="version" required="required">
+                                        <select class="form-control" name="version" placeholder="Выберите категорию" id="version" required="required">
                                             <option value="0" <?php echo ($option_version==0)? "selected": "";?>>Для любой версии</option>
                                             <?php
                                             $arr = $robots->getEquipment;

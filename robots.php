@@ -190,7 +190,7 @@ $subversions = $robots->getSubVersion;
                     <div class="form-group">
                         <label>Подверсия робота</label>
                         <select class="form-control" name="version" id="version" required="required">
-                            <option value="0">Веберите подверсию...</option>
+                            <option value="0">Выберите подверсию...</option>
                             <?php
                             foreach ($subversions as &$version) {
                                 echo "<option value='" . $version['id'] . "'>" . $version['title'] . "</option>";
@@ -209,7 +209,7 @@ $subversions = $robots->getSubVersion;
                     <div class="form-group">
                         <label>Покупатель <small>(<a href="#" data-toggle="modal" data-target="#add_customer">Добавить</a>)</small></label>
                         <select class="form-control select2" name="customer" id="customer">
-                            <option value="0">Веберите покупателя...</option>
+                            <option value="0">Выберите покупателя...</option>
                             <?php
                             $arr = $robots->get_customers();
                             foreach ($arr as &$customer) {
@@ -221,7 +221,7 @@ $subversions = $robots->getSubVersion;
                     <div class="form-group">
                         <label>Владелец <small>(<a href="#" data-toggle="modal" data-target="#add_customer">Добавить</a>)</small></label>
                         <select class="form-control select2" name="owner" id="owner">
-                            <option value="0">Веберите владельца...</option>
+                            <option value="0">Выберите владельца...</option>
                             <?php
                             $arr = $robots->get_customers();
                             foreach ($arr as &$customer) {
@@ -339,7 +339,7 @@ $subversions = $robots->getSubVersion;
                     <div class="form-group">
                         <label>Подверсия робота</label>
                         <select class="form-control" name="version" id="version" required="required">
-                            <option value="0">Веберите подверсию...</option>
+                            <option value="0">Выберите подверсию...</option>
                             <?php
                             foreach ($subversions as &$version) {
                                 echo "<option value='" . $version['id'] . "'>" . $version['title'] . "</option>";
@@ -354,7 +354,7 @@ $subversions = $robots->getSubVersion;
                     <div class="form-group">
                         <label>Покупатель <small>(<a href="#" data-toggle="modal" data-target="#add_customer">Добавить</a>)</small></label>
                         <select class="form-control select2" name="customer" id="customer">
-                            <option value="0">Веберите покупателя...</option>
+                            <option value="0">Выберите покупателя...</option>
                             <?php
                             $arr = $robots->get_customers();
                             foreach ($arr as &$customer) {
@@ -366,7 +366,7 @@ $subversions = $robots->getSubVersion;
                     <div class="form-group">
                         <label>Владелец <small>(<a href="#" data-toggle="modal" data-target="#add_customer">Добавить</a>)</small></label>
                         <select class="form-control select2" name="owner" id="owner">
-                            <option value="0">Веберите владельца...</option>
+                            <option value="0">Выберите владельца...</option>
                             <?php
                             $arr = $robots->get_customers();
                             foreach ($arr as &$customer) {

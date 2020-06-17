@@ -51,7 +51,7 @@ $kit_version = $kit['kit_version'];
                                     </div>
 									<div class="form-group">
                                       <label>Версия робота</label>
-                                      <select class="form-control" name="version" placeholder="Веберите версию" id="version_edit" required="required">
+                                      <select class="form-control" name="version" placeholder="Выберите версию" id="version_edit" required="required">
                                           <?php
                                           $versions = $robots->getEquipment;
                                           foreach ($versions as &$version) {
@@ -66,7 +66,7 @@ $kit_version = $kit['kit_version'];
                                     </div>
 									<div class="form-group">
 										<label>Категория</label><select class="form-control" id="category" name="category" required="required" >
-											<option>Веберите категорию...</option>
+											<option>Выберите категорию...</option>
                                             <?php
                                             $arr = $position->getCategoryes;
                                             foreach ($arr as &$category) {

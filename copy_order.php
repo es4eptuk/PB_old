@@ -74,7 +74,7 @@ $order_responsible = $order['order_responsible'];
 										<label>Категория</label>
                                         <select class="form-control" id="category" name="category" required="required" >
 											<option value="0">
-												Веберите категорию...
+												Выберите категорию...
 											</option>
                                             <?php
                                             $arr = $position->getCategoryes;
@@ -97,7 +97,7 @@ $order_responsible = $order['order_responsible'];
 								    <div class="form-group">
 										<label>Контрагент <small>(<a data-target="#add_provider" data-toggle="modal" href="#">Добавить</a>)</small></label> <select class="form-control select2" id="provider" name="provider" required="required">
 											<option value="0">
-												Веберите контррагента...
+												Выберите контррагента...
 											</option><?php 
 											                  $arr = $position->get_pos_provider();
 											                

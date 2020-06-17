@@ -68,7 +68,7 @@ $order_date = $order_date->format('d.m.Y');
 									<div class="form-group">
 										<label>Категория</label> <select class="form-control" id="category" name="category" required="required" >
 											<option>
-												Веберите категорию...
+												Выберите категорию...
 											</option><?php 
 											                   $arr = $position->getCategoryes;
 											                    
@@ -94,7 +94,7 @@ $order_date = $order_date->format('d.m.Y');
 								    <div class="form-group">
 										<label>Контрагент <small>(<a data-target="#add_provider" data-toggle="modal" href="#">Добавить</a>)</small></label> <select class="form-control" id="provider" name="provider" required="required">
 											<option>
-												Веберите контррагента...
+												Выберите контррагента...
 											</option><?php 
 											                   $arr = $position->get_pos_provider();
 											                
@@ -125,7 +125,7 @@ $order_date = $order_date->format('d.m.Y');
 									<div class="form-group">
 										<label>Статус </label> <select class="form-control" id="status" name="status" required="required">
 											<option>
-												Веберите статус...
+												Выберите статус...
 											</option><?php 
 											                    
 											                

@@ -47,8 +47,8 @@ include 'include/class.inc.php';
                 <!-- select -->
                 <div class="form-group">
                   <label>Категория</label>
-                  <select class="form-control" name="category" placeholder="Веберите категорию" id="category" required="required">
-                   <option value="0">Веберите категорию...</option>
+                  <select class="form-control" name="category" placeholder="Выберите категорию" id="category" required="required">
+                   <option value="0">Выберите категорию...</option>
                    <?php 
                    $arr = $position->getCategoryes;
                 
@@ -129,8 +129,8 @@ include 'include/class.inc.php';
                 
                  <div class="form-group">
                   <label>Поставщик <small>(<a href="#" data-toggle="modal" data-target="#add_provider">Добавить</a>)</small></label>
-                  <select class="form-control" name="provider" placeholder="Веберите категорию" id="provider" required="required">
-                   <option>Веберите поставщика...</option>
+                  <select class="form-control" name="provider" placeholder="Выберите категорию" id="provider" required="required">
+                   <option>Выберите поставщика...</option>
                    <?php 
                    $arr = $position->get_pos_provider();
                 
@@ -221,7 +221,7 @@ include 'include/class.inc.php';
                 <!-- select -->
                 <div class="form-group">
                   <label>Форма собственности</label>
-                  <select class="form-control" name="provider_type" placeholder="Веберите форму собственности" id="provider_type" required="required">
+                  <select class="form-control" name="provider_type" placeholder="Выберите форму собственности" id="provider_type" required="required">
                   <option value="ИП">ИП</option>
                   <option value="ООО">ООО</option>
                   <option value="ОАО">ОАО</option>

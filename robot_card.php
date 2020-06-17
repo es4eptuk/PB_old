@@ -60,7 +60,7 @@ $robot_dop_manufactur= $robot_info['dop_manufactur'];
                             <div class="form-group">
                                 <label>Источник </label>
                                 <select class="form-control" id="ticket_source" required="required">
-                                    <option value="">Веберите источник...</option>
+                                    <option value="">Выберите источник...</option>
                                     <?php
                                     foreach ($tickets->listSourceTikets as $id => $class) {
                                         if ($id > 20 && $id < 30) {
@@ -86,7 +86,7 @@ $robot_dop_manufactur= $robot_info['dop_manufactur'];
                             <div class="form-group">
                                 <label>Класс обращения </label>
                                 <select class="form-control" id="ticket_class" required="required">
-                                    <option value="">Веберите класс...</option>
+                                    <option value="">Выберите класс...</option>
                                     <?php
                                     foreach ($tickets->listClassTikets as $id => $class) {
                                         echo "<option value='" . $id . "'>" . $class . "</option>";
@@ -98,7 +98,7 @@ $robot_dop_manufactur= $robot_info['dop_manufactur'];
                             <div class="form-group" id="form_category">
                                 <label>Категория <small>(<a href="#" data-toggle="modal" data-target="#add_category">Добавить</a>)</small></label>
                                 <select class="form-control" id="category">
-                                    <option value="0">Веберите категорию...</option>
+                                    <option value="0">Выберите категорию...</option>
                                     <?php
                                         $arr = $tickets->get_category();
                                         foreach ($arr as &$category) {

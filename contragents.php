@@ -181,7 +181,7 @@ include 'include/class.inc.php';
                 <!-- select -->
                 <div class="form-group">
                   <label>Форма собственности</label>
-                  <select class="form-control" name="provider_type" placeholder="Веберите форму собственности" id="type" required="required">
+                  <select class="form-control" name="provider_type" placeholder="Выберите форму собственности" id="type" required="required">
                       <option value="ИП">ИП</option>
                       <option value="ООО">ООО</option>
                       <option value="ОАО">ОАО</option>

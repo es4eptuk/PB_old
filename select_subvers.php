@@ -22,20 +22,20 @@ $subcategory = $position->getSubcategoryes;
     <?php include 'template/sidebar.php';?>
     <div class="content-wrapper">
         <section class="content-header">
-            <h1>Выбор подверсии</h1>
+            <h1>Роботы</h1>
         </section>
         <section class="content">
             <div class="row">
                 <div class="col-xs-12">
                     <div class="box box-warning">
                         <div class="box-header with-border">
-                            <h3 class="box-title">Форма</h3>
+                            <h3 class="box-title">Выбор подверсии</h3>
                         </div><!-- /.box-header -->
                         <div class="box-body">
                             <form action="" method="post" data-toggle="validator">
                                 <div class="form-group">
                                     <select class="form-control" id="version" name="version" required="required" >
-                                        <option value="0">Веберите версию...</option>
+                                        <option value="0">Выберите версию...</option>
                                         <?php
                                         foreach ($versions as &$version) {
                                             echo "<option value='" . $version['id'] . "'>" . $version['title'] . "</option>";

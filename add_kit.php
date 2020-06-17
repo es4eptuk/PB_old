@@ -31,7 +31,7 @@ include 'include/class.inc.php';
 									
 										<div class="form-group">
                                       <label>Версия робота</label>
-                                      <select class="form-control" name="version" placeholder="Веберите версию" id="version" required="required">
+                                      <select class="form-control" name="version" placeholder="Выберите версию" id="version" required="required">
                                         <?php
                                             $versions = $robots->getEquipment;
                                             foreach ($versions as &$version) {
@@ -43,8 +43,8 @@ include 'include/class.inc.php';
 								   
 									 <div class="form-group">
                   <label>Категория</label>
-                  <select class="form-control" name="category" placeholder="Веберите категорию" id="category" required="required">
-                   <option value="0">Веберите категорию...</option>
+                  <select class="form-control" name="category" placeholder="Выберите категорию" id="category" required="required">
+                   <option value="0">Выберите категорию...</option>
                    <?php 
                    $arr = $position->getCategoryes;
                 

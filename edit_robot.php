@@ -79,7 +79,7 @@ $subversions = $robots->getSubVersion;
                                 <div class="form-group">
                                     <label>Покупатель <small>(<a href="#" data-toggle="modal" data-target="#add_customer">Добавить</a>)</small></label>
                                     <select class="form-control select2" name="customer" id="customer" <?php echo ($robot_progress == 100) ? "disabled" : ""; ?>>
-                                        <option value="0">Веберите покупателя...</option>
+                                        <option value="0">Выберите покупателя...</option>
                                         <?php
                                         $arr = $robots->get_customers();
                                         foreach ($arr as &$customer) {
@@ -95,7 +95,7 @@ $subversions = $robots->getSubVersion;
                                 <div class="form-group">
                                     <label>Владелец <small>(<a href="#" data-toggle="modal" data-target="#add_customer">Добавить</a>)</small></label>
                                     <select class="form-control select2" name="owner" id="owner" <?php echo ($robot_progress == 100) ? "disabled" : ""; ?>>
-                                        <option value="0">Веберите владельца...</option>
+                                        <option value="0">Выберите владельца...</option>
                                         <?php
                                         $arr = $robots->get_customers();
                                         foreach ($arr as &$customer) {
