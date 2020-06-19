@@ -549,7 +549,6 @@ class Plan
             }
         }
         //собираем потребность по версиям
-        $arr_kit_items = $this->get_kits();
         $query = "
             SELECT *, `robots`.`id` AS `rid` FROM `check` 
             JOIN `robots` ON `check`.`robot` = `robots`.`id`
@@ -563,6 +562,8 @@ class Plan
                 AND `check`.`id_kit`!=0
         ";
         $result = $this->pdo->query($query);
+        // + то из чего состоит сборка
+        /*$arr_kit_items = $this->get_kits();
         while ($line = $result->fetch()) {
             foreach ($arr_kit_items[$line['id_kit']] as $pos_id => $count ) {
                 if (isset($arr_robots[$line['date']][$line['version']][$pos_id])) {
@@ -571,7 +572,17 @@ class Plan
                     $arr_robots[$line['date']][$line['version']][$pos_id] = $count;
                 }
             }
-
+        }*/
+        //только комплект раскладывает
+        $arr_kit_items = $this->get_kits_items();
+        while ($line = $result->fetch()) {
+            foreach ($arr_kit_items[$line['id_kit']] as $pos_id => $count ) {
+                if (isset($arr_robots[$line['date']][$line['version']][$pos_id])) {
+                    $arr_robots[$line['date']][$line['version']][$pos_id] = $arr_robots[$line['date']][$line['version']][$pos_id] + $count['count'];
+                } else {
+                    $arr_robots[$line['date']][$line['version']][$pos_id] = $count['count'];
+                }
+            }
         }
 
         return $arr_robots;

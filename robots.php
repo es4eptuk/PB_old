@@ -4,6 +4,21 @@ global $userdata;
 
 $today = date('Y-m-d');
 $subversions = $robots->getSubVersion;
+
+$arr_eq = $robots->getEquipment;
+
+$v_filtr = [];
+foreach ($arr_eq as $eq) {
+    if (isset($_POST[$eq['id']])) {
+        array_push($v_filtr, $eq['id']);
+    }
+}
+if (isset($_POST['check_show_all'])) {
+    $check_show_all = 1;
+} else {
+    $check_show_all = 0;
+}
+
 ?>
 
 <?php include 'template/head.php' ?>
@@ -37,27 +52,39 @@ $subversions = $robots->getSubVersion;
             </div>
             <!-- /.box-header -->
             <div class="box-body table-responsive">
-                <form id="show_all">
-                    <input type="hidden" name="id" value="<?php /*echo $_GET['id'];*/?>">
-                    <div class="checkbox">
-                    <label>
-                      <?php   if ( isset($_GET['show_all']) == 'on') {
-                        
-                      echo '<input type="checkbox" id="check_show_all" name="show_all" checked>';
-                      
-                      } else {
-                          
-                      echo '<input type="checkbox" id="check_show_all" name="show_all"  >';
-                          
-                      }
-                      
-                      ?>
-                      Отображать завершенных роботов
-                    </label>
-                  </div>
-                    
-                </form>
-                
+                <div class="">
+                    <form action="./robots.php" method="post">
+                        <div class="form-group">
+                            <?php
+                            if (isset($_POST['check_show_all'])) {
+                                $checked = 'checked';
+                            } else {
+                                $checked = '';
+                            }
+                            echo '
+                            <div class="checkbox">
+                                <label><input type="checkbox" id="check_show_all" name="check_show_all" '.$checked.'>Отображать завершенных роботов</label>
+                            </div>
+                            ';
+                            foreach ($arr_eq as $eq) {
+                                if (isset($_POST[$eq['id']])) {
+                                    $checked = 'checked';
+                                } else {
+                                    $checked = '';
+                                }
+                                echo '<div class="checkbox">';
+                                echo '<label><input type="checkbox" id="'.$eq['id'].'" name="'.$eq['id'].'" '.$checked.'> '.$eq['title'].'</label>';
+                                echo '</div>';
+                            }
+                            ?>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary" id="add_filtr" name="">Применить</button>
+                            <button type="reset" class="btn btn-default" id="del_filtr" name="" onclick="javascript:document.location = './robots.php'">Сбросить</button>
+                        </div>
+                    </form>
+                </div>
+                <br>
               <table id="robots" class="table  table-hover">
                 <thead>
                 <tr>
@@ -79,8 +106,10 @@ $subversions = $robots->getSubVersion;
                 
                 if (isset($arr)) {
                 foreach ($arr as &$robot) {
-                    
-                    if ($robot['progress']!=100 || isset($_GET['show_all'])=='on') {
+                    if (!in_array($robot['version'], $v_filtr) && $v_filtr != []) {
+                        continue;
+                    }
+                    if ($robot['progress']!=100 || $check_show_all== 1) {
 
                         $color = "#fff";
                         if ($robot['progress']>0) {$color = "#f1f7c1";}
@@ -685,7 +714,7 @@ $subversions = $robots->getSubVersion;
         }
 
         //отображать завершенных роботов
-        $('#check_show_all').change(function () {
+        /*$('#check_show_all').change(function () {
             if ($(this).is(":checked")) {
                 //var returnVal = confirm("Are you sure?");
                 $(this).attr("checked", true);
@@ -693,7 +722,7 @@ $subversions = $robots->getSubVersion;
             // alert($(this).is(':checked'));
             $("#show_all").submit();
 
-        });
+        });*/
 
         //??? вроде нет ничего
         $("#robots1 tbody").sortable({
