@@ -1,6 +1,4 @@
 <?php include 'include/class.inc.php';
-//двигаем роботов
-$robots->change_date_robot();
 //списки
 $versions = $robots->getEquipment;
 $subversions = $robots->getSubVersion;
@@ -8,6 +6,8 @@ $category = $position->getCategoryes;
 $subcategory = $position->getSubcategoryes;
 //фильтр по версиям
 $v_filtr = [6,7];
+//двигаем роботов
+$robots->change_date_robot($v_filtr);
 //фильтр по категориям
 $cat_filtr = [];
 foreach ($category as $cat) {

@@ -848,7 +848,7 @@ class Robots
     }
 
     //двигаем роботов по дате производства
-    function change_date_robot() {
+    function change_date_robot($v_filtr = []) {
         $day_now = date('d');
         $month_now = date('m');
         $year_now = date('Y');
@@ -868,9 +868,11 @@ class Robots
         }
         if (isset($robots)) {
             foreach ($robots as $robot) {
-                $id = $robot['id'];
-                $query = "UPDATE `robots` SET `date` = '$date_new' WHERE `id` = $id";
-                $result = $this->pdo->query($query);
+                if (in_array($robot['version'], $v_filtr) || $v_filtr == []) {
+                    $id = $robot['id'];
+                    $query = "UPDATE `robots` SET `date` = '$date_new' WHERE `id` = $id";
+                    $result = $this->pdo->query($query);
+                }
             }
         }
 
