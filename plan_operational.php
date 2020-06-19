@@ -121,6 +121,7 @@ foreach ($arr_need as $date => $info) {
                                     <div class="form-group">
                                         <?php
                                         foreach ($category as $cat_id => $cat) {
+                                            if ($cat_id > 10) {continue;}
                                             if (isset($_POST[$cat_id])) {
                                                 $checked = 'checked';
                                             } else {
