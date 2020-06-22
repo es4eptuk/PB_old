@@ -584,7 +584,7 @@ $robot_id= $robot_info['id'];
                             } else {
                                 var conId =  <?php echo $ticket_id; ?>;
                                 var conClass = "<?php echo $ticket_class; ?>";
-                                var conDescription = "<?php echo $ticket_description; ?>";
+                                var conDescription = "<?php echo str_replace(array("\r\n", "\r", "\n"), '"+"',$ticket_description); ?>";
                                 comment = "Прикреплено <a href=\"ticket.php?id=" + conId + "\">" + conClass + "-" + conId + "</a>" + " " + conDescription;
                                 console.log(comment);
                                 $.post("./api.php", {
