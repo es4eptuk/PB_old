@@ -39,7 +39,7 @@ include 'include/class.inc.php';
                                         <option value="Возврат поставщику">Возврат поставщику</option>
                                         <option value="Покраска/Покрытие">Покраска/Покрытие</option>
                                         <option value="Сварка/Зенковка">Сварка/Зенковка</option>
-                                        <option value="Не прокатило">Не прокатило</option>
+                                        <option value="Не актуально">Не актуально</option>
                                         <option value="ThermoControl">ThermoControl</option>
                                     </select>
                                 </div>

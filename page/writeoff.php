@@ -133,7 +133,7 @@ class Writeoff
 
         }
 
-        if ($category == "Не прокатило") {
+        if ($category == "Не актуально") {
 
             $this->mail->send('Светлана Орлова', 's.orlova@promo-bot.ru', 'Списание на разработку №' . $idd, 'Пройдите по ссылке для просмотра списания https://db.promo-bot.ru/new/edit_writeoff.php?id=' . $idd);
 
