@@ -196,6 +196,18 @@ class TelegramAPI {
             $idMessage = $line['id'];
             $chatId = $line['chatId'];
             $msgIsNight = $this->isNight($date_message);
+
+            /**/
+            $params = [];
+            $params['time'] = time();
+            $params['idMessage'] = $idMessage;
+            $params['isHight'] = $isHight;
+            $params['msgIsNight'] = $msgIsNight;
+            $params['raznica'] = intval((strtotime($curDate) - strtotime($date_message))/60);
+            $log = print_r(print_r(), true);
+            file_put_contents( 'log__unanswer.txt', $log . PHP_EOL, FILE_APPEND);
+            /**/
+
             if(!$isHight) {
                 $d1_ts = strtotime($curDate);
                 $d2_ts = strtotime($date_message);
