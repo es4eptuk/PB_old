@@ -199,12 +199,12 @@ class TelegramAPI {
 
             /**/
             $params = [];
-            $params['time'] = time();
+            $params['time'] = date('Y-m-d H:i:s');
             $params['idMessage'] = $idMessage;
             $params['isHight'] = $isHight;
             $params['msgIsNight'] = $msgIsNight;
             $params['raznica'] = intval((strtotime($curDate) - strtotime($date_message))/60);
-            $log = print_r(print_r(), true);
+            $log = print_r($params, true);
             file_put_contents( 'log__unanswer.txt', $log . PHP_EOL, FILE_APPEND);
             /**/
 
@@ -221,10 +221,11 @@ class TelegramAPI {
                     $telegram_str = $icon . " " . $comment;
                     $this->sendNotify('client', $telegram_str,  -232413504);
                     if (!$msgIsNight) {$isViolation = true;}
-                    $this->query  = "UPDATE `bot_message` SET `notification` = '1' WHERE `chatId` = '$chatId'";
-                    $result2 = $this->pdo->query($this->query);
-                    $this->query  = "UPDATE `bot_message` SET `violation` = $isViolation WHERE `id` = '$idMessage'";
-                    $result2 = $this->pdo->query($this->query);
+                    $query  = "UPDATE `bot_message` SET `notification` = '1' WHERE `chatId` = '$chatId'";
+                    $result2 = $this->pdo->query($query);
+                    $isViolation = ($isViolation) ? 1 : 0;
+                    $query  = "UPDATE `bot_message` SET `violation` = $isViolation WHERE `id` = $idMessage";
+                    $result2 = $this->pdo->query($query);
                 } else {
 
 
