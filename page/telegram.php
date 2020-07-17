@@ -142,7 +142,14 @@ class TelegramAPI {
     }
 
     public function isHolidays($date) {
-        $calendar = simplexml_load_file('http://xmlcalendar.ru/data/ru/'.date('Y').'/calendar.xml');
+        //на локалке убраны дни выходных из за пандемии
+        $year = date('Y');
+        if ($year == 2020) {
+            $calendar = simplexml_load_file(PATCH_DIR.'/date/'.$year.'/calendar.xml');
+        } else {
+            $calendar = simplexml_load_file('http://xmlcalendar.ru/data/ru/'.$year.'/calendar.xml');
+        }
+        /*$calendar = simplexml_load_file('http://xmlcalendar.ru/data/ru/'.date('Y').'/calendar.xml');*/
         $calendar =  $calendar->days->day;
         foreach( $calendar as $day ){
             $d = (array)$day->attributes()->d;
