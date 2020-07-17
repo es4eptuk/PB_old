@@ -8,6 +8,7 @@
 #
 /.htaccess
 /log.txt
+/log__*
 
 #
 /1c/
