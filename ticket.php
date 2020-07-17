@@ -208,6 +208,7 @@ $robot_id= $robot_info['id'];
                      <?php
                      $arr = $tickets->get_tickets("$robot_id",0,0,"update_date","DESC",0,0,0,"P",0,1);
                      foreach ($arr as &$ticket) {
+                        if ($ticket['id'] == $ticket_id) {continue;}
 					    echo "<option value='".$ticket['id']."' >".$ticket['class']."-".$ticket['id']." ".$ticket['description']."</option>";
                      }
 					 ?>

@@ -13,6 +13,7 @@ $arr = $robots->get_robots();
 //$paramRobot = (isset($_GET['robot']) ? $_GET['robot'] : 0);
 
 $arr_tickets = $tickets->get_tickets();
+$filtr_robot = array();
 $finish = array();
 $inProcess = array();
 $awaitingRepair = array();
@@ -30,6 +31,8 @@ $assign_Eldar = 0;
 $currentDate = date('d.m.Y');
 $date_Today = date("Y-m-d");
 
+
+
 //считаем созданные сегодня
 $ticketsTodayArr = $tickets->get_tickets(0, null, 0, 'update_date', 'DESC', 'date_create', $date_Today . " 00:00:00", $date_Today . " 23:59:59");
 if (!isset($ticketsTodayArr)) {
@@ -43,6 +46,18 @@ foreach ($arr_tickets as &$ticket) {
     $ticket_status = $ticket['status'];
     $ticket_robot = $ticket['robot'];
     $ticket_assign = $ticket['assign'];
+    //считаем уникальных роботов для фильтра
+    if ($ticket_status != 6) {
+        if (!array_key_exists($ticket_robot, $filtr_robot)) {
+            $robot_info = $robots->get_info_robot($ticket_robot);
+            $filtr_robot[$ticket_robot] = [
+                'id' => $ticket_robot,
+                'number' => $robot_info['version'] . "." . $robot_info['number'],
+                'name' => $robot_info['name'],
+            ];
+
+        }
+    }
     //завершенных
     if ($ticket_status == 3 || $ticket_status == 6) {
     //$finish[$ticket_robot] = isset($finish[$ticket_robot] ) + 1;
@@ -491,11 +506,17 @@ foreach ($arr_tickets as &$ticket) {
                                 <select class="form-control select3" style="width: 100%;" id="filter_robot">
                                     <option value="0">Выберите робота</option>
                                     <?php
-                                    //$arr_robots = $robots->get_robots();
-                                    //print_r2($inprocess_sort);
-                                    if (isset($inprocess_sort)) {
+                                    /*if (isset($inprocess_sort)) {
                                         foreach ($inprocess_sort as &$robot) {
                                                 echo '<option value="' . $robot['id'] . '"> ' . $robot['number'] . '( ' . $robot['name'] . ')'.'</option>';
+                                        }
+                                    }*/
+                                    if (isset($filtr_robot)) {
+                                        usort($filtr_robot, function ($a, $b) {
+                                            return strcmp($a["number"], $b["number"]);
+                                        });
+                                        foreach ($filtr_robot as &$robot) {
+                                                echo '<option value="' . $robot['id'] . '">' . $robot['number'] . ' (' . $robot['name'] . ')'.'</option>';
                                         }
                                     }
                                     ?>

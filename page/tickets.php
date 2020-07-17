@@ -105,11 +105,11 @@ class Tickets
      * @param string $type
      * @return array
      */
-    public function get_category($type = "P")
+    public function get_category($type = "")
     {
-        $where = ($type == 0) ? "" : "WHERE `class` = $type";
-        $this->query = "SELECT * FROM `tickets_category` $where ORDER BY `title` ASC";
-        $result = $this->pdo->query($this->query);
+        $where = ($type == "") ? "" : "WHERE `class` = '$type'";
+        $query = "SELECT * FROM `tickets_category` ".$where." ORDER BY `title` ASC";
+        $result = $this->pdo->query($query);
         while ($line = $result->fetch()) {
             $ticket_category_array[$line['id']] = $line;
         }
