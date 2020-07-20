@@ -66,27 +66,29 @@ $settings->init();
 $bitrixAPI->init();
 $statistics->init();
 
+if (array_key_exists('REQUEST_URI', $_SERVER)) {
+    $i = $_SERVER['REQUEST_URI'];
+    //echo $i;
+    $i2 = stristr($i, '?', true);
 
-$i = $_SERVER['REQUEST_URI'];
-//echo $i;
-$i2 = stristr($i, '?', true);
+    if ($i2 = "") {
+        $i = $i2;
+    }
 
-
-if ($i2 = "") {$i = $i2;}
-//echo $i;
-switch ($i) {
-    case "/new/api.php":
-        break;
-    case "/new/telegram.php":
-        break; 
-     case "/new/telegram_r.php":
-        break;     
-    case "/new/self_tester.php":
-        break;
-    default:
-        include 'include/auth.php'; 
-        break;
+    //echo $i;
+    switch ($i) {
+        case "/new/api.php":
+            break;
+        case "/new/telegram.php":
+            break;
+        case "/new/telegram_r.php":
+            break;
+        case "/new/self_tester.php":
+            break;
+        default:
+            include 'include/auth.php';
+            break;
+    }
 }
-
 
 ?>
