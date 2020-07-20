@@ -36,6 +36,7 @@ include 'include/class.inc.php';
                     <th>Id</th>
                     <th>ФИО</th>
                     <th>Email</th>
+                    <th>Telegram Id</th>
                     <th>Группа</th>
                     <th></th>
                     <th></th>
@@ -50,6 +51,7 @@ include 'include/class.inc.php';
                               <td>".$pos['user_id']."</td>                           
                               <td>".$pos['user_name']."</td>
                               <td>".$pos['user_email']."</td>
+                              <td>".$pos['telegramId']."</td>                              
                               <td>".$user->getGroups[$pos['group']]['title']."</td>                                                          
                               <td><i class='fa fa-2x fa-pencil' style='cursor: pointer;' data-id='".$pos['user_id']."'></i></td>
                               <td><i class='fa fa-2x fa-remove' style='cursor: pointer;' data-id='".$pos['user_id']."'></i></td>
@@ -99,6 +101,10 @@ include 'include/class.inc.php';
                     <div class="form-group">
                         <label>Email</label>
                         <input type="text" class="form-control" name="email" id="edit_email">
+                    </div>
+                    <div class="form-group">
+                        <label>Telegram Id</label>
+                        <input type="text" class="form-control" name="telegram" id="edit_telegram">
                     </div>
                     <div class="form-group">
                         <label>Группа</label>
@@ -197,6 +203,8 @@ include 'include/class.inc.php';
             $('#edit_name').val(obj['user_name']);
             $('#edit_email').val(obj['user_email']);
             $('#edit_group').val(obj['group']);
+            $('#edit_telegram').val(obj['telegramId']);
+
         });
     });
 
@@ -235,12 +243,14 @@ include 'include/class.inc.php';
     function save_close() {
         var name = $('#edit_name').val();
         var email = $('#edit_email').val();
+        var telegram = $('#edit_telegram').val();
         var group = $('#edit_group').val();
         $.post("./api.php", {
             action: "edit_user",
             id: id_pos,
             name: name,
             email: email,
+            telegram: telegram,
             group: group,
         }).done(function (data) {
             if (data == "false") {

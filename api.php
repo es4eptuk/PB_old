@@ -446,7 +446,7 @@ if (isset($_POST['action'])) {
         echo json_encode($user->add_user($_POST['login'], $_POST['password'], $_POST['name'], $_POST['email'], $_POST['group']), JSON_UNESCAPED_UNICODE);
     }
     if ($_POST['action'] == "edit_user") {
-        echo json_encode($user->edit_user($_POST['id'], $_POST['name'], $_POST['email'], $_POST['group']), JSON_UNESCAPED_UNICODE);
+        echo json_encode($user->edit_user($_POST['id'], $_POST['name'], $_POST['email'], $_POST['telegram'], $_POST['group']), JSON_UNESCAPED_UNICODE);
     }
     if ($_POST['action'] == "del_user") {
         echo json_encode($user->del_user($_POST['id']), JSON_UNESCAPED_UNICODE);

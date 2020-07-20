@@ -99,11 +99,11 @@ class User
     }
 
     //редактировать пользователя
-    function edit_user($id, $name, $email, $group)
+    function edit_user($id, $name, $email, $telegram, $group)
     {
         $date = date("Y-m-d H:i:s");
         $user_id = intval($_COOKIE['id']);
-        $query = "UPDATE `users` SET `user_name` = '$name', `user_email` = '$email', `group` = '$group', `update_user` = '$user_id', `update_date` = '$date' WHERE `user_id` = $id;";
+        $query = "UPDATE `users` SET `user_name` = '$name', `user_email` = '$email', `telegramId` = '$telegram', `group` = '$group', `update_user` = '$user_id', `update_date` = '$date' WHERE `user_id` = $id;";
         $result = $this->pdo->query($query);
         return ($result) ? true : false;
     }
