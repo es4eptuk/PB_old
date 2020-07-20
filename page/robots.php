@@ -852,11 +852,12 @@ class Robots
         $day_now = date('d');
         $month_now = date('m');
         $year_now = date('Y');
-        $date_old = date('Y-m-d', mktime(0,0,0, $month_now, $day_now - 1, $year_now));
+        $date_old = date('Y-m-d', mktime(0,0,0, $month_now, $day_now - 4, $year_now));
         $date_new = date('Y-m-d', mktime(0,0,0, $month_now, $day_now, $year_now));
         $query = "
             SELECT * FROM `robots` 
-            WHERE `date` = '$date_old'
+            WHERE `date` > '$date_old'
+                AND `date` < '$date_new'
                 AND `robots`.`progress`!=100 
                 AND `robots`.`remont`=0 
                 AND `robots`.`delete`=0 
