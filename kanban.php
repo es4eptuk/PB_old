@@ -25,7 +25,7 @@ $open_tickets = 0;
 $awaitingRepair_tickets = 0;
 $process_tickets = 0;
 $unAssigned_tickets = 0;
-$assign_Dima = 0;
+$assign_Kostya = 0;
 $assign_Danil = 0;
 $assign_Eldar = 0;
 $currentDate = date('d.m.Y');
@@ -119,12 +119,12 @@ foreach ($arr_tickets as &$ticket) {
         $unAssigned[$ticket_robot]++;
         $unAssigned_tickets++;
     }
-    //назначенные диме
-    if ($ticket_assign == 31 && ($ticket_status == 1 || $ticket_status == 2 || $ticket_status == 4 || $ticket_status == 5) && $ticket['finish_date'] != null) {
+    //назначенные Косте
+    if ($ticket_assign == 51 && ($ticket_status == 1 || $ticket_status == 2 || $ticket_status == 4 || $ticket_status == 5) && $ticket['finish_date'] != null) {
         $date_finish = new DateTime($ticket['finish_date']);
         $date_finish_formatted = $date_finish->format('d.m.Y');
         if ($date_finish_formatted === $currentDate) {
-            $assign_Dima++;
+            $assign_Kostya++;
         }
     }
     //назначенные дане
@@ -286,8 +286,8 @@ foreach ($arr_tickets as &$ticket) {
                                     </td>
                                 </tr>
                                 <tr>
-                                    <th>Назначенных Диме</th>
-                                    <td class="dop"><?php echo $assign_Dima; ?>
+                                    <th>Назначенных Косте</th>
+                                    <td class="dop"><?php echo $assign_Kostya; ?>
                                     </td>
                                 </tr>
                                 <tr>
