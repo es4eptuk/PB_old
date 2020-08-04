@@ -43,7 +43,7 @@ class User
         while ($line = $result->fetch()) {
             $users[] = $line;
         }
-        return (isset($users)) ? $users['0'] : [];
+        return (isset($users)) ? $users['0'] : ['user_name' => 'пользователь удален'];
     }
 
     //все пользователи
