@@ -286,8 +286,8 @@ foreach ($arr_tickets as &$ticket) {
                                     </td>
                                 </tr>
                                 <tr>
-                                    <th>Назначенных Косте</th>
-                                    <td class="dop"><?php echo $assign_Kostya; ?>
+                                    <th>Назначенных Диме</th>
+                                    <td class="dop"><?php echo $assign_Dima; ?>
                                     </td>
                                 </tr>
                                 <tr>
