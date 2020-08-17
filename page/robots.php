@@ -150,6 +150,7 @@ class Robots
                     $arr[$line['id_pos']]['title'] = $line['title'];
                     $arr[$line['id_pos']]['assembly'] = $line['assembly'];
                     $arr[$line['id_pos']]['price'] = $line['price'];
+                    $arr[$line['id_pos']]['total'] = $line['total'];
                     $arr[$line['id_pos']]['count'] = $line['count'];
                 }
                 //если позиция сборка
@@ -163,6 +164,7 @@ class Robots
                             $arr[$id_pos]['title'] = $arr_pos[$id_pos]['title'];
                             $arr[$id_pos]['assembly'] = $arr_pos[$id_pos]['assembly'];
                             $arr[$id_pos]['price'] = $arr_pos[$id_pos]['price'];
+                            $arr[$id_pos]['total'] = $arr_pos[$id_pos]['total'];
                             $arr[$id_pos]['count'] = $count * $line['count'];
                         }
                     }

@@ -41,8 +41,9 @@ $robot_number = $robot_info['number'];*/
                                     <th>Сборка</th>
                                     <th>Артикул</th>
                                     <th>Наименование</th>
-                                    <th>Цена</th>
+                                    <th>На складе</th>
                                     <th>Количество</th>
+                                    <th>Цена</th>
                                     <th>Стоимость</th>
                                     <th>Удаление</th>
                                 </tr>
@@ -59,9 +60,10 @@ $robot_number = $robot_info['number'];*/
                                         <td>'.$assembly.'</td>
                                         <td>'.$pos['vendor_code'].'</td>
                                         <td>'.$pos['title'].'</td> 
+                                        <td>'.$pos['total'].'</td>                                          
+                                        <td class="quant">'.$pos['count'].'</td>                                        
                                         <td>'.$pos['price'].'</td>                                        
-                                        <td class="quant">'.$pos['count'].'</td>
-                                        <td>'. ($pos['price']*$pos['count']).'</td>                                        
+                                        <td>'. ($pos['price']*$pos['count']).'</td>
                                         <td><i class="fa fa-2x fa-remove" style="cursor:pointer;"></i></td> 
                                     </tr>
                                 ';
