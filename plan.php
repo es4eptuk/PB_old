@@ -23,7 +23,7 @@ foreach ($arr_eq as $eq) {
 }
 
     //print_r($v_filtr);
-
+$categoryes = $position->getCategoryes;
 ?>
 
 <?php include 'template/head.php' ?>
@@ -61,10 +61,7 @@ foreach ($arr_eq as $eq) {
 
           <div class="box">
             <div class="box-header">
-              <h3 class="box-title"><?php echo $position->getCategoryes[$_GET['id']]['title'] ;
-             
-             // echo $plan->get_ordered_items(65);
-              ?></h3>
+              <h3 class="box-title"><?= $categoryes[$_GET['id']]['title'] ?></h3>
             </div>
             <!-- /.box-header -->
             
@@ -242,6 +239,7 @@ foreach ($arr_eq as $eq) {
                           $arr_orders[$v['pos_id']][$v['order_id']] = [
                               'count' => $in_order,
                               'date' => $pos_date,
+                              'category' => $categoryes[$v['order_category']]['title'],
                           ];
                       }
                   }
@@ -352,7 +350,7 @@ foreach ($arr_eq as $eq) {
                       //создаем ссылки на заказы
                       $orders = "";
                       foreach ($v['orders'] as $id => $info) {
-                          $orders .= "<a href='./edit_order.php?id=".$id."'>".$info['date']." - ".$info['count']." шт.</a><br>";
+                          $orders .= "<a href='./edit_order.php?id=".$id."'>".$info['date']." (".$info['category'].") - ".$info['count']." шт.</a><br>";
                       }
 
                       //переворачиваем массив
@@ -391,7 +389,7 @@ foreach ($arr_eq as $eq) {
                                 </span>                              
                             </td>
                             <td>
-                                <span style="color:'.$color.'" data-toggle="tooltip" data-html="true" data-delay=\'{"show":"100", "hide":"3000"}\' data-placement="bottom" title="'.$orders.'">
+                                <span style="color:'.$color.'" data-template=\'<div class="tooltip" role="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner large"></div></div>\' data-toggle="tooltip" data-html="true" data-delay=\'{"show":"100", "hide":"3000"}\' data-placement="bottom" title="'.$orders.'">
                                     '.$statuses[$vm['status']].$toorder.'                            
                                 </span>
                             </td>                            
@@ -431,6 +429,11 @@ foreach ($arr_eq as $eq) {
 
 <script>
     $(document).ready(function () {
+
+        /*$('.tt_large').tooltip({
+            template: '<div class="tooltip" role="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner large"></div></div>'
+        });*/
+
         $('body').on('click', '.add_order', function () {
             var category = <?php echo (isset($_GET['id'])) ? $_GET['id'] : 0; ?>;
             var version = <?php echo (isset($_GET['version'])) ? $_GET['version'] : 0; ?>;

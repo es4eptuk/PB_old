@@ -589,4 +589,113 @@ class Plan
     }
 
     /** КОНЕЦ ОПЕРАТИВНЫЙ ПЛАН **/
+
+    /** ДЛЯ СНЯТИЯ ОСТАТКОВ **/
+    function get_kits_by_version($versions)
+    {
+        $arr = implode(',', $versions);
+        $query = "SELECT * FROM `check_items` WHERE `version` IN (".$arr.") AND `kit` != 0";
+        $result = $this->pdo->query($query);
+        $kits = [];
+        while ($line = $result->fetch()) {
+            $kits[] = $line['kit'];
+        }
+        return $kits;
+    }
+
+    function get_pos_by_kits($kits)
+    {
+        $query = "SELECT * FROM `pos_items`";
+        $result = $this->pdo->query($query);
+        while ($line = $result->fetch()) {
+            $positions[$line['id']] = $line;
+        }
+
+        $arr_kit_items = $this->get_kits_items();
+        $arr_assemble_items = $this->get_assemblyes_items();
+
+        $res = [];
+        foreach ($kits as $kit) {
+            foreach ($arr_kit_items[$kit] as $id_pos => $info) {
+                if (!array_key_exists($id_pos, $res)) {
+                    $res[$id_pos] = $positions[$id_pos];
+                    if ($res[$id_pos]['assembly'] != 0) {
+                        foreach ($arr_assemble_items[$res[$id_pos]['assembly']] as $id_pos_a => $count_a) {
+                            if (!array_key_exists($id_pos_a, $res)) {
+                                $res[$id_pos_a] = $positions[$id_pos_a];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return $res;
+    }
+
+    function get_inventory($date_start, $date_end)
+    {
+        $query = "SELECT * FROM `pos_log` WHERE `title` LIKE '%инвентаризация%' 
+            AND `update_date` >= '".$date_start."' AND `update_date` <= '".$date_end."' ORDER BY `update_date` ASC";
+        $result = $this->pdo->query($query);
+        $res = [];
+        while ($line = $result->fetch()) {
+            $res[$line['id_pos']] = $line;
+        }
+        return $res;
+    }
+
+    function get_in_process($versions)
+    {
+        $arr = implode(',', $versions);
+        $query = "
+            SELECT * FROM `check` 
+            JOIN `robots` ON `check`.`robot` = `robots`.`id`
+            WHERE `check`.`check` = 1
+                AND `check`.`id_kit` != 0
+                AND `robots`.`progress` != 100
+                AND `robots`.`version` IN (".$arr.") 
+                AND `robots`.`remont` = 0 
+                AND `robots`.`delete` = 0 
+                AND `robots`.`writeoff` = 0 
+        ";
+        $result = $this->pdo->query($query);
+        $kits = [];
+        while ($line = $result->fetch()) {
+            if (array_key_exists($line['id_kit'], $kits)) {
+                $kits[$line['id_kit']] = $kits[$line['id_kit']] + 1;
+            } else {
+                $kits[$line['id_kit']] = 1;
+            }
+        }
+
+        //собираем позиции
+        $arr_kit_items = $this->get_kits_items();
+        $arr_assemble_items = $this->get_assemblyes_items();
+
+        $pos = [];
+        foreach ($kits as $id_kit => $count) {
+            foreach ($arr_kit_items[$id_kit] as $id_pos => $info) {
+                if (array_key_exists($id_pos, $pos)) {
+                    $pos[$id_pos] = $pos[$id_pos] + $info['count'] * $count;
+                } else {
+                    $pos[$id_pos] = $info['count'] * $count;
+                }
+                if ($info['assembly'] != 0) {
+                    foreach ($arr_assemble_items[$info['assembly']] as $id_pos_a => $count_a) {
+                        if (array_key_exists($id_pos_a, $pos)) {
+                            $pos[$id_pos_a] = $pos[$id_pos_a] + $count_a * $info['count'] * $count;
+                        } else {
+                            $pos[$id_pos_a] = $count_a * $info['count'] * $count;
+                        }
+                    }
+                }
+            }
+        }
+
+        return $pos;
+    }
+
+    /** ДЛЯ СНЯТИЯ ОСТАТКОВ **/
+
 }

@@ -1159,7 +1159,7 @@ class Position
     }
 
     //выдает массив набора/ов в том числе с дочерними начиная с текущего
-    function get_all_kits_by_id($id)
+    function get_all_kits_by_id($id, $delete = 0)
     {
         $kit_array_parents = $this->get_all_parents_kits_by_id($id);
         //$kit_array_children = $this->get_all_children_kits_by_id($id);
@@ -1185,9 +1185,14 @@ class Position
             $id_kits = [];
             foreach ($kit_array as $kit) {
                 if (!in_array($kit['id_kit'], $id_kits)) {
-                    if ($kit['delete'] == 0) {
+                    if ($delete = 0) {
+                        if ($kit['delete'] == 0) {
+                            $result[] = $kit;
+                        }
+                    } else {
                         $result[] = $kit;
                     }
+
                     $id_kits[] = $kit['id_kit'];
                 }
             }

@@ -620,7 +620,7 @@ class Orders
    
     //поиск всех неотгруженных позиций
     function get_orders_items_inprocess() {
-        $query = "SELECT `orders_items`.`pos_id`, `orders_items`.`order_id`, `orders_items`.`pos_count`, `orders_items`.`pos_count_finish`, `orders_items`.`pos_date` FROM `orders_items` JOIN `orders` ON `orders_items`.`order_id` = `orders`.`order_id` WHERE (`orders`.`order_status` = 1 || `orders`.`order_status` = 0)"; //пока без категории AND `orders_items`.`pos_category` = $id
+        $query = "SELECT `orders`.`order_category`, `orders_items`.`pos_id`, `orders_items`.`order_id`, `orders_items`.`pos_count`, `orders_items`.`pos_count_finish`, `orders_items`.`pos_date` FROM `orders_items` JOIN `orders` ON `orders_items`.`order_id` = `orders`.`order_id` WHERE (`orders`.`order_status` = 1 || `orders`.`order_status` = 0)"; //пока без категории AND `orders_items`.`pos_category` = $id
         $result = $this->pdo->query($query);
 
         while ($line = $result->fetch()) {
