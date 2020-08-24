@@ -473,7 +473,7 @@ include 'include/class.inc.php';
                             pos_in_kits = objKits;
                             if (objKits != null) {
                                 $.each(objKits, function (key, value) {
-                                    $('#in-kit').append($("<a></a>").attr("href", './edit_kit.php?id=' + value['id_kit']).text(' ' + value['id_kit']));
+                                    $('#in-kit').append($("<a></a>").attr("href", './edit_kit.php?id=' + value).text(' ' + value));
                                 });
                             } else {
                                 $('#in-kit').append($("<a></a>").attr("style", "font-weight: 700;").text('нет'));
@@ -487,7 +487,7 @@ include 'include/class.inc.php';
                             pos_in_assembly = objAssembly;
                             if (objAssembly != null) {
                                 $.each(objAssembly, function (key, value) {
-                                    $('#in-assembly').append($("<a></a>").attr("href", './edit_assembly.php?id=' + value['id_assembly']).text(' ' + value['id_assembly']));
+                                    $('#in-assembly').append($("<a></a>").attr("href", './edit_assembly.php?id=' + value).text(' ' + value));
                                 });
                             } else {
                                 $('#in-assembly').append($("<a></a>").attr("style", "font-weight: 700;").text('нет'));

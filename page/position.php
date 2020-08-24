@@ -869,9 +869,9 @@ class Position
         $query = "SELECT id_assembly FROM `pos_assembly_items` WHERE id_pos = $id";
         $result = $this->pdo->query($query);
         while ($line = $result->fetch()) {
-            $kit_array[] = $line;
+            $kit_array[] = $line['id_assembly'];
         }
-        return (isset($kit_array)) ? $kit_array : null;
+        return (isset($kit_array)) ? array_unique($kit_array) : null;
     }
 
 
@@ -1082,9 +1082,10 @@ class Position
         $query = "SELECT id_kit FROM `pos_kit_items` WHERE id_pos = $id";
         $result = $this->pdo->query($query);
         while ($line = $result->fetch()) {
-            $kit_array[] = $line;
+            $kit_array[] = $line['id_kit'];
         }
-        return (isset($kit_array)) ? $kit_array : null;
+
+        return (isset($kit_array)) ? array_unique($kit_array) : null;
     }
 
     //

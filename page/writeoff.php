@@ -150,7 +150,7 @@ class Writeoff
     {
         $where = "";
         if ($robot != 0) $where = "WHERE robot = $robot";
-        $this->query = "SELECT * FROM writeoff $where ORDER BY `update_date` DESC"; //LIMIT 1000
+        $this->query = "SELECT * FROM writeoff $where ORDER BY `update_date` DESC LIMIT 5000"; //
         //echo $query;
         $result = $this->pdo->query($this->query);
 
