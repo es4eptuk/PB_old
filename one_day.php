@@ -52,11 +52,18 @@ foreach ($arr_pos as $id_pos => $info) {
     }
 }
 //прибавляем отмеченные чеклисты, в процессе, не списанные в 1С
-foreach ($arr_in_process as $id_pos => $count) {
+foreach ($arr_pos as $id_pos => $info) {
+    if (array_key_exists($id_pos, $arr_in_process)) {
+        $arr_pos[$id_pos]['count'] = $arr_pos[$id_pos]['count'] + $arr_in_process[$id_pos];
+    }
+}
+
+/*foreach ($arr_in_process as $id_pos => $count) {
     if (array_key_exists($id_pos, $arr_pos)) {
         $arr_pos[$id_pos]['count'] = $arr_pos[$id_pos]['count'] + $count;
     }
-}
+}*/
+
 function file_force_download($file) {
     if (file_exists($file)) {
         if (ob_get_level()) {

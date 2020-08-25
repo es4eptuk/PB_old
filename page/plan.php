@@ -665,23 +665,22 @@ class Plan
         return $res;
     }
 
-    function get_in_process($versions = [])
+    function get_in_process()
     {
-        if ($versions == []) {
+        /*if ($versions == []) {
             return [];
         }
-        $arr = implode(',', $versions);
+        $arr = implode(',', $versions);*/
         $query = "
             SELECT * FROM `check` 
             JOIN `robots` ON `check`.`robot` = `robots`.`id`
             WHERE `check`.`check` = 1
                 AND `check`.`id_kit` != 0
                 AND `robots`.`progress` != 100
-                AND `robots`.`version` IN (".$arr.") 
                 AND `robots`.`remont` = 0 
                 AND `robots`.`delete` = 0 
                 AND `robots`.`writeoff` = 0 
-        ";
+        "; //                AND `robots`.`version` IN (".$arr.")
         $result = $this->pdo->query($query);
         $kits = [];
         while ($line = $result->fetch()) {
