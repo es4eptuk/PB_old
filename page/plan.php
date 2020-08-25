@@ -591,8 +591,11 @@ class Plan
     /** КОНЕЦ ОПЕРАТИВНЫЙ ПЛАН **/
 
     /** ДЛЯ СНЯТИЯ ОСТАТКОВ **/
-    function get_kits_by_version($versions)
+    function get_kits_by_version($versions = [])
     {
+        if ($versions == []) {
+            return [];
+        }
         $arr = implode(',', $versions);
         $query = "SELECT * FROM `check_items` WHERE `version` IN (".$arr.") AND `kit` != 0";
         $result = $this->pdo->query($query);
@@ -603,8 +606,11 @@ class Plan
         return $kits;
     }
 
-    function get_kits_by_version2($versions)
+    function get_kits_by_version2($versions = [])
     {
+        if ($versions == []) {
+            return [];
+        }
         $arr = implode(',', $versions);
         $query = "SELECT * FROM `pos_kit` WHERE `version` IN (".$arr.")";
         $result = $this->pdo->query($query);
@@ -634,7 +640,7 @@ class Plan
                         $res[$id_pos] = $positions[$id_pos];
                         if ($res[$id_pos]['assembly'] != 0) {
                             foreach ($arr_assemble_items[$res[$id_pos]['assembly']] as $id_pos_a => $count_a) {
-                                if (!array_key_exists($id_pos_a, $res)) {
+                                if (!array_key_exists($id_pos_a, $res) && array_key_exists($id_pos_a, $positions)) {
                                     $res[$id_pos_a] = $positions[$id_pos_a];
                                 }
                             }
@@ -659,8 +665,11 @@ class Plan
         return $res;
     }
 
-    function get_in_process($versions)
+    function get_in_process($versions = [])
     {
+        if ($versions == []) {
+            return [];
+        }
         $arr = implode(',', $versions);
         $query = "
             SELECT * FROM `check` 
