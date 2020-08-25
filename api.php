@@ -251,7 +251,7 @@ if (isset($_POST['action'])) {
     }
     //Добавление поступления
     if ($_POST['action'] == "add_admission") {
-        echo json_encode($admission->add_admission($_POST['order_id'], $_POST['json'], $_POST['category'], $_POST['provider']), JSON_UNESCAPED_UNICODE);
+        echo json_encode($admission->add_admission($_POST['order_id'], $_POST['json'], $_POST['category'], $_POST['provider'], $_POST['description']), JSON_UNESCAPED_UNICODE);
     }
     //Получение списка групп чек листа  
     if ($_POST['action'] == "get_checks_group") {

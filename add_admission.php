@@ -47,6 +47,10 @@ include 'include/class.inc.php';
 											</option>
 										</select>
 									</div>
+                                    <div class="form-group">
+                                        <label>Описание</label>
+                                        <textarea class="form-control" rows="3" placeholder="Укажите уточнение к поступлению ..." id="description"></textarea>
+                                    </div>
                                     <p class="p-label">Добавить позицию</p>
 								    <div class="form-group input-group" id="pos">
                                       
@@ -101,6 +105,7 @@ var pos_info = [];
 var category_data = [];
 var category = "0";
 var provider = "0";
+
 $( "#category" )
   .change(function () {
     var id = "";
@@ -136,14 +141,14 @@ $( "#order" )
   .change(function () {
       var id = $(this).val();
       provider = $("#order option:selected").data("target");
-      console.log(provider);
+      //console.log(provider);
   
        
         $("#listPos > tbody").html("<tr><th>ID</th><th>Артикул</th><th>Наименование</th><th>Заказанное количество</th><th>Отгружено</th><th>Поступление</th><th>Возврат</th></tr>");
     
     $.post( "./api.php", { action: "get_pos_in_order", id: id } )
             .done(function( data ) {  
-                 console.log(data);
+                 //console.log(data);
                  var obj = jQuery.parseJSON(data);
                  $.each( obj, function( key, value ) {
                        $('#listPos tbody').append('<tr> \
@@ -190,10 +195,11 @@ $("#listPos").on("keyup", ".quant_inp", function() {
  
  function save_close() {
      var id =  $("#order").val();
+     var description = $("#description").val();
      provider = $("#order option:selected").data("target");
      category =  $("#category").val();
-     console.log(category);
-     console.log(provider);
+     //console.log(category);
+     //console.log(provider);
      var TableArray = [];
         
         $("#listPos tr").each(function() {
@@ -212,6 +218,7 @@ $("#listPos").on("keyup", ".quant_inp", function() {
        	$.post("./api.php", {
  			action: "add_admission",
  			order_id: id,
+            description: description,
  			json: JsonString,
  			category : category,
  			provider : provider
@@ -226,10 +233,11 @@ $("#listPos").on("keyup", ".quant_inp", function() {
  }
 
  function save_new() {
-      var id =  $("#order").val();
+     var id =  $("#order").val();
+     var description = $("#description").val();
      category =  $("#category").val();
-     console.log(category);
-     console.log(provider);
+     //console.log(category);
+     //console.log(provider);
      var TableArray = [];
         
         $("#listPos tr").each(function() {
@@ -248,6 +256,7 @@ $("#listPos").on("keyup", ".quant_inp", function() {
        	$.post("./api.php", {
  			action: "add_admission",
  			order_id: id,
+            description: description,
  			json: JsonString,
  			category : category,
  			provider : provider

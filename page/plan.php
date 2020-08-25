@@ -603,6 +603,18 @@ class Plan
         return $kits;
     }
 
+    function get_kits_by_version2($versions)
+    {
+        $arr = implode(',', $versions);
+        $query = "SELECT * FROM `pos_kit` WHERE `version` IN (".$arr.")";
+        $result = $this->pdo->query($query);
+        $kits = [];
+        while ($line = $result->fetch()) {
+            $kits[] = $line['id_kit'];
+        }
+        return $kits;
+    }
+
     function get_pos_by_kits($kits)
     {
         $query = "SELECT * FROM `pos_items`";
@@ -616,13 +628,15 @@ class Plan
 
         $res = [];
         foreach ($kits as $kit) {
-            foreach ($arr_kit_items[$kit] as $id_pos => $info) {
-                if (!array_key_exists($id_pos, $res)) {
-                    $res[$id_pos] = $positions[$id_pos];
-                    if ($res[$id_pos]['assembly'] != 0) {
-                        foreach ($arr_assemble_items[$res[$id_pos]['assembly']] as $id_pos_a => $count_a) {
-                            if (!array_key_exists($id_pos_a, $res)) {
-                                $res[$id_pos_a] = $positions[$id_pos_a];
+            if (array_key_exists($kit, $arr_kit_items)) {
+                foreach ($arr_kit_items[$kit] as $id_pos => $info) {
+                    if (!array_key_exists($id_pos, $res)) {
+                        $res[$id_pos] = $positions[$id_pos];
+                        if ($res[$id_pos]['assembly'] != 0) {
+                            foreach ($arr_assemble_items[$res[$id_pos]['assembly']] as $id_pos_a => $count_a) {
+                                if (!array_key_exists($id_pos_a, $res)) {
+                                    $res[$id_pos_a] = $positions[$id_pos_a];
+                                }
                             }
                         }
                     }
@@ -694,6 +708,79 @@ class Plan
         }
 
         return $pos;
+    }
+
+    //отчет в эксель
+    function get_report_inventory($arr_pos) {
+        //создаем файлы
+        //для папок
+        $f_date = date('Y-m-d_H:i:s');
+        //$folder = $owner_id;
+        if (!file_exists(PATCH_DIR."/report/")) {
+            mkdir(PATCH_DIR."/report/", 0777);
+        }
+        $excel_name = PATCH_DIR."/report/".$f_date.".xlsx";
+        require_once ('excel/Classes/PHPExcel.php');
+        require_once ('excel/Classes/PHPExcel/IOFactory.php');
+        $objPHPExcel = new PHPExcel();
+        // Add some data
+        $objPHPExcel->setActiveSheetIndex(0);
+        //задаем заголовки
+        $objPHPExcel->getActiveSheet()->setCellValue("A1", 'Сборка');
+        $objPHPExcel->getActiveSheet()->setCellValue("B1", 'posID');
+        $objPHPExcel->getActiveSheet()->setCellValue("C1", 'Категория');
+        $objPHPExcel->getActiveSheet()->setCellValue("D1", 'Артикул');
+        $objPHPExcel->getActiveSheet()->setCellValue("E1", 'Наименование');
+        $objPHPExcel->getActiveSheet()->setCellValue("F1", 'Инвентаризация');
+        $objPHPExcel->getActiveSheet()->setCellValue("G1", 'Кол-во');
+        $objPHPExcel->getActiveSheet()->setCellValue("H1", 'На складе СЕЙЧАС');
+
+        $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('E')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('F')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('G')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('H')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getStyle("A1:H1")->getFont()->setBold(true);
+
+        $categoryes = $this->position->getCategoryes;
+        $row = 1;
+        foreach ($arr_pos as $pos) {
+            $row++;
+            $assembly = ($pos['assembly'] == 0) ? 'Нет' :  'Да';
+            $inventory = ($pos['inventory'] == 0) ? 'Нет' :  'Да';
+            $objPHPExcel->getActiveSheet()->setCellValue("A" . $row, $assembly);
+            $objPHPExcel->getActiveSheet()->setCellValue("B" . $row, $pos['id']);
+            $objPHPExcel->getActiveSheet()->setCellValue("C" . $row, $categoryes[$pos['category']]['title']);
+            $objPHPExcel->getActiveSheet()->setCellValue("D" . $row, $pos['vendor_code']);
+            $objPHPExcel->getActiveSheet()->setCellValue("E" . $row, $pos['title']);
+            $objPHPExcel->getActiveSheet()->setCellValue("F" . $row, $inventory);
+            $objPHPExcel->getActiveSheet()->setCellValue("G" . $row, $pos['count']);
+            $objPHPExcel->getActiveSheet()->setCellValue("H" . $row, $pos['total']);
+        }
+
+        $styleArray = [
+            'borders' => [
+                'outline' => [
+                    'style' => PHPExcel_Style_Border::BORDER_THIN,
+                    'color' => ['argb' => 'FF000000'],
+                ],
+                'inside' => [
+                    'style' => PHPExcel_Style_Border::BORDER_THIN,
+                    'color' => ['argb' => 'FF000000'],
+                ],
+            ],
+        ];
+        $objPHPExcel->getActiveSheet()->getStyle("A1:H".$row)->applyFromArray($styleArray);
+
+
+        // Save Excel 2007 file
+        $objWriter = new PHPExcel_Writer_Excel2007($objPHPExcel);
+        $objWriter->save($excel_name);
+
+        return $excel_name;
     }
 
     /** ДЛЯ СНЯТИЯ ОСТАТКОВ **/

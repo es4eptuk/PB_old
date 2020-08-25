@@ -41,6 +41,7 @@ include 'include/class.inc.php';
                   <th>Дата поступления</th>
                   <th>Группа</th>
                   <th>Контрагент</th>
+                  <th>Описание</th>
                   <th>Ответственный</th>
                 </tr>
                 </thead>
@@ -61,6 +62,7 @@ include 'include/class.inc.php';
                         <td>".$admis_date->format('d.m.Y')."</td>
                         <td>".$position->getCategoryes[$pos['category']]['title']."</td>
                         <td>".$provider['title'].", ".$provider['type']."</td>
+                        <td>".$pos['description']."</td>
                         <td>".$user_info['user_name']."</td>
                     </tr>
                        

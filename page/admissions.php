@@ -31,7 +31,7 @@ class Admissions
         $this->position = $position;
     }
 
-    function add_admission($order_id, $json, $category, $provider)
+    function add_admission($order_id, $json, $category, $provider, $description)
     {
         //echo $order_id;
         //массив данных переданный по пост
@@ -221,7 +221,8 @@ class Admissions
             `category`, 
             `provider`, 
             `price`, 
-            `responsible`, 
+            `responsible`,
+            `description`,  
             `update_date`, 
             `update_user`) VALUES (
                 NULL, 
@@ -230,7 +231,8 @@ class Admissions
                 '$category',
                 '$provider', 
                 '0',
-                '$user_id', 
+                '$user_id',
+                '$description',
                 '$date', 
                 '$user_id');";
         $result = $this->pdo->query($query);

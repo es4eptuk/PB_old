@@ -60,7 +60,7 @@ foreach ($arr_tickets as &$ticket) {
     }
     //завершенных
     if ($ticket_status == 3 || $ticket_status == 6) {
-    //$finish[$ticket_robot] = isset($finish[$ticket_robot] ) + 1;
+        //$finish[$ticket_robot] = isset($finish[$ticket_robot] ) + 1;
         //если по ключу массив пустой, задаем ему 0
         if (isset($finish[$ticket_robot]) == false) {
             $finish[$ticket_robot] = 0;
@@ -123,7 +123,7 @@ foreach ($arr_tickets as &$ticket) {
     if ($ticket_assign == 51 && ($ticket_status == 1 || $ticket_status == 2 || $ticket_status == 4 || $ticket_status == 5) && $ticket['finish_date'] != null) {
         $date_finish = new DateTime($ticket['finish_date']);
         $date_finish_formatted = $date_finish->format('d.m.Y');
-        if ($date_finish_formatted == $currentDate) {
+        if ($date_finish_formatted === $currentDate) {
             $assign_Kostya++;
         }
     }
@@ -131,7 +131,7 @@ foreach ($arr_tickets as &$ticket) {
     if ($ticket_assign == 32 && ($ticket_status == 1 || $ticket_status == 2 || $ticket_status == 4 || $ticket_status == 5) && $ticket['finish_date'] != null) {
         $date_finish = new DateTime($ticket['finish_date']);
         $date_finish_formatted = $date_finish->format('d.m.Y');
-        if ($date_finish_formatted == $currentDate) {
+        if ($date_finish_formatted === $currentDate) {
             $assign_Danil++;
         }
     }
@@ -139,7 +139,7 @@ foreach ($arr_tickets as &$ticket) {
     if ($ticket_assign == 44 && ($ticket_status == 1 || $ticket_status == 2 || $ticket_status == 4 || $ticket_status == 5) && $ticket['finish_date'] != null) {
         $date_finish = new DateTime($ticket['finish_date']);
         $date_finish_formatted = $date_finish->format('d.m.Y');
-        if ($date_finish_formatted == $currentDate) {
+        if ($date_finish_formatted === $currentDate) {
             $assign_Eldar++;
         }
     }
@@ -183,9 +183,9 @@ foreach ($arr_tickets as &$ticket) {
                                     <th style="width:50%">Созданных тикетов:</th>
                                     <td><?php
                                         if (!isset($ticketsToday))
-                                            {echo 0;}
+                                        {echo 0;}
                                         else
-                                            {echo $ticketsToday;}
+                                        {echo $ticketsToday;}
                                         ?>
                                     </td>
                                 </tr>
@@ -224,7 +224,7 @@ foreach ($arr_tickets as &$ticket) {
                                         </div>
                                     </td>
                                 </tr>
-<!--                                --><?php /*print_r($robot_info);*/ ?>
+                                <!--                                --><?php /*print_r($robot_info);*/ ?>
 
                                 <tr>
                                     <th>В процессе решения:</th>
@@ -286,8 +286,8 @@ foreach ($arr_tickets as &$ticket) {
                                     </td>
                                 </tr>
                                 <tr>
-                                    <th>Назначенных Диме</th>
-                                    <td class="dop"><?php echo $assign_Dima; ?>
+                                    <th>Назначенных Косте</th>
+                                    <td class="dop"><?php echo $assign_Kostya; ?>
                                     </td>
                                 </tr>
                                 <tr>
@@ -405,11 +405,11 @@ foreach ($arr_tickets as &$ticket) {
                                     <th style="width:50%">Исправленных роботов:</th>
                                     <td class="dop">
                                         <?php
-                                            if (!isset($arrTicketRobotNoProblem)) {
-                                                $arrTicketRobotNoProblem = [];
-                                            } else {
-                                                echo count($arrTicketRobotNoProblem);
-                                            }
+                                        if (!isset($arrTicketRobotNoProblem)) {
+                                            $arrTicketRobotNoProblem = [];
+                                        } else {
+                                            echo count($arrTicketRobotNoProblem);
+                                        }
                                         ?>
                                         <i class="fa fa-fw fa-plus-circle pull-right text-green" style="cursor: pointer;"></i>
                                         <div class="robots" style="display: none">
@@ -440,16 +440,16 @@ foreach ($arr_tickets as &$ticket) {
                                 <th style="width:50%">Исправленных роботов:</th>
                                 <td class="dop">
                                     <?php
-                                        if (!isset($arrTicketRobotNoProblemToday)) {
-                                            $arrTicketRobotNoProblemToday = [];
-                                        } else {
-                                            echo count($arrTicketRobotNoProblemToday);
-                                        }
-                                        if (!isset($arr_comments)) {
-                                            $arr_count_comments = 0;
-                                        } else {
-                                            $arr_count_comments = count($arr_comments);
-                                        }
+                                    if (!isset($arrTicketRobotNoProblemToday)) {
+                                        $arrTicketRobotNoProblemToday = [];
+                                    } else {
+                                        echo count($arrTicketRobotNoProblemToday);
+                                    }
+                                    if (!isset($arr_comments)) {
+                                        $arr_count_comments = 0;
+                                    } else {
+                                        $arr_count_comments = count($arr_comments);
+                                    }
                                     ?>
                                     <i class="fa fa-fw fa-plus-circle pull-right text-green" style="cursor: pointer;"></i>
                                     <div class="robots" style="display: none">
@@ -516,7 +516,7 @@ foreach ($arr_tickets as &$ticket) {
                                             return strcmp($a["number"], $b["number"]);
                                         });
                                         foreach ($filtr_robot as &$robot) {
-                                                echo '<option value="' . $robot['id'] . '">' . $robot['number'] . ' (' . $robot['name'] . ')'.'</option>';
+                                            echo '<option value="' . $robot['id'] . '">' . $robot['number'] . ' (' . $robot['name'] . ')'.'</option>';
                                         }
                                     }
                                     ?>
@@ -683,9 +683,9 @@ foreach ($arr_tickets as &$ticket) {
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLongTitle">Опишите причину переноса карточки</h5>
-<!--                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">-->
-<!--                        <span aria-hidden="true">&times;</span>-->
-<!--                    </button>-->
+                    <!--                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">-->
+                    <!--                        <span aria-hidden="true">&times;</span>-->
+                    <!--                    </button>-->
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
@@ -694,7 +694,7 @@ foreach ($arr_tickets as &$ticket) {
                     </div>
                 </div>
                 <div class="modal-footer">
-<!--                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>-->
+                    <!--                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>-->
                     <button type="button" class="btn btn-primary" id="btn_add_comment">Добавить</button>
                 </div>
             </div>
@@ -974,7 +974,7 @@ foreach ($arr_tickets as &$ticket) {
     <?php /*if ($userdata['user_id']==29) {
     echo "
     //setTimeout(function() {window.location.reload();}, 20000);
-    
+
     ";
     }*/ ?>
     $(document).ready(function () {
