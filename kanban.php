@@ -11,7 +11,7 @@ function print_r2($val)
 
 $arr = $robots->get_robots();
 //$paramRobot = (isset($_GET['robot']) ? $_GET['robot'] : 0);
-
+$arr_assign = $tickets->get_assign_tickets();
 $arr_tickets = $tickets->get_tickets();
 $filtr_robot = array();
 $finish = array();
@@ -285,7 +285,7 @@ foreach ($arr_tickets as &$ticket) {
                                         </div>
                                     </td>
                                 </tr>
-                                <tr>
+                                <!--<tr>
                                     <th>Назначенных Косте</th>
                                     <td class="dop"><?php echo $assign_Kostya; ?>
                                     </td>
@@ -300,7 +300,25 @@ foreach ($arr_tickets as &$ticket) {
                                     <td class="dop"><?php echo $assign_Eldar; ?>
                                     </td>
                                 </tr>
-                                <tr>
+                                <tr>-->
+                                </tbody>
+                            </table>
+                        </div>
+                        <p class="lead">Назначенных</p>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <tbody>
+                                <?php
+                                foreach ($arr_assign as $id_user => $info) {
+                                    $user_name = $user->get_info_user($id_user)['user_name'];
+                                    echo '
+                                    <tr>
+                                        <th>'.$user_name.'</th>
+                                        <td class="dop">'.$info['count'].'</td>
+                                    </tr>
+                                    ';
+                                }
+                                ?>
                                 </tbody>
                             </table>
                         </div>
@@ -592,7 +610,7 @@ foreach ($arr_tickets as &$ticket) {
                                     if ($ticket['priority'] == 2) {$tiket_color = '#f9f9f9';}
                                     if ($ticket['priority'] == 3) {$tiket_color = '#ffd5d5';}
                                     $out .= '
-                                        <div class="box box-solid" style="background-color: '.$tiket_color.'" id="' . $ticket['id'] . '" data-robot="' . $ticket['robot'] . '">
+                                        <div class="box box-solid" style="background-color: '.$tiket_color.'" id="' . $ticket['id'] . '" data-robot="' . $ticket['robot'] . '" data-status="' . $ticket['status'] . '">
                                             <div class="box-body">
                                               <b>' . $username_assign . '</b> <span class="pull-right text-muted">' . $robot_version . '.' . $robot_number . ' </span></br>
                                               <b><a href="./ticket.php?id=' . $ticket['id'] . '"><span class="ticket_class">' . $ticket_class . '</span>-' . $ticket['id'] . ' ' . $ticket_category . ':<span class="subcategory"> ' . $ticket_subcategory . '</span></a></b> 
@@ -900,18 +918,19 @@ foreach ($arr_tickets as &$ticket) {
             var tickets = jQuery.parseJSON(data);
             //window.location.reload(true);
             $.each(tickets, function (index, value) {
-                console.log(statusId);
-                $("#" + statusId).append(' <div class="box box-solid" style="background-color: #f9f9f9;" id="' + value['id'] + '" data-robot="' + value['robot'] + '"> \
+                //console.log(statusId);
+                $("#" + statusId).append(' <div class="box box-solid" style="background-color: #f9f9f9;" id="' + value['id'] + '" data-robot="' + value['robot'] + '" data-status="' + value['status'] + '"> \
                                     <div class="box-body"> \
                                     <b>' + value['assign'] + '</b> <span class="pull-right text-muted">' + value['robot'] + '</span></br> \
                                       <b><a href="./ticket.php?id=' + value['id'] + '">' + value['class'] + '-' + value['id'] + ' ' + value['category'] + ': ' + value['subcategory'] + '</a></b> \
                                       <p>' + value['description'] + '</p> \
+                                      ' + value['str_finish_date'] + '\
                                       <span class="pull-right text-muted"><i class="fa fa-paperclip" style="margin-right:2px;"></i>0&nbsp;&nbsp;<i class="fa fa-commenting-o" style="margin-right:2px;"></i>' + value['comments'] + '&nbsp;&nbsp;<i class="fa fa-comments-o" style="margin-right:2px;"></i>' + value['comments_customers'] + '</span> \
                                       <span class="pull-left text-muted"><i class="fa fa-calendar-o"></i> ' + value['update_date'] + '</span> \
                                     </div>\
                             </div>');
                 $("#overlay" + statusId).find(".overlay").remove();
-                console.log(value);
+                //console.log(value);
             });
         });
     });
@@ -991,10 +1010,15 @@ foreach ($arr_tickets as &$ticket) {
                 var id = ui['item'][0]['id'];
                 var status = ui['item'][0]['parentElement']['id'];
                 var robot = ui['item'][0]['dataset']['robot'];
-                // console.log(ui['item'][0]);
-                console.log(id);
-                console.log(robot);
-                console.log(out);
+                var old_status = ui['item'][0]['dataset']['status'];
+                //console.log(ui['item'][0]);
+                //console.log(id);
+                //console.log(robot);
+                //console.log(out);
+                console.log(old_status);
+                if (old_status == 3) {
+                    return false;
+                }
                 // var robot = $("#"+id).find(".robot").text();
                 var subcategory = $("#" + id).find(".subcategory").text();
                 var ticket_class = $("#" + id).find(".ticket_class").text();

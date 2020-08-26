@@ -272,7 +272,7 @@ $robot_id= $robot_info['id'];
                   <label>Статус</label>
                   <select class="form-control" id="ticket_status">
                     <?php
-                        $arr_status = $tickets->get_status();
+                        $arr_status = $tickets->get_status_list_change($ticket_status);
                         foreach ($arr_status as &$status) {
                             if ($status['id']==$ticket_status) {
                                 $selected = "selected";
@@ -309,8 +309,9 @@ $robot_id= $robot_info['id'];
                     <li><a>Источник <span class="pull-right"><?= $tickets::SOURCE_TICKET[$ticket_info['source']] ?></span></a></li>
                     <li><a>Дата создания <span class="pull-right"><?php echo $ticket_create->format('d.m.Y H:i'); ?></span></a></li>
                     <?php
-                    if ($ticket_status==3 || $ticket_status ==6) {
-                        echo ' <li><a>Дата решения <span class="pull-right">'.$ticket_inwork->format('d.m.Y H:i').'</span></a></li>';
+                    if ($ticket_status==3 || $ticket_status ==6 || $ticket_status ==8) {
+                        $time = ($ticket_info['inwork'] != null) ? $ticket_inwork->format('d.m.Y H:i') : '';
+                        echo ' <li><a>Дата решения <span class="pull-right">'.$time.'</span></a></li>';
                     }
                     ?>
                     <li><a>Взято в работу <span class="pull-right"><?= $ticket_assign_date ?></span></a></li>
@@ -615,7 +616,7 @@ $robot_id= $robot_info['id'];
         var robot =  <?php echo $robot_id; ?>;
         var ticket_class = "<?php echo $ticket_class; ?>";
         var descriprion = $('#descriprion').val();
-        var status = $('#ticket_status').val();
+        //var status = $('#ticket_status').val();
         console.log(ticket_class);
         //comment = category_str + ': ' + subcategory_str;
         if (ticket_class == "P") {
@@ -727,7 +728,7 @@ $robot_id= $robot_info['id'];
         if (status == 4) {
             $('#add_date').modal('show');
         }
-        if (status == 0 || status == 1 || status == 2 || status == 5 || status == 6 || status == 7) {
+        if (status == 0 || status == 1 || status == 2 || status == 5 || status == 6 || status == 7 || status == 8) {
             $.post("./api.php", {
                 action: "ticket_change_status",
                 id: id,

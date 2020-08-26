@@ -170,6 +170,103 @@ class Statistics
     }
 
     /** ПОДСЧЕТ РАБОЧЕГО ВРЕМЕНИ **/
+    //подсчет рабочего времени NEW
+    function get_new_time_spent($date_start, $date_end, $schedule = [], $holiday = 1)
+    {
+        //проверка переменных
+        if ($schedule == [] || $date_start > $date_end) {
+            return 0;
+        }
+        //определим старт год/месяц/день/час/мин/сек/день нед
+        $y_start = date('Y', $date_start);
+        $m_start = date('m', $date_start);
+        $d_start = date('d', $date_start);
+        $w_start = date('N', $date_start);
+        //определим конец год/месяц/день/час/мин/сек/день нед
+        $y_end = date('Y', $date_end);
+        $m_end = date('m', $date_end);
+        $d_end = date('d', $date_end);
+        $w_end = date('N', $date_end);
+        //РАСПИСАНИЕ начало: время в массив 0->часы 1->мин
+        if (array_key_exists($w_start, $schedule)) {
+            $start_time_w_start = explode(':', $schedule[$w_start]['time_start']);
+            $start_time_w_end = explode(':', $schedule[$w_start]['time_end']);
+        } else {
+            $start_time_w_start = [0 => 0, 1=> 0];
+            $start_time_w_end = [0 => 0, 1=> 0];
+        }
+        //РАСПИСАНИЕ конец: время в массив 0->часы 1->мин
+        if (array_key_exists($w_end, $schedule)) {
+            $end_time_w_start = explode(':', $schedule[$w_end]['time_start']);
+            $end_time_w_end = explode(':', $schedule[$w_end]['time_end']);
+        } else {
+            $end_time_w_start = [0 => 0, 1=> 0];
+            $end_time_w_end = [0 => 0, 1=> 0];
+        }
+        //собираем массив праздников
+        if ($holiday == 1) {
+            $holidays = array_merge($this->getHolidays($y_start), $this->getHolidays($y_start+1));
+        } else {
+            $holidays = [];
+        }
+        //в метки времени начало и конец периода ТОЛЬКО РАБОЧЕЕ ВРЕМЯ
+        $mktime_start_work_s = mktime($start_time_w_start[0], $start_time_w_start[1], 0, $m_start, $d_start, $y_start);
+        $mktime_start_work_e = mktime($start_time_w_end[0], $start_time_w_end[1], 0, $m_start, $d_start, $y_start);
+        $mktime_end_work_s = mktime($end_time_w_start[0], $end_time_w_start[1], 0, $m_end, $d_end, $y_end);
+        $mktime_end_work_e = mktime($end_time_w_end[0], $end_time_w_end[1], 0, $m_end, $d_end, $y_end);
+        //подмена меток начала и конца периода, если они выходят за рамки рабочего времени
+        $date_start = ($mktime_start_work_s > $date_start) ? $mktime_start_work_s : $date_start;
+        $date_end = ($mktime_end_work_e < $date_end) ? $mktime_end_work_e : $date_end;
+        //проверка одного дня
+        if ($y_start == $y_end && $m_start == $m_end && $d_start == $d_end) {
+            //проверка дня на выходной
+            if (!array_key_exists($w_start, $schedule)) {
+                return 0;
+            }
+            $time = ($date_end - $date_start);
+            return $time;
+        }
+        //определить время от текущей метки до конца времени рабочего дня в сек
+        $start_time = $mktime_start_work_e - $date_start;
+        $start_time = ($start_time > 0) ? $start_time : 0;
+        //определить время от начала времени рабочего дня до текущей метки в сек
+        $end_time = $date_end - $mktime_end_work_s;
+        $end_time = ($end_time > 0) ? $end_time : 0;
+
+        //собираем массив полного рабочего времени по дням недели
+        $sh = [];
+        for ($i = 1; $i <= 7; $i++) {
+            if (array_key_exists($i, $schedule)) {
+                $start = explode(':', $schedule[$i]['time_start']);
+                $end = explode(':', $schedule[$i]['time_end']);
+                $sh[$i] = ($end[0] * 3600 + $end[1] * 60) - ($start[0] * 3600 + $start[1] * 60);
+            } else {
+                $sh[$i] = 0;
+            }
+        }
+        //определяем количество дней исключая дни начало и конец даты
+        $work_time = 0;
+        $d=$d_start+1;
+        $end = date('Y-m-d', $date_end);
+        $i_date = date('Y-m-d', mktime(0, 0, 0, $m_start, $d, $y_start));
+        while ($i_date < $end) {
+            $i_d = date('d', strtotime($i_date));
+            $i_m = date('m', strtotime($i_date));
+            $i_y = date('Y', strtotime($i_date));
+            $i_w = date('N', strtotime($i_date));
+            //проверка на выходные
+            if (!in_array($i_y.'-'.$i_m.'-'.$i_d, $holidays)) {
+                $work_time = $work_time + $sh[$i_w];
+            }
+            //добавляем счетчики и меняем дату
+            $d++;
+            $i_date = date('Y-m-d', mktime(0, 0, 0, $m_start, $d, $y_start));
+        }
+        //считаем конечный результат (сек)
+        $time = $start_time + $work_time + $end_time;
+        return $time;
+    }
+
     //определить затраченное время с учетом графика и выходных
     public function get_time_spent($date_start, $date_end, $schedule=self::TIME_PRODUCTION)
     {
@@ -264,4 +361,5 @@ class Statistics
         curl_close($curlInit);
         return ($result == 200) ? true : false;
     }
+
 }

@@ -7,6 +7,16 @@ class Tickets
         'days_week' => [1,2,3,4,5,6,7],
     ];
 
+    const TIME_TEXPOD_NEW = [
+        1 => ['time_start' => '09:00', 'time_end' => '21:00'],
+        2 => ['time_start' => '09:00', 'time_end' => '21:00'],
+        3 => ['time_start' => '09:00', 'time_end' => '21:00'],
+        4 => ['time_start' => '09:00', 'time_end' => '21:00'],
+        5 => ['time_start' => '09:00', 'time_end' => '21:00'],
+        6 => ['time_start' => '12:00', 'time_end' => '21:00'],
+        7 => ['time_start' => '12:00', 'time_end' => '21:00'],
+    ];
+
     const CLASS_TICKET = [
         "I" => "Консультация",
         "P" => "Проблема",
@@ -87,7 +97,7 @@ class Tickets
     {
         $where = "";
         if ($id == 0) {
-            $where = 'WHERE `id` !=6';
+            $where = 'WHERE `id` NOT IN (6,8)';
         }
         $this->query = "SELECT * FROM tickets_status $where ORDER BY `sort` ASC ";
         $result = $this->pdo->query($this->query);
@@ -98,7 +108,35 @@ class Tickets
         if (isset($ticket_status_array))
             return $ticket_status_array;
     }
-    
+
+    //Получение списка статусов на которые можно сменить
+    /**
+     * @param int $id
+     * @return array
+     */
+    public function get_status_list_change($my_statys = null)
+    {
+        $where = "";
+        if ($my_statys == 3) {
+            $where = 'WHERE `id` IN (3,6)';
+        }
+        if ($my_statys == 8) {
+            $where = 'WHERE `id` NOT IN (8,6)';
+        }
+        if ($my_statys == 6) {
+            $where = 'WHERE `id` = 6';
+        }
+
+        $query = "SELECT * FROM tickets_status $where ORDER BY `sort` ASC ";
+        $result = $this->pdo->query($query);
+        while ($line = $result->fetch()) {
+            $ticket_status_array[$line['id']] = $line;
+        }
+
+        if (isset($ticket_status_array))
+            return $ticket_status_array;
+    }
+
     //Получение списка категорий тикетов, в качестве параметров можно указать тип $type (P - проблема (по умолчанию), I - консультация, FR - пожелание)
 
     /**
@@ -409,6 +447,7 @@ class Tickets
         while ($line_kanban = $result->fetch()) {
             $i++;
             $ticket_array[$i]['id']          = $line_kanban['id'];
+            $ticket_array[$i]['status']      = $line_kanban['status'];
             // $ticket_array[]['robot_version'] = $line['id'];
             $info_robot                      = $this->robot->get_info_robot($line_kanban['robot']);
             $ticket_array[$i]['robot']       = $info_robot['version'] . "." . $info_robot['number'];
@@ -431,6 +470,12 @@ class Tickets
             $ticket_array[$i]['comments']    = count($ticket_commets);
             $ticket_commets_customers        = $this->get_comments_customers($line_kanban['id']);
             $ticket_array[$i]['comments_customers'] = count($ticket_commets_customers);
+            if ($line_kanban['finish_date'] != '0000-00-00' && $line_kanban['finish_date'] != null) {
+                $date_finish = new DateTime($line_kanban['finish_date']);
+                $ticket_array[$i]['str_finish_date'] = 'Ремонт назначен на <b>' . $date_finish->format('d.m.Y') . '</b><br><br>';
+            } else {
+                $ticket_array[$i]['str_finish_date'] = "";
+            }
         }
 
         if (isset($ticket_array))
@@ -442,39 +487,55 @@ class Tickets
     //$status - id статуса
     public function ticket_change_status($id, $status)
     {
+        //проверка
+        $query = "SELECT * FROM `tickets` WHERE `id` = $id";
+        $result = $this->pdo->query($query);
+        while ($line = $result->fetch()) {
+            $tickets[] = $line;
+        }
+        $old_status  = $tickets[0]['status'];
+        //из решено/не решено только в архив
+        if (($old_status == 3 || $old_status == 8) && $status != 6) {
+            return false;
+        }
+        //из архива никуда
+        if ($old_status == 6) {
+            return false;
+        }
+
         //добавить метку смены статуса
         $this->set_time_change_status($id, $status);
 
         $date    = date("Y-m-d H:i:s");
         $user_id = intval($_COOKIE['id']);
         if ($status == 3) {
-            $this->query = "UPDATE `tickets` SET `status` = '$status', `inwork` = '$date', `update_user` = $user_id, `update_date` = '$date' WHERE `id` = $id";
+            $query = "UPDATE `tickets` SET `status` = '$status', `inwork` = '$date', `update_user` = $user_id, `update_date` = '$date' WHERE `id` = $id";
         } else {
-            $this->query = "UPDATE `tickets` SET `status` = '$status', `update_user` = $user_id, `update_date` = '$date' WHERE `id` = $id";
+            $query = "UPDATE `tickets` SET `status` = '$status', `update_user` = $user_id, `update_date` = '$date' WHERE `id` = $id";
         }
-        //echo $query;
-        // $query = "UPDATE `tickets` SET `status` = '$status', `update_user` = $user_id, `update_date` = '$date' WHERE `id` = $id";
-        $result = $this->pdo->query($this->query);
-        $this->query = "SELECT * FROM `tickets_status` WHERE `id` = $id";
-        $result = $this->pdo->query($this->query);
+        $result = $this->pdo->query($query);
+
+        /*$query = "SELECT * FROM `tickets_status` WHERE `id` = $status";
+        $result = $this->pdo->query($query);
         while ($line = $result->fetch()) {
             $status_array[] = $line;
         }
         if (isset($status_array)) {
             $status_str = $status_array[0]['title'];
             $color      = $status_array[0]['color'];
-        }
-        $this->query = "SELECT * FROM `tickets` WHERE `id` = $id";
-        $result = $this->pdo->query($this->query);
+        }*/
+        /*$query = "SELECT * FROM `tickets` WHERE `id` = $id";
+        $result = $this->pdo->query($query);
         while ($line = $result->fetch()) {
             $tickets_array[] = $line;
-        }
-        $robot   = $tickets_array[0]['robot'];
-        $idd     = $tickets_array[0]['id'];
-        $comment = $tickets_array[0]['description'];
-        $status  = $tickets_array[0]['status'];
-        $this->query = "INSERT INTO `robot_log` (`id`, `robot_id`,  `source`, `level`, `comment`, `ticket_id`,`update_user`, `update_date`) VALUES (NULL, $robot,  'TICKET', $status, '$comment', $idd,  $user_id, '$date')";
-        $result = $this->pdo->query($this->query);
+        }*/
+
+        $robot   = $tickets[0]['robot'];
+        $idd     = $tickets[0]['id'];
+        $comment = $tickets[0]['description'];
+        //$new_status  = $status;
+        $query = "INSERT INTO `robot_log` (`id`, `robot_id`, `source`, `level`, `comment`, `ticket_id`,`update_user`, `update_date`) VALUES (NULL, $robot,  'TICKET', $status, '$comment', $idd,  $user_id, '$date')";
+        $result = $this->pdo->query($query);
 
         return $result;
     }
@@ -806,6 +867,7 @@ class Tickets
 
     //запись смены статуса
     function set_time_change_status($id_ticket, $id_new_status) {
+        date_default_timezone_set('Asia/Yekaterinburg');
         $query = "SELECT * FROM `tickets_statistics` WHERE `id_ticket` = $id_ticket ORDER BY `date_change` DESC LIMIT 1";
         $result = $this->pdo->query($query);
         while ($line = $result->fetch()) {
@@ -822,7 +884,7 @@ class Tickets
             $id_old_status = $line['status'];
         }
         $date_end = time();
-        $in_work = $this->statistics->get_time_spent($date_start, $date_end, self::TIME_TEXPOD);
+        $in_work = $this->statistics->get_new_time_spent($date_start, $date_end, self::TIME_TEXPOD_NEW, 0);
         $in_time = $date_end - $date_start;
 
         $this->query = "INSERT INTO `tickets_statistics` (`id`, `id_ticket`, `old_status`, `new_status`, `date_change`, `in_work`, `in_time`) VALUES (NULL, '$id_ticket', '$id_old_status', '$id_new_status', '$date_end', '$in_work', '$in_time')";
@@ -830,6 +892,32 @@ class Tickets
         return true;
     }
 
+    //назначенные тикеты
+    function get_assign_tickets() {
+        $date_now = date('Y-m-d');
+        $query = "SELECT * from `tickets` WHERE `status` IN (1,2,4,5) AND `assign` != 0  ORDER BY `id` ASC";
+        $result = $this->pdo->query($query);
+        $assign = [];
+        while ($line = $result->fetch()) {
+            if ($line['finish_date'] == null || $line['finish_date'] <= $date_now) {
+                if (array_key_exists($line['assign'], $assign)) {
+                    $assign[$line['assign']]['count'] = $assign[$line['assign']]['count'] + 1;
+                } else {
+                    $assign[$line['assign']]['count'] = 1;
+                }
+                $assign[$line['assign']]['tickets'][$line['id']] = $line;
+            }
+        }
+        $arr_user = $this->user->get_users(4);
+        foreach ($arr_user as $user_id => $user) {
+            if (!array_key_exists($user_id, $assign)) {
+                $assign[$user_id]['count'] = 0;
+                $assign[$user_id]['tickets'] = [];
+            }
+        }
+
+        return $assign;
+    }
 
     function __destruct()
     {
