@@ -195,10 +195,19 @@ class Tickets
      * @param $comment
      * @return false|PDOStatement
      */
-    function add($robot, $source, $priority, $class, $category, $subcategory, $status, $comment)
+    function add($robot, $source, $priority, $class, $category, $subcategory, $status, $comment, $user_id = 0)
     {
-        $date    = date("Y-m-d H:i:s");
-        $user_id = intval($_COOKIE['id']);
+        $date = date("Y-m-d H:i:s");
+        $user_id = ($user_id == 0) ? intval($_COOKIE['id']) : $user_id;
+        $user_info = $this->user->get_info_user($user_id);
+        if ($user_info['group'] == 4) {
+            $assign = $user_id;
+            $assign_time = $date;
+        } else {
+            $auto_assign = $this->auto_assign_user();
+            $assign = ($auto_assign) ? $auto_assign : 0;
+            $assign_time = ($assign) ? $date : null;
+        }
         $this->query   = "INSERT INTO `tickets` (
             `id`, 
             `robot`, 
@@ -208,7 +217,9 @@ class Tickets
             `category`, 
             `subcategory`, 
             `description`, 
-            `status`, 
+            `status`,
+            `assign`,
+            `assign_time`,                        
             `user_create`,
             `date_create`,
             `update_user`, 
@@ -223,6 +234,8 @@ class Tickets
                 '$subcategory', 
                 '$comment', 
                 '$status',
+                '$assign',
+                '$assign_time',                                
                 '$user_id',
                 '$date',
                 '$user_id', 
@@ -917,6 +930,44 @@ class Tickets
         }
 
         return $assign;
+    }
+
+    //вкл/выкл автораспределения тикетов у пользователя
+    function change_auto_assign_for_user($user_id) {
+        $old_status = $this->user->get_info_user($user_id)['auto_assign_ticket'];
+        $status = ($old_status == 1) ? 0 : 1;
+        $query = $query = "UPDATE `users` SET `auto_assign_ticket` = $status WHERE `user_id` = $user_id;";
+        $result = $this->pdo->query($query);
+        return true;
+    }
+
+    //автоназночение исполнителя
+    function auto_assign_user() {
+        $tickets = $this->get_assign_tickets();
+        $users = $this->user->get_users(4);
+        //проверка если не из кого выбирать
+        if ($users == []) {
+            return false;
+        }
+        //пользователи кому можно назначать
+        $users_on = [];
+        foreach ($users as $user_id => $user) {
+            if ($user['auto_assign_ticket'] == 1) {
+                if (array_key_exists($user_id, $tickets)) {
+                    $users_on[$user_id] = $tickets[$user_id]['count'];
+                } else {
+                    $users_on[$user_id] = 0;
+                }
+            }
+        }
+        //проверка если некому назначать
+        if ($users_on == []) {
+            return false;
+        }
+        //логика кому назначить
+        $user_assign = array_keys($users_on, min($users_on))[0];
+
+        return $user_assign;
     }
 
     function __destruct()

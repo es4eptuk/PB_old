@@ -306,15 +306,22 @@ foreach ($arr_tickets as &$ticket) {
                         </div>
                         <p class="lead">Назначенных</p>
                         <div class="table-responsive">
-                            <table class="table">
+                            <table class="table" id="arr_assign">
                                 <tbody>
                                 <?php
                                 foreach ($arr_assign as $id_user => $info) {
-                                    $user_name = $user->get_info_user($id_user)['user_name'];
+                                    $user_info = $user->get_info_user($id_user);
+                                    $color = "#00a65a";
+                                    $button_class = "fa fa-fw fa-toggle-on pull-right";
+                                    if ($user_info['auto_assign_ticket'] == 0) {
+                                        $color = "#af3124";
+                                        $button_class = "fa fa-fw fa-toggle-off pull-right";
+                                    }
+                                    
                                     echo '
-                                    <tr>
-                                        <th>'.$user_name.'</th>
-                                        <td class="dop">'.$info['count'].'</td>
+                                    <tr style="color:'.$color.'">
+                                        <th style="width:50%">'.$user_info['user_name'].'</th>
+                                        <td class="dop">'.$info['count'].' <i class="'.$button_class.'" style="cursor: pointer;" data-user="'.$id_user.'"></i></td>
                                     </tr>
                                     ';
                                 }
@@ -791,7 +798,7 @@ foreach ($arr_tickets as &$ticket) {
 </div>
 
 <audio controls id="notify">
-    <source src="notify.mp3" type="audio/mp3">
+    <!--<source src="notify.mp3" type="audio/mp3">-->
 </audio>
 
 <!-- ./wrapper -->
@@ -983,6 +990,17 @@ foreach ($arr_tickets as &$ticket) {
         });
     });
 
+    //вкл авто распределения для сотрудника
+    $("#arr_assign").on("click", ".fa-toggle-off, .fa-toggle-on", function() {
+        var user_id = $(this).data("user");
+        $.post("./api.php", {
+            action: "change_auto_assign_for_user",
+            id: user_id
+        }).done(function (data) {
+            window.location.reload(true);
+        });
+    });
+
     //генерация фильтра в таблице
     $('#orders').DataTable({
         "iDisplayLength": 100,
@@ -1000,6 +1018,7 @@ foreach ($arr_tickets as &$ticket) {
         //$("#filter_user").val(<?php if (isset($_GET['user'])) echo $_GET['user']; ?>);
         $("#filter_robot").val(<?php if (isset($_GET['robot'])) echo $_GET['robot']; ?>);
         //$('#filter_user').val(<?php if (isset($_GET['user'])) echo $_GET['user']; ?>).trigger('change');
+
     });
 
     $(function () {

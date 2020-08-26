@@ -394,6 +394,9 @@ if (isset($_POST['action'])) {
     if ($_POST['action'] == "ticket_get") {
         echo json_encode($tickets->get_tickets_kanban($_POST['robot'], $_POST['user'], $_POST['status'], $_POST['sortby'], $_POST['sortdir']), JSON_UNESCAPED_UNICODE);
     }
+    if ($_POST['action'] == "change_auto_assign_for_user") {
+        echo json_encode($tickets->change_auto_assign_for_user($_POST['id']), JSON_UNESCAPED_UNICODE);
+    }
     if ($_POST['action'] == "ticket_info") {
         echo json_encode($tickets->info($_POST['id']), JSON_UNESCAPED_UNICODE);
     }

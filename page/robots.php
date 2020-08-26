@@ -8,6 +8,7 @@ class Robots
     private $sklad;
     private $checks;
     private $plan;
+    private $tickets;
 
     //списки
     public $getEquipment;
@@ -42,12 +43,13 @@ class Robots
 
     function init()
     {
-        global $telegramAPI, $position, $checks, $plan;
+        global $telegramAPI, $position, $checks, $plan, $tickets;
 
         $this->telegram = $telegramAPI; //new TelegramAPI;
         $this->sklad = $position; //new Position;
         $this->checks = $checks;
         $this->plan = $plan;
+        $this->tickets = $tickets;
 
         //список версий роботов
         $query = "SELECT * FROM `robot_equipment` ORDER BY `title` DESC";
@@ -380,7 +382,8 @@ class Robots
                 if ($status != "OK" and preg_match("(2048|640|136|138)", "$problem") != true) {
                     //не создавать тикеты для версии 6 и 7 версии роботов
                     //if ($version != 6 && $version != 7) {
-                    $this->query = "INSERT INTO `tickets` (
+                    $this->tickets->add($robot_id, '12', '2', 'P', $cat_id, '0', '1', $problem, $user_id);
+                    /*$this->query = "INSERT INTO `tickets` (
                                                 `id`, 
                                                 `robot`,
                                                 `source`,
@@ -408,7 +411,7 @@ class Robots
                                                     '$date',
                                                     '$user_id', 
                                                     '$date')";
-                    $result = $this->pdo->query($this->query);
+                    $result = $this->pdo->query($this->query);*/
                     //}
                 }
                 if ($client != 1 and preg_match("(2048|640|136|138)", "$problem") != true) {
