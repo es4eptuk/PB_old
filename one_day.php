@@ -36,7 +36,7 @@ $arr_pos = $plan->get_pos_by_kits($arr_kit);
 //собрать инвенторизацию
 $arr_inventory = $plan->get_inventory($date.' 00:00:00', $date.' 23:59:59');
 //собрать количество позиций в собираемых роботах
-$arr_in_process = $plan->get_in_process($v_filtr);
+$arr_in_process = $plan->get_in_process();
 //ставим инвенторизацию
 foreach ($arr_inventory as $id_pos => $info) {
     if (array_key_exists($id_pos, $arr_pos)) {

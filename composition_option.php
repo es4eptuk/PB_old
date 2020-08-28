@@ -2,12 +2,12 @@
 include 'include/class.inc.php';
 
 $arr_pos = [];
-$robot_subversion_id = 0;
+$robot_option_id = 0;
 
-if (isset($_GET['subversion'])) {
-    $robot_subversion_id = (isset($_GET['subversion']) && !empty($_GET['subversion'])) ? $_GET['subversion'] : 0;
-    if ($robot_subversion_id != 0) {
-        $arr_pos = $robots->get_composition_subversion($robot_subversion_id);
+if (isset($_GET['option'])) {
+    $robot_option_id = (isset($_GET['option']) && !empty($_GET['option'])) ? $_GET['option'] : 0;
+    if ($robot_option_id != 0) {
+        $arr_pos = $robots->get_composition_option($robot_option_id);
     }
 }
 
@@ -36,13 +36,13 @@ if (isset($_GET['subversion'])) {
                         <div class="box-header with-border">
                             <div style="width:300px;margin:10px 20px;">
                                 <div class="form-group">
-                                    <select class="form-control select2" name="subversion" id="subversion">
-                                        <option value="0">Выбирите подверсию</option>
+                                    <select class="form-control select2" name="option" id="option">
+                                        <option value="0">Выбирите опцию</option>
                                         <?php
-                                        $arr = $robots->getSubVersion;
-                                        foreach ($arr as $subversion) {
-                                            $selected = ($subversion['id'] == $robot_subversion_id) ? "selected" : "";
-                                            echo "<option value='" . $subversion['id'] . " '".$selected.">" . $subversion['title'] . "</option>";
+                                        $arr = $robots->getOptions;
+                                        foreach ($arr as $option) {
+                                            $selected = ($option['id_option'] == $robot_option_id) ? "selected" : "";
+                                            echo "<option value='" . $option['id_option'] . " '".$selected.">" . $option['title'] . "</option>";
                                         }
                                         ?>
                                     </select>
@@ -50,30 +50,30 @@ if (isset($_GET['subversion'])) {
                             </div>
                         </div><!-- /.box-header -->
                         <div class="box-body">
-                            <?php if ($robot_subversion_id != 0) {?>
-                            <h3 class="box-title">Подверсия: <span id="writeoff_id"><?= $robots->getSubVersion[$robot_subversion_id]['title'] ?></span></h3>
-                            <br>
-                            <table class="table table-hover" id="listPos">
-                                <tbody>
-                                <tr>
-                                    <th>posID</th>
-                                    <th>Сборка</th>
-                                    <th>Артикул</th>
-                                    <th>Наименование</th>
-                                    <th>Количество</th>
-                                    <th>На складе</th>
-                                    <th>Цена</th>
-                                    <th>Стоимость</th>
-                                    <th>Удаление</th>
-                                </tr>
-                                <?php
+                            <?php if ($robot_option_id != 0) {?>
+                                <h3 class="box-title">Подверсия: <span id="writeoff_id"><?= $robots->getOptions[$robot_option_id]['title'] ?></span></h3>
+                                <br>
+                                <table class="table table-hover" id="listPos">
+                                    <tbody>
+                                    <tr>
+                                        <th>posID</th>
+                                        <th>Сборка</th>
+                                        <th>Артикул</th>
+                                        <th>Наименование</th>
+                                        <th>Количество</th>
+                                        <th>На складе</th>
+                                        <th>Цена</th>
+                                        <th>Стоимость</th>
+                                        <th>Удаление</th>
+                                    </tr>
+                                    <?php
 
-                                usort($arr_pos, function ($a,$b) {
-                                    return strcmp($a["title"], $b["title"]);
-                                });
-                                foreach ($arr_pos as $pos) {
-                                    $assembly = ($pos['assembly'] == 0) ? '' :  '<i class="fa fa-check"></i>';
-                                    echo '   
+                                    usort($arr_pos, function ($a,$b) {
+                                        return strcmp($a["title"], $b["title"]);
+                                    });
+                                    foreach ($arr_pos as $pos) {
+                                        $assembly = ($pos['assembly'] == 0) ? '' :  '<i class="fa fa-check"></i>';
+                                        echo '   
                                     <tr> 
                                         <td>'.$pos['id_pos'].'</td>
                                         <td>'.$assembly.'</td>
@@ -86,10 +86,10 @@ if (isset($_GET['subversion'])) {
                                         <td><i class="fa fa-2x fa-remove" style="cursor:pointer;"></i></td> 
                                     </tr>
                                 ';
-                                }
-                                ?>
-                                </tbody>
-                            </table>
+                                    }
+                                    ?>
+                                    </tbody>
+                                </table>
                             <?php }?>
                         </div><!-- /.box-body -->
                     </div>
@@ -109,12 +109,12 @@ if (isset($_GET['subversion'])) {
 
     $(document).ready(function () {
 
-        $("#subversion").change(function () {
-            var subversion = $("#subversion").val();
-            if (subversion != 0) {
-                window.location.href = "./composition_subversion.php?subversion=" + subversion;
+        $("#option").change(function () {
+            var option = $("#option").val();
+            if (option != 0) {
+                window.location.href = "./composition_option.php?option=" + option;
             } else {
-                window.location.href = "./composition_subversion.php";
+                window.location.href = "./composition_option.php";
             }
         });
 

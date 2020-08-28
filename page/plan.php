@@ -665,12 +665,9 @@ class Plan
         return $res;
     }
 
+    //собрать всю комплектуху которая использовалась (отмечены чек листы) в незавершенных роботах
     function get_in_process()
     {
-        /*if ($versions == []) {
-            return [];
-        }
-        $arr = implode(',', $versions);*/
         $query = "
             SELECT * FROM `check` 
             JOIN `robots` ON `check`.`robot` = `robots`.`id`

@@ -143,7 +143,6 @@ class Robots
                 WHERE `pos_kit_items`.`id_kit` = $kit";
             $result2 = $this->pdo->query($query);
             while ($line = $result2->fetch()) {
-                //print_r($line);die;
                 if (isset($arr[$line['id_pos']])) {
                     $arr[$line['id_pos']]['count'] += $line['count'];
                 } else {
@@ -161,13 +160,15 @@ class Robots
                         if (isset($arr[$id_pos])) {
                             $arr[$id_pos]['count'] += $count * $line['count'];
                         } else {
-                            $arr[$id_pos]['id_pos'] = $arr_pos[$id_pos]['id'];
-                            $arr[$id_pos]['vendor_code'] = $arr_pos[$id_pos]['vendor_code'];
-                            $arr[$id_pos]['title'] = $arr_pos[$id_pos]['title'];
-                            $arr[$id_pos]['assembly'] = $arr_pos[$id_pos]['assembly'];
-                            $arr[$id_pos]['price'] = $arr_pos[$id_pos]['price'];
-                            $arr[$id_pos]['total'] = $arr_pos[$id_pos]['total'];
-                            $arr[$id_pos]['count'] = $count * $line['count'];
+                            if (array_key_exists($id_pos, $arr_pos)) {
+                                $arr[$id_pos]['id_pos'] = $arr_pos[$id_pos]['id'];
+                                $arr[$id_pos]['vendor_code'] = $arr_pos[$id_pos]['vendor_code'];
+                                $arr[$id_pos]['title'] = $arr_pos[$id_pos]['title'];
+                                $arr[$id_pos]['assembly'] = $arr_pos[$id_pos]['assembly'];
+                                $arr[$id_pos]['price'] = $arr_pos[$id_pos]['price'];
+                                $arr[$id_pos]['total'] = $arr_pos[$id_pos]['total'];
+                                $arr[$id_pos]['count'] = $count * $line['count'];
+                            }
                         }
                     }
                 }
@@ -176,9 +177,64 @@ class Robots
         }
 
         return $arr;
+    }
 
+    //информация из чего состоит опция
+    function get_composition_option($option)
+    {
+        $arr_assemble = $this->plan->get_assemblyes_items();
+        //добавляем инфу по позициям
+        $this->query = "SELECT * FROM `pos_items`";
+        $result = $this->pdo->query($this->query);
+        while($line = $result->fetch()){
+            $arr_pos[$line['id']] = $line;
+        }
+        //собираем комплекты
+        $query = "SELECT * FROM `robot_options_checks` WHERE `id_option` = $option AND `id_kit` != 0";
+        $result = $this->pdo->query($query);
+        $arr = [];
+        while ($kits = $result->fetch()) {
+            //собираем позиции
+            $kit = $kits['id_kit'];
+            $query = "SELECT * FROM `pos_kit_items`
+                JOIN `pos_items` ON `pos_kit_items`.`id_pos` = `pos_items`.`id` 
+                WHERE `pos_kit_items`.`id_kit` = $kit";
+            $result2 = $this->pdo->query($query);
+            while ($line = $result2->fetch()) {
+                if (isset($arr[$line['id_pos']])) {
+                    $arr[$line['id_pos']]['count'] += $line['count'];
+                } else {
+                    $arr[$line['id_pos']]['id_pos'] = $line['id_pos'];
+                    $arr[$line['id_pos']]['vendor_code'] = $line['vendor_code'];
+                    $arr[$line['id_pos']]['title'] = $line['title'];
+                    $arr[$line['id_pos']]['assembly'] = $line['assembly'];
+                    $arr[$line['id_pos']]['price'] = $line['price'];
+                    $arr[$line['id_pos']]['total'] = $line['total'];
+                    $arr[$line['id_pos']]['count'] = $line['count'];
+                }
+                //если позиция сборка
+                if ($line['assembly'] != 0) {
+                    foreach ($arr_assemble[$line['assembly']] as $id_pos => $count ) {
+                        if (isset($arr[$id_pos])) {
+                            $arr[$id_pos]['count'] += $count * $line['count'];
+                        } else {
+                            if (array_key_exists($id_pos, $arr_pos)) {
+                                $arr[$id_pos]['id_pos'] = $arr_pos[$id_pos]['id'];
+                                $arr[$id_pos]['vendor_code'] = $arr_pos[$id_pos]['vendor_code'];
+                                $arr[$id_pos]['title'] = $arr_pos[$id_pos]['title'];
+                                $arr[$id_pos]['assembly'] = $arr_pos[$id_pos]['assembly'];
+                                $arr[$id_pos]['price'] = $arr_pos[$id_pos]['price'];
+                                $arr[$id_pos]['total'] = $arr_pos[$id_pos]['total'];
+                                $arr[$id_pos]['count'] = $count * $line['count'];
+                            }
+                        }
+                    }
+                }
+            }
 
+        }
 
+        return $arr;
     }
     /** КОНЕЦ ПОДВЕРСИИ **/
 

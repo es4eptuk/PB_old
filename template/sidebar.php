@@ -296,7 +296,20 @@
               <ul class="treeview-menu">
                 <li><a href="./ticket_category.php"><i class="fa fa-th-list"></i> Категории обращений (Тикет)</a></li>
               </ul>
-            </li> 
+            </li>
+            
+            <li class="treeview">
+              <a href="#">
+                <i class="fa fa-gears"></i><span> Комплектации</span>
+                <span class="pull-right-container">
+                </span>
+              </a>
+              <ul class="treeview-menu">
+                <li><a href="./composition_subversion.php"><i class="fa fa-cubes"></i> Состав подверсии</a></li>
+                <li><a href="./composition_option.php"><i class="fa fa-cubes"></i> Состав опции</a></li>
+                <li><a href="./one_day.php"><i class="fa fa-dropbox"></i> Инвентаризация</a></li>
+              </ul>
+            </li>             
 
 
           </ul>
