@@ -206,7 +206,7 @@ class Tickets
         } else {
             $auto_assign = $this->auto_assign_user();
             $assign = ($auto_assign) ? $auto_assign : 0;
-            $assign_time = ($assign) ? $date : null;
+            $assign_time = ($assign) ? "'$date'" : "NULL";
         }
         $this->query   = "INSERT INTO `tickets` (
             `id`, 
@@ -235,7 +235,7 @@ class Tickets
                 '$comment', 
                 '$status',
                 '$assign',
-                '$assign_time',                                
+                 $assign_time,                                
                 '$user_id',
                 '$date',
                 '$user_id', 
@@ -567,7 +567,8 @@ class Tickets
         $this->query = "UPDATE `tickets` SET `status` = '3', `inwork` = '$date',`result_description` = '$result', `update_user` = $user_id, `update_date` = '$date' WHERE `id` = $id";
         // $query = "UPDATE `tickets` SET `status` = '$status', `update_user` = $user_id, `update_date` = '$date' WHERE `id` = $id";
         $result = $this->pdo->query($this->query);
-        $this->query = "SELECT * FROM `tickets_status` WHERE `id` = $id";
+
+        /*$this->query = "SELECT * FROM `tickets_status` WHERE `id` = $id";
         $result = $this->pdo->query($this->query);
         while ($line = $result->fetch()) {
             $status_array[] = $line;
@@ -575,7 +576,8 @@ class Tickets
         if (isset($status_array)) {
             $status_str = $status_array[0]['title'];
             $color      = $status_array[0]['color'];
-        }
+        }*/
+
         $this->query = "SELECT * FROM `tickets` WHERE `id` = $id";
         $result = $this->pdo->query($this->query);
         while ($line = $result->fetch()) {
@@ -606,7 +608,8 @@ class Tickets
 
         // $query = "UPDATE `tickets` SET `status` = '$status', `update_user` = $user_id, `update_date` = '$date' WHERE `id` = $id";
         $result = $this->pdo->query($this->query);
-        $this->query = "SELECT * FROM `tickets_status` WHERE `id` = $id";
+
+        /*$this->query = "SELECT * FROM `tickets_status` WHERE `id` = $id";
         $result = $this->pdo->query($this->query);
         while ($line = $result->fetch()) {
             $status_array[] = $line;
@@ -614,7 +617,8 @@ class Tickets
         if (isset($status_array)) {
             $status_str = $status_array[0]['title'];
             $color      = $status_array[0]['color'];
-        }
+        }*/
+
         $this->query = "SELECT * FROM `tickets` WHERE `id` = $id";
         $result = $this->pdo->query($this->query);
         while ($line = $result->fetch()) {
@@ -734,7 +738,7 @@ class Tickets
         return $result;
     }
 
-    //отчет по владельцу
+    //отчет по владельцу ***Нужно переписывать с учетом НОВОГО графика работы и новой функции подсчета рабочего времени
     function get_report_owner($owner_id, $interval) {
 
         //создаем файлы
@@ -968,6 +972,243 @@ class Tickets
         $user_assign = array_keys($users_on, min($users_on))[0];
 
         return $user_assign;
+    }
+
+    //собираем статистику по тикетам решенным
+    function get_resolved_ticket_status_time($date_start = null, $date_end = null, $robot_name = null, $robot_number = null, $robot_version = null)
+    {
+        date_default_timezone_set('Asia/Yekaterinburg');
+        $date_start = ($date_start != null) ? $date_start : date('Y-m-d');
+        $date_start .= ' 00:00:00';
+        $date_end = ($date_end != null) ? $date_end : date('Y-m-d');
+        $date_end .= ' 23:59:59';
+        //если дата начала больше даты конца
+        if ($date_start > $date_end) {
+            return false;
+        }
+        $date_start_str = strtotime($date_start);
+        $date_end_str = strtotime($date_end);
+        //собираем решнные тикеты
+        $query = "
+            SELECT * FROM `tickets_statistics`
+            JOIN `tickets` ON `tickets_statistics`.`id_ticket` = `tickets`.`id`
+                WHERE `tickets_statistics`.`date_change` >= $date_start_str AND `tickets_statistics`.`date_change` <= $date_end_str
+                AND `tickets_statistics`.`new_status` = 3
+            ORDER BY `tickets`.`date_create` ASC
+        ";
+        $result = $this->pdo->query($query);
+        $min_date = null;
+        $max_date = '2000-01-01 00:00:00';
+        $tikets = [];
+        while ($line = $result->fetch()) {
+            //задаем мин дату поиска для лога
+            if ($min_date == null) {
+                $min_date = $line['date_create'];
+            }
+            //задаем макс дату для поиска
+            if ($max_date < $line['update_date']) {
+                $max_date = $line['update_date'];
+            }
+            $tikets[$line['id_ticket']] = $line;
+        }
+        //если нет решенных тикетов
+        if ($tikets == []) {
+            return false;
+        }
+        $min_date_str = strtotime($min_date);
+        $max_date_str = strtotime($max_date);
+        //собираем полный лог смены статусов
+        $query = "SELECT * FROM `tickets_statistics` WHERE `date_change` >= $min_date_str AND `date_change` <= $max_date_str ORDER BY `date_change` ASC";
+        $result = $this->pdo->query($query);
+        $log_status = [];
+        while ($line = $result->fetch()) {
+            if (!array_key_exists($line['id_ticket'], $log_status)) {
+                $log_status[$line['id_ticket']] = [
+                    'in_work' => [
+                        1 => 0,
+                        2 => 0,
+                        3 => 0,
+                        4 => 0,
+                        5 => 0,
+                        6 => 0,
+                        7 => 0,
+                        8 => 0,
+                    ],
+                    'before_status' => 1,
+                ];
+            }
+            $log_status[$line['id_ticket']]['in_work'][$line['old_status']] += intval($line['in_work']/60);
+            $log_status[$line['id_ticket']]['before_status'] = $line['old_status'];
+        }
+        //собираем роботов по условиям
+        $and = "";
+        if ($robot_name != null) {
+            $and .= " AND `name` LIKE '%$robot_name%'";
+        }
+        if ($robot_number != null) {
+            $and .= " AND `number` = $robot_number";
+        }
+        if ($robot_version != null) {
+            $and .= " AND `version` = $robot_version";
+        }
+        $query = "SELECT * FROM `robots` WHERE `id` > 0".$and;
+        $result = $this->pdo->query($query);
+        $robots = [];
+        while ($line = $result->fetch()) {
+            $robots[$line['id']] = $line;
+        }
+        //если нет роботов удовлетворяющих условиям
+        if ($robots == []) {
+            return false;
+        }
+        //обработка данных
+        $listCategoryTikets = $this->get_category(0);
+        $listSubCategoryTikets = $this->get_subcategory(0);
+        $listUsers = $this->user->get_users();
+        $time_status_1 = 0;
+        $time_status_2 = 0;
+        $time_status_4 = 0;
+        $time_status_5 = 0;
+        $time_status_7 = 0;
+        $time_resolved = 0;
+        $time_count = 0;
+        $arr = [];
+        foreach ($tikets as $id => $info) {
+            if (array_key_exists($info['robot'], $robots) && array_key_exists($id, $log_status)) {
+                $arr[$id]['id'] = $id; // ID
+                $arr[$id]['date_create'] = $info['date_create']; //дата создания
+                $arr[$id]['date_resolved'] = date('Y-m-d H:i:s', $info['date_change']); //дата решения
+                $arr[$id]['date_repair'] = $info['finish_date']; //дата ремонта
+                $arr[$id]['source'] = self::SOURCE_TICKET[$info['source']]; //источник
+                $robot_number = str_pad($robots[$info['robot']]['number'], 4, "0", STR_PAD_LEFT);
+                $arr[$id]['robot'] = $robots[$info['robot']]['version'] . "." . $robot_number; //робот
+                $arr[$id]['time_in_status'] = [
+                    1 => $log_status[$id]['in_work'][1],
+                    2 => $log_status[$id]['in_work'][2],
+                    3 => $log_status[$id]['in_work'][3],
+                    4 => $log_status[$id]['in_work'][4],
+                    5 => $log_status[$id]['in_work'][5],
+                    6 => $log_status[$id]['in_work'][6],
+                    7 => $log_status[$id]['in_work'][7],
+                    8 => $log_status[$id]['in_work'][8],
+                ]; //время в статусе только рабочее (мин)
+                $arr[$id]['time_resolved'] = $log_status[$id]['in_work'][1] + $log_status[$id]['in_work'][2] + $log_status[$id]['in_work'][4] + $log_status[$id]['in_work'][5]; //время решения
+                $arr[$id]['before_status'] = $this->listStatusTikets[$log_status[$id]['before_status']]['title']; //преведущий статус
+                $arr[$id]['status'] = $this->listStatusTikets[$info['status']]['title']; //статус
+                $arr[$id]['class'] = self::CLASS_TICKET[$info['class']]; //класс
+                $arr[$id]['category'] = ($info['category'] != 0) ? $listCategoryTikets[$info['category']]['title'] : "";
+                $arr[$id]['subcategory'] = ($info['subcategory'] != 0) ? $listSubCategoryTikets[$info['subcategory']]['title'] : "";
+                $arr[$id]['priority'] = self::PRIORITY_TICKET[$info['priority']];
+                $arr[$id]['user'] = ($info['assign'] != 0) ? $listUsers[$info['assign']]['user_name'] : "";
+                $arr[$id]['description'] = ($info['description'] != "") ? $info['description'] : "";
+                $arr[$id]['result_description'] = ($info['result_description'] != "") ? $info['result_description'] : "";
+
+                //подсчет времени для статусов среднее
+                $time_status_1 += $log_status[$id]['in_work'][1];
+                $time_status_2 += $log_status[$id]['in_work'][2];
+                $time_status_4 += $log_status[$id]['in_work'][4];
+                $time_status_5 += $log_status[$id]['in_work'][5];
+                $time_status_7 += $log_status[$id]['in_work'][7];
+                $time_resolved += $arr[$id]['time_resolved'];
+                $time_count++;
+            }
+        }
+        //если вдруг не сраслось
+        if ($arr == []) {
+            return false;
+        }
+        $time = [
+            'status' => [
+                1 => intval($time_status_1/$time_count),
+                2 => intval($time_status_2/$time_count),
+                4 => intval($time_status_4/$time_count),
+                5 => intval($time_status_5/$time_count),
+                7 => intval($time_status_7/$time_count),
+            ],
+            'resolved' => intval($time_resolved/$time_count),
+            'count' => $time_count,
+        ];
+        unset($tikets);
+        unset($log_status);
+        unset($robots);
+        $result = ['result' => $arr, 'average_time' => $time];
+
+        return $result;
+    }
+
+    function get_report_resolved($date_start = null, $date_end = null, $robot_name = null, $robot_number = null, $robot_version = null)
+    {
+
+        $arr = $this->get_resolved_ticket_status_time($date_start, $date_end, $robot_name, $robot_number, $robot_version);
+        if (!$arr) {
+            $arr['result'] = [];
+        }
+
+        //создаем файлы
+        //для папок
+        $f_date = date('Y-m-d_H:i:s');
+        if (!file_exists(PATCH_DIR."/report/")) {
+            mkdir(PATCH_DIR."/report/", 0777);
+        }
+        $excel_name = PATCH_DIR."/report/".$f_date.".csv";
+        require_once ('excel/Classes/PHPExcel.php');
+        require_once ('excel/Classes/PHPExcel/IOFactory.php');
+        $objPHPExcel = new PHPExcel();
+        // Add some data
+        $objPHPExcel->setActiveSheetIndex(0);
+        //задаем заголовки
+        $objPHPExcel->getActiveSheet()->setCellValue("A1", 'ID');
+        $objPHPExcel->getActiveSheet()->setCellValue("B1", 'Дата создания');
+        $objPHPExcel->getActiveSheet()->setCellValue("C1", 'Дата решения');
+        $objPHPExcel->getActiveSheet()->setCellValue("D1", 'Дата ремонта');
+        $objPHPExcel->getActiveSheet()->setCellValue("E1", 'Источник');
+        $objPHPExcel->getActiveSheet()->setCellValue("F1", 'Робот');
+        $objPHPExcel->getActiveSheet()->setCellValue("G1", 'Во входящих');
+        $objPHPExcel->getActiveSheet()->setCellValue("H1", 'В ожидает ремонта');
+        $objPHPExcel->getActiveSheet()->setCellValue("I1", 'В процессе');
+        $objPHPExcel->getActiveSheet()->setCellValue("J1", 'В отправке запчастей');
+        $objPHPExcel->getActiveSheet()->setCellValue("K1", 'Время решения');
+        $objPHPExcel->getActiveSheet()->setCellValue("L1", 'Предпоследний статус');
+        $objPHPExcel->getActiveSheet()->setCellValue("M1", 'Статус');
+        $objPHPExcel->getActiveSheet()->setCellValue("N1", 'Класс');
+        $objPHPExcel->getActiveSheet()->setCellValue("O1", 'Категория');
+        $objPHPExcel->getActiveSheet()->setCellValue("P1", 'Подкатегория');
+        $objPHPExcel->getActiveSheet()->setCellValue("Q1", 'Приоритет');
+        $objPHPExcel->getActiveSheet()->setCellValue("R1", 'Исполнитель');
+        $objPHPExcel->getActiveSheet()->setCellValue("S1", 'Описание');
+        $objPHPExcel->getActiveSheet()->setCellValue("T1", 'Решение');
+
+        $row = 1;
+        foreach ($arr['result'] as $ticket) {
+            $row++;
+            $objPHPExcel->getActiveSheet()->setCellValue("A" . $row, $ticket['id']);
+            $objPHPExcel->getActiveSheet()->setCellValue("B" . $row, $ticket['date_create']);
+            $objPHPExcel->getActiveSheet()->setCellValue("C" . $row, $ticket['date_resolved']);
+            $objPHPExcel->getActiveSheet()->setCellValue("D" . $row, $ticket['date_repair']);
+            $objPHPExcel->getActiveSheet()->setCellValue("E" . $row, $ticket['source']);
+            $objPHPExcel->getActiveSheet()->setCellValue("F" . $row, $ticket['robot']);
+            $objPHPExcel->getActiveSheet()->setCellValue("G" . $row, $ticket['time_in_status'][1]);
+            $objPHPExcel->getActiveSheet()->setCellValue("H" . $row, $ticket['time_in_status'][4]);
+            $objPHPExcel->getActiveSheet()->setCellValue("I" . $row, $ticket['time_in_status'][2]);
+            $objPHPExcel->getActiveSheet()->setCellValue("J" . $row, $ticket['time_in_status'][5]);
+            $objPHPExcel->getActiveSheet()->setCellValue("K" . $row, $ticket['time_resolved']);
+            $objPHPExcel->getActiveSheet()->setCellValue("L" . $row, $ticket['before_status']);
+            $objPHPExcel->getActiveSheet()->setCellValue("M" . $row, $ticket['status']);
+            $objPHPExcel->getActiveSheet()->setCellValue("N" . $row, $ticket['class']);
+            $objPHPExcel->getActiveSheet()->setCellValue("O" . $row, $ticket['category']);
+            $objPHPExcel->getActiveSheet()->setCellValue("P" . $row, $ticket['subcategory']);
+            $objPHPExcel->getActiveSheet()->setCellValue("Q" . $row, $ticket['priority']);
+            $objPHPExcel->getActiveSheet()->setCellValue("R" . $row, $ticket['user']);
+            $objPHPExcel->getActiveSheet()->setCellValue("S" . $row, $ticket['description']);
+            $objPHPExcel->getActiveSheet()->setCellValue("T" . $row, $ticket['result_description']);
+        }
+
+        // Save CSV file
+        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'CSV');
+        $objWriter->setDelimiter(';');
+        $objWriter->save($excel_name);
+
+        return $excel_name;
     }
 
     function __destruct()

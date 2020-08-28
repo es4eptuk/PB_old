@@ -52,7 +52,7 @@ if($text){
     $param['isEmployee'] = 1;
     $param['userId'] = 14;
     $param['message'] = $text;
-    $telegramAPI->writeMessageDb($param);
+    //$telegramAPI->writeMessageDb($param);
 
     if ($text == "/start") {
         $reply = "Hello! Choose your language: ";

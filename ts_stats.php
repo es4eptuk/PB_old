@@ -3,7 +3,6 @@ include 'include/class.inc.php';
 include 'page/dashboard.php';
 
 
-
 ?>
 
 <?php include 'template/head.php' ?>
@@ -153,10 +152,7 @@ include 'page/dashboard.php';
                                 $date_formated_str = '"'. strval($date_formated) .'"';
                                 array_push($labels, $date_formated_str);
                             }
-
                             $labels_str = implode(",", $labels);
-
-
 
                             //считаем количество ответов по дням за последние 31 день $date_arr
                             $totalAnswers_arr = array();
@@ -164,33 +160,7 @@ include 'page/dashboard.php';
                                 $totalAnswers_arr[] = $dashboard->getCountAnswers(0, 999999,$value . " 00:00:00",  $value. " 23:59:59");
                             }
                             $totalAnswers_arr_str = implode(",", $totalAnswers_arr);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                             $totalAnswers = $dashboard->getCountAnswers(0, 999999);
-
-
 
                             //считаем количество ответов от 0 до 1 минуты, по дням за последние 31 день $date_arr_reversed
                             $countAnswers01_arr = array();
@@ -198,10 +168,7 @@ include 'page/dashboard.php';
                                 $countAnswers01_arr[] = $dashboard->getCountAnswers(0, 1,$value . " 00:00:00",  $value. " 23:59:59");
                             }
                             $countAnswers01_arr_str = implode(",", $countAnswers01_arr);
-
                             $countAnswers01 = $dashboard->getCountAnswers(0,1);
-
-
 
                             //считаем количество ответов от 1 до 2 минут, по дням за последние 31 день $date_arr_reversed
                             $countAnswers12_arr = array();
@@ -209,10 +176,7 @@ include 'page/dashboard.php';
                                 $countAnswers12_arr[] = $dashboard->getCountAnswers(1, 2,$value . " 00:00:00",  $value. " 23:59:59");
                             }
                             $countAnswers12_arr_str = implode(",", $countAnswers12_arr);
-
                             $countAnswers12 = $dashboard->getCountAnswers(1,2);
-
-
 
                             //считаем количество ответов от 2 до 3 минут, по дням за последние 31 день $date_arr_reversed
                             $countAnswers23_arr = array();
@@ -220,10 +184,7 @@ include 'page/dashboard.php';
                                 $countAnswers23_arr[] = $dashboard->getCountAnswers(2, 3,$value . " 00:00:00",  $value. " 23:59:59");
                             }
                             $countAnswers23_arr_str = implode(",", $countAnswers23_arr);
-
                             $countAnswers23 = $dashboard->getCountAnswers(2,3);
-
-
 
                             //считаем количество ответов от 3 до 5 минут, по дням за последние 31 день $date_arr_reversed
                             $countAnswers35_arr = array();
@@ -231,10 +192,7 @@ include 'page/dashboard.php';
                                 $countAnswers35_arr[] = $dashboard->getCountAnswers(3, 5,$value . " 00:00:00",  $value. " 23:59:59");
                             }
                             $countAnswers35_arr_str = implode(",", $countAnswers35_arr);
-
                             $countAnswers35 = $dashboard->getCountAnswers(3,5);
-
-
 
                             //считаем количество ответов от 5 до 9999999 минут, по дням за последние 31 день $date_arr_reversed
                             $countAnswers15_arr = array();
@@ -242,10 +200,7 @@ include 'page/dashboard.php';
                                 $countAnswers15_arr[] = $dashboard->getCountAnswers(15, 999999,$value . " 00:00:00",  $value. " 23:59:59");
                             }
                             $countAnswers15_arr_str = implode(",", $countAnswers15_arr);
-
                             $countAnswers15 = $dashboard->getCountAnswers(15,999999);
-
-
 
                             //считаем количество арушений по дням за последние 31 день $date_arr_reversed
                             $countViolation_arr = array();
@@ -276,11 +231,59 @@ include 'page/dashboard.php';
                                 </tr>
                                 </tbody>
                             </table>
-
-
                             <br>
-                            <h4>Скорость ответа:</h4>
 
+                            <h4>Показатели среднего времени (раб. мин):</h4>
+                            <table class="table table-striped w-auto">
+                                <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="row">Количество тикетов</th>
+                                    <th scope="col">Время решения</th>
+                                    <th scope="col">Входящие</th>
+                                    <th scope="col">Ожидает ремонта</th>
+                                    <th scope="col">В процессе</th>
+                                    <th scope="col">Отправка запчастей</th>
+                                    <th scope="col">Время в приостановке</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <?php
+                                $date_start = date('Y-m-d', strtotime("-7 day"));
+                                $date_end = date('Y-m-d', strtotime("-1 day"));
+                                $average_time = $tickets->get_resolved_ticket_status_time($date_start, $date_end);
+                                ?>
+                                <tr>
+                                    <th scope="row">Решенные за последнюю неделю</th>
+                                    <td><b><?= ($average_time) ? $average_time['average_time']['count'] : " - "; ?></b></td>
+                                    <td><b><?= ($average_time) ? $average_time['average_time']['resolved'] : " - "; ?></b></td>
+                                    <td><b><?= ($average_time) ? $average_time['average_time']['status'][1] : " - "; ?></b></td>
+                                    <td><b><?= ($average_time) ? $average_time['average_time']['status'][4] : " - "; ?></b></td>
+                                    <td><b><?= ($average_time) ? $average_time['average_time']['status'][2] : " - "; ?></b></td>
+                                    <td><b><?= ($average_time) ? $average_time['average_time']['status'][5] : " - "; ?></b></td>
+                                    <td><b><?= ($average_time) ? $average_time['average_time']['status'][7] : " - "; ?></b></td>
+                                </tr>
+                                <?php
+                                $date_start = date('Y-m-d', strtotime("-1 year"));
+                                $date_end = date('Y-m-d', strtotime("-1 day"));
+                                $average_time = $tickets->get_resolved_ticket_status_time($date_start, $date_end);
+                                ?>
+                                <tr>
+                                    <th scope="row">Решенные за последний год</th>
+                                    <td><b><?= ($average_time) ? $average_time['average_time']['count'] : " - "; ?></b></td>
+                                    <td><b><?= ($average_time) ? $average_time['average_time']['resolved'] : " - "; ?></b></td>
+                                    <td><b><?= ($average_time) ? $average_time['average_time']['status'][1] : " - "; ?></b></td>
+                                    <td><b><?= ($average_time) ? $average_time['average_time']['status'][4] : " - "; ?></b></td>
+                                    <td><b><?= ($average_time) ? $average_time['average_time']['status'][2] : " - "; ?></b></td>
+                                    <td><b><?= ($average_time) ? $average_time['average_time']['status'][5] : " - "; ?></b></td>
+                                    <td><b><?= ($average_time) ? $average_time['average_time']['status'][7] : " - "; ?></b></td>
+                                </tr>
+                                <?php unset($average_time); ?>
+                                </tbody>
+                            </table>
+                            <br>
+
+                            <h4>Скорость ответа:</h4>
                             <table class="table table-striped w-auto">
                                 <thead>
                                 <tr>

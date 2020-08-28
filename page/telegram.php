@@ -131,7 +131,7 @@ class TelegramAPI {
 
     public function userIsEmployee($userId) {
         $isEmployee = false;
-        $this->query  = "SELECT * FROM `users` WHERE `telegramId` = '$userId'";
+        $this->query  = "SELECT * FROM `users` WHERE (`telegramId` = '$userId' OR `id_telegram` = '$userId')";
         $result = $this->pdo->query($this->query);
         $number_of_rows = $result->fetchColumn();
         if ($number_of_rows>0) {$isEmployee = true;}
