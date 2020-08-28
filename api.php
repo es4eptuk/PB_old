@@ -14,6 +14,10 @@ if (isset($_POST['action'])) {
     if ($_POST['action'] == "get_pos_in_assembly") {
         echo json_encode($position->get_pos_in_assembly($_POST['id']), JSON_UNESCAPED_UNICODE);
     }
+    //отправить сборку в архив = отправить позицию к которой привязана данная сборка в архив
+    if ($_POST['action'] == "assembly_to_archive") {
+        echo json_encode($position->assembly_to_archive($_POST['id']), JSON_UNESCAPED_UNICODE);
+    }
     //выбрать все позиции из набора
     if ($_POST['action'] == "get_pos_in_kit") {
         echo json_encode($position->get_pos_in_kit($_POST['id']), JSON_UNESCAPED_UNICODE);

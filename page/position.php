@@ -788,10 +788,14 @@ class Position
     }
 
     //отдает массив данных по всем сборкам
-    function get_assembly()
+    function get_assembly($archive=true)
     {
+        $where = "";
+        if (!$archive) {
+            $where .= "WHERE `pos_items`.`archive` = 0";
+        }
         //$query = "SELECT * FROM pos_assembly ORDER BY `title` ASC";
-        $query = "SELECT `pos_assembly`.*,`pos_items`.`vendor_code` FROM `pos_assembly` LEFT JOIN `pos_items` ON pos_assembly.id_assembly = pos_items.assembly ORDER BY `title` ASC";
+        $query = "SELECT `pos_assembly`.*,`pos_items`.* FROM `pos_assembly` LEFT JOIN `pos_items` ON `pos_assembly`.`id_assembly` = `pos_items`.`assembly` $where ORDER BY `pos_assembly`.`title` ASC";
         $result = $this->pdo->query($query);
         while ($line = $result->fetch()) {
             $equipment_array[] = $line;
@@ -1348,6 +1352,15 @@ class Position
         $count = $line['COUNT(*)'];
 
         return ($count > 0) ? false : true;
+    }
+
+    //отправить позицию к которой привязан комплект в архив
+    function assembly_to_archive($assembly_id)
+    {
+        $query = "UPDATE `pos_items` SET `archive` = 1 WHERE `assembly` = $assembly_id";
+        $result  = $this->pdo->query($query);
+
+        return ($result) ? true : false;
     }
 
     function __destruct()

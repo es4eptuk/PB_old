@@ -46,7 +46,7 @@ include 'include/class.inc.php';
                 <tbody>
                 <?php 
                 
-                $arr = $position->get_assembly();
+                $arr = $position->get_assembly(false);
                 
                 if (isset($arr)) {
                 foreach ($arr as &$pos) {
