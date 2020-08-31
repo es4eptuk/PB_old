@@ -202,7 +202,7 @@ class Tickets
         $user_info = $this->user->get_info_user($user_id);
         if ($user_info['group'] == 4) {
             $assign = $user_id;
-            $assign_time = $date;
+            $assign_time = "'$date'";
         } else {
             $auto_assign = $this->auto_assign_user();
             $assign = ($auto_assign) ? $auto_assign : 0;
