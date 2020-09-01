@@ -228,7 +228,7 @@ include 'include/class.inc.php';
                   <select class="form-control" name="assembly"  id="assembly" required="required">
                    <option value="0"></option>
                    <?php 
-                   $arr = $position->get_assembly();
+                   $arr = $position->get_assembly(false, true);
                 
                     foreach ($arr as &$provider) {
                         

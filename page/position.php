@@ -740,10 +740,12 @@ class Position
     //создание сборки
     function add_assembly($json)
     {
+        $date    = date("Y-m-d H:i:s");
+        $user_id = intval($_COOKIE['id']);
         $equipment_arr = json_decode($json);
         $title         = $equipment_arr['0']['0'];
         array_shift($equipment_arr);
-        $query = "INSERT INTO `pos_assembly` (`id_assembly`, `title`) VALUES (NULL, '$title')";
+        $query = "INSERT INTO `pos_assembly` (`id_assembly`, `title`, `update_user`, `update_date`) VALUES (NULL, '$title', '$user_id', '$date')";
         $result = $this->pdo->query($query);
 
         $idd   = $this->pdo->lastInsertId();
@@ -758,7 +760,7 @@ class Position
             $query  = "INSERT INTO `pos_assembly_items` (`id_assembly`, `id_pos`, `count`) VALUES ( $idd, $pos_id,$count);";
             $result = $this->pdo->query($query);
         }
-        return $result;
+        return true;//$result;
     }
 
     //редактирование сборки
@@ -788,20 +790,70 @@ class Position
     }
 
     //отдает массив данных по всем сборкам
-    function get_assembly($archive=true)
+    function get_assembly($archive=true, $assembly=true)
     {
-        $where = "";
-        if (!$archive) {
-            $where .= "WHERE `pos_items`.`archive` = 0";
-        }
-        //$query = "SELECT * FROM pos_assembly ORDER BY `title` ASC";
-        $query = "SELECT `pos_assembly`.*,`pos_items`.* FROM `pos_assembly` LEFT JOIN `pos_items` ON `pos_assembly`.`id_assembly` = `pos_items`.`assembly` $where ORDER BY `pos_assembly`.`title` ASC";
+        //весь список
+        $query = "SELECT `pos_assembly`.*,`pos_items`.`vendor_code`, `pos_items`.`archive`  FROM `pos_assembly` LEFT JOIN `pos_items` ON pos_assembly.id_assembly = pos_items.assembly ORDER BY `title` ASC";
         $result = $this->pdo->query($query);
+        $all = [];
         while ($line = $result->fetch()) {
-            $equipment_array[] = $line;
+            $all[$line['id_assembly']] = $line;
         }
-        if (isset($equipment_array))
-            return $equipment_array;
+
+        /*$where = "WHERE `pos_assembly`.`id_assembly` != 0";
+        if (!$archive) {
+            $where .= " AND `pos_items`.`archive` = 0";
+        }*/
+
+        //все привязанные
+        /*$query = "SELECT `pos_assembly`.*,`pos_items`.* FROM `pos_assembly` LEFT JOIN `pos_items` ON `pos_assembly`.`id_assembly` = `pos_items`.`assembly` ORDER BY `pos_assembly`.`title` ASC";
+        $result = $this->pdo->query($query);
+        $arr_assembly = [];
+        while ($line = $result->fetch()) {
+            $arr_assembly[] = $line;
+        }*/
+
+        $result = [];
+        //все в не зависимости от привязки (true, true)
+        if ($archive && $assembly) {
+            return $all;
+        }
+
+        //все привязанные (true, false)
+        if ($archive && !$assembly) {
+            foreach ($all as $id_assembly => $assembly) {
+                if (isset($assembly['vendor_code'])) {
+                    $result[$id_assembly] = $assembly;
+                }
+            }
+            return $result;
+        }
+
+        //привязанные не архивные (false, false)
+        if (!$archive && !$assembly) {
+            foreach ($all as $id_assembly => $assembly) {
+                if (isset($assembly['vendor_code'])) {
+                    if ($assembly['archive'] == 0) {
+                        $result[$id_assembly] = $assembly;
+                    }
+                }
+            }
+            return $result;
+        }
+
+        //все, но с условием что не в архивае (false, true)
+        if (!$archive && $assembly) {
+            foreach ($all as $id_assembly => $assembly) {
+                if (isset($assembly['vendor_code'])) {
+                    if ($assembly['archive'] == 0) {
+                        $result[$id_assembly] = $assembly;
+                    }
+                } else {
+                    $result[$id_assembly] = $assembly;
+                }
+            }
+            return $result;
+        }
     }
 
     //информация по сборке
