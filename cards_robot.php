@@ -1,6 +1,8 @@
 <?php 
 include 'include/class.inc.php';
 
+$arr_ticket_status = $tickets->get_status();
+
  $arr = $robots->get_robots();
  //$paramRobot = (isset($_GET['robot']) ? $_GET['robot'] : 0);
 
@@ -118,7 +120,7 @@ include 'include/class.inc.php';
                 </td>
               </tr>
               <tr>
-                <th>В процессе решения:</th>
+                <th><?= $arr_ticket_status[2]['title'] ?>:</th>
                 <td class="dop"><?php echo $process_tickets;?> <i class="fa fa-fw fa-plus-circle pull-right text-green" style="cursor: pointer;"></i>
                  <div class="robots" style="display: none">
                     <ul>
@@ -135,7 +137,7 @@ include 'include/class.inc.php';
                 </td>
               </tr>
               <tr>
-                <th>Ожидают ремонта:</th>
+                <th><?= $arr_ticket_status[4]['title']?>:</th>
                 <td class="dop"> <?php echo count($remont);?> <i class="fa fa-fw fa-plus-circle pull-right text-green" style="cursor: pointer;"></i>
                 <div class="robots" style="display: none">
                     <ul>

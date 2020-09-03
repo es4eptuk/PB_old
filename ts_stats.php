@@ -2,7 +2,7 @@
 include 'include/class.inc.php';
 include 'page/dashboard.php';
 
-
+$arr_ticket_status = $tickets->get_status();
 ?>
 
 <?php include 'template/head.php' ?>
@@ -240,11 +240,11 @@ include 'page/dashboard.php';
                                     <th scope="col">#</th>
                                     <th scope="row">Количество тикетов</th>
                                     <th scope="col">Время решения</th>
-                                    <th scope="col">Входящие</th>
-                                    <th scope="col">Ожидает ремонта</th>
-                                    <th scope="col">В процессе</th>
-                                    <th scope="col">Отправка запчастей</th>
-                                    <th scope="col">Время в приостановке</th>
+                                    <th scope="col"><?= $arr_ticket_status[1]['title']?></th>
+                                    <th scope="col"><?= $arr_ticket_status[4]['title']?></th>
+                                    <th scope="col"><?= $arr_ticket_status[2]['title']?></th>
+                                    <th scope="col"><?= $arr_ticket_status[5]['title']?></th>
+                                    <th scope="col"><?= $arr_ticket_status[7]['title']?></th>
                                 </tr>
                                 </thead>
                                 <tbody>

@@ -912,7 +912,7 @@ class Tickets
     //назначенные тикеты
     function get_assign_tickets() {
         $date_now = date('Y-m-d');
-        $query = "SELECT * from `tickets` WHERE `status` IN (1,2,4,5) AND `assign` != 0  ORDER BY `id` ASC";
+        $query = "SELECT * from `tickets` WHERE `status` IN (1,2,4,5,7,9) AND `assign` != 0  ORDER BY `id` ASC";
         $result = $this->pdo->query($query);
         $assign = [];
         while ($line = $result->fetch()) {
@@ -1156,6 +1156,7 @@ class Tickets
         $objPHPExcel = new PHPExcel();
         // Add some data
         $objPHPExcel->setActiveSheetIndex(0);
+        $arr_ticket_status = $this->get_status();
         //задаем заголовки
         $objPHPExcel->getActiveSheet()->setCellValue("A1", 'ID');
         $objPHPExcel->getActiveSheet()->setCellValue("B1", 'Дата создания');
@@ -1163,10 +1164,10 @@ class Tickets
         $objPHPExcel->getActiveSheet()->setCellValue("D1", 'Дата ремонта');
         $objPHPExcel->getActiveSheet()->setCellValue("E1", 'Источник');
         $objPHPExcel->getActiveSheet()->setCellValue("F1", 'Робот');
-        $objPHPExcel->getActiveSheet()->setCellValue("G1", 'Во входящих');
-        $objPHPExcel->getActiveSheet()->setCellValue("H1", 'В ожидает ремонта');
-        $objPHPExcel->getActiveSheet()->setCellValue("I1", 'В процессе');
-        $objPHPExcel->getActiveSheet()->setCellValue("J1", 'В отправке запчастей');
+        $objPHPExcel->getActiveSheet()->setCellValue("G1", $arr_ticket_status[1]['title']);
+        $objPHPExcel->getActiveSheet()->setCellValue("H1", $arr_ticket_status[4]['title']);
+        $objPHPExcel->getActiveSheet()->setCellValue("I1", $arr_ticket_status[2]['title']);
+        $objPHPExcel->getActiveSheet()->setCellValue("J1", $arr_ticket_status[5]['title']);
         $objPHPExcel->getActiveSheet()->setCellValue("K1", 'Время решения');
         $objPHPExcel->getActiveSheet()->setCellValue("L1", 'Предпоследний статус');
         $objPHPExcel->getActiveSheet()->setCellValue("M1", 'Статус');

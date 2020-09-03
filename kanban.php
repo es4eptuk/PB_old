@@ -8,7 +8,7 @@ function print_r2($val)
     print_r($val);
     echo '</pre>';
 }
-
+$arr_ticket_status = $tickets->get_status();
 $arr = $robots->get_robots();
 //$paramRobot = (isset($_GET['robot']) ? $_GET['robot'] : 0);
 $arr_assign = $tickets->get_assign_tickets();
@@ -227,7 +227,7 @@ foreach ($arr_tickets as &$ticket) {
                                 <!--                                --><?php /*print_r($robot_info);*/ ?>
 
                                 <tr>
-                                    <th>В процессе решения:</th>
+                                    <th><?= $arr_ticket_status[2]['title'] ?>:</th>
                                     <td class="dop"><?php echo $process_tickets; ?> <i class="fa fa-fw fa-plus-circle pull-right text-green" style="cursor: pointer;"></i>
                                         <div class="robots" style="display: none">
                                             <ul>
@@ -243,7 +243,7 @@ foreach ($arr_tickets as &$ticket) {
                                     </td>
                                 </tr>
                                 <tr>
-                                    <th>Ожидают ремонта:</th>
+                                    <th><?= $arr_ticket_status[4]['title'] ?>:</th>
                                     <td class="dop"> <?php echo $awaitingRepair_tickets; ?> <i class="fa fa-fw fa-plus-circle pull-right text-green" style="cursor: pointer;"></i>
                                         <div class="robots" style="display: none">
                                             <ul>
@@ -1064,7 +1064,7 @@ foreach ($arr_tickets as &$ticket) {
                     id_s = id;
                     // $('#assign').modal({backdrop: 'static', keyboard: false, show: true});
                 }
-                if (status == 0 || status == 1 || status == 2 || status == 5 || status == 6 || status == 7) {
+                if (status == 0 || status == 1 || status == 2 || status == 5 || status == 6 || status == 7 || status == 9) {
                     $.post("./api.php", {
                         action: "ticket_change_status",
                         id: id,
