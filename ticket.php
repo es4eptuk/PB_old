@@ -728,7 +728,7 @@ $robot_id= $robot_info['id'];
         if (status == 4) {
             $('#add_date').modal('show');
         }
-        if (status == 0 || status == 1 || status == 2 || status == 5 || status == 6 || status == 7 || status == 8) {
+        if (status == 0 || status == 1 || status == 2 || status == 5 || status == 6 || status == 7 || status == 8 || status == 9) {
             $.post("./api.php", {
                 action: "ticket_change_status",
                 id: id,

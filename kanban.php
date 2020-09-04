@@ -312,16 +312,17 @@ foreach ($arr_tickets as &$ticket) {
                                 foreach ($arr_assign as $id_user => $info) {
                                     $user_info = $user->get_info_user($id_user);
                                     $color = "#00a65a";
-                                    $button_class = "fa fa-fw fa-toggle-on pull-right";
+
+                                    $button_class = "fa fa-fw fa-toggle-on pull-right tumb";
                                     if ($user_info['auto_assign_ticket'] == 0) {
                                         $color = "#af3124";
-                                        $button_class = "fa fa-fw fa-toggle-off pull-right";
+                                        $button_class = "fa fa-fw fa-toggle-off pull-right tumb";
                                     }
-                                    
+                                    $i_button = ($user_info['group'] == 4) ? '<i class="'.$button_class.'" style="cursor: pointer;" data-user="'.$id_user.'"></i>' : '';
                                     echo '
                                     <tr style="color:'.$color.'">
                                         <th style="width:50%">'.$user_info['user_name'].'</th>
-                                        <td class="dop">'.$info['count'].' <i class="'.$button_class.'" style="cursor: pointer;" data-user="'.$id_user.'"></i></td>
+                                        <td class="dop">'.$info['count'].' '.$i_button.'</td>
                                     </tr>
                                     ';
                                 }
@@ -992,12 +993,25 @@ foreach ($arr_tickets as &$ticket) {
 
     //вкл авто распределения для сотрудника
     $("#arr_assign").on("click", ".fa-toggle-off, .fa-toggle-on", function() {
+        $(".fa-toggle-off, .fa-toggle-on").hide();
         var user_id = $(this).data("user");
+        var this_class = $(this).attr('class');
+        //console.log(this_class);
         $.post("./api.php", {
             action: "change_auto_assign_for_user",
             id: user_id
         }).done(function (data) {
-            window.location.reload(true);
+            var obj = jQuery.parseJSON(data)
+            var el = $('i.tumb[data-user='+user_id+']');
+            //console.log(obj.status);
+            /*this_class.match(/(fa-toggle-on)/ig)*/
+            if (obj.status == 0) {
+                el.removeClass( "fa-toggle-on" ).removeClass( "fa-toggle-off" ).addClass( "fa-toggle-off" ).parent().parent().css( 'color', '#af3124' );
+            } else {
+                el.removeClass( "fa-toggle-off" ).removeClass( "fa-toggle-on" ).addClass( "fa-toggle-on" ).parent().parent().css( 'color', '#00a65a' );
+            }
+            $(".fa-toggle-off, .fa-toggle-on").show();
+            //window.location.reload(true);
         });
     });
 

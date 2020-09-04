@@ -116,12 +116,12 @@ class Tickets
      */
     public function get_status_list_change($my_statys = null)
     {
-        $where = "";
+        $where = "WHERE `id` != 6";
         if ($my_statys == 3) {
             $where = 'WHERE `id` IN (3,6)';
         }
         if ($my_statys == 8) {
-            $where = 'WHERE `id` NOT IN (8,6)';
+            $where = 'WHERE `id` IN (8,6)';
         }
         if ($my_statys == 6) {
             $where = 'WHERE `id` = 6';
@@ -940,8 +940,108 @@ class Tickets
     function change_auto_assign_for_user($user_id) {
         $old_status = $this->user->get_info_user($user_id)['auto_assign_ticket'];
         $status = ($old_status == 1) ? 0 : 1;
-        $query = $query = "UPDATE `users` SET `auto_assign_ticket` = $status WHERE `user_id` = $user_id;";
+        $query = "UPDATE `users` SET `auto_assign_ticket` = $status WHERE `user_id` = $user_id;";
         $result = $this->pdo->query($query);
+        $status = ($this->log_time_working_techpod($user_id, $old_status)) ? $status : $old_status;
+        return ['status' => $status];
+    }
+
+    //создание лога для учета времени
+    function log_time_working_techpod($user_id, $old_status) {
+        date_default_timezone_set('Asia/Yekaterinburg');
+        $user = $this->user->get_info_user($user_id);
+        //проверка на изменения
+        if ($old_status == $user['auto_assign_ticket']) {
+            return false;
+        }
+        //начальные переменные
+        $time_now_str = time();
+        $date_now = date('Y-m-d', $time_now_str);
+        $query = "SELECT * FROM `tickets_statistics_wta` WHERE `user_id` = $user_id ORDER BY `date` DESC LIMIT 1";
+        $result = $this->pdo->query($query);
+        $end_row = $result->fetch();
+        if ($end_row != null) {
+            if ($user['auto_assign_ticket'] == 1) {
+                //пуск
+                if ($date_now == $end_row['date']) {
+                    $pause_work = $this->statistics->get_new_time_spent($end_row['end_time'], $time_now_str, self::TIME_TEXPOD_NEW, 0);
+                    $query = "UPDATE `tickets_statistics_wta` SET `start_time` = $time_now_str, `end_time` = 0, `pause_work` = `pause_work` + $pause_work WHERE `user_id` = $user_id AND `date` = '$date_now'";
+                    $result = $this->pdo->query($query);
+                } else {
+                    //пересчитываем время простоя в последней записи
+                    $date_end_row = $end_row['date'];
+                    $end_time_end_row = strtotime($end_row['date'].' 23:59:59');
+                    $pause_work = $this->statistics->get_new_time_spent($end_row['end_time'], $end_time_end_row, self::TIME_TEXPOD_NEW, 0);
+                    $query = "UPDATE `tickets_statistics_wta` SET `end_time` = $end_time_end_row, `pause_work` = `pause_work` + $pause_work WHERE `user_id` = $user_id AND `date` = '$date_end_row'";
+                    $result = $this->pdo->query($query);
+                    //формируем записи с разницей дат, за искл последней строки и текущей даты
+                    $date_start = strtotime($end_row['date']);
+                    $d_start = date('d', $date_start);
+                    $m_start = date('m', $date_start);
+                    $y_start = date('Y', $date_start);
+                    $i = 1;
+                    $date_i = date('Y-m-d', mktime(0, 0, 0, $m_start, $d_start+$i, $y_start));
+                    while ($date_i < $date_now) {
+                        //что то делаем
+                        $start_time_i = strtotime($date_i.' 00:00:00');
+                        $end_time_i = strtotime($date_i.' 23:59:59');
+                        $pause_work = $this->statistics->get_new_time_spent($start_time_i, $end_time_i, self::TIME_TEXPOD_NEW, 0);
+                        $query = "INSERT INTO `tickets_statistics_wta` (`user_id`, `date`, `start_time`, `end_time`, `pause_work`) VALUES ($user_id, '$date_i', $start_time_i, $end_time_i, $pause_work)";
+                        $result = $this->pdo->query($query);
+                        //добавляем счетчики и меняем дату
+                        $i++;
+                        $date_i = date('Y-m-d', mktime(0, 0, 0, $m_start, $d_start+$i, $y_start));
+                    }
+                    //добавляем запись на текущую дату
+                    $start_time = strtotime($date_now.' 00:00:00');
+                    $pause_work = $this->statistics->get_new_time_spent($start_time, $time_now_str, self::TIME_TEXPOD_NEW, 0);
+                    $query = "INSERT INTO `tickets_statistics_wta` (`user_id`, `date`, `start_time`, `pause_work`) VALUES ($user_id, '$date_now', $time_now_str, $pause_work)";
+                    $result = $this->pdo->query($query);
+                }
+            } else {
+                //стоп
+                if ($date_now == $end_row['date']) {
+                    $in_work = $this->statistics->get_new_time_spent($end_row['start_time'], $time_now_str, self::TIME_TEXPOD_NEW, 0);
+                    $query = "UPDATE `tickets_statistics_wta` SET `end_time` = $time_now_str, `in_work` = `in_work` + $in_work WHERE `user_id` = $user_id AND `date` = '$date_now'";
+                    $result = $this->pdo->query($query);
+                } else {
+                    //пересчитываем рабочее время в последней записи
+                    $date_end_row = $end_row['date'];
+                    $end_time_end_row = strtotime($end_row['date'].' 23:59:59');
+                    $in_work = $this->statistics->get_new_time_spent($end_row['start_time'], $end_time_end_row, self::TIME_TEXPOD_NEW, 0);
+                    $query = "UPDATE `tickets_statistics_wta` SET `end_time` = $end_time_end_row, `in_work` = `in_work` + $in_work WHERE `user_id` = $user_id AND `date` = '$date_end_row'";
+                    $result = $this->pdo->query($query);
+                    //формируем записи с разницей дат, за искл последней строки и текущей даты
+                    $date_start = strtotime($end_row['date']);
+                    $d_start = date('d', $date_start);
+                    $m_start = date('m', $date_start);
+                    $y_start = date('Y', $date_start);
+                    $i = 1;
+                    $date_i = date('Y-m-d', mktime(0, 0, 0, $m_start, $d_start+$i, $y_start));
+                    while ($date_i < $date_now) {
+                        //что то делаем
+                        $start_time_i = strtotime($date_i.' 00:00:00');
+                        $end_time_i = strtotime($date_i.' 23:59:59');
+                        $in_work = $this->statistics->get_new_time_spent($start_time_i, $end_time_i, self::TIME_TEXPOD_NEW, 0);
+                        $query = "INSERT INTO `tickets_statistics_wta` (`user_id`, `date`, `start_time`, `end_time`, `in_work`) VALUES ($user_id, '$date_i', $start_time_i, $end_time_i, $in_work)";
+                        $result = $this->pdo->query($query);
+                        //добавляем счетчики и меняем дату
+                        $i++;
+                        $date_i = date('Y-m-d', mktime(0, 0, 0, $m_start, $d_start+$i, $y_start));
+                    }
+                    //добавляем запись на текущую дату
+                    $start_time = strtotime($date_now.' 00:00:00');
+                    $in_work = $this->statistics->get_new_time_spent($start_time, $time_now_str, self::TIME_TEXPOD_NEW, 0);
+                    $query = "INSERT INTO `tickets_statistics_wta` (`user_id`, `date`, `start_time`, `end_time`, `in_work`) VALUES ($user_id, '$date_now', $start_time, $time_now_str, $in_work)";
+                    $result = $this->pdo->query($query);
+                }
+            }
+        } else {
+            //запуск статистики для новых пользователей - ПУСК
+            $query = "INSERT INTO `tickets_statistics_wta` (`user_id`, `date`, `start_time`) VALUES ($user_id, '$date_now', $time_now_str)";
+            $result = $this->pdo->query($query);
+        }
+
         return true;
     }
 
@@ -1033,6 +1133,7 @@ class Tickets
                         6 => 0,
                         7 => 0,
                         8 => 0,
+                        9 => 0,
                     ],
                     'before_status' => 1,
                 ];

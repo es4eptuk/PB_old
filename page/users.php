@@ -103,7 +103,7 @@ class User
     {
         $date = date("Y-m-d H:i:s");
         $user_id = intval($_COOKIE['id']);
-        $query = "UPDATE `users` SET `user_name` = '$name', `user_email` = '$email', `telegramId` = '$telegram', `group` = '$group', `update_user` = '$user_id', `update_date` = '$date' WHERE `user_id` = $id;";
+        $query = "UPDATE `users` SET `user_name` = '$name', `user_email` = '$email', `telegramId` = '$telegram', `group` = '$group', `auto_assign_ticket` = 0, `update_user` = '$user_id', `update_date` = '$date' WHERE `user_id` = $id;";
         $result = $this->pdo->query($query);
         return ($result) ? true : false;
     }
