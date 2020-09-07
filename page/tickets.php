@@ -1074,6 +1074,216 @@ class Tickets
         return $user_assign;
     }
 
+    //собираем статистику рабочего времени
+    function get_time_working_techpod($date_start = null, $date_end = null)
+    {
+        date_default_timezone_set('Asia/Yekaterinburg');
+        $date_start = ($date_start != null) ? $date_start : date('Y-m-d');
+        $date_end = ($date_end != null) ? $date_end : date('Y-m-d');
+        //проверка фильтра
+        if ($date_start > $date_end) {
+            return false;
+        }
+
+        //задаем пустой массив пользователей группы 4, далее в процессе сборки всего массива статы войдут пользователи которые уже не состоят в этой группе
+        $arr_statistics = [];
+        $users = $this->user->get_users(4);
+        foreach ($users as $user_id => $user) {
+            $arr_statistics[$user_id] = [];
+        }
+        //взять статистику за промежуток дат
+        $query = "SELECT * FROM `tickets_statistics_wta` WHERE `date` >= '$date_start' AND `date` <= '$date_end'";
+        $result = $this->pdo->query($query);
+        while ($line = $result->fetch()) {
+            $arr_statistics[$line['user_id']][$line['date']] = $line;
+        }
+        //собираем массив итоговый
+        $str_date_start = strtotime($date_start);
+        $d_start = date('d', $str_date_start);
+        $m_start = date('m', $str_date_start);
+        $y_start = date('Y', $str_date_start);
+        $arr = [];
+        foreach ($arr_statistics as $user_id => $date_info) {
+            //инфо про тек юзера
+            $user = $user = $this->user->get_info_user($user_id);
+            //статус автоназначения
+            $user_status_assign = $user['auto_assign_ticket'];
+            //группа
+            $user_group = $user['group'];
+            //вычисляем дату первого раб дня
+            $query = "SELECT * FROM `tickets_statistics_wta` WHERE `user_id` = $user_id ORDER BY `date` ASC LIMIT 1";
+            $result = $this->pdo->query($query);
+            $row_first_date = $result->fetch();
+            $first_work_day = ($row_first_date != null) ? $row_first_date['date'] : $date_end;
+            //вычисляем дату последнего раб дня
+            $query = "SELECT * FROM `tickets_statistics_wta` WHERE `user_id` = $user_id ORDER BY `date` DESC LIMIT 1";
+            $result = $this->pdo->query($query);
+            $row_end_date = $result->fetch();
+            $end_work_day = ($row_end_date != null) ? $row_end_date['date'] : $date_end;
+            //начальные параметры
+            $i = 0;
+            $date_i = $date_start;
+            while ($date_i <= $date_end) {
+                if (array_key_exists($date_i, $date_info)) {
+                    $arr[$user_id][$date_i]['in_work'] = $date_info[$date_i]['in_work'];
+                    $arr[$user_id][$date_i]['pause_work'] = $date_info[$date_i]['pause_work'];
+                } else {
+                    $start_time_i = strtotime($date_i.' 00:00:00');
+                    $end_time_i = strtotime($date_i.' 23:59:59');
+                    $time = $this->statistics->get_new_time_spent($start_time_i, $end_time_i, self::TIME_TEXPOD_NEW, 0);
+                    if ($user_status_assign == 1) {
+                        //если пользователь включен, собираем так
+                        if ($date_i >= $first_work_day) {
+                            $arr[$user_id][$date_i]['in_work'] = $time;
+                            $arr[$user_id][$date_i]['pause_work'] = 0;
+                        } else {
+                            $arr[$user_id][$date_i]['in_work'] = 0;
+                            $arr[$user_id][$date_i]['pause_work'] = 0;
+                        }
+                    } else {
+                        //если пользователь выключен
+                        $arr[$user_id][$date_i]['in_work'] = 0;
+                        $arr[$user_id][$date_i]['pause_work'] = 0;
+                        if ($user_group == 4) {
+                            if ($date_i > $first_work_day) {
+                                $arr[$user_id][$date_i]['pause_work'] = $time;
+                            }
+                        } else {
+                            if ($date_i > $first_work_day && $date_i < $end_work_day) {
+                                $arr[$user_id][$date_i]['pause_work'] = $time;
+                            }
+                        }
+                    }
+                }
+
+                //добавляем счетчики и меняем дату
+                $i++;
+                $date_i = date('Y-m-d', mktime(0, 0, 0, $m_start, $d_start+$i, $y_start));
+            }
+            //пересчет последней/первой записи
+            if ($row_end_date != null && array_key_exists($row_end_date['date'],$arr[$user_id])) {
+                if ($user_status_assign == 1) {
+                    //включен добавить/пересчитать раб время
+                    $start_time = $row_end_date['start_time'];
+                    $end_time = strtotime($row_end_date['date'].' 23:59:59');
+                    $in_work = $this->statistics->get_new_time_spent($start_time, $end_time, self::TIME_TEXPOD_NEW, 0);
+                    $arr[$user_id][$row_end_date['date']]['in_work'] = $arr[$user_id][$row_end_date['date']]['in_work'] + $in_work;
+                } else {
+                    //выключен добавить/пересчитать паузу
+                    $start_time = $row_end_date['end_time'];
+                    $end_time = strtotime($row_end_date['date'].' 23:59:59');
+                    $pause_work = $this->statistics->get_new_time_spent($start_time, $end_time, self::TIME_TEXPOD_NEW, 0);
+                    $arr[$user_id][$row_end_date['date']]['pause_work'] = $arr[$user_id][$row_end_date['date']]['pause_work'] + $pause_work;
+                }
+            }
+        }
+        return $arr;
+    }
+
+    //
+    function get_report_time_working_techpod($date_start = null, $date_end = null, $pause_type = 0)
+    {
+
+        $arr = $this->get_time_working_techpod($date_start, $date_end);
+        $arr = ($arr) ? $arr : [];
+
+        //создаем файлы
+        //для папок
+        $f_date = date('Y-m-d_H:i:s');
+        if (!file_exists(PATCH_DIR."/report/")) {
+            mkdir(PATCH_DIR."/report/", 0777);
+        }
+        $excel_name = PATCH_DIR."/report/".$f_date.".csv";
+        require_once ('excel/Classes/PHPExcel.php');
+        require_once ('excel/Classes/PHPExcel/IOFactory.php');
+        $objPHPExcel = new PHPExcel();
+        // Add some data
+        $objPHPExcel->setActiveSheetIndex(0);
+        $objPHPExcel->getActiveSheet()->setCellValue("A1", 'ФИО/ДАТА');
+        $d_start = date('d', strtotime($date_start));
+        $m_start = date('m', strtotime($date_start));
+        $y_start = date('Y', strtotime($date_start));
+        $i = 0;
+        $col = "B";
+        $date_i = date('Y-m-d', mktime(0, 0, 0, $m_start, $d_start, $y_start));
+        while ($date_i <= $date_end) {
+            $objPHPExcel->getActiveSheet()->setCellValue($col . "1", $date_i);
+            $col++;
+            $i++;
+            $date_i = date('Y-m-d', mktime(0, 0, 0, $m_start, $d_start+$i, $y_start));
+        }
+        $row = 2;
+        foreach ($arr as $user_id => $date_info) {
+            $user = $user = $this->user->get_info_user($user_id);
+            $objPHPExcel->getActiveSheet()->setCellValue("A" . $row, $user['user_name']);
+            $col = "B";
+            foreach ($date_info as $date => $time) {
+                if ($pause_type == 1) {
+                    $objPHPExcel->getActiveSheet()->setCellValue($col . $row, $time['pause_work']);
+                } else {
+                    $objPHPExcel->getActiveSheet()->setCellValue($col . $row, $time['in_work']);
+                }
+                $col++;
+            }
+            $row++;
+        }
+
+        /*
+        //задаем заголовки
+        $objPHPExcel->getActiveSheet()->setCellValue("A1", 'ID');
+        $objPHPExcel->getActiveSheet()->setCellValue("B1", 'Дата создания');
+        $objPHPExcel->getActiveSheet()->setCellValue("C1", 'Дата решения');
+        $objPHPExcel->getActiveSheet()->setCellValue("D1", 'Дата ремонта');
+        $objPHPExcel->getActiveSheet()->setCellValue("E1", 'Источник');
+        $objPHPExcel->getActiveSheet()->setCellValue("F1", 'Робот');
+        $objPHPExcel->getActiveSheet()->setCellValue("G1", $arr_ticket_status[1]['title']);
+        $objPHPExcel->getActiveSheet()->setCellValue("H1", $arr_ticket_status[4]['title']);
+        $objPHPExcel->getActiveSheet()->setCellValue("I1", $arr_ticket_status[2]['title']);
+        $objPHPExcel->getActiveSheet()->setCellValue("J1", $arr_ticket_status[5]['title']);
+        $objPHPExcel->getActiveSheet()->setCellValue("K1", 'Время решения');
+        $objPHPExcel->getActiveSheet()->setCellValue("L1", 'Предпоследний статус');
+        $objPHPExcel->getActiveSheet()->setCellValue("M1", 'Статус');
+        $objPHPExcel->getActiveSheet()->setCellValue("N1", 'Класс');
+        $objPHPExcel->getActiveSheet()->setCellValue("O1", 'Категория');
+        $objPHPExcel->getActiveSheet()->setCellValue("P1", 'Подкатегория');
+        $objPHPExcel->getActiveSheet()->setCellValue("Q1", 'Приоритет');
+        $objPHPExcel->getActiveSheet()->setCellValue("R1", 'Исполнитель');
+        $objPHPExcel->getActiveSheet()->setCellValue("S1", 'Описание');
+        $objPHPExcel->getActiveSheet()->setCellValue("T1", 'Решение');
+
+        $row = 1;
+        foreach ($arr['result'] as $ticket) {
+            $row++;
+            $objPHPExcel->getActiveSheet()->setCellValue("A" . $row, $ticket['id']);
+            $objPHPExcel->getActiveSheet()->setCellValue("B" . $row, $ticket['date_create']);
+            $objPHPExcel->getActiveSheet()->setCellValue("C" . $row, $ticket['date_resolved']);
+            $objPHPExcel->getActiveSheet()->setCellValue("D" . $row, $ticket['date_repair']);
+            $objPHPExcel->getActiveSheet()->setCellValue("E" . $row, $ticket['source']);
+            $objPHPExcel->getActiveSheet()->setCellValue("F" . $row, $ticket['robot']);
+            $objPHPExcel->getActiveSheet()->setCellValue("G" . $row, $ticket['time_in_status'][1]);
+            $objPHPExcel->getActiveSheet()->setCellValue("H" . $row, $ticket['time_in_status'][4]);
+            $objPHPExcel->getActiveSheet()->setCellValue("I" . $row, $ticket['time_in_status'][2]);
+            $objPHPExcel->getActiveSheet()->setCellValue("J" . $row, $ticket['time_in_status'][5]);
+            $objPHPExcel->getActiveSheet()->setCellValue("K" . $row, $ticket['time_resolved']);
+            $objPHPExcel->getActiveSheet()->setCellValue("L" . $row, $ticket['before_status']);
+            $objPHPExcel->getActiveSheet()->setCellValue("M" . $row, $ticket['status']);
+            $objPHPExcel->getActiveSheet()->setCellValue("N" . $row, $ticket['class']);
+            $objPHPExcel->getActiveSheet()->setCellValue("O" . $row, $ticket['category']);
+            $objPHPExcel->getActiveSheet()->setCellValue("P" . $row, $ticket['subcategory']);
+            $objPHPExcel->getActiveSheet()->setCellValue("Q" . $row, $ticket['priority']);
+            $objPHPExcel->getActiveSheet()->setCellValue("R" . $row, $ticket['user']);
+            $objPHPExcel->getActiveSheet()->setCellValue("S" . $row, $ticket['description']);
+            $objPHPExcel->getActiveSheet()->setCellValue("T" . $row, $ticket['result_description']);
+        }
+        */
+        // Save CSV file
+        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'CSV');
+        $objWriter->setDelimiter(';');
+        $objWriter->save($excel_name);
+
+        return $excel_name;
+    }
+
     //собираем статистику по тикетам решенным
     function get_resolved_ticket_status_time($date_start = null, $date_end = null, $robot_name = null, $robot_number = null, $robot_version = null)
     {

@@ -5,6 +5,7 @@ class User
 {
     private $query;
     private $pdo;
+    private $tickets;
 
     public $getGroups;
 
@@ -23,6 +24,11 @@ class User
 
     function init()
     {
+        global $tickets;
+
+        //Подключение внешних классов
+        $this->tickets = $tickets;
+
         //список групп
         $query = "SELECT * FROM `users_group` ORDER BY `id` ASC";
         $result = $this->pdo->query($query);
@@ -103,7 +109,14 @@ class User
     {
         $date = date("Y-m-d H:i:s");
         $user_id = intval($_COOKIE['id']);
-        $query = "UPDATE `users` SET `user_name` = '$name', `user_email` = '$email', `telegramId` = '$telegram', `group` = '$group', `auto_assign_ticket` = 0, `update_user` = '$user_id', `update_date` = '$date' WHERE `user_id` = $id;";
+        $old_user = $this->get_info_user($id);
+        if ($old_user['auto_assign_ticket'] == 1 && $old_user['group'] == 4 && $group != 4) {
+            $this->tickets->change_auto_assign_for_user($id);
+        }
+        if ($old_user['auto_assign_ticket'] == 0 && $old_user['group'] != 4 && $group == 4) {
+            $this->tickets->change_auto_assign_for_user($id);
+        }
+        $query = "UPDATE `users` SET `user_name` = '$name', `user_email` = '$email', `telegramId` = '$telegram', `group` = '$group', `update_user` = '$user_id', `update_date` = '$date' WHERE `user_id` = $id;";
         $result = $this->pdo->query($query);
         return ($result) ? true : false;
     }

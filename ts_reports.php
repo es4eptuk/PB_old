@@ -36,6 +36,19 @@ if (isset($_POST['resolved'])) {
     file_force_download($file);
 }
 
+if (isset($_POST['in_time'])) {
+    $date = explode(' - ', $_POST['in_time_date']);
+    $date_start = $date[0];
+    $date_end = $date[1];
+    $type = (isset($_POST['type_in_time']) && !empty($_POST['type_in_time']) && $_POST['type_in_time'] == 1) ? 1 : 0;
+    $file = $tickets->get_report_time_working_techpod($date_start, $date_end, $type);
+    file_force_download($file);
+    /*$arr = $tickets->get_time_working_techpod($date_start, $date_end);
+    print_r("<pre>");
+    print_r($arr);
+    print_r("</pre>");*/
+}
+
 ?>
 <?php include 'template/head.php' ?>
 <body class="hold-transition skin-blue sidebar-mini">
@@ -91,7 +104,7 @@ if (isset($_POST['resolved'])) {
                 </div>
             </div>
 
-            <div class="box box-primary">
+            <div class="box box-default">
                 <div class="box-header with-border">
                     <h3 class="box-title">По закрытм тикетам</h3>
                     <div class="box-tools pull-right">
@@ -144,6 +157,44 @@ if (isset($_POST['resolved'])) {
                 </div>
             </div>
 
+            <div class="box box-default">
+                <div class="box-header with-border">
+                    <h3 class="box-title">По рабочему времени</h3>
+                    <div class="box-tools pull-right">
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                    </div>
+                </div>
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <form action="" method="post" name="in_time">
+                                <div style="width:300px;float:left;margin-right:20px;">
+                                    <div class="form-group">
+                                        <select class="form-control select2" name="type_in_time" id="type_in_time">
+                                            <option value="0">Рабочее время</option>
+                                            <option value="1">Время простоя</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div style="float:left;margin-right:20px;">
+                                    <div class="form-group">
+                                        <input type="text" name="in_time_date" id="in_time_date" value="<?= date('Y-m-d', strtotime("yesterday")).' - '.date('Y-m-d', strtotime("yesterday")) ?>" hidden>
+                                        <div class="input-group">
+                                            <button type="button" class="btn btn-default pull-right" name="in_time_daterange" id="in_time_daterange">
+                                                <span><i class="fa fa-calendar"></i> Период</span> <i class="fa fa-caret-down"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="float:right;margin-right:20px;">
+                                    <button class="btn btn-primary" type="submit" id="in_time" name="in_time">Сформировать</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </section>
     </div>
     <div class="control-sidebar-bg"></div>
@@ -164,7 +215,7 @@ if (isset($_POST['resolved'])) {
 
         //Date range as a button
         $('#owner_daterange').daterangepicker({
-                //opens: 'right',
+                opens: 'right',
                 locale: {
                     format: 'DD/MM/YYYY',
                     firstDay: 1
@@ -207,6 +258,31 @@ if (isset($_POST['resolved'])) {
             function (start, end) {
                 $('#resolved_daterange span').html(start.format('DD.MM.YYYY') + ' - ' + end.format('DD.MM.YYYY'));
                 $('input#resolved_date').val(start.format('YYYY-MM-DD') + ' - ' + end.format('YYYY-MM-DD'));
+            }
+        )
+
+        //Date range as a button
+        $('#in_time_daterange').daterangepicker({
+                opens: 'right',
+                locale: {
+                    format: 'DD/MM/YYYY',
+                    firstDay: 1
+                },
+                ranges: {
+                    //'Today': [moment(), moment()],
+                    'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                    'Last 7 Days': [moment().subtract(7, 'days'), moment().subtract(1, 'days')],
+                    'Last 30 Days': [moment().subtract(30, 'days'), moment().subtract(1, 'days')],
+                    //'This Month': [moment().startOf('month'), moment().endOf('month')],
+                    'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                },
+                startDate: moment().subtract(1, 'days'),
+                endDate: moment().subtract(1, 'days'),
+                maxDate: moment().subtract(1, 'days')
+            },
+            function (start, end) {
+                $('#in_time_daterange span').html(start.format('DD.MM.YYYY') + ' - ' + end.format('DD.MM.YYYY'));
+                $('input#in_time_date').val(start.format('YYYY-MM-DD') + ' - ' + end.format('YYYY-MM-DD'));
             }
         )
         //
