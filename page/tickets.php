@@ -127,6 +127,12 @@ class Tickets
             $where = 'WHERE `id` = 6';
         }
 
+        $user_id = intval($_COOKIE['id']);
+        $user = $this->user->get_info_user($user_id);
+        if ($user['group'] == 1) {
+            $where = "";
+        }
+
         $query = "SELECT * FROM tickets_status $where ORDER BY `sort` ASC ";
         $result = $this->pdo->query($query);
         while ($line = $result->fetch()) {
@@ -506,14 +512,20 @@ class Tickets
         while ($line = $result->fetch()) {
             $tickets[] = $line;
         }
+
+        $user_id = intval($_COOKIE['id']);
+        $user = $this->user->get_info_user($user_id);
         $old_status  = $tickets[0]['status'];
-        //из решено/не решено только в архив
-        if (($old_status == 3 || $old_status == 8) && $status != 6) {
-            return false;
-        }
-        //из архива никуда
-        if ($old_status == 6) {
-            return false;
+
+        if ($user['group'] != 1) {
+            //из решено/не решено только в архив
+            if (($old_status == 3 || $old_status == 8) && $status != 6) {
+                return false;
+            }
+            //из архива никуда
+            if ($old_status == 6) {
+                return false;
+            }
         }
 
         //добавить метку смены статуса

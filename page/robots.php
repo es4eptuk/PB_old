@@ -350,7 +350,7 @@ class Robots
             $version = '4';
         }
 
-        $this->query = "SELECT * FROM robots WHERE (number='$number' OR number='$number_0') AND version = '$version'";
+        $this->query = "SELECT * FROM robots WHERE (number='$number' OR number='$number_0') AND version = '$version' AND delete != 1";
         $result = $this->pdo->query($this->query);
         while ($line = $result->fetch()) {
             $robot_array[] = $line;
