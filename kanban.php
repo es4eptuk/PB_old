@@ -47,7 +47,7 @@ foreach ($arr_tickets as &$ticket) {
     $ticket_robot = $ticket['robot'];
     $ticket_assign = $ticket['assign'];
     //считаем уникальных роботов для фильтра
-    if ($ticket_status != 6) {
+    if ($ticket_status != 6 && $ticket_status != 8) {
         if (!array_key_exists($ticket_robot, $filtr_robot)) {
             $robot_info = $robots->get_info_robot($ticket_robot);
             $filtr_robot[$ticket_robot] = [
