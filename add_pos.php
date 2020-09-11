@@ -332,7 +332,7 @@ include 'include/class.inc.php';
         var quant_total = $('#quant_total').val();
         var file = $('#file').val();
 
-        if (title != "" && category != "0" && subcategory != "" && quant_total != "" && provider != 0 && price != "" && vendorcode != "") {
+        if (title != "" && category != "0" && subcategory != "" && quant_total != "" && price != "" && vendorcode != "") {
             $.post("./api.php", {
                 action: "add_pos",
                 title: title,
@@ -388,7 +388,7 @@ include 'include/class.inc.php';
         var quant_total = $('#quant_total').val();
         var file = $('#file').val();
 
-        if (title != "" && category != "0" && subcategory != "" && quant_total != "" && provider != 0 && price != "" && vendorcode != "") {
+        if (title != "" && category != "0" && subcategory != "" && quant_total != "" && price != "" && vendorcode != "") {
             $.post("./api.php", {
                 action: "add_pos",
                 title: title,
