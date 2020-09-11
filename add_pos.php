@@ -98,87 +98,72 @@ include 'include/class.inc.php';
                 <div class="form-group">
                   <label>Артикул</label>
                   <?php
-                  $gen_code = $position->generate_art();
-                  $gen_code = $gen_code['Auto_increment']; //$gen_code['max(id)']
-                  $cat = "";
-                  if (isset($_GET['category'])) {
-                  switch ($_GET['category']) {
-                    case 1:
-                        $cat = "MH";
-                        break;
-                    case 2:
-                        $cat = "HP";
-                        break;
-                    case 3:
-                        $cat = "BD";
-                        break;
-                    case 4:
-                        $cat = "PK";
-                        break; 
-                    case 5:
-                        $cat = "HS";
-                        break;    
-                }
-                  }
-                  
-                  
-                  //print_r($gen_code);
+                      $gen_code = $position->generate_art();
+                      $gen_code = $gen_code['Auto_increment']; //$gen_code['max(id)']
+                      $cat = "";
+                      if (isset($_GET['category'])) {
+                          switch ($_GET['category']) {
+                              case 1:
+                                  $cat = "MH";
+                                  break;
+                              case 2:
+                                  $cat = "HP";
+                                  break;
+                              case 3:
+                                  $cat = "BD";
+                                  break;
+                              case 4:
+                                  $cat = "PK";
+                                  break;
+                              case 5:
+                                  $cat = "HS";
+                                  break;
+                          }
+                      }
+                      //print_r($gen_code);
                   ?>
                   <input type="text" class="form-control" name="vendorcode"  id="vendorcode" value="<?php echo $cat."-".$gen_code; ?>">
                 </div>
                 
                  <div class="form-group">
                   <label>Поставщик <small>(<a href="#" data-toggle="modal" data-target="#add_provider">Добавить</a>)</small></label>
-                  <select class="form-control" name="provider" placeholder="Выберите категорию" id="provider" required="required">
-                   <option>Выберите поставщика...</option>
-                   <?php 
-                   $arr = $position->get_pos_provider();
-                
-                 if (isset($_GET['provider'])) {
-                
-                    foreach ($arr as &$provider) {
-                        
-                        if ($_GET['provider']==$provider['id']) {
-                       echo "
-                       <option value='".$provider['id']."' selected>".$provider['type']." ".$provider['title']."</option>
-                       ";
-                        } else {
-                           echo "
-                       <option value='".$provider['id']."'>".$provider['type']." ".$provider['title']."</option>
-                       ";  
-                            
-                        }
-                    }
-                    
-                 } else {
-                     
-                      foreach ($arr as &$provider) {
-                       echo "
-                       <option value='".$provider['id']."'>".$provider['type']." ".$provider['title']."</option>
-                       
-                       ";
-                    }
-                     
-                 }
-                   
-                   ?>
+                  <select class="form-control" name="provider" placeholder="" id="provider" required="required">
+                      <option value="0">Выберите поставщика...</option>
+                      <?php
+                          $arr = $position->get_pos_provider();
+                          if (isset($_GET['provider'])) {
+                              foreach ($arr as &$provider) {
+                                  if ($_GET['provider'] == $provider['id']) {
+                                      echo "<option value='" . $provider['id'] . "' selected>" . $provider['type'] . " " . $provider['title'] . "</option>";
+                                  } else {
+                                      echo "<option value='" . $provider['id'] . "'>" . $provider['type'] . " " . $provider['title'] . "</option>";
+                                  }
+                              }
+                          } else {
+                              foreach ($arr as &$provider) {
+                                  echo "<option value='" . $provider['id'] . "'>" . $provider['type'] . " " . $provider['title'] . "</option>";
+                              }
+                          }
+                      ?>
                   </select>
-                  
-                  
                 </div>
                 
                 <div class="form-group">
                   <label>Стоимость</label>
                   <input type="text" class="form-control" name="price" placeholder="0.00" id="price" value="<?php if(isset($_GET['price']))  echo $_GET['price']; ?>">
                 </div>
-                
-               
-                
+
                  <div class="form-group">
                   <label>Количество на складе</label>
                   <input type="text" class="form-control" name="quant_total" placeholder="0" id="quant_total">
                 </div>
-                
+
+                <div class="form-group">
+                  <label for="file">Изображение</label>
+                  <input type="file" id="file">
+                  <p class="help-block"></p>
+                </div>
+
                 <div class="box-footer">
                     <button type="submit" class="btn btn-primary" id="save_close">Сохранить и закрыть</button>
                     <button type="submit" class="btn btn-primary" id="save_new">Сохранить и создать новую позицию</button>
@@ -247,186 +232,202 @@ include 'include/class.inc.php';
 
 <?php include 'template/scripts.php'; ?>
 <script>
-  
-  $( "#category" )
-  .change(function () {
-    var id = "";
-    
-    $( "#category option:selected" ).each(function() {
-      id = $( this ).val();
-    });
- 
-    $.post( "./api.php", { action: "get_pos_sub_category", subcategory: id } )
-    .done(function( data ) {
-        $('option', $("#subcategory")).remove();
-        var obj = jQuery.parseJSON(data);
-        //console.log(obj);
-        $.each( obj, function( key, value ) {
-          $('#subcategory')
-         .append($("<option></option>")
-                    .attr("value",value['id'])
-                    .text(value['title'])); 
-                    
+
+    $("#category").change(function () {
+        var id = "";
+        $("#category option:selected").each(function () {
+            id = $(this).val();
         });
-
+        $.post("./api.php", {
+            action: "get_pos_sub_category",
+            subcategory: id
+        }).done(function (data) {
+            $('option', $("#subcategory")).remove();
+            var obj = jQuery.parseJSON(data);
+            //console.log(obj);
+            $.each(obj, function (key, value) {
+                $('#subcategory').append($("<option></option>")
+                    .attr("value", value['id'])
+                    .text(value['title']));
+            });
+        });
     });
- 
- 
-  });
-  
-  
-    $( "#version" )
-  .change(function () {
-    var cat = $( "#category" ).val(); 
-    var version = $( this ).val();
-    var max_id = <?php echo $gen_code; ?>+1;
-    var cat_str=""
-    
-    switch (cat) {
-          case "1":
-            cat_str = "MH";
-            console.log(cat);
-            break;
-          case "2":
-            cat_str = "HP";
-            break;
-          case "3":
-            cat_str = "BD";
-            break;
-           case "4":
-            cat_str = "PK";
-            break;
+
+
+    $("#category").change(function () {
+        var cat = $(this).val();
+        //var version = $(this).val();
+        var max_id = <?php echo $gen_code; ?>;
+        var cat_str = "";
+        switch (cat) {
+            case "1":
+                cat_str = "MH";
+                console.log(cat);
+                break;
+            case "2":
+                cat_str = "HP";
+                break;
+            case "3":
+                cat_str = "BD";
+                break;
+            case "4":
+                cat_str = "PK";
+                break;
             case "5":
-            cat_str = "HS";
-            break;
-        
+                cat_str = "HS";
+                break;
         }
-    
-    var code = cat_str+"-"+version+"-"+max_id;
-    $( "#vendorcode" ).val(code); 
-    //alert(code);
+        var code = cat_str + "-" + max_id;
+        $("#vendorcode").val(code);
+        //alert(code);
+    });
 
- 
- 
-  });
-  
-  $( "#save_close" ).click(function() {
-      $(this).last().addClass( "disabled" );
-     save_close();
-     return false;
+    $("#save_close").click(function () {
+        $(this).last().addClass("disabled");
+        save_close();
+        return false;
     });
-    
-  $( "#save_new" ).click(function() {
-      $(this).last().addClass( "disabled" );
-      save_new();
-      return false;
+
+    $("#save_new").click(function () {
+        $(this).last().addClass("disabled");
+        save_new();
+        return false;
     });
-    
-    
-   $( "#btn_add_provider" ).click(function() {
-     var type =  $('#provider_type').val();
-     var title = $('#provider_title').val();
-    //alert("123");
-    if (title!="") {
-     
-      $.post( "./api.php", { 
-        action: "add_pos_provider", 
-        type: type,
-        title: title 
-    } )
-          .done(function( data ) {
-              console.log(data);
-              if (data=="false") {alert( "Data Loaded: " + data );  return false;}
-              else {
-                  $('#provider').append("<option value='"+ data +"' selected>"+ title +"</option>");
-                  $('#add_provider').modal('hide');
-                  //return false;
-              }
-          });
-     
-     
-    }
-    
-    });  
-  
- $('#add_pos').validator();
- $('#add_provider_form').validator();
-  
-  
- function save_close() {
-    var title =  $('#title').val();
-    var longtitle =  $('#longtitle').val();
-    var category =  $('#category').val();
-    var subcategory =  $('#subcategory').val();
-  
-    var vendorcode =  $('#vendorcode').val();
-    var provider =  $('#provider').val();
-    var price =  $('#price').val();
-    var quant_robot =  0; 
-    var quant_total =  $('#quant_total').val(); 
-    
-    if (title!="" && category!="0" && subcategory!="" ) {
-    
-      $.post( "./api.php", { 
-        action: "add_pos", 
-        title: title,
-        longtitle: longtitle ,
-        category: category ,
-        subcategory: subcategory ,
-       
-        vendorcode: vendorcode ,
-        provider: provider ,
-        price: price ,
-        quant_robot: 0 ,
-        quant_total: quant_total 
-    } )
-          .done(function( data ) {
-              data.replace(new RegExp("\\r?\\n", "g"), "");
+
+    $("#btn_add_provider").click(function () {
+        var type = $('#provider_type').val();
+        var title = $('#provider_title').val();
+        //alert("123");
+        if (title != "") {
+            $.post("./api.php", {
+                action: "add_pos_provider",
+                type: type,
+                title: title
+            }).done(function (data) {
                 console.log(data);
-              if (data=="false") {alert( "Невозможно добавить позицию"); return false; }
-              else {
-                 
-                  window.location.href = "./pos.php?id="+category;
-              }
-          });
-          
+                if (data == "false") {
+                    alert("Data Loaded: " + data);
+                    return false;
+                } else {
+                    $('#provider').append("<option value='" + data + "' selected>" + title + "</option>");
+                    $('#add_provider').modal('hide');
+                    //return false;
+                }
+            });
+        }
+    });
+
+    $('#add_pos').validator();
+    $('#add_provider_form').validator();
+
+    function save_close() {
+        var title = $('#title').val();
+        var longtitle = $('#longtitle').val();
+        var category = $('#category').val();
+        var subcategory = $('#subcategory').val();
+        var vendorcode = $('#vendorcode').val();
+        var provider = $('#provider').val();
+        var price = $('#price').val();
+        var quant_robot = 0;
+        var quant_total = $('#quant_total').val();
+        var file = $('#file').val();
+
+        if (title != "" && category != "0" && subcategory != "" && quant_total != "" && provider != 0 && price != "" && vendorcode != "") {
+            $.post("./api.php", {
+                action: "add_pos",
+                title: title,
+                longtitle: longtitle,
+                category: category,
+                subcategory: subcategory,
+                vendorcode: vendorcode,
+                provider: provider,
+                price: price,
+                quant_robot: 0,
+                quant_total: quant_total
+            }).done(function (data) {
+                //data.replace(new RegExp("\\r?\\n", "g"), "");
+                //console.log(data);
+                if (data == "false") {
+                    alert("Невозможно добавить позицию");
+                    return false;
+                } else {
+                    var file_data = $('#file').prop('files')[0];
+                    var form_data = new FormData();
+                    form_data.append('file', file_data);
+                    form_data.append('category', category);
+                    form_data.append('vendor', vendorcode);
+                    //alert(form_data);
+                    $.ajax({
+                        url: 'upload.php',
+                        dataType: 'text',
+                        cache: false,
+                        contentType: false,
+                        processData: false,
+                        data: form_data,
+                        type: 'post',
+                        success: function (php_script_response) {
+                            //alert(php_script_response);
+                            window.location.href = "./pos.php?id=" + category;
+                        }
+                    });
+                }
+            });
+        }
+
     }
-    
- }
- 
- function save_new() {
-    var title =  $('#title').val();
-    var longtitle =  $('#longtitle').val();
-    var category =  $('#category').val();
-    var subcategory =  $('#subcategory').val();
-    var vendorcode =  $('#vendorcode').val();
-    var provider =  $('#provider').val();
-    var price =  $('#price').val();
-    var quant_robot =  0; 
-    var quant_total =  $('#quant_total').val(); 
-    
-     if (title!="" && category!="0" && subcategory!="" ) {
-    
-      $.post( "./api.php", { 
-        action: "add_pos", 
-        title: title,
-        longtitle: longtitle ,
-        category: category ,
-        subcategory: subcategory ,
-        vendorcode: vendorcode ,
-        provider: provider ,
-        price: price ,
-        quant_robot: 0 ,
-        quant_total: quant_total 
-    } )
-          .done(function( data ) {
-              if (data=="false") {alert( "Data Loaded: " + data ); }
-              else {
-                  window.location.href = "./add_pos.php";
-              }
-          });
-     }
- }
+
+    function save_new() {
+        var title = $('#title').val();
+        var longtitle = $('#longtitle').val();
+        var category = $('#category').val();
+        var subcategory = $('#subcategory').val();
+        var vendorcode = $('#vendorcode').val();
+        var provider = $('#provider').val();
+        var price = $('#price').val();
+        var quant_robot = 0;
+        var quant_total = $('#quant_total').val();
+        var file = $('#file').val();
+
+        if (title != "" && category != "0" && subcategory != "" && quant_total != "" && provider != 0 && price != "" && vendorcode != "") {
+            $.post("./api.php", {
+                action: "add_pos",
+                title: title,
+                longtitle: longtitle,
+                category: category,
+                subcategory: subcategory,
+                vendorcode: vendorcode,
+                provider: provider,
+                price: price,
+                quant_robot: 0,
+                quant_total: quant_total
+            }).done(function (data) {
+                if (data == "false") {
+                    alert("Невозможно добавить позицию");
+                    return false;
+                } else {
+                    var file_data = $('#file').prop('files')[0];
+                    var form_data = new FormData();
+                    form_data.append('file', file_data);
+                    form_data.append('category', category);
+                    form_data.append('vendor', vendorcode);
+                    //alert(form_data);
+                    $.ajax({
+                        url: 'upload.php',
+                        dataType: 'text',
+                        cache: false,
+                        contentType: false,
+                        processData: false,
+                        data: form_data,
+                        type: 'post',
+                        success: function (php_script_response) {
+                            //alert(php_script_response);
+                            window.location.href = "./add_pos.php";
+                        }
+                    });
+                }
+            });
+        }
+    }
   
 </script>
 
