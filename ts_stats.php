@@ -93,7 +93,7 @@ if (isset($_POST['script'])) {
                             //максимальная дата
                             $date_MAX = date("Y-m-d H:i:s");
 
-                            for ($i = 1; $i <= 721; $i++) {
+                            for ($i = 1; $i <= $go_time; $i++) {
                                 //записываем максимальное значение для первого интервала дат
                                 $date_arr_second[$i]['dateMax'] = $date_MAX;
 
