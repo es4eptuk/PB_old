@@ -3,6 +3,18 @@ include 'include/class.inc.php';
 include 'page/dashboard.php';
 
 $arr_ticket_status = $tickets->get_status();
+$selected1 = "";
+$selected0 = "";
+$go_time = 30*24+1;
+if (isset($_POST['script'])) {
+    $go_time = ($_POST['script'] == 1) ? 362*24+1 : $go_time;
+    if ($_POST['script'] == 1) {
+        $selected1 = "selected";
+    } else {
+        $selected0 = "selected";
+    }
+}
+
 ?>
 
 <?php include 'template/head.php' ?>
@@ -35,6 +47,18 @@ $arr_ticket_status = $tickets->get_status();
                             <h3 class="box-title">Техническая поддержка</h3>
                         </div>
                         <div class="box-body table-responsive">
+                            <form action="" method="post">
+                                <div style="width:300px;float:left;margin-right:20px;">
+                                    <div class="form-group">
+                                        <select class="form-control" id="script" name="script" required="required">
+                                            <option value="0" <?= $selected0 ?>>За последний месяц</option>
+                                            <option value="1" <?= $selected1 ?>>За последний год</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <button class="btn btn-primary" id="go" type="submit">Пересчитать</button>
+                            </form>
+                            <div class="clearfix"></div>
                             <?php
 
                             function print_r2($val)
@@ -117,6 +141,7 @@ $arr_ticket_status = $tickets->get_status();
                             foreach ($date_arr_reversed_second as $key => $value) {
                                 $dateMin = $value["dateMin"];
                                 $dateMax = $value["dateMax"];
+                                //print_r($dateMin.'/'.$dateMax.'<br>');
                                 $totalAnswers_arr_second[] = $dashboard->getCountAnswers(0, 999999, "$dateMin",  "$dateMax");
                             }
 
