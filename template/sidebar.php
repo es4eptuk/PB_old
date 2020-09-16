@@ -74,7 +74,8 @@
             <li><a href="./orders.php?id=7"><i class="fa fa-circle-o"></i> Листовые материалы</a></li>
             <li><a href="./orders.php?id=999"><i class="fa fa-circle-o"></i> Возвраты поставщику</a></li>
             <li><a href="./orders.php?id=998"><i class="fa fa-circle-o"></i> Покраска/Покрытие</a></li>
-            <li><a href="./orders.php?id=997"><i class="fa fa-circle-o"></i> Сварка/Зенковка</a></li>
+            <li><a href="./orders.php?id=996"><i class="fa fa-circle-o"></i> Зенковка</a></li>
+            <li><a href="./orders.php?id=997"><i class="fa fa-circle-o"></i> Сварка</a></li>
           </ul>
         </li>
         

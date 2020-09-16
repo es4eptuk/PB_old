@@ -271,7 +271,7 @@ class Orders
         $where = "";
         if ($status!=1) {$where.=" AND order_status != 2";}
         
-        if ($order_category==999 || $order_category==998 || $order_category==997  ) {
+        if ($order_category==999 || $order_category==998 || $order_category==997 || $order_category==996) {
              $query = "SELECT * FROM orders WHERE orders.order_category = '$order_category' ORDER BY `order_delivery` ASC";
         }
         else {
