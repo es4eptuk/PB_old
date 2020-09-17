@@ -377,6 +377,9 @@ if (isset($_POST['action'])) {
     if ($_POST['action'] == "ticket_change_status") {
         echo json_encode($tickets->ticket_change_status($_POST['id'], $_POST['status']), JSON_UNESCAPED_UNICODE);
     }
+    if ($_POST['action'] == "new_ticket_change_status") {
+        echo json_encode($tickets->new_ticket_change_status($_POST['date'], $_POST['comment'], $_POST['id'], $_POST['status']), JSON_UNESCAPED_UNICODE);
+    }
     if ($_POST['action'] == "ticket_arhiv") {
         echo json_encode($tickets->arhiv($_POST['id']), JSON_UNESCAPED_UNICODE);
     }

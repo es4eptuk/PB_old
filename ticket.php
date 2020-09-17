@@ -319,7 +319,10 @@ $robot_id= $robot_info['id'];
                     <?php
                         if ($ticket_info['finish_date']!='0000-00-00' && $ticket_info['finish_date']!=null) {
                             $ticket_finish = new DateTime($ticket_info['finish_date']);
-                            echo '<li><a>Дата ремонта <span class="pull-right">'.$ticket_finish->format('d.m.Y').'</span></a></li>';
+                            $finish_date = $ticket_finish->format('d.m.Y');
+                            echo '<li><a>Дата ремонта <span class="pull-right">'.$finish_date.'</span></a></li>';
+                        } else {
+                            $finish_date = date('d.m.Y');
                         }
                     ?>
                     <?php
@@ -460,85 +463,91 @@ $robot_id= $robot_info['id'];
   <div class="control-sidebar-bg"></div>
   
   <!-- Modal -->
-<div class="modal fade" id="add_result" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLongTitle">Опишите решение проблемы</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="form-group">
-                  <label>Решение:</label>
-                  <textarea class="form-control" rows="5" id="result_description"></textarea>
+<!-- Modal -->
+<div class="modal fade" id="add_result" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Опишите решение проблемы</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Решение:</label>
+                    <textarea class="form-control" rows="3" id="result_description"></textarea>
                 </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
-        <button type="button" class="btn btn-primary" id="btn_add_reuslt">Сохранить</button>
-      </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary cancel-change" data-dismiss="modal" data-status="" data-old_status="">Отменить перенос</button>
+                <button type="button" class="btn btn-primary" id="btn_add_reuslt" data-id="">Сохранить</button>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
-<div class="modal fade" id="add_date" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLongTitle">Укажите дату решения проблемы</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-       <div class="form-group">
-                <label>Дата:</label>
-
-                <div class="input-group date">
-                  <div class="input-group-addon">
-                    <i class="fa fa-calendar"></i>
-                  </div>
-                  <input type="text" class="form-control pull-right" id="datepicker">
-                </div>
-                <!-- /.input group -->
-              </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
-        <button type="button" class="btn btn-primary" id="btn_add_date">Сохранить</button>
-      </div>
-    </div>
-  </div>
 </div>
 
+<div class="modal fade" id="change_status" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Укажите информацию для смены статуса</h5>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Дата ремонта:</label>
+                    <div class="input-group date">
+                        <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+                        <input type="text" class="form-control pull-right" class="datepicker" id="change_status_date" name="change_status_date" value="">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Комментарий:</label>
+                    <textarea class="form-control" rows="3" name="change_status_comment" id="change_status_comment"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary cancel-change" data-dismiss="modal" data-status="" data-old_status="">Отменить перенос</button>
+                <button type="button" class="btn btn-primary" id="btn_change_status" data-id="">Сохранить</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 </div>
 <!-- ./wrapper -->
 <!-- jQuery 3 -->
-<script src="../../bower_components/jquery/dist/jquery.min.js"></script>
+<script src="./bower_components/jquery/dist/jquery.min.js"></script>
 <!-- Bootstrap 3.3.7 -->
-<script src="../../bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="./bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 <!-- DataTables -->
-<script src="../../bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
-<script src="../../bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+<script src="./bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="./bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
 <!-- SlimScroll -->
-<script src="../../bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+<script src="./bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
 <!-- FastClick -->
-<script src="../../bower_components/fastclick/lib/fastclick.js"></script>
+<script src="./bower_components/fastclick/lib/fastclick.js"></script>
 <!-- AdminLTE App -->
-<script src="../../dist/js/adminlte.min.js"></script>
+<script src="./dist/js/adminlte.min.js"></script>
 <!-- AdminLTE for demo purposes -->
-<script src="../../dist/js/demo.js"></script>
-<script src="../../bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+<script src="./dist/js/demo.js"></script>
+<script src="./bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+<script src="./bower_components/bootstrap-datepicker/dist/locales/bootstrap-datepicker.ru.min.js"></script>
 <!-- Select2 -->
-<script src="../../bower_components/select2/dist/js/select2.full.min.js"></script>
+<script src="./bower_components/select2/dist/js/select2.full.min.js"></script>
 
 <!-- page script -->
+<?php
+    $today = date('d.m.Y');
+?>
 <script>
     //Date picker
-    $('#datepicker').datepicker({
+    $('#change_status_date').datepicker({
         format: 'dd.mm.yyyy',
+        language: 'ru-Ru',
+        startDate: '<?= $today ?>',
+        todayHighlight: true,
         autoclose: true
     })
 
@@ -642,38 +651,6 @@ $robot_id= $robot_info['id'];
         return false;
     });
 
-    $("#btn_add_reuslt").click(function () {
-        var id = <?php echo $ticket_id?>;
-        var result = $('#result_description').val();
-        $.post("./api.php", {
-            action: "ticket_add_result",
-            id: id,
-            result: result
-        }).done(function (data) {
-            if (data == "false") {
-                alert("Data Loaded: " + data);
-            } else {
-                window.location.reload(true);
-            }
-        });
-    });
-
-    $("#btn_add_date").click(function () {
-        var id = <?php echo $ticket_id?>;
-        var date = $('#datepicker').val();
-        $.post("./api.php", {
-            action: "ticket_add_date",
-            id: id,
-            date: date
-        }).done(function (data) {
-            if (data == "false") {
-                alert("Data Loaded: " + data);
-            } else {
-                window.location.reload(true);
-            }
-        });
-    });
-
     <?php if ($userdata['group'] == 1) { ?>
     //смена приоритета
     $("#ticket_priority").change(function () {
@@ -709,19 +686,122 @@ $robot_id= $robot_info['id'];
     });
     <?php } ?>
 
+    //кнопка отмены изменения статуса
+    $("#change_status").on('click', '.cancel-change', function () {
+        var old_status = $(this).data('old_status');
+        $("#ticket_status").val(old_status);
+    });
+
+    //кнопка отмены изменения статуса
+    $("#add_result").on('click', '.cancel-change', function () {
+        var old_status = $(this).data('old_status');
+        $("#ticket_status").val(old_status);
+    });
+
+    //кнопка сохранить изменения
+    $("#change_status").on('click', '#btn_change_status', function () {
+        var status = $('#change_status').find('.cancel-change').data('status');
+        var old_status = $('#change_status').find('.cancel-change').data('old_status');
+        var id = $('#btn_change_status').data('id');
+        var date = $('#change_status_date').val();
+        var comment = $('#change_status_comment').val();
+        if (date == "" || comment == "") {
+            alert("Заполните все поля!");
+            return false;
+        }
+        $.post("./api.php", {
+            action: "new_ticket_change_status",
+            date: date,
+            comment: comment,
+            id: id,
+            status: status
+        }).done(function (data) {
+            if (data == "false") {
+                $("#ticket_status").val(old_status);
+                alert("Data Loaded: " + data);
+            } else {
+                $("#change_status").hide();
+                window.location.reload(true);
+            }
+        });
+    });
+
+    //кнопка сохранить изменения
+    $("#add_result").on('click', '#btn_add_reuslt', function () {
+        var status = $('#add_result').find('.cancel-change').data('status');
+        var old_status = $('#add_result').find('.cancel-change').data('old_status');
+        var id = $('#btn_add_reuslt').data('id');
+        var result = $('#result_description').val();
+        if (result == "") {
+            alert("Заполните все поля!");
+            return false;
+        }
+        $.post("./api.php", {
+            action: "ticket_add_result",
+            id: id,
+            result: result
+        }).done(function (data) {
+            if (data == "false") {
+                $("#ticket_status").val(old_status);
+                alert("Data Loaded: " + data);
+            } else {
+                $("#add_result").hide();
+                window.location.reload(true);
+            }
+        });
+    });
+
+
     //смена статуса
     $("#ticket_status").change(function () {
-        var id = <?php echo $ticket_id?>;
+        var id = <?= $ticket_id?>;
         var status = $('#ticket_status').val();
+        var old_status = <?= $ticket_status?>;
+        var date = '<?= $finish_date?>';
         var subcategory = $('#subcategory').val();
         var ticket_class_2 = $('#ticket_class_2').text();
-        //console.log(ticket_class_2);
-        if ((subcategory == 0 || subcategory == "" || subcategory == null) && (status != 2 && status != 4)) {
-            if (ticket_class_2 == "P") {
-                alert("Не заполнена подкатегория!");
-                return false;
-            }
+
+        if (status == old_status) {
+            return false;
         }
+
+        if ((subcategory == 0 || subcategory == "" || subcategory == null)
+            && (status != 2 && status != 4 && status != 1)
+            && (ticket_class_2 == "P")) {
+            $("#ticket_status").val(old_status);
+            alert("Не заполнена подкатегория!");
+            return false;
+        }
+
+        if (status == 6 && !(old_status == 3 || old_status == 8)) {
+            $("#ticket_status").val(old_status);
+            alert("Архивировать можно только из статусов Решено / Не решено");
+            return false;
+        }
+
+        if (status == 3) {
+            $('#add_result').modal({backdrop: 'static', keyboard: false, show: true});
+            $('#add_result').find('.cancel-change').attr('data-status', status);
+            $('#add_result').find('.cancel-change').attr('data-old_status', old_status);
+            $('#add_result').find('#btn_add_reuslt').attr('data-id', id);
+            $('#result_description').val('');
+        }
+
+        if (status == 1 || status == 2 || status == 4 || status == 5 || status == 6 || status == 7 || status == 8 || status == 9) {
+            if (status == 6 || status == 8) {
+                $('#change_status_date').parent().parent().hide();
+            }
+            $('#change_status').modal({backdrop: 'static', keyboard: false, show: true});
+            date = (date == "") ? '<?= $today ?>' : date;
+            $('#change_status').find('.cancel-change').attr('data-status', status);
+            $('#change_status').find('.cancel-change').attr('data-old_status', old_status);
+            $('#change_status').find('#btn_change_status').attr('data-id', id);
+            $('#change_status_date').val(date);
+            $('#change_status_comment').val('');
+        }
+
+
+        /*
         if (status == 3) {
             $('#add_result').modal('show');
         }
@@ -741,7 +821,7 @@ $robot_id= $robot_info['id'];
                     window.location.reload(true);
                 }
             });
-        }
+        }*/
     });
 
     //смена исполнителя

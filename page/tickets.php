@@ -491,9 +491,12 @@ class Tickets
             $ticket_array[$i]['comments_customers'] = count($ticket_commets_customers);
             if ($line_kanban['finish_date'] != '0000-00-00' && $line_kanban['finish_date'] != null) {
                 $date_finish = new DateTime($line_kanban['finish_date']);
-                $ticket_array[$i]['str_finish_date'] = 'Ремонт назначен на <b>' . $date_finish->format('d.m.Y') . '</b><br><br>';
+                $date = $date_finish->format('d.m.Y');
+                $ticket_array[$i]['str_finish_date'] = 'Ремонт назначен на <b>' . $date . '</b><br><br>';
+                $ticket_array[$i]['finish_date'] = $date;
             } else {
                 $ticket_array[$i]['str_finish_date'] = "";
+                $ticket_array[$i]['finish_date'] = "";
             }
         }
 
@@ -564,8 +567,51 @@ class Tickets
 
         return $result;
     }
-    
-    
+
+    //Изменение статуса тикета NEW VERSION
+    //$id - id тикета
+    //$status - id статуса
+    public function new_ticket_change_status($finish_date, $comment, $id, $status)
+    {
+        //проверка
+        $query = "SELECT * FROM `tickets` WHERE `id` = $id";
+        $result = $this->pdo->query($query);
+        while ($line = $result->fetch()) {
+            $tickets[] = $line;
+        }
+        $user_id = intval($_COOKIE['id']);
+        $user = $this->user->get_info_user($user_id);
+        $old_status  = $tickets[0]['status'];
+        if ($user['group'] != 1) {
+            //из решено/не решено только в архив
+            if (($old_status == 3 || $old_status == 8) && $status != 6) {
+                return false;
+            }
+            //из архива никуда
+            if ($old_status == 6) {
+                return false;
+            }
+        }
+        //добавить метку смены статуса
+        $this->set_time_change_status($id, $status);
+        //смена статуса в бд
+        $date    = date("Y-m-d H:i:s");
+        $user_id = intval($_COOKIE['id']);
+        $finish_date = date("Y-m-d", strtotime($finish_date));
+        $query = "UPDATE `tickets` SET `status` = '$status', `finish_date` = '$finish_date', `update_user` = $user_id, `update_date` = '$date' WHERE `id` = $id";
+        $result = $this->pdo->query($query);
+        //добавляем комментарий
+        $robot   = $tickets[0]['robot'];
+        $idd     = $tickets[0]['id'];
+        $description = $tickets[0]['description'];
+        $this->add_comment($robot, $idd, $comment);
+        //добавляем лог
+        $query = "INSERT INTO `robot_log` (`id`, `robot_id`, `source`, `level`, `comment`, `ticket_id`,`update_user`, `update_date`) VALUES (NULL, $robot,  'TICKET', $status, '$description', $idd,  $user_id, '$date')";
+        $result = $this->pdo->query($query);
+
+        return $result;
+    }
+
     //Добавление результата тикета
     //$id - id тикета
     //$result - текст резултата

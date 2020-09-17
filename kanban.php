@@ -610,15 +610,17 @@ foreach ($arr_tickets as &$ticket) {
                                         $ticket_description = mb_substr($ticket_description, 0, 100) . "...";
                                     }
                                     $str_date_finish = "";
+                                    $date_finish = "";
                                     if ($ticket['finish_date'] != '0000-00-00' && $ticket['finish_date'] != null) {
                                         $date_finish = new DateTime($ticket['finish_date']);
-                                        $str_date_finish = 'Ремонт назначен на <b>' . $date_finish->format('d.m.Y') . '</b><br><br>';
+                                        $date_finish = $date_finish->format('d.m.Y');
+                                        $str_date_finish = 'Ремонт назначен на <b>' . $date_finish . '</b><br><br>';
                                     }
                                     $tiket_color = '#e6e8ff'; //fffcd8 - желт для 2, e6e8ff
                                     if ($ticket['priority'] == 2) {$tiket_color = '#f9f9f9';}
                                     if ($ticket['priority'] == 3) {$tiket_color = '#ffd5d5';}
                                     $out .= '
-                                        <div class="box box-solid" style="background-color: '.$tiket_color.'" id="' . $ticket['id'] . '" data-robot="' . $ticket['robot'] . '" data-status="' . $ticket['status'] . '">
+                                        <div class="box box-solid" style="background-color: '.$tiket_color.'" id="' . $ticket['id'] . '" data-robot="' . $ticket['robot'] . '" data-status="' . $ticket['status'] . '" data-date="' . $date_finish . '" >
                                             <div class="box-body">
                                               <b>' . $username_assign . '</b> <span class="pull-right text-muted">' . $robot_version . '.' . $robot_number . ' </span></br>
                                               <b><a href="./ticket.php?id=' . $ticket['id'] . '"><span class="ticket_class">' . $ticket_class . '</span>-' . $ticket['id'] . ' ' . $ticket_category . ':<span class="subcategory"> ' . $ticket_subcategory . '</span></a></b> 
@@ -691,105 +693,39 @@ foreach ($arr_tickets as &$ticket) {
                 <div class="modal-body">
                     <div class="form-group">
                         <label>Решение:</label>
-                        <textarea class="form-control" rows="5" id="result_description"></textarea>
+                        <textarea class="form-control" rows="3" id="result_description"></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
-                    <button type="button" class="btn btn-primary" id="btn_add_reuslt">Сохранить</button>
+                    <button type="button" class="btn btn-secondary cancel-change" data-dismiss="modal" data-status="" data-old_status="">Отменить перенос</button>
+                    <button type="button" class="btn btn-primary" id="btn_add_reuslt" data-id="">Сохранить</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Модальное add_comment -->
-    <div class="modal fade" id="add_comment" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
-         aria-hidden="true">
+    <div class="modal fade" id="change_status" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLongTitle">Опишите причину переноса карточки</h5>
-                    <!--                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">-->
-                    <!--                        <span aria-hidden="true">&times;</span>-->
-                    <!--                    </button>-->
+                    <h5 class="modal-title" id="exampleModalLongTitle">Укажите информацию для смены статуса</h5>
                 </div>
                 <div class="modal-body">
+                    <div class="form-group">
+                        <label>Дата ремонта:</label>
+                        <div class="input-group date">
+                            <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+                            <input type="text" class="form-control pull-right" class="datepicker" id="change_status_date" name="change_status_date" value="">
+                        </div>
+                    </div>
                     <div class="form-group">
                         <label>Комментарий:</label>
-                        <textarea class="form-control" rows="5" id="comment"></textarea>
+                        <textarea class="form-control" rows="3" name="change_status_comment" id="change_status_comment"></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <!--                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>-->
-                    <button type="button" class="btn btn-primary" id="btn_add_comment">Добавить</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!--    модальное assign-->
-    <div class="modal fade" id="assign" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
-         aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLongTitle">Выберете сотрудника</h5>
-                    <!--<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>-->
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <select class="form-control" id="ticket_assign">
-                            <option value="0">Не назначен</option>
-                            <?php
-                            $user_info = $user->get_info_user($ticket_info['assign']);
-                            $ticket_assign_id = $user_info['user_id'];
-                            $arr_user = $user->get_users(4);
-                            //echo $ticket_assign_id;
-                            foreach ($arr_user as &$user_assign) {
-                                if ($user_assign['user_id']==$ticket_assign_id) {
-                                    $selected = "selected";
-                                } else {
-                                    $selected = "";
-                                }
-                                echo "<option value='".$user_assign['user_id']."' ".$selected.">".$user_assign['user_name']."</option>";
-                            }
-                            ?>
-                        </select>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="add_date" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
-         aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLongTitle">Укажите дату назначенного ремонта</h5>
-                    <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                       <span aria-hidden="true">&times;</span>
-                     </button>-->
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label>Дата:</label>
-
-                        <div class="input-group date">
-                            <div class="input-group-addon">
-                                <i class="fa fa-calendar"></i>
-                            </div>
-                            <input type="text" class="form-control pull-right" id="datepicker"
-                                   value= <?php echo $currentDate ?>>
-                        </div>
-                        <!-- /.input group -->
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
-                    <button type="button" class="btn btn-primary" id="btn_add_date">Сохранить</button>
+                    <button type="button" class="btn btn-secondary cancel-change" data-dismiss="modal" data-status="" data-old_status="">Отменить перенос</button>
+                    <button type="button" class="btn btn-primary" id="btn_change_status" data-id="">Сохранить</button>
                 </div>
             </div>
         </div>
@@ -798,118 +734,27 @@ foreach ($arr_tickets as &$ticket) {
 
 </div>
 
-<audio controls id="notify">
-    <!--<source src="notify.mp3" type="audio/mp3">-->
-</audio>
-
 <!-- ./wrapper -->
 <?php include 'template/scripts.php'; ?>
-<script src="../../bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
-<!-- Select2 -->
-<script src="../../bower_components/select2/dist/js/select2.full.min.js"></script>
+<script src="./bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+<script src="./bower_components/bootstrap-datepicker/dist/locales/bootstrap-datepicker.ru.min.js"></script>
+<script src="./bower_components/select2/dist/js/select2.full.min.js"></script>
+
+<?php
+    $today = date('d.m.Y');
+?>
 <script>
-
-    //get today in correct format
-    var today = new Date();
-    var dd = today.getDate();
-    var mm = today.getMonth() + 1;
-    var yyyy = today.getFullYear();
-    if (dd < 10) {
-        dd = '0' + dd;
-    }
-    if (mm < 10) {
-        mm = '0' + mm;
-    }
-    today = dd + '.' + mm + '.' + yyyy;
-    // console.log(today);
-
     //Date picker
-    $('#datepicker').datepicker({
+    $('#change_status_date').datepicker({
         format: 'dd.mm.yyyy',
-        startDate: today,
+        language: 'ru-Ru',
+        startDate: '<?= $today ?>',
         todayHighlight: true,
-        endDate: '',
         autoclose: true
-    });
-
-    var ticket_count = 0;
-    var ticket_count_old = 0;
-    var id_s = 0;
-    var robot_t = 0;
-
-    //кнопка
-    $("#btn_add_reuslt").click(function () {
-        var id = id_s;
-        var result = $('#result_description').val();
-        $.post("./api.php", {
-            action: "ticket_add_result",
-            id: id,
-            result: result
-        }).done(function (data) {
-            if (data == "false") {
-                alert("Data Loaded: " + data);
-            } else {
-                $("#btn_add_reuslt").hide();
-                window.location.reload(true);
-            }
-        });
-    });
-
-    // кнопка добавить комментарий
-    $("#btn_add_comment").click(function () {
-        var robot = robot_t;
-        var id = id_s;
-        var comment = $('#comment').val();
-        if (comment === '') {
-            console.log("пустая строка");
-            alert("заполни комментАААААриЙ");
-        } else {
-            $("#btn_add_comment").hide();
-            $.post("./api.php", {
-                action: "ticket_add_comment",
-                robot: robot,
-                id: id,
-                comment: comment
-            }).done(function (data) {
-                if (data == "false") {
-                    alert("Data Loaded: " + data);
-                } else {
-                    window.location.reload(true);
-                }
-            });
-        }
-    });
-
-    //кнопка
-    $("#btn_add_date").click(function () {
-        var id = id_s;
-        var date = $('#datepicker').val();
-        /*if (typeof date !== 'undefined') {
-            console.log('задана');
-            console.log(date);
-        } else {
-            console.log('не задана');
-        }*/
-        $.post("./api.php", {
-            action: "ticket_add_date",
-            id: id,
-            date: date
-        }).done(function (data) {
-            if (data == "false") {
-                alert("Data Loaded: " + data);
-            } else {
-                $("#btn_add_date").hide();
-                $('#add_date').modal('hide');
-                $('#assign').modal({backdrop: 'static', keyboard: false, show: true});
-                id_s = id;
-                // window.location.reload(true);
-            }
-        });
-    });
+    })
 
     //кнопка
     $(".sort").click(function () {
-
         var sortBy = $(this).data("sortby");
         var sortDir = $(this).data("sortdir");
         var statusId = $(this).data("status");
@@ -924,10 +769,8 @@ foreach ($arr_tickets as &$ticket) {
             sortdir: sortDir
         }).done(function (data) {
             var tickets = jQuery.parseJSON(data);
-            //window.location.reload(true);
             $.each(tickets, function (index, value) {
-                //console.log(statusId);
-                $("#" + statusId).append(' <div class="box box-solid" style="background-color: #f9f9f9;" id="' + value['id'] + '" data-robot="' + value['robot'] + '" data-status="' + value['status'] + '"> \
+                $("#" + statusId).append(' <div class="box box-solid" style="background-color: #f9f9f9;" id="' + value['id'] + '" data-robot="' + value['robot'] + '" data-status="' + value['status'] + '" data-date="' + value['finish_date'] + '" > \
                                     <div class="box-body"> \
                                     <b>' + value['assign'] + '</b> <span class="pull-right text-muted">' + value['robot'] + '</span></br> \
                                       <b><a href="./ticket.php?id=' + value['id'] + '">' + value['class'] + '-' + value['id'] + ' ' + value['category'] + ': ' + value['subcategory'] + '</a></b> \
@@ -938,7 +781,6 @@ foreach ($arr_tickets as &$ticket) {
                                     </div>\
                             </div>');
                 $("#overlay" + statusId).find(".overlay").remove();
-                //console.log(value);
             });
         });
     });
@@ -956,78 +798,26 @@ foreach ($arr_tickets as &$ticket) {
         });
     });
 
-    //при смене
-    $("#ticket_assign").change(function () {
-        var id = id_s;
-        var assign = $('#ticket_assign').val();
-        $.post("./api.php", {
-            action: "ticket_change_assign",
-            id: id,
-            assign: assign
-        }).done(function (data) {
-            if (data == "false") {
-                alert("Data Loaded: " + data);
-            } else {
-                window.location.reload(true);
-            }
-        });
-    });
-
-    // $('.comment').validator();
-    $('.select2').select2();
-    $(".fa-align-justify").click(function () {
-        var id = $(this).attr("id");
-        window.location.href = "./ticket.php?id=" + id;
-    });
-
-    //кнопка
-    $(".fa-times").click(function () {
-        id_log = $(this).attr("id");
-        $.post("./api.php", {
-            action: "delete_log",
-            id: id_log
-        }).done(function (data) {
-            window.location.reload(true);
-        });
-    });
-
     //вкл авто распределения для сотрудника
     $("#arr_assign").on("click", ".fa-toggle-off, .fa-toggle-on", function() {
         $(".fa-toggle-off, .fa-toggle-on").hide();
         var user_id = $(this).data("user");
         var this_class = $(this).attr('class');
-        //console.log(this_class);
         $.post("./api.php", {
             action: "change_auto_assign_for_user",
             id: user_id
         }).done(function (data) {
             var obj = jQuery.parseJSON(data)
             var el = $('i.tumb[data-user='+user_id+']');
-            //console.log(obj.status);
-            /*this_class.match(/(fa-toggle-on)/ig)*/
             if (obj.status == 0) {
                 el.removeClass( "fa-toggle-on" ).removeClass( "fa-toggle-off" ).addClass( "fa-toggle-off" ).parent().parent().css( 'color', '#af3124' );
             } else {
                 el.removeClass( "fa-toggle-off" ).removeClass( "fa-toggle-on" ).addClass( "fa-toggle-on" ).parent().parent().css( 'color', '#00a65a' );
             }
             $(".fa-toggle-off, .fa-toggle-on").show();
-            //window.location.reload(true);
         });
     });
 
-    //генерация фильтра в таблице
-    $('#orders').DataTable({
-        "iDisplayLength": 100,
-        "order": [[0, "desc"]]
-    });
-
-    //Что это?
-    <?php /*if ($userdata['user_id']==29) {
-    echo "
-    //setTimeout(function() {window.location.reload();}, 20000);
-
-    ";
-    }*/ ?>
     $(document).ready(function () {
         //$("#filter_user").val(<?php if (isset($_GET['user'])) echo $_GET['user']; ?>);
         $("#filter_robot").val(<?php if (isset($_GET['robot'])) echo $_GET['robot']; ?>);
@@ -1035,61 +825,113 @@ foreach ($arr_tickets as &$ticket) {
 
     });
 
+    //кнопка отмены изменения статуса
+    $("#change_status").on('click', '.cancel-change', function () {
+        var status = $(this).data('status');
+        var old_status = $(this).data('old_status');
+        $("#"+status ).sortable( "cancel" );
+        $("#"+old_status).sortable( "cancel" );
+    });
+
+    //кнопка отмены изменения статуса
+    $("#add_result").on('click', '.cancel-change', function () {
+        var status = $(this).data('status');
+        var old_status = $(this).data('old_status');
+        $("#"+status ).sortable( "cancel" );
+        $("#"+old_status).sortable( "cancel" );
+    });
+
+    //кнопка сохранить изменения
+    $("#change_status").on('click', '#btn_change_status', function () {
+        var status = $('#change_status').find('.cancel-change').data('status');
+        var old_status = $('#change_status').find('.cancel-change').data('old_status');
+        var id = $('#btn_change_status').data('id');
+        var date = $('#change_status_date').val();
+        var comment = $('#change_status_comment').val();
+        if (date == "" || comment == "") {
+            alert("Заполните все поля!");
+            return false;
+        }
+        $.post("./api.php", {
+            action: "new_ticket_change_status",
+            date: date,
+            comment: comment,
+            id: id,
+            status: status
+        }).done(function (data) {
+            if (data == "false") {
+                $("#"+status ).sortable( "cancel" );
+                $("#"+old_status).sortable( "cancel" );
+                alert("Data Loaded: " + data);
+            } else {
+                $("#change_status").hide();
+                window.location.reload(true);
+            }
+        });
+    });
+
+    //кнопка сохранить изменения
+    $("#add_result").on('click', '#btn_add_reuslt', function () {
+        var status = $('#add_result').find('.cancel-change').data('status');
+        var old_status = $('#add_result').find('.cancel-change').data('old_status');
+        var id = $('#btn_add_reuslt').data('id');
+        var result = $('#result_description').val();
+        if (result == "") {
+            alert("Заполните все поля!");
+            return false;
+        }
+        $.post("./api.php", {
+            action: "ticket_add_result",
+            id: id,
+            result: result
+        }).done(function (data) {
+            if (data == "false") {
+                $("#"+status ).sortable( "cancel" );
+                $("#"+old_status).sortable( "cancel" );
+                alert("Data Loaded: " + data);
+            } else {
+                $("#add_result").hide();
+                window.location.reload(true);
+            }
+        });
+    });
+
+    //
     $(function () {
         $('[data-toggle="popover"]').popover();
         $(".sortable").sortable({
             stop: function (event, ui) {
-                var out = ui;
                 var id = ui['item'][0]['id'];
                 var status = ui['item'][0]['parentElement']['id'];
-                var robot = ui['item'][0]['dataset']['robot'];
                 var old_status = ui['item'][0]['dataset']['status'];
-                //console.log(ui['item'][0]);
-                //console.log(id);
-                //console.log(robot);
-                //console.log(out);
-                console.log(old_status);
-                if (old_status == 3) {
+                var date = ui['item'][0]['dataset']['date'];
+                if (old_status == 3 || old_status == 8 || old_status == 6 || status == 1 || old_status == status) {
                     return false;
                 }
-                // var robot = $("#"+id).find(".robot").text();
                 var subcategory = $("#" + id).find(".subcategory").text();
                 var ticket_class = $("#" + id).find(".ticket_class").text();
-                // console.log(ticket_class);
-                // console.log(robot);
-                if ((subcategory == 0 || subcategory == "" || subcategory == null) && (status != 2 && status != 4 && status != 1)) {
-                    if (ticket_class == "P") {
-                        //$("#ticket_status option[value='0']").attr("selected","selected");
-                        alert("Не заполнена подкатегория!");
-                        return false;
-                    }
-                }
-                if (status == 2 || status == 5 || status == 7) {
-                    $('#add_comment').modal({backdrop: 'static', keyboard: false, show: true});
-                    robot_t = robot;
-                    id_s = id;
+                if ((subcategory == 0 || subcategory == "" || subcategory == null)
+                    && (status != 2 && status != 4 && status != 1)
+                    && (ticket_class == "P")) {
+                    alert("Не заполнена подкатегория!");
+                    return false;
                 }
                 if (status == 3) {
                     $('#add_result').modal({backdrop: 'static', keyboard: false, show: true});
-                    id_s = id;
+                    $('#add_result').find('.cancel-change').attr('data-status', status);
+                    $('#add_result').find('.cancel-change').attr('data-old_status', old_status);
+                    $('#add_result').find('#btn_add_reuslt').attr('data-id', id);
+                    $('#result_description').val('');
                 }
-                if (status == 4) {
-                    $('#add_date').modal({backdrop: 'static', keyboard: false, show: true});
-                    id_s = id;
-                    // $('#assign').modal({backdrop: 'static', keyboard: false, show: true});
-                }
-                if (status == 0 || status == 1 || status == 2 || status == 5 || status == 6 || status == 7 || status == 9) {
-                    $.post("./api.php", {
-                        action: "ticket_change_status",
-                        id: id,
-                        status: status
-                    }).done(function (data) {
-                        if (data == "false") {
-                            alert("Data Loaded: " + data);
-                        } else {
-                            //window.location.href = "./robots.php";
-                        }
-                    });
+
+                if (status == 2 || status == 4 || status == 5 || status == 7 || status == 9) {
+                    $('#change_status').modal({backdrop: 'static', keyboard: false, show: true});
+                    date = (date == "") ? '<?= $today ?>' : date;
+                    $('#change_status').find('.cancel-change').attr('data-status', status);
+                    $('#change_status').find('.cancel-change').attr('data-old_status', old_status);
+                    $('#change_status').find('#btn_change_status').attr('data-id', id);
+                    $('#change_status_date').val(date);
+                    $('#change_status_comment').val('');
                 }
             },
             connectWith: ".connectedSortable"
@@ -1122,32 +964,6 @@ foreach ($arr_tickets as &$ticket) {
     $(".dop").click(function () {
         $(this).find(".robots").toggle("slow");
     });
-
-    //
-    function live() {
-        $.post("./api.php", {
-            action: "tickets_get_live"
-        }).done(function (data) {
-            if (ticket_count == 0) {
-                ticket_count = data;
-                ticket_count_old = data;
-                console.log("first" + " " + ticket_count + " " + ticket_count_old)
-            } else {
-                ticket_count = data;
-                console.log("step" + " " + ticket_count + " " + ticket_count_old)
-                if (ticket_count != ticket_count_old) {
-                    //$('#norify')[0].play();
-                    var sound = document.getElementById("notify");
-                    sound.play();
-                }
-                ticket_count_old = ticket_count;
-            }
-        });
-    }
-
-    var timerId = setInterval(function () {
-        //live();
-    }, 2000);
 
 </script>
 </body>

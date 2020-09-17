@@ -119,7 +119,7 @@ $robot_dop_manufactur= $robot_info['dop_manufactur'];
                                 <textarea class="form-control" rows="3" placeholder="Введите описание ..." name="comment" id="comment" required="required"></textarea>
                             </div>
 
-                            <div class="form-group">
+                            <div class="form-group" style="display: none;">
                                 <label>Статус</label>
                                 <select class="form-control" id="status" required="required">
                                     <?php
@@ -555,6 +555,7 @@ $robot_dop_manufactur= $robot_info['dop_manufactur'];
         }
         var comment = $(this).find('#comment').val();
         var status = $('#status').val();
+        status = 1;
         $.post("./api.php", {
             action: "ticket_add",
             robot: robot,
