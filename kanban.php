@@ -744,227 +744,229 @@ foreach ($arr_tickets as &$ticket) {
     $today = date('d.m.Y');
 ?>
 <script>
-    //Date picker
-    $('#change_status_date').datepicker({
-        format: 'dd.mm.yyyy',
-        language: 'ru-Ru',
-        startDate: '<?= $today ?>',
-        todayHighlight: true,
-        autoclose: true
-    })
+    var old_status_ch;
+    var status_ch;
+    var id_ch;
 
-    //кнопка
-    $(".sort").click(function () {
-        var sortBy = $(this).data("sortby");
-        var sortDir = $(this).data("sortdir");
-        var statusId = $(this).data("status");
-        $("#" + statusId).empty();
-        $("#overlay" + statusId).append('<div class="overlay"><i class="fa fa-refresh fa-spin"></i></div>');
-        $.post("./api.php", {
-            action: "ticket_get",
-            robot: 0,
-            user: 0,
-            status: statusId,
-            sortby: sortBy,
-            sortdir: sortDir
-        }).done(function (data) {
-            var tickets = jQuery.parseJSON(data);
-            $.each(tickets, function (index, value) {
-                $("#" + statusId).append(' <div class="box box-solid" style="background-color: #f9f9f9;" id="' + value['id'] + '" data-robot="' + value['robot'] + '" data-status="' + value['status'] + '" data-date="' + value['finish_date'] + '" > \
-                                    <div class="box-body"> \
-                                    <b>' + value['assign'] + '</b> <span class="pull-right text-muted">' + value['robot'] + '</span></br> \
-                                      <b><a href="./ticket.php?id=' + value['id'] + '">' + value['class'] + '-' + value['id'] + ' ' + value['category'] + ': ' + value['subcategory'] + '</a></b> \
-                                      <p>' + value['description'] + '</p> \
-                                      ' + value['str_finish_date'] + '\
-                                      <span class="pull-right text-muted"><i class="fa fa-paperclip" style="margin-right:2px;"></i>0&nbsp;&nbsp;<i class="fa fa-commenting-o" style="margin-right:2px;"></i>' + value['comments'] + '&nbsp;&nbsp;<i class="fa fa-comments-o" style="margin-right:2px;"></i>' + value['comments_customers'] + '</span> \
-                                      <span class="pull-left text-muted"><i class="fa fa-calendar-o"></i> ' + value['update_date'] + '</span> \
-                                    </div>\
-                            </div>');
+    $(document).ready(function () {
+
+        //Date picker
+        $('#change_status_date').datepicker({
+            format: 'dd.mm.yyyy',
+            language: 'ru-Ru',
+            startDate: '<?= $today ?>',
+            todayHighlight: true,
+            autoclose: true
+        })
+
+        //кнопка
+        $(".sort").click(function () {
+            var sortBy = $(this).data("sortby");
+            var sortDir = $(this).data("sortdir");
+            var statusId = $(this).data("status");
+            $("#" + statusId).empty();
+            $("#overlay" + statusId).append('<div class="overlay"><i class="fa fa-refresh fa-spin"></i></div>');
+            $.post("./api.php", {
+                action: "ticket_get",
+                robot: 0,
+                user: 0,
+                status: statusId,
+                sortby: sortBy,
+                sortdir: sortDir
+            }).done(function (data) {
+                var tickets = jQuery.parseJSON(data);
+                $.each(tickets, function (index, value) {
+                    $("#" + statusId).append(' <div class="box box-solid" style="background-color: #f9f9f9;" id="' + value['id'] + '" data-robot="' + value['robot'] + '" data-status="' + value['status'] + '" data-date="' + value['finish_date'] + '" > \
+                                        <div class="box-body"> \
+                                        <b>' + value['assign'] + '</b> <span class="pull-right text-muted">' + value['robot'] + '</span></br> \
+                                          <b><a href="./ticket.php?id=' + value['id'] + '">' + value['class'] + '-' + value['id'] + ' ' + value['category'] + ': ' + value['subcategory'] + '</a></b> \
+                                          <p>' + value['description'] + '</p> \
+                                          ' + value['str_finish_date'] + '\
+                                          <span class="pull-right text-muted"><i class="fa fa-paperclip" style="margin-right:2px;"></i>0&nbsp;&nbsp;<i class="fa fa-commenting-o" style="margin-right:2px;"></i>' + value['comments'] + '&nbsp;&nbsp;<i class="fa fa-comments-o" style="margin-right:2px;"></i>' + value['comments_customers'] + '</span> \
+                                          <span class="pull-left text-muted"><i class="fa fa-calendar-o"></i> ' + value['update_date'] + '</span> \
+                                        </div>\
+                                </div>');
+                    $("#overlay" + statusId).find(".overlay").remove();
+                });
+            });
+        });
+
+        //кнопка
+        $(".arhiv").click(function () {
+            var statusId = $(this).data("status");
+            $("#" + statusId).empty();
+            $("#overlay" + statusId).append('<div class="overlay"><i class="fa fa-refresh fa-spin"></i></div>');
+            $.post("./api.php", {
+                action: "ticket_arhiv",
+                id: statusId
+            }).done(function (data) {
                 $("#overlay" + statusId).find(".overlay").remove();
             });
         });
-    });
 
-    //кнопка
-    $(".arhiv").click(function () {
-        var statusId = $(this).data("status");
-        $("#" + statusId).empty();
-        $("#overlay" + statusId).append('<div class="overlay"><i class="fa fa-refresh fa-spin"></i></div>');
-        $.post("./api.php", {
-            action: "ticket_arhiv",
-            id: statusId
-        }).done(function (data) {
-            $("#overlay" + statusId).find(".overlay").remove();
+        //вкл авто распределения для сотрудника
+        $("#arr_assign").on("click", ".fa-toggle-off, .fa-toggle-on", function () {
+            $(".fa-toggle-off, .fa-toggle-on").hide();
+            var user_id = $(this).data("user");
+            var this_class = $(this).attr('class');
+            $.post("./api.php", {
+                action: "change_auto_assign_for_user",
+                id: user_id
+            }).done(function (data) {
+                var obj = jQuery.parseJSON(data)
+                var el = $('i.tumb[data-user=' + user_id + ']');
+                if (obj.status == 0) {
+                    el.removeClass("fa-toggle-on").removeClass("fa-toggle-off").addClass("fa-toggle-off").parent().parent().css('color', '#af3124');
+                } else {
+                    el.removeClass("fa-toggle-off").removeClass("fa-toggle-on").addClass("fa-toggle-on").parent().parent().css('color', '#00a65a');
+                }
+                $(".fa-toggle-off, .fa-toggle-on").show();
+            });
         });
-    });
 
-    //вкл авто распределения для сотрудника
-    $("#arr_assign").on("click", ".fa-toggle-off, .fa-toggle-on", function() {
-        $(".fa-toggle-off, .fa-toggle-on").hide();
-        var user_id = $(this).data("user");
-        var this_class = $(this).attr('class');
-        $.post("./api.php", {
-            action: "change_auto_assign_for_user",
-            id: user_id
-        }).done(function (data) {
-            var obj = jQuery.parseJSON(data)
-            var el = $('i.tumb[data-user='+user_id+']');
-            if (obj.status == 0) {
-                el.removeClass( "fa-toggle-on" ).removeClass( "fa-toggle-off" ).addClass( "fa-toggle-off" ).parent().parent().css( 'color', '#af3124' );
-            } else {
-                el.removeClass( "fa-toggle-off" ).removeClass( "fa-toggle-on" ).addClass( "fa-toggle-on" ).parent().parent().css( 'color', '#00a65a' );
+        $(document).ready(function () {
+            //$("#filter_user").val(<?php if (isset($_GET['user'])) echo $_GET['user']; ?>);
+            $("#filter_robot").val(<?php if (isset($_GET['robot'])) echo $_GET['robot']; ?>);
+            //$('#filter_user').val(<?php if (isset($_GET['user'])) echo $_GET['user']; ?>).trigger('change');
+
+        });
+
+        //кнопка отмены изменения статуса
+        $("#change_status").on('click', '.cancel-change', function () {
+            $("#" + status_ch).sortable("cancel");
+            $("#" + old_status_ch).sortable("cancel");
+        });
+
+        //кнопка отмены изменения статуса
+        $("#add_result").on('click', '.cancel-change', function () {
+            $("#" + status_ch).sortable("cancel");
+            $("#" + old_status_ch).sortable("cancel");
+        });
+
+        //кнопка сохранить изменения
+        $("#change_status").on('click', '#btn_change_status', function () {
+            var date = $('#change_status_date').val();
+            var comment = $('#change_status_comment').val();
+            if (date == "" || comment == "") {
+                alert("Заполните все поля!");
+                return false;
             }
-            $(".fa-toggle-off, .fa-toggle-on").show();
+            $.post("./api.php", {
+                action: "new_ticket_change_status",
+                date: date,
+                comment: comment,
+                id: id_ch,
+                status: status_ch
+            }).done(function (data) {
+                if (data == "false") {
+                    $("#" + status_ch).sortable("cancel");
+                    $("#" + old_status_ch).sortable("cancel");
+                    alert("Data Loaded: " + data);
+                } else {
+                    $("#change_status").hide();
+                    window.location.reload(true);
+                }
+            });
         });
-    });
 
-    $(document).ready(function () {
-        //$("#filter_user").val(<?php if (isset($_GET['user'])) echo $_GET['user']; ?>);
-        $("#filter_robot").val(<?php if (isset($_GET['robot'])) echo $_GET['robot']; ?>);
-        //$('#filter_user').val(<?php if (isset($_GET['user'])) echo $_GET['user']; ?>).trigger('change');
+        //кнопка сохранить изменения
+        $("#add_result").on('click', '#btn_add_reuslt', function () {
+            var result = $('#result_description').val();
+            if (result == "") {
+                alert("Заполните все поля!");
+                return false;
+            }
+            $.post("./api.php", {
+                action: "ticket_add_result",
+                id: id_ch,
+                result: result
+            }).done(function (data) {
+                if (data == "false") {
+                    $("#" + status_ch).sortable("cancel");
+                    $("#" + old_status_ch).sortable("cancel");
+                    alert("Data Loaded: " + data);
+                } else {
+                    $("#add_result").hide();
+                    window.location.reload(true);
+                }
+            });
+        });
 
-    });
+        //
+        $(function () {
+            $('[data-toggle="popover"]').popover();
+            $(".sortable").sortable({
+                stop: function (event, ui) {
+                    var id = ui['item'][0]['id'];
+                    var status = ui['item'][0]['parentElement']['id'];
+                    var old_status = ui['item'][0]['dataset']['status'];
+                    var date = ui['item'][0]['dataset']['date'];
+                    if (old_status == 3 || old_status == 8 || old_status == 6 || status == 1 || old_status == status) {
+                        return false;
+                    }
+                    var subcategory = $("#" + id).find(".subcategory").text();
+                    var ticket_class = $("#" + id).find(".ticket_class").text();
+                    if ((subcategory == 0 || subcategory == "" || subcategory == null)
+                        && (status != 2 && status != 4 && status != 1)
+                        && (ticket_class == "P")) {
+                        alert("Не заполнена подкатегория!");
+                        return false;
+                    }
+                    if (status == 3) {
+                        $('#add_result').modal({backdrop: 'static', keyboard: false, show: true});
+                        status_ch = status;
+                        old_status_ch = old_status;
+                        id_ch = id;
+                        //$('#add_result').find('.cancel-change').attr('data-status', status);
+                        //$('#add_result').find('.cancel-change').attr('data-old_status', old_status);
+                        //$('#add_result').find('#btn_add_reuslt').attr('data-id', id);
+                        $('#result_description').val('');
+                    }
 
-    //кнопка отмены изменения статуса
-    $("#change_status").on('click', '.cancel-change', function () {
-        var status = $(this).data('status');
-        var old_status = $(this).data('old_status');
-        $("#"+status ).sortable( "cancel" );
-        $("#"+old_status).sortable( "cancel" );
-    });
+                    if (status == 2 || status == 4 || status == 5 || status == 7 || status == 9) {
+                        $('#change_status').modal({backdrop: 'static', keyboard: false, show: true});
+                        status_ch = status;
+                        old_status_ch = old_status;
+                        id_ch = id;
+                        date = (date == "") ? '<?= $today ?>' : date;
+                        //$('#change_status').find('.cancel-change').attr('data-status', status);
+                        //$('#change_status').find('.cancel-change').attr('data-old_status', old_status);
+                        //$('#change_status').find('#btn_change_status').attr('data-id', id);
+                        $('#change_status_date').val(date);
+                        $('#change_status_comment').val('');
+                    }
+                },
+                connectWith: ".connectedSortable"
+            }).disableSelection();
+        });
 
-    //кнопка отмены изменения статуса
-    $("#add_result").on('click', '.cancel-change', function () {
-        var status = $(this).data('status');
-        var old_status = $(this).data('old_status');
-        $("#"+status ).sortable( "cancel" );
-        $("#"+old_status).sortable( "cancel" );
-    });
-
-    //кнопка сохранить изменения
-    $("#change_status").on('click', '#btn_change_status', function () {
-        var status = $('#change_status').find('.cancel-change').data('status');
-        var old_status = $('#change_status').find('.cancel-change').data('old_status');
-        var id = $('#btn_change_status').data('id');
-        var date = $('#change_status_date').val();
-        var comment = $('#change_status_comment').val();
-        if (date == "" || comment == "") {
-            alert("Заполните все поля!");
-            return false;
-        }
-        $.post("./api.php", {
-            action: "new_ticket_change_status",
-            date: date,
-            comment: comment,
-            id: id,
-            status: status
-        }).done(function (data) {
-            if (data == "false") {
-                $("#"+status ).sortable( "cancel" );
-                $("#"+old_status).sortable( "cancel" );
-                alert("Data Loaded: " + data);
+        //при смене
+        $("#filter_user").change(function () {
+            var user = $("#filter_user").val();
+            var robot = $("#filter_robot").val();
+            if (robot == 0) {
+                window.location.href = "./kanban.php?user=" + user;
             } else {
-                $("#change_status").hide();
-                window.location.reload(true);
+                window.location.href = "./kanban.php?user=" + user + "&robot=" + robot;
             }
         });
-    });
 
-    //кнопка сохранить изменения
-    $("#add_result").on('click', '#btn_add_reuslt', function () {
-        var status = $('#add_result').find('.cancel-change').data('status');
-        var old_status = $('#add_result').find('.cancel-change').data('old_status');
-        var id = $('#btn_add_reuslt').data('id');
-        var result = $('#result_description').val();
-        if (result == "") {
-            alert("Заполните все поля!");
-            return false;
-        }
-        $.post("./api.php", {
-            action: "ticket_add_result",
-            id: id,
-            result: result
-        }).done(function (data) {
-            if (data == "false") {
-                $("#"+status ).sortable( "cancel" );
-                $("#"+old_status).sortable( "cancel" );
-                alert("Data Loaded: " + data);
+        //при смене
+        $("#filter_robot").change(function () {
+            var user = $("#filter_user").val();
+            var robot = $("#filter_robot").val();
+            if (user == 0) {
+                window.location.href = "./kanban.php?robot=" + robot;
             } else {
-                $("#add_result").hide();
-                window.location.reload(true);
+                window.location.href = "./kanban.php?user=" + user + "&robot=" + robot;
             }
         });
+
+        //кнопка
+        $(".dop").click(function () {
+            $(this).find(".robots").toggle("slow");
+        });
     });
-
-    //
-    $(function () {
-        $('[data-toggle="popover"]').popover();
-        $(".sortable").sortable({
-            stop: function (event, ui) {
-                var id = ui['item'][0]['id'];
-                var status = ui['item'][0]['parentElement']['id'];
-                var old_status = ui['item'][0]['dataset']['status'];
-                var date = ui['item'][0]['dataset']['date'];
-                if (old_status == 3 || old_status == 8 || old_status == 6 || status == 1 || old_status == status) {
-                    return false;
-                }
-                var subcategory = $("#" + id).find(".subcategory").text();
-                var ticket_class = $("#" + id).find(".ticket_class").text();
-                if ((subcategory == 0 || subcategory == "" || subcategory == null)
-                    && (status != 2 && status != 4 && status != 1)
-                    && (ticket_class == "P")) {
-                    alert("Не заполнена подкатегория!");
-                    return false;
-                }
-                if (status == 3) {
-                    $('#add_result').modal({backdrop: 'static', keyboard: false, show: true});
-                    $('#add_result').find('.cancel-change').attr('data-status', status);
-                    $('#add_result').find('.cancel-change').attr('data-old_status', old_status);
-                    $('#add_result').find('#btn_add_reuslt').attr('data-id', id);
-                    $('#result_description').val('');
-                }
-
-                if (status == 2 || status == 4 || status == 5 || status == 7 || status == 9) {
-                    $('#change_status').modal({backdrop: 'static', keyboard: false, show: true});
-                    date = (date == "") ? '<?= $today ?>' : date;
-                    $('#change_status').find('.cancel-change').attr('data-status', status);
-                    $('#change_status').find('.cancel-change').attr('data-old_status', old_status);
-                    $('#change_status').find('#btn_change_status').attr('data-id', id);
-                    $('#change_status_date').val(date);
-                    $('#change_status_comment').val('');
-                }
-            },
-            connectWith: ".connectedSortable"
-        }).disableSelection();
-    });
-
-    //при смене
-    $("#filter_user").change(function () {
-        var user = $("#filter_user").val();
-        var robot = $("#filter_robot").val();
-        if (robot == 0) {
-            window.location.href = "./kanban.php?user=" + user;
-        } else {
-            window.location.href = "./kanban.php?user=" + user + "&robot=" + robot;
-        }
-    });
-
-    //при смене
-    $("#filter_robot").change(function () {
-        var user = $("#filter_user").val();
-        var robot = $("#filter_robot").val();
-        if (user == 0) {
-            window.location.href = "./kanban.php?robot=" + robot;
-        } else {
-            window.location.href = "./kanban.php?user=" + user + "&robot=" + robot;
-        }
-    });
-
-    //кнопка
-    $(".dop").click(function () {
-        $(this).find(".robots").toggle("slow");
-    });
-
 </script>
 </body>
 </html>
