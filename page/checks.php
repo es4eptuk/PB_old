@@ -273,16 +273,17 @@ class Checks
             $this->statistics->add_robot_production_statistics($robot);
         }
 
+        $checks_array = [];
+        $query = "SELECT * FROM `check` WHERE `id` = $id_row";
+        $result = $this->pdo->query($query);
+        while ($line = $result->fetch()) {
+            $checks_array[] = $line;
+        }
+
         $date    = date("Y-m-d H:i:s");
         $user_id = intval($_COOKIE['id']);
         $arr_kits = $this->plan->get_kits();
         if ($kit != 0) {
-            $checks_array = [];
-            $query = "SELECT * FROM `check` WHERE `id` = $id_row";
-            $result = $this->pdo->query($query);
-            while ($line = $result->fetch()) {
-                $checks_array[] = $line;
-            }
             if ($checks_array[0]['id_kit'] != $kit) {
                 //списание старого резерва
                 $this->sklad->del_reserv($arr_kits[$checks_array[0]['id_kit']]);
@@ -296,6 +297,9 @@ class Checks
             return false;
         }*/
         $query = "UPDATE `check` SET `check` = '$value', `update_user` = '$user_id', `update_date` = '$date', `id_kit` = '$kit' WHERE `id` = $id_row";
+        if ($value == 1 && $remont == 0 && $checks_array[0]['check_f_date'] == null) {
+            $query = "UPDATE `check` SET `check` = '$value', `update_user` = '$user_id', `update_date` = '$date', `id_kit` = '$kit', `check_f_date` = '$date' WHERE `id` = $id_row";
+        }
         $result = $this->pdo->query($query);
         $query = "SELECT * FROM `check` WHERE `id` = $id_row";
         $result = $this->pdo->query($query);
