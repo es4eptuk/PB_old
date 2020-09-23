@@ -135,14 +135,14 @@ class Writeoff
 
         }
 
-        if ($category == "Не актуально") {
+        /*if ($category == "Не актуально") {
 
             $this->mail->send('Светлана Орлова', 's.orlova@promo-bot.ru', 'Списание на разработку №' . $idd, 'Пройдите по ссылке для просмотра списания https://db.promo-bot.ru/new/edit_writeoff.php?id=' . $idd);
 
         } else {
             // $this->mail->send('Екатерина Старцева',  'startceva@promo-bot.ru', 'Списание №'.$idd, 'Пройдите по ссылке для просмотра списания https://db.promo-bot.ru/new/edit_writeoff.php?id='.$idd);
 
-        }
+        }*/
 
         return true;
 
