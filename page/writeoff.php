@@ -43,6 +43,7 @@ class Writeoff
         //print_r($writeoff_arr);
         $check = 0;
         $robot = 0;
+        $written = 0;
         $category = $writeoff_arr['0']['0'];
         $description = $writeoff_arr['0']['1'];
         $provider = (isset($writeoff_arr['0']['4'])) ? $writeoff_arr['0']['4'] : 0;
@@ -52,6 +53,7 @@ class Writeoff
         }
         if (isset($writeoff_arr['0']['3'])) {
             $robot = $writeoff_arr['0']['3'];
+            $written = 1;
         }
         $total_price_is_null = false;
         if ($category == "Возврат поставщику") {
@@ -93,7 +95,7 @@ class Writeoff
         }
 
         $total_price = ($total_price_is_null) ? 0 : $total_price;
-        $this->query = "INSERT INTO `writeoff` (`id`, `category`, `description`,`total_price`,`check`,`robot`, `option`, `update_date`, `update_user`) VALUES (NULL, '$category','$description','$total_price','$check','$robot', '0', '$date', $user_id)";
+        $this->query = "INSERT INTO `writeoff` (`id`, `category`, `description`,`total_price`,`check`,`robot`, `option`, `written`, `update_date`, `update_user`) VALUES (NULL, '$category','$description','$total_price','$check','$robot', '0', $written, '$date', $user_id)";
         $result = $this->pdo->query($this->query);
 
         $idd = $this->pdo->lastInsertId();
@@ -146,11 +148,16 @@ class Writeoff
 
     }
 
-    function get_writeoff($robot = 0)
+    function get_writeoff($robot = 0, $no_written = 0)
     {
-        $where = "";
-        if ($robot != 0) $where = "WHERE robot = $robot";
-        $this->query = "SELECT * FROM writeoff $where ORDER BY `update_date` DESC LIMIT 5000"; //
+        if ($robot == 0) {
+            $where = "WHERE `robot` = 0";
+            $where = ($no_written != 0) ? $where." AND `written` = 0" : $where;
+        } else {
+            $where = "WHERE `robot` = $robot";
+        }
+
+        $this->query = "SELECT * FROM `writeoff` $where ORDER BY `update_date`"; // DESC LIMIT 5000"; //
         //echo $query;
         $result = $this->pdo->query($this->query);
 
