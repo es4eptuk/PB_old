@@ -53,7 +53,7 @@ class Writeoff
         }
         if (isset($writeoff_arr['0']['3'])) {
             $robot = $writeoff_arr['0']['3'];
-            $written = 1;
+            $written = ($robot != 0) ? 1 : 0;
         }
         $total_price_is_null = false;
         if ($category == "Возврат поставщику") {
