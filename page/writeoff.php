@@ -487,6 +487,22 @@ class Writeoff
         return $arr;
     }
 
+    //провести списание
+    function conduct_writeoff($id)
+    {
+        $this->query   = "UPDATE `writeoff` SET `written` = 1 WHERE `id` = $id";
+        $result = $this->pdo->query($this->query);
+        return true;
+    }
+
+    //провести списание
+    function unconduct_writeoff($id)
+    {
+        $this->query   = "UPDATE `writeoff` SET `written` = 0 WHERE `id` = $id";
+        $result = $this->pdo->query($this->query);
+        return true;
+    }
+
     function __destruct() {
        
     }

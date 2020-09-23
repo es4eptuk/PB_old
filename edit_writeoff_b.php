@@ -8,7 +8,6 @@ $writeoff_category = $writeoff1['category'];
 $writeoff_description = $writeoff1['description'];
 $writeoff_price = $writeoff1['total_price'];
 $writeoff_user_id = $writeoff1['update_user'];
-$disabled = ($writeoff1['written'] == 0) ? '' : 'disabled';
 ?>
 <?php include 'template/head.php' ?>
 
@@ -66,7 +65,7 @@ $disabled = ($writeoff1['written'] == 0) ? '' : 'disabled';
 							   
 							   	    <div class="form-group">
 										<label>Описание</label> 
-										 <input type="text" class="form-control" name="description" required="required" id="description" value="<?= $writeoff_description ?>" <?= $disabled ?>>
+										 <input type="text" class="form-control" name="description" required="required" id="description" value="<?php echo $writeoff_description; ?> " disabled>
 									</div>
 									
 									<div class="print"><b>Категория: </b><?php echo $writeoff_category;?></div>
@@ -81,7 +80,6 @@ $disabled = ($writeoff1['written'] == 0) ? '' : 'disabled';
                                       <th>Количество</th>
                                       <th>Цена</th>
                                       <th>Сумма</th>
-                                      <th>Удаление</th>
                                     </tr>
                                    
                                     <?php 
@@ -91,17 +89,15 @@ $disabled = ($writeoff1['written'] == 0) ? '' : 'disabled';
                                         $title = $value['pos_title'];
                                         $vendor_code = $value['vendor_code'];
                                         $sum = $value['pos_price'] * $value['pos_count'];
-                                        $rm = ($disabled == '') ? '<i class="fa fa-2x fa-remove" style="cursor: pointer;" id="'.$value['pos_id'].'" data-target="'.$value['pos_count'].'"></i>' : '';
                                         echo '   
                                             <tr> 
                                             <td>'.$value['id'].'</td>
                                             <td>'.$value['pos_id'].'</td>
                                             <td>'.$vendor_code.'</td> 
                                             <td>'.$title.'</td> 
-                                            <td class="quant"><span style="position: absolute;">'.$value['pos_count'].'</span><input type="text" class="form-control quant_inp"  style="position: relative;  width: 55px; text-align: center;" placeholder="'.$value['pos_count'].'" value="'.$value['pos_count'].'" '.$disabled.'></td>
+                                            <td class="quant"><span style="position: absolute;">'.$value['pos_count'].'</span><input type="text" class="form-control quant_inp"  style="position: relative;  width: 55px; text-align: center;" placeholder="'.$value['pos_count'].'" value="'.$value['pos_count'].'" disabled></td>
                                             <td class="price">'.$value['pos_price'].'</td>
                                             <td class="sum">'.$sum.'</td>  
-                                            <td>'.$rm.'</td> 
                                             </tr>
                                         ';
                                     }
@@ -109,21 +105,19 @@ $disabled = ($writeoff1['written'] == 0) ? '' : 'disabled';
                                     
                                     </tbody>
                                     </table>
-									
-							
-							<?php 
-							if ($disabled == '' && ($userdata['user_id'] == 35 || $userdata['user_id'] == 14 || $userdata['user_id'] == 75)) {
-							    echo '
-							    	<div class="box-footer">
-										<button class="btn btn-primary" id="save_close" type="submit">Сохранить</button> 
-										<button type="button" class="btn btn-primary btn-danger pull-right" id="delete" name="">Удалить</button>
-							        </div>
-							    ';
-							}
-							
-							?>
-								
-						
+
+                                <div class="box-footer">
+                                    <?php
+                                    if ($userdata['user_id'] == 42 || $userdata['user_id'] == 14 || $userdata['user_id'] == 75 ) {
+                                        if ($writeoff1['written'] == 0) {
+                                            echo '<button class="btn btn-primary" id="conduct" type="submit">Провести</button>';
+                                        } else {
+                                            echo '<button class="btn btn-danger" id="unconduct" type="submit">Отменить проведение</button>';
+                                        }
+                                    }
+                                    ?>
+                                    <button type="reset" class="btn btn-default" id="del_filtr" name="" onclick="javascript:document.location = './writeoff_b.php'">Вернуться</button>
+                                </div>
 									
 									
 							</div><!-- /.box-body -->
@@ -140,109 +134,28 @@ $disabled = ($writeoff1['written'] == 0) ? '' : 'disabled';
 	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 
-    <?php if ($disabled == '') {?>
     <script>
         $(document).ready(function () {
 
-            change_total_price();
-
-            $("#save_close").click(function () {
-                $(this).last().addClass("disabled");
-                save_close();
-                return false;
-            });
-
-            $("#listPos").on("keyup", ".quant_inp", function () {
-                var val = $(this).val();
-                $(this).parent().find("span").text(val);
-            });
-
-            $("#listPos").on("keyup", ".quant_inp", function () {
-                var price = $(this).parent().parent().find(".price").text();
-                var quant = $(this).val();
-                var sum = (price * quant).toFixed(2);
-                $(this).parent().parent().find(".sum").text(sum);
-                change_total_price();
-            });
-
-            $("#listPos").on("click", ".fa-remove", function () {
-                var count = $(this).data("target");
-                var id = $(this).attr('id');
+            $(".content").on("click", "#conduct", function () {
                 $.post("./api.php", {
-                    action: "del_pos_writeoff",
+                    action: "conduct_writeoff",
                     id: <?php echo $writeoff_id; ?>,
-                    pos_id: id,
-                    count: count,
                 }).done(function (data) {
                     window.location.reload(true);
                 });
             });
 
-            function change_total_price() {
-                var all_sum = 0;
-                $("#listPos tr").each(function () {
-                    let isum = Number($(this).find('.sum').text());
-                    all_sum = all_sum + isum;
-                });
-                //all_sum = Math.round(all_sum).toFixed(2);
-                //console.log(all_sum);
-                $("#total_price").text(all_sum.toFixed(2));
-            }
-
-            function save_close() {
-                $(this).prop('disabled', true);
-                var id = $("#writeoff_id").text();
-                var title = "<?php echo $writeoff_category; ?>";
-                var description = $("#description").val();
-                var TableArray = [];
-                TableArray.push([title, description]);
-                $("#listPos tr").each(function () {
-                    var arrayOfThisRow = [];
-                    var tableData = $(this).find('td');
-                    if (tableData.length > 0) {
-
-                        tableData.each(function () {
-                            arrayOfThisRow.push($(this).text());
-                        });
-                        TableArray.push(arrayOfThisRow);
-                    }
-                });
-                var JsonString = JSON.stringify(TableArray);
-                //console.log(JsonString);
+            $(".content").on("click", "#unconduct", function () {
                 $.post("./api.php", {
-                    action: "edit_writeoff",
-                    id: id,
-                    json: JsonString
+                    action: "unconduct_writeoff",
+                    id: <?php echo $writeoff_id; ?>,
                 }).done(function (data) {
-                    console.log(data);
-                    window.location.href = "./writeoff.php";
-                    return false;
+                    window.location.reload(true);
                 });
-                return false;
-            }
-
-            $("#delete").click(function () {
-                $(this).last().addClass("disabled");
-                delete_writeoff();
-                return false;
             });
 
-            function delete_writeoff() {
-                var id = $("#writeoff_id").text();
-                $.post("./api.php", {
-                    action: "del_writeoff",
-                    id: id
-                }).done(function (data) {
-                    if (data == "false") {
-                        alert("Data Loaded: " + data);
-                    } else {
-                        // console.log(data);
-                        window.location.href = "./writeoff.php";
-                    }
-                });
-            }
         });
     </script>
-    <?php } ?>
 </body>
 </html>

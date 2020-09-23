@@ -226,7 +226,20 @@
  
  ';
  }
- 
+if ($userdata['group'] == 1) {
+   echo ' 
+   <li class="treeview">
+      <a href="#">
+        <i class="fa fa-money"></i> <span>Бухгалтерия</span>
+        <span class="pull-right-container">
+        </span>
+      </a>
+      <ul class="treeview-menu">
+        <li><a href="./writeoff_b.php"><i class="fa fa-minus-square"></i> Произвольные списания</a></li>
+      </ul>
+    </li>
+   ';
+}
  if ($userdata['group'] == 1  ) {
        echo '
 

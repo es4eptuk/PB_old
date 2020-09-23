@@ -188,9 +188,17 @@ if (isset($_POST['action'])) {
     if ($_POST['action'] == "add_order_plan_new") {
         echo $plan->add_order_plan_new($_POST['category'], $_POST['version'], $_POST['month'], $_POST['filter']);
     }
-    //Создание нового заказа
+    //Создание нового списания
     if ($_POST['action'] == "add_writeoff") {
         echo $writeoff->add_writeoff($_POST['json']);
+    }
+    //Провести списание
+    if ($_POST['action'] == "conduct_writeoff") {
+        echo $writeoff->conduct_writeoff($_POST['id']);
+    }
+    //Отменить проведение списания
+    if ($_POST['action'] == "unconduct_writeoff") {
+        echo $writeoff->unconduct_writeoff($_POST['id']);
     }
     //Создание новой версии робота
     if ($_POST['action'] == "add_equipment") {
