@@ -699,8 +699,8 @@ $robot_id= $robot_info['id'];
             if (data == "false") {
                 alert("Data Loaded: " + data);
             } else {
-                //window.location.href = "./kanban.php";
-                history.back();
+                window.location.href = "./kanban.php";
+                //history.back();
             }
         });
     });
