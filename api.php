@@ -369,6 +369,9 @@ if (isset($_POST['action'])) {
     if ($_POST['action'] == "ticket_add") {
         echo json_encode($tickets->add($_POST['robot'], $_POST['ticket_source'], $_POST['ticket_priority'], $_POST['ticket_class'], $_POST['category'], $_POST['subcategory'], $_POST['status'], $_POST['comment']), JSON_UNESCAPED_UNICODE);
     }
+    if ($_POST['action'] == "delete_ticket") {
+        echo json_encode($tickets->delete_ticket($_POST['id']), JSON_UNESCAPED_UNICODE);
+    }
     if ($_POST['action'] == "ticket_edit") {
         echo json_encode($tickets->edit($_POST['id'], $_POST['category'], $_POST['subcategory'], $_POST['description']), JSON_UNESCAPED_UNICODE);
     }

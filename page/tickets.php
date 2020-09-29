@@ -254,7 +254,24 @@ class Tickets
 
         return $result;
     }
-    
+
+    /**
+     * Delete ticket.
+     * @param $id
+     * @return mixed
+     */
+    public function delete_ticket($id)
+    {
+        $this->query = "DELETE FROM `robot_log` WHERE `ticket_id` = '$id'";
+        $result = $this->pdo->query($this->query);
+        $this->query = "DELETE FROM `tickets_comments` WHERE `ticket` = '$id'";
+        $result = $this->pdo->query($this->query);
+        $this->query = "DELETE FROM `tickets_statistics` WHERE `id_ticket` = '$id'";
+        $result = $this->pdo->query($this->query);
+        $this->query = "DELETE FROM `tickets` WHERE `id` = '$id'";
+        $result = $this->pdo->query($this->query);
+    }
+
     //Получение информации о тикете по ID
 
     /**

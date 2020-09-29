@@ -221,7 +221,7 @@ $robot_id= $robot_info['id'];
 
        </div>
             
-       <div class="col-md-3">
+       <div class="col-md-3" id="ticket_info_block">
           <!-- Widget: user widget style 1 -->
           <div class="box box-widget widget-user-2">
             <!-- Add the bg color to the header using any of the bg-* classes -->
@@ -241,7 +241,7 @@ $robot_id= $robot_info['id'];
                 if ($ticket_info['priority'] == 2) {$tiket_color = '#f9f9f9';}
                 if ($ticket_info['priority'] == 3) {$tiket_color = '#ffd5d5';}
             ?>
-            <div class="box-footer" style="background-color:<?=$tiket_color?>">
+            <div class="box-body" style="background-color:<?=$tiket_color?>">
                 <?php if ($userdata['group'] == 1) { ?>
                     <div class="form-group" >
                         <label>Источник</label>
@@ -345,6 +345,11 @@ $robot_id= $robot_info['id'];
                     <li><a>В работе<span class="pull-right badge bg-red"><?= $ticket_work_str; ?></span></a></li>
                 </ul>
             </div>
+            <?php if ($userdata['group'] == 1) { ?>
+            <div class="box-footer" style="background-color:<?=$tiket_color?>">
+                <button type="submit" class="btn btn-danger btn-block" id="del_ticket" name="">Удалить</button>
+            </div>
+            <?php } ?>
           </div>
           <!-- /.widget-user -->
         </div>
@@ -681,6 +686,21 @@ $robot_id= $robot_info['id'];
                 alert("Data Loaded: " + data);
             } else {
                 window.location.reload(true);
+            }
+        });
+    });
+    //кнопка удаления тикета
+    $("#ticket_info_block").on('click', '#del_ticket', function () {
+        var id = <?php echo $ticket_id?>;
+        $.post("./api.php", {
+            action: "delete_ticket",
+            id: id,
+        }).done(function (data) {
+            if (data == "false") {
+                alert("Data Loaded: " + data);
+            } else {
+                //window.location.href = "./kanban.php";
+                history.back();
             }
         });
     });
