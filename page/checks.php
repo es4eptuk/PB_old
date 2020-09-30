@@ -362,7 +362,7 @@ class Checks
             $this->z_remove_group_new($z_host[0]['hostid'], self::ZABIX[$version]['Manufacture'], $version);
 
             //!!!временно для синхронизации
-            if ($version == 2 || $version == 4 || $version == 5) {
+            if ($version == 4) {
                 $this->auth = null;
                 $versionD = $version . '1';
                 $this->auth = $this->z_auth_new($versionD);
