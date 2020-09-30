@@ -18,6 +18,10 @@ class Checks
         '4' => ['url' => 'https://pb2.icmm.ru/zabbix/api_jsonrpc.php', 'user' => 'manufacture', 'password' => 'queetoh6Ace', 'Manufacture' => '32', 'Manufacture_test' => '31', 'host' => 'promobotv4_'],
         '6' => ['url' => 'https://195.69.158.137/zabbix/api_jsonrpc.php', 'user' => 'manufacture', 'password' => 'queetoh6Ace', 'Manufacture' => '15', 'Manufacture_test' => '19', 'host' => 'promobotv4_'],
         '7' => ['url' => 'https://195.69.158.137/zabbix/api_jsonrpc.php', 'user' => 'manufacture', 'password' => 'queetoh6Ace', 'Manufacture' => '15', 'Manufacture_test' => '19', 'host' => 'promobotv4_'],
+        //дубль
+        '21' => ['url' => '', 'user' => '', 'password' => '', 'Manufacture' => '', 'Manufacture_test' => '', 'host' => ''],
+        '51' => ['url' => '', 'user' => '', 'password' => '', 'Manufacture' => '', 'Manufacture_test' => '', 'host' => ''],
+        '41' => ['url' => 'https://pb-srv8.promo-bot.ru/zabbix/api_jsonrpc.php', 'user' => 'manufacture', 'password' => 'queetoh6Ace', 'Manufacture' => '32', 'Manufacture_test' => '31', 'host' => 'promobotv4_'],
     ];
 
 
@@ -347,12 +351,26 @@ class Checks
                 $robot_array[] = $line;
             }
             $version = $robot_array[0]['version'];
+            if ($version != 5 && $version != 6 && $version != 7) {
+                $version = 4;
+            }
             $robot_name = $robot_array[0]['name'];
             $num        = str_pad($number, 4, "0", STR_PAD_LEFT);
             $this->auth = $this->z_auth_new($version);
             $z_host     = $this->z_get_hosts_new(['host' => self::ZABIX[$version]['host'].$num], $version);
             $this->z_remove_group_new($z_host[0]['hostid'], self::ZABIX[$version]['Manufacture_test'], $version);
             $this->z_remove_group_new($z_host[0]['hostid'], self::ZABIX[$version]['Manufacture'], $version);
+
+            //!!!временно для синхронизации
+            if ($version == 2 || $version == 4 || $version == 5) {
+                $this->auth = null;
+                $versionD = $version . '1';
+                $this->auth = $this->z_auth_new($versionD);
+                $z_host     = $this->z_get_hosts_new(['host' => self::ZABIX[$versionD]['host'].$num], $versionD);
+                $this->z_remove_group_new($z_host[0]['hostid'], self::ZABIX[$versionD]['Manufacture_test'], $versionD);
+                $this->z_remove_group_new($z_host[0]['hostid'], self::ZABIX[$versionD]['Manufacture'], $versionD);
+            }
+
             /* старый код
             $this->auth = $this->z_auth();
             $z_host     = $this->z_get_hosts(array(
@@ -361,6 +379,7 @@ class Checks
             $this->z_remove_group($z_host[0]['hostid'], '31');
             $this->z_remove_group($z_host[0]['hostid'], '32');
             */
+
             $icon         = '🚚';
             $comment      = " Робот  #" . $number . "(" . $robot_name . ") отправлен";
             $telegram_str = $icon . $comment;
