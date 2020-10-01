@@ -471,15 +471,40 @@ class Plan
         unset($arr_inneed);
         unset($arr_orders);
 
-        //предварительная обработка массива для создания заказа и фала
+        //предварительная обработка массива для создания заказа и файла
         $result = [];
         foreach ($arr_pos as $id => $pos) {
+
+            /*новая логика*/
+            if ($id_month != 0) {
+                //если месяц
+                $inorder = $pos['month'][$id_month]['inorder'];
+            } else {
+                //если не месяц
+                if ($v_filtr != []) {
+                    //есть фильтр
+                    $sum = 0;
+                    foreach ($pos['month'] as $month) {
+                        $sum = $sum + $month['inorder'];
+                    }
+                    $inorder = $sum;
+                } else {
+                    //нет фильтра
+                    $inorder = ($pos['total']<0) ? 0 : $pos['inorder'];
+                }
+            }
+
+
+            /* старая
+            //если месяц
             if ($id_month != 0) {
                 $inorder = $pos['month'][$id_month]['inorder'];
             } else {
                 //если остатки в -, то автозаказа по позиции не создавать
                 $inorder = ($pos['total']<0) ? 0 : $pos['inorder'];
             }
+            */
+
             if ($inorder == 0) {
                 continue;
             }
@@ -498,10 +523,16 @@ class Plan
         die;*/
 
         //создание заказа и файла
+
+        /* старое
         $current_month = date('m');
         $current_year = date('y');
         $tmp_date = "25.".$current_month.".".$current_year;
-        $order_date = date('d.m.Y',strtotime("$tmp_date +1 month"));
+        */
+        //новое
+        $tmp_date = date('Y-m-d');
+
+        $order_date = date('d.m.Y',strtotime("$tmp_date +2 week")); //$tmp_date +1 month
         $order_date = new DateTime($order_date);
         $order_date = $order_date->format('Y-m-d H:i:s');
 

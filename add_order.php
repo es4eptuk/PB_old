@@ -1,14 +1,17 @@
 <?php 
 include 'include/class.inc.php';
 
-$current_month = date('m');
-        $current_year = date('y');
-        $tmp_date = "25.".$current_month.".".$current_year;
-        
-        $order_date =  date('d.m.Y',strtotime("$tmp_date +1 month"));
-        
-        $order_date = new DateTime($order_date);
-		$order_date = $order_date->format('d.m.Y');
+    /*
+    $current_month = date('m');
+    $current_year = date('y');
+    $tmp_date = "25.".$current_month.".".$current_year;
+    */
+    //новое
+    $tmp_date = date('Y-m-d');
+
+    $order_date =  date('d.m.Y',strtotime("$tmp_date +2 week")); //$tmp_date +1 month
+    $order_date = new DateTime($order_date);
+    $order_date = $order_date->format('d.m.Y');
 
 
 

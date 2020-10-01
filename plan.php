@@ -159,7 +159,7 @@ $categoryes = $position->getCategoryes;
                     <th colspan="3"><b>Номенклатура</b></th>
                     <th colspan="3">
                         <b>Склад</b><br>
-                        <button type="button" class="btn btn-block btn-primary btn-xs add_order" data-date="0" <?php echo (isset($_GET['version']) || $v_filtr != []) ? "disabled" : "";?>>Заказ</button>
+                        <button type="button" class="btn btn-block <?= (isset($_GET['version']) || $v_filtr != []) ? "btn-danger" : "btn-primary";?> btn-xs add_order" data-date="0" <?php /*echo (isset($_GET['version']) || $v_filtr != []) ? "disabled" : "";*/?>>Заказ</button>
                         <!--<button type="button" class="btn btn-primary btn-xs add_order" data-date="" style="width:48%;" <?php echo (!isset($_GET['version'])) ? "disabled" : "";?>>На робота</button>-->
                     </th>
                     <?php echo $out; ?>
@@ -350,7 +350,7 @@ $categoryes = $position->getCategoryes;
                       //создаем ссылки на заказы
                       $orders = "";
                       foreach ($v['orders'] as $id => $info) {
-                          $orders .= "<a href='./edit_order.php?id=".$id."'>".$info['date']." (".$info['category'].") - ".$info['count']." шт.</a><br>";
+                          $orders .= "<a href='./edit_order.php?id=".$id."' target='_blank'>".$info['date']." (".$info['category'].") - ".$info['count']." шт.</a><br>";
                       }
 
                       //переворачиваем массив
@@ -439,7 +439,7 @@ $categoryes = $position->getCategoryes;
             var version = <?php echo (isset($_GET['version'])) ? $_GET['version'] : 0; ?>;
             var date = $(this).data('date');
             var filter = JSON.stringify([<?php echo implode(',', $v_filtr);?>]);
-            //console.log(filter);
+            //console.log(version);
             //return false;
             $.post("./api.php", {
                 action: "add_order_plan_new",
