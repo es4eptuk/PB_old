@@ -536,6 +536,7 @@ class Plan
         $order_date = new DateTime($order_date);
         $order_date = $order_date->format('Y-m-d H:i:s');
 
+        $orders_id = '';
         foreach ($result as $key_provider => $orders) {
             $json = [];
             $json['0']['0'] = $id_category;
@@ -553,13 +554,16 @@ class Plan
                 $json[$i]['6'] = $order_date;
                 $i++;
             }
-            $this->orders->add_order(json_encode($json),0,true);
+            $orders_id = $orders_id . ', ' . $this->orders->add_order(json_encode($json),0,true);
         }
 
         $date_folder = new DateTime($order_date);
         $date_folder = $date_folder->format('d_m_y');
 
-        return "orders/".$date_folder."/orders_".$id_category.".zip";
+        //return "orders/".$date_folder."/orders_".$id_category.".zip";
+
+        $orders_id = substr($orders_id, 2);
+        return $orders_id;
 
     }
     /** ОПЕРАТИВНЫЙ ПЛАН **/

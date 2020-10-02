@@ -9,6 +9,7 @@ class Position
     //списки
     public $getCategoryes;
     public $getSubcategoryes;
+    public $getUnits;
 
     function __construct()
     {
@@ -45,8 +46,16 @@ class Position
         while ($line = $result->fetch()) {
             $subcategoryes[$line['id']] = $line;
         }
-
         $this->getSubcategoryes = (isset($subcategoryes)) ? $subcategoryes : [];
+
+        //список ед измерений
+        $this->getUnits = [
+            0 => ['id' => 0, 'title' => ''],
+            1 => ['id' => 1, 'title' => 'шт'],
+            2 => ['id' => 2, 'title' => 'кг'],
+            3 => ['id' => 3, 'title' => 'м.кв'],
+            4 => ['id' => 4, 'title' => 'л'],
+        ];
 
     }
 
@@ -230,12 +239,12 @@ class Position
             return $pos_array['0'];*/
     }
 
-    function add_pos($title, $longtitle, $category, $subcategory, $vendorcode, $provider, $price, $quant_robot, $quant_total)
+    function add_pos($title, $longtitle, $category, $unit, $subcategory, $vendorcode, $provider, $price, $quant_robot, $quant_total)
     {
         $date    = date("Y-m-d H:i:s");
         $user_id = intval($_COOKIE['id']);
         $title = quotemeta($title);
-        $query   = "INSERT INTO `pos_items` (`id`, `category`, `subcategory`, `title`, `vendor_code`, `provider`, `price`, `longtitle`, `quant_robot`, `total`, `update_date`, `update_user`) VALUES (NULL, '$category', '$subcategory', '$title', '$vendorcode', $provider, '$price', '$longtitle', '$quant_robot', '$quant_total', '$date', '$user_id')";
+        $query   = "INSERT INTO `pos_items` (`id`, `category`, `unit`, `subcategory`, `title`, `vendor_code`, `provider`, `price`, `longtitle`, `quant_robot`, `total`, `update_date`, `update_user`) VALUES (NULL, '$category', '$unit', '$subcategory', '$title', '$vendorcode', $provider, '$price', '$longtitle', '$quant_robot', '$quant_total', '$date', '$user_id')";
         $result = $this->pdo->query($query);
         
         if ($result) {
@@ -244,11 +253,11 @@ class Position
 
         return $result;
     }
-    function edit_pos($id, $title, $longtitle, $category, $subcategory, $vendorcode, $provider, $price, $quant_robot, $quant_total, $min_balance, $assembly, $summary, $archive)
+    function edit_pos($id, $title, $longtitle, $unit, $category, $subcategory, $vendorcode, $provider, $price, $quant_robot, $quant_total, $min_balance, $assembly, $summary, $archive)
     {
         $date    = date("Y-m-d H:i:s");
         $user_id = intval($_COOKIE['id']);
-        $query   = "UPDATE `pos_items` SET `title` = '$title', `longtitle` = '$longtitle', `category` = '$category', `subcategory` = '$subcategory', `provider` = '$provider', `price` = '$price', `quant_robot` = '$quant_robot', `total` = '$quant_total', `min_balance` = '$min_balance', `vendor_code` = '$vendorcode', `assembly` = '$assembly', `summary` = '$summary', `archive` = '$archive', `update_date` = '$date', `update_user` = '$user_id' WHERE `pos_items`.`id` = $id;";
+        $query   = "UPDATE `pos_items` SET `title` = '$title', `longtitle` = '$longtitle', `category` = '$category', `unit` = '$unit', `subcategory` = '$subcategory', `provider` = '$provider', `price` = '$price', `quant_robot` = '$quant_robot', `total` = '$quant_total', `min_balance` = '$min_balance', `vendor_code` = '$vendorcode', `assembly` = '$assembly', `summary` = '$summary', `archive` = '$archive', `update_date` = '$date', `update_user` = '$user_id' WHERE `pos_items`.`id` = $id;";
         $result = $this->pdo->query($query);
         if ($result && $quant_total != 0) {
             $log_title      = "Редактирвоание позиции";

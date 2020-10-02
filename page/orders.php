@@ -5,6 +5,35 @@ class Orders
     private $pdo;
     private $log;
 
+    private $position;
+
+    const CONTACTS = [
+        35 => [
+            'role' => 'руководитель отдела закупок ООО "ПРОМОБОТ"',
+            'name' => 'Лобачева Татьяна',
+            'mobile' => '+7(952)644-32-55',
+            'phone' => '+7(342)257-80-85 доб.402',
+            'email' => 't.lobacheva@promo-bot.ru',
+            'signature' => '/img/podpis_lobacheva.png',
+        ],
+        43 => [
+            'role' => 'менеджер по внешней кооперации ООО "ПРОМОБОТ"',
+            'name' => 'Бекбулатова Мария',
+            'mobile' => '+7(902)837-94-53',
+            'phone' => '+7(342)257-80-85 доб.403',
+            'email' => 'm.bekbulatova@promo-bot.ru',
+            'signature' => '/img/podpis_bekbulatova.png',
+        ],
+        0 => [
+            'role' => 'отдела закупок ООО "ПРОМОБОТ"',
+            'name' => '',
+            'mobile' => '',
+            'phone' => '+7(342)257-80-85',
+            'email' => 'info@promo-bot.ru',
+            'signature' => '',
+        ],
+    ];
+
     function __construct()
     {
         global $database_server, $database_user, $database_password, $dbase, $dbconnect;
@@ -21,9 +50,10 @@ class Orders
 
     function init()
     {
-        global $log;
+        global $log, $position;
 
         $this->log = $log; //new Log;
+        $this->position = $position;
         //$this -> robot = new Robots;
     }
 
@@ -246,6 +276,7 @@ class Orders
             $zip->addFile($excel_name.".xlsx", "Заказ_".$idd."_".str_replace(' ', '_', $provider).".xlsx");
             $zip->close();
             //echo "orders/".$date_folder."/orders.zip";
+             return $idd;
          } else {
             // Освобождаем память от результата
             //mysql_free_result($result);
@@ -628,6 +659,185 @@ class Orders
         }
 
         return (isset($array)) ? $array : [];
+    }
+
+    function createFileOrder($order_id)
+    {
+        $query = "SELECT * FROM `orders` WHERE `order_id` = $order_id";
+        $result = $this->pdo->query($query);
+        while ($line = $result->fetch()) {
+            $orders[] = $line;
+        }
+        $order = isset($orders) ? $orders[0] : null;
+        unset($orders);
+        if ($order == null) {
+            return null;
+        }
+
+        $query = "SELECT * FROM `orders_items` JOIN `pos_items` ON `pos_items`.`id` = `orders_items`.`pos_id` WHERE `orders_items`.`order_id` = $order_id";
+        $result = $this->pdo->query($query);
+        while ($line = $result->fetch()) {
+            $order_items[] = $line;
+        }
+        if (!isset($order_items)) {
+            return null;
+        }
+
+        $user_id = intval($_COOKIE['id']);
+
+        //создаем файлы
+        //для папок
+        $f_date = $order_id.'_'.time();
+        if (!file_exists(PATCH_DIR . "/orders/")) {
+            mkdir(PATCH_DIR . "/orders/", 0777);
+        }
+        $excel_name = PATCH_DIR . "/orders/" . $f_date . ".xlsx";
+        require_once('excel/Classes/PHPExcel.php');
+        require_once('excel/Classes/PHPExcel/IOFactory.php');
+        $objPHPExcel = new PHPExcel();
+
+        // Add some data
+        $objPHPExcel->setActiveSheetIndex(0);
+        $sheet = $objPHPExcel->getActiveSheet();
+
+        $imagePath = PATCH_DIR . "/img/head_letter.png";
+        $logo = new PHPExcel_Worksheet_Drawing();
+        $logo->setPath($imagePath);
+        $width = PHPExcel_Shared_Drawing::pixelsToCellDimension($logo->getWidth(),$sheet->getStyle("B2:G2")->getFont());
+
+        //
+        $sheet->getColumnDimension('A')->setWidth($width*0.2);
+        $sheet->getColumnDimension('B')->setWidth($width*0.1);
+        $sheet->getColumnDimension('C')->setWidth($width*0.12);
+        $sheet->getColumnDimension('D')->setWidth($width*0.43);
+        $sheet->getColumnDimension('E')->setWidth($width*0.1);
+        $sheet->getColumnDimension('F')->setWidth($width*0.1);
+        $sheet->getColumnDimension('G')->setWidth($width*0.15);
+        $sheet->getColumnDimension('H')->setWidth($width*0.2);
+
+        //задаем реквизиты
+        $sheet->mergeCells("B2:G2");
+        $logo->setCoordinates("B2");
+        $logo->setOffsetX(0);
+        $logo->setOffsetY(0);
+        $logo->setWorksheet($sheet);
+        unset($logo);
+
+        //задаем номер заказа
+        $sheet->mergeCells("B14:G14");
+        $order_date = new DateTime($order['order_date']);
+        $order_date = $order_date->format('d.m.Y');
+        $sheet->setCellValue("B14", 'Заказ поставщику №' . $order['order_id'] . ' от ' . $order_date . 'г.');
+        $styleArray = [
+            'alignment' => [
+                'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+                'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER,
+            ]
+        ];
+        $sheet->getStyle("B14")->applyFromArray($styleArray);
+
+        $sheet->setCellValue("B16", "Номер\nп/п");
+        $sheet->setCellValue("C16", "Артикул");
+        $sheet->setCellValue("D16", "Наименование");
+        $sheet->setCellValue("E16", "Кол-во");
+        $sheet->setCellValue("F16", "Ед.изм.");
+        $sheet->setCellValue("G16", "Желаемый\nсрок\nпоставки");
+        $styleArray = [
+            'alignment' => [
+                'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+                'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER,
+                'wrap' => true,
+            ],
+            'borders' => [
+                'outline' => [
+                    'style' => PHPExcel_Style_Border::BORDER_THIN,
+                    'color' => ['rgb' => '000000'],
+                ],
+                'inside' => [
+                    'style' => PHPExcel_Style_Border::BORDER_THIN,
+                    'color' => ['rgb' => '000000'],
+                ],
+            ],
+        ];
+        $sheet->getStyle("B16:G16")->applyFromArray($styleArray);
+        $sheet->getRowDimension(16)->setRowHeight($width*0.52);
+
+        $arr_units = $this->position->getUnits;
+        $row = 16;
+        $nn = 0;
+        foreach ($order_items as $item) {
+            $row++;
+            $nn++;
+            $sheet->setCellValue("B" . $row, $nn);
+            $sheet->setCellValue("C" . $row, $item['vendor_code']);
+            $sheet->setCellValue("D" . $row, $item['title']);
+            $sheet->setCellValue("E" . $row, $item['pos_count']);
+            $sheet->setCellValue("F" . $row, $arr_units[$item['unit']]['title']);
+            $order_date = new DateTime($item['pos_date']);
+            $order_date = $order_date->format('d.m.Y');
+            $sheet->setCellValue("G" . $row, $order_date);
+            $sheet->getRowDimension($row)->setRowHeight($width*0.4);
+        }
+        //для всей таблицы
+        $styleArray = [
+            'alignment' => ['vertical' => PHPExcel_Style_Alignment::VERTICAL_TOP, 'wrap' => true,],
+            'borders' => ['outline' => ['style' => PHPExcel_Style_Border::BORDER_THIN, 'color' => ['rgb' => '000000'],], 'inside' => ['style' => PHPExcel_Style_Border::BORDER_THIN, 'color' => ['rgb' => '000000'],],],
+        ];
+        $sheet->getStyle("B17:G" . $row)->applyFromArray($styleArray);
+        //
+        $styleArray = [
+            'alignment' => ['horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,],
+        ];
+        $sheet->getStyle("C17:C" . $row)->applyFromArray($styleArray);
+        $sheet->getStyle("F17:F" . $row)->applyFromArray($styleArray);
+        $sheet->getStyle("G17:G" . $row)->applyFromArray($styleArray);
+        //
+        //$user_id = 43;
+        $contacts = self::CONTACTS;
+        $contact = (isset($contacts[$user_id])) ? $contacts[$user_id] : $contacts[0];
+        if ($contact['signature'] != '') {
+            $imagePath = PATCH_DIR . $contact['signature'];
+            $logo = new PHPExcel_Worksheet_Drawing();
+            $logo->setPath($imagePath);
+            $logo->setCoordinates("F". ($row+4));
+            $logo->setOffsetX(0);
+            $logo->setOffsetY(0);
+            $logo->setHeight($width*0.50);
+            $logo->setWorksheet($sheet);
+            unset($logo);
+        }
+        $sheet->setCellValue("B". ($row+4), 'С наилучшими пожеланиями,');
+        $sheet->setCellValue("B". ($row+5), $contact['role']);
+        $sheet->setCellValue("B". ($row+6), $contact['name']);
+        $sheet->setCellValue("B". ($row+7), $contact['mobile']);
+        $sheet->setCellValue("B". ($row+8), $contact['phone']);
+        $sheet->setCellValue("B". ($row+9), $contact['email']);
+        $sheet->setCellValue("B". ($row+10), 'www.promo-bot.ru');
+        $sheet->getRowDimension($row+4)->setRowHeight($width*0.20);
+        $sheet->getRowDimension($row+5)->setRowHeight($width*0.20);
+        $sheet->getRowDimension($row+6)->setRowHeight($width*0.20);
+        $sheet->getRowDimension($row+7)->setRowHeight($width*0.20);
+        $sheet->getRowDimension($row+8)->setRowHeight($width*0.20);
+        $sheet->getRowDimension($row+9)->setRowHeight($width*0.20);
+        $sheet->getRowDimension($row+10)->setRowHeight($width*0.20);
+
+        $styleArray = [
+            'font' => [
+                'name' => 'Calibri',
+                'size' => 13,
+            ],
+            'fill' => [
+                'type' => PHPExcel_Style_Fill::FILL_SOLID,
+                'color' => ['rgb' => 'FFFFFF'],
+            ],
+        ];
+        $sheet->getStyle("A1:H".($row+14))->applyFromArray($styleArray);
+
+        // Save
+        $objWriter = new PHPExcel_Writer_Excel2007($objPHPExcel);
+        $objWriter->save($excel_name);
+
+        return $excel_name;
     }
 
     function __destruct()

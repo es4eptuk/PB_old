@@ -92,7 +92,7 @@ include 'include/class.inc.php';
                         if (file_exists($filename_thumb)) {
                             $img =  '<a class="fancybox" href="'.$filename.'" target="_blank"><img alt="'.$pos['vendor_code'].'" src="'.$filename_thumb.'" /></a>';
                         } else {
-                            $img =  "<img src='/img/no-image.png' width='100'></img>";
+                            $img = "<img src='/img/no-image.png' width='100'></img>";
                         }
                      
                        echo "
@@ -163,7 +163,18 @@ include 'include/class.inc.php';
                   <input type="text" class="form-control" name="longtitle" id="longtitle">
                 </div>
 
-                
+                <!-- select -->
+                <div class="form-group">
+                  <label>Единицы измерения</label>
+                  <select class="form-control" name="unit" placeholder="" id="unit" required="required">
+                      <?php
+                      $arr = $position->getUnits;
+                      foreach ($arr as &$unit) {
+                          echo "<option value='".$unit['id']."' >".$unit['title']."</option>";
+                      }
+                      ?>
+                  </select>
+                </div>
 
                 <!-- select -->
                 <div class="form-group">
@@ -172,14 +183,9 @@ include 'include/class.inc.php';
                    <option>Выберите категорию...</option>
                    <?php 
                    $arr = $position->getCategoryes;
-                
-                    foreach ($arr as &$category) {
-                       echo "
-                       <option value='".$category['id']."'>".$category['title']."</option>
-                       
-                       ";
-                    }
-                   
+                   foreach ($arr as &$category) {
+                       echo "<option value='".$category['id']."'>".$category['title']."</option>";
+                   }
                    ?>
                   </select>
                 </div>
@@ -449,6 +455,7 @@ include 'include/class.inc.php';
                     // console.log (get_info_user(obj['update_user']));
                     $('#title').val(obj['title']);
                     $('#longtitle').val(obj['longtitle']);
+                    $('#unit').val(obj['unit']);
                     $('#category').val(obj['category']);
                     //загружаем подкатегории по выбранной категории
                     $.post("./api.php", {action: "get_pos_sub_category", subcategory: obj['category']})
@@ -586,6 +593,7 @@ include 'include/class.inc.php';
             var title = $('#title').val();
             var longtitle = $('#longtitle').val();
             var category = $('#category').val();
+            var unit = $('#unit').val();
             var subcategory = $('#subcategory').val();
             var vendorcode = $('#vendorcode').val();
             var provider = $('#provider').val();
@@ -609,6 +617,7 @@ include 'include/class.inc.php';
                 title: title,
                 longtitle: longtitle,
                 category: category,
+                unit: unit,
                 subcategory: subcategory,
                 vendorcode: vendorcode,
                 provider: provider,

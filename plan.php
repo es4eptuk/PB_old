@@ -439,24 +439,41 @@ $categoryes = $position->getCategoryes;
             var version = <?php echo (isset($_GET['version'])) ? $_GET['version'] : 0; ?>;
             var date = $(this).data('date');
             var filter = JSON.stringify([<?php echo implode(',', $v_filtr);?>]);
+            var yes = confirm("Вы действительно готовы сформировать заказы поставщику?");
+
             //console.log(version);
             //return false;
-            $.post("./api.php", {
-                action: "add_order_plan_new",
-                category: category,
-                version: version,
-                month: date,
-                filter: filter
-            }).done(function (data) {
-                console.log(data);
-                window.location.href = data;
-                setTimeout(function() {
-                    //document.location = './plan.php?id=' + <?= $_GET['id']?>;
+
+            if (yes == true) {
+                $.post("./api.php", {
+                    action: "add_order_plan_new",
+                    category: category,
+                    version: version,
+                    month: date,
+                    filter: filter
+                }).done(function (data) {
+                    //console.log(data);
+                    if (data == '') {
+                        alert('Заказы не сформировались, т.к. заказывать нечего!');
+                    } else {
+                        alert('Заказы успешно сформированны: ' + data + '.');
+                    }
+
+                    window.location.reload(true);
+                    /*
+                    window.location.href = data;
+                    setTimeout(function() {
+                        //document.location = './plan.php?id=' + <?= $_GET['id']?>;
                     window.location.reload(true);
                     //window.location.href = "./plan.php?id=<?= $_GET['id']?>";
                 }, 1000);
                 return false;
-            });
+                */
+                });
+            } else {
+                return false;
+            }
+
         });
     });
 </script>

@@ -133,7 +133,7 @@ if (isset($_POST['check_show_all'])) {
                          $num = str_pad($robot['number'], 4, "0", STR_PAD_LEFT);
                          $remont = "";
                          if ($robot['remont']>0) {$remont = '<br><small class="label bg-red">Модернизация</small>';}
-                         $edit = ($userdata['user_id'] == 75 || $userdata['user_id'] == 14 || $userdata['user_id'] == 17) ? "<a href='./edit_robot.php?id=".$robot['id']."'><i class='fa fa-2x fa-pencil' style='cursor: pointer;'></i></a>" : "";
+                         $edit = ($userdata['user_id'] == 75 || $userdata['user_id'] == 14 || $userdata['user_id'] == 17 || $userdata['user_id'] == 77) ? "<a href='./edit_robot.php?id=".$robot['id']."'><i class='fa fa-2x fa-pencil' style='cursor: pointer;'></i></a>" : "";
                          if ($robot['delete']==2) {
                              $print = "";
                              $check = "";

@@ -42,7 +42,18 @@ include 'include/class.inc.php';
                   <input type="text" class="form-control" name="longtitle" id="longtitle" value="<?php if(isset($_GET['longtitle']))  echo $_GET['longtitle']; ?>">
                 </div>
 
-                
+                <!-- select -->
+                <div class="form-group">
+                  <label>Единицы измерения</label>
+                  <select class="form-control" name="unit" placeholder="" id="unit" required="required">
+                      <?php
+                      $arr = $position->getUnits;
+                      foreach ($arr as &$unit) {
+                          echo "<option value='".$unit['id']."' >".$unit['title']."</option>";
+                      }
+                      ?>
+                  </select>
+                </div>
 
                 <!-- select -->
                 <div class="form-group">
@@ -324,6 +335,7 @@ include 'include/class.inc.php';
         var title = $('#title').val();
         var longtitle = $('#longtitle').val();
         var category = $('#category').val();
+        var unit = $('#unit').val();
         var subcategory = $('#subcategory').val();
         var vendorcode = $('#vendorcode').val();
         var provider = $('#provider').val();
@@ -338,6 +350,7 @@ include 'include/class.inc.php';
                 title: title,
                 longtitle: longtitle,
                 category: category,
+                unit: unit,
                 subcategory: subcategory,
                 vendorcode: vendorcode,
                 provider: provider,
@@ -380,6 +393,7 @@ include 'include/class.inc.php';
         var title = $('#title').val();
         var longtitle = $('#longtitle').val();
         var category = $('#category').val();
+        var unit = $('#unit').val();
         var subcategory = $('#subcategory').val();
         var vendorcode = $('#vendorcode').val();
         var provider = $('#provider').val();
@@ -394,6 +408,7 @@ include 'include/class.inc.php';
                 title: title,
                 longtitle: longtitle,
                 category: category,
+                unit: unit,
                 subcategory: subcategory,
                 vendorcode: vendorcode,
                 provider: provider,

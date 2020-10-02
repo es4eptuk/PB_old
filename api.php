@@ -97,7 +97,7 @@ if (isset($_POST['action'])) {
     }
     //Добавление позиции  
     if ($_POST['action'] == "add_pos") {
-        echo json_encode($position->add_pos($_POST['title'], $_POST['longtitle'], $_POST['category'], $_POST['subcategory'], $_POST['vendorcode'], $_POST['provider'], $_POST['price'], $_POST['quant_robot'], $_POST['quant_total']), JSON_UNESCAPED_UNICODE);
+        echo json_encode($position->add_pos($_POST['title'], $_POST['longtitle'], $_POST['category'], $_POST['unit'], $_POST['subcategory'], $_POST['vendorcode'], $_POST['provider'], $_POST['price'], $_POST['quant_robot'], $_POST['quant_total']), JSON_UNESCAPED_UNICODE);
     }
     //Получение списка поставщиков  
     if ($_POST['action'] == "get_pos_provider") {
@@ -131,7 +131,7 @@ if (isset($_POST['action'])) {
     }
     //Редактирование позиции
     if ($_POST['action'] == "edit_pos") {
-        echo json_encode($position->edit_pos($_POST['id'], $_POST['title'], $_POST['longtitle'], $_POST['category'], $_POST['subcategory'], $_POST['vendorcode'], $_POST['provider'], $_POST['price'], $_POST['quant_robot'], $_POST['quant_total'], $_POST['min_balance'], $_POST['assembly'], $_POST['summary'], $_POST['archive'], $_POST['file']), JSON_UNESCAPED_UNICODE);
+        echo json_encode($position->edit_pos($_POST['id'], $_POST['title'], $_POST['longtitle'], $_POST['unit'], $_POST['category'], $_POST['subcategory'], $_POST['vendorcode'], $_POST['provider'], $_POST['price'], $_POST['quant_robot'], $_POST['quant_total'], $_POST['min_balance'], $_POST['assembly'], $_POST['summary'], $_POST['archive'], $_POST['file']), JSON_UNESCAPED_UNICODE);
     }
     //Редактирование позиции с удаленного склада
     if ($_POST['action'] == "edit_pos_warehouse") {
@@ -188,6 +188,11 @@ if (isset($_POST['action'])) {
     if ($_POST['action'] == "add_order_plan_new") {
         echo $plan->add_order_plan_new($_POST['category'], $_POST['version'], $_POST['month'], $_POST['filter']);
     }
+    //Выгрузка заказа
+    /*if ($_POST['action'] == "print_order") {
+        echo $orders->createFileOrder($_POST['id']);
+
+    }*/
     //Создание нового списания
     if ($_POST['action'] == "add_writeoff") {
         echo $writeoff->add_writeoff($_POST['json']);

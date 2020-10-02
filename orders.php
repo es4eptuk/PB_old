@@ -1,5 +1,30 @@
 <?php 
 include 'include/class.inc.php';
+
+function file_force_download($file) {
+    if (file_exists($file)) {
+        if (ob_get_level()) {
+            ob_end_clean();
+        }
+        header('Content-Description: File Transfer');
+        header('Content-Type: application/octet-stream');
+        header('Content-Disposition: attachment; filename=' . basename($file));
+        header('Content-Transfer-Encoding: binary');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate');
+        header('Pragma: public');
+        header('Content-Length: ' . filesize($file));
+        readfile($file);
+        unlink($file);
+        exit;
+    }
+}
+
+if (isset($_POST['print'])) {
+    $file = $orders->createFileOrder($_POST['order_id']);
+    file_force_download($file);
+}
+
 ?>
 
 <?php include 'template/head.php' ?>
@@ -73,6 +98,7 @@ include 'include/class.inc.php';
                   <th>Ответственный</th>
                   <th></th>
                   <th></th>
+                  <th></th>
                  
                 </tr>
                 </thead>
@@ -131,6 +157,7 @@ include 'include/class.inc.php';
                          
                         <td><i class='fa fa-2x fa-copy' style='cursor: pointer;' data-id='".$pos['order_id']."'></i></td>
                         <td><i class='fa fa-2x fa-pencil' style='cursor: pointer;' data-id='".$pos['order_id']."'></i></td>
+                        <td><i class='fa fa-2x fa-print' style='cursor: pointer;' data-id='".$pos['order_id']."'></i></td>
                        
                        
                     </tr>
@@ -159,6 +186,12 @@ include 'include/class.inc.php';
   <!-- Add the sidebar's background. This div must be placed
        immediately after the control sidebar -->
   <div class="control-sidebar-bg"></div>
+    <div style="display: none;">
+        <form action="" method="post" name="order_print" id="order_print">
+            <input type="hidden" id="print" name="print" value="">
+            <input type="hidden" id="order_id" name="order_id" value="">
+        </form>
+    </div>
 </div>
 <!-- ./wrapper -->
 <!-- Modal -->
@@ -191,6 +224,24 @@ include 'include/class.inc.php';
     $("#orders").on('click', '.fa-copy', function () {
         id_order = $(this).data("id");
         window.location.href = "./copy_order.php?id=" + id_order;
+    });
+
+    $("#orders").on('click', '.fa-print', function () {
+        id_order = $(this).data("id");
+        $('input#order_id').val(id_order);
+        document.getElementById('order_print').submit()
+        /*$.post("./api.php", {
+            action: "print_order",
+            id: id_order,
+        }).done(function (data) {
+            if (data == '') {
+                alert('Заказы не сформировались, т.к. заказывать нечего!');
+            } else {
+                alert('Заказы успешно сформированны: ' + data + '.');
+            }
+            window.location.href = data;
+        });*/
+        return false;
     });
 
     /*$("#save_close").click(function () {

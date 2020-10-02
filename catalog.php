@@ -66,7 +66,7 @@ include 'include/class.inc.php';
                     if (file_exists($filename_thumb)) {
                         $img =  '<a class="fancybox" href="'.$filename.'" target="_blank"><img alt="'.$pos['vendor_code'].'" src="'.$filename_thumb.'" /></a>';
                     } else {
-                        $img =  "<img src='/img/no-image.png' width='100'></img>";
+                        $img = "<img src='/img/no-image.png' width='100'></img>";
                     }
                     echo "
                         <tr>
