@@ -99,10 +99,7 @@
          <li >
           <a href="./writeoff.php">
             <i class="fa fa-minus-square"></i> <span>Списания</span>
-           
           </a>
-          
-          
         </li>
 
         <li >
@@ -157,7 +154,6 @@
                <li><a href="./pos_warehouse.php?id=4"><i class="fa fa-circle-o"></i> Упаковка</a></li>
                <li><a href="./pos_warehouse.php?id=7"><i class="fa fa-circle-o"></i> Листовые материалы</a></li>
            </ul>
-
        </li>
         <li class="treeview">
           <a href="#">
@@ -169,9 +165,18 @@
             <li><a href="./plan_operational.php"><i class="fa fa-circle-o"></i> Оперативный план</a></li>
             <li><a href="./select_subvers.php"><i class="fa fa-circle-o"></i> Выбор подверсии</a></li>
           </ul>
-        </li>        
+        </li>
+        
+        <li>
+          <a href="./inventory.php">
+            <i class="fa fa-pencil-square"></i> <span> Инвентаризация</span>
+          </a>
+        </li> 
+             
        </ul>
        </li>
+       
+      
        ';
        
        
