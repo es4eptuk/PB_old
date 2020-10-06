@@ -112,7 +112,7 @@ $disabled = ($writeoff1['written'] == 0) ? '' : 'disabled';
 									
 							
 							<?php 
-							if ($disabled == '' && ($userdata['user_id'] == 35 || $userdata['user_id'] == 14 || $userdata['user_id'] == 75)) {
+							if ($disabled == '' && ($userdata['group'] == 1 || $userdata['group'] == 4)/*($userdata['user_id'] == 35 || $userdata['user_id'] == 14 || $userdata['user_id'] == 75)*/) {
 							    echo '
 							    	<div class="box-footer">
 										<button class="btn btn-primary" id="save_close" type="submit">Сохранить</button> 
