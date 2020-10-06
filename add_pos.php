@@ -62,50 +62,29 @@ include 'include/class.inc.php';
                    <option value="0">Выберите категорию...</option>
                    <?php 
                    $arr = $position->getCategoryes;
-                
-                if (isset($_GET['category'])) {
-                    foreach ($arr as &$category) {
-                        
-                        if ($_GET['category'] == $category['id']) {
-                       echo "
-                       <option value='".$category['id']."' selected>".$category['title']."</option>
-                       ";
-                        } else {
-                            
-                             echo "
-                       <option value='".$category['id']."' >".$category['title']."</option>
-                       ";
-                        }
-                    }
-                }
-                
-                else {
-                    foreach ($arr as &$category) {
-                       echo "
-                       <option value='".$category['id']."'>".$category['title']."</option>
-                       ";
-                    }
-                    
-                }
-                   
+                   if (isset($_GET['category'])) {
+                       foreach ($arr as &$category) {
+                           if ($_GET['category'] == $category['id']) {
+                               echo "<option value='".$category['id']."' selected>".$category['title']."</option>";
+                           } else {
+                               echo "<option value='".$category['id']."' >".$category['title']."</option>";
+                           }
+                       }
+                   } else {
+                       foreach ($arr as &$category) {
+                           echo "<option value='".$category['id']."'>".$category['title']."</option>";
+                       }
+                   }
                    ?>
                   </select>
                 </div>
-                
+
                 <div class="form-group">
                   <label>Подкатегория</label>
                   <select class="form-control" name="subcategory" id="subcategory" >
-                    
-                    
-                    
-               
-                    
-                    
                   </select>
                 </div>
-                
-              
-                
+
                 <div class="form-group">
                   <label>Артикул</label>
                   <?php
@@ -161,7 +140,7 @@ include 'include/class.inc.php';
                 
                 <div class="form-group">
                   <label>Стоимость</label>
-                  <input type="text" class="form-control" name="price" placeholder="0.00" id="price" value="<?php if(isset($_GET['price']))  echo $_GET['price']; ?>">
+                  <input type="text" class="form-control" name="price" placeholder="0.00" id="price" value="<?= (isset($_GET['price'])) ? $_GET['price'] : 0; ?>">
                 </div>
 
                  <div class="form-group">
