@@ -261,6 +261,10 @@ if (isset($_POST['action'])) {
     if ($_POST['action'] == "edit_writeoff") {
         echo json_encode($writeoff->edit_writeoff($_POST['id'], $_POST['json']), JSON_UNESCAPED_UNICODE);
     }
+    //Редактирование только описания списания
+    if ($_POST['action'] == "edit_description_writeoff") {
+        echo json_encode($writeoff->edit_description_writeoff($_POST['id'], $_POST['description']), JSON_UNESCAPED_UNICODE);
+    }
     //Удаление заказа
     if ($_POST['action'] == "del_order") {
         echo $_POST['id'];

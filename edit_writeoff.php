@@ -66,7 +66,7 @@ $disabled = ($writeoff1['written'] == 0) ? '' : 'disabled';
 							   
 							   	    <div class="form-group">
 										<label>Описание</label> 
-										 <input type="text" class="form-control" name="description" required="required" id="description" value="<?= $writeoff_description ?>" <?= $disabled ?>>
+										 <input type="text" class="form-control" name="description" required="required" id="description" value="<?= $writeoff_description ?>">
 									</div>
 									
 									<div class="print"><b>Категория: </b><?php echo $writeoff_category;?></div>
@@ -111,17 +111,14 @@ $disabled = ($writeoff1['written'] == 0) ? '' : 'disabled';
                                     </table>
 									
 							
-							<?php 
-							if ($disabled == '' && ($userdata['group'] == 1 || $userdata['group'] == 4)/*($userdata['user_id'] == 35 || $userdata['user_id'] == 14 || $userdata['user_id'] == 75)*/) {
-							    echo '
+
 							    	<div class="box-footer">
-										<button class="btn btn-primary" id="save_close" type="submit">Сохранить</button> 
-										<button type="button" class="btn btn-primary btn-danger pull-right" id="delete" name="">Удалить</button>
+                                        <?= (/*$disabled == '' && */($userdata['group'] == 1 || $userdata['group'] == 4)/*($userdata['user_id'] == 35 || $userdata['user_id'] == 14 || $userdata['user_id'] == 75)*/) ? '<button class="btn btn-primary" id="save_close" type="submit">Сохранить</button>' : '';?>
+                                        <?= ($disabled == '' && ($userdata['group'] == 1 || $userdata['group'] == 4)/*($userdata['user_id'] == 35 || $userdata['user_id'] == 14 || $userdata['user_id'] == 75)*/) ? '<button type="button" class="btn btn-primary btn-danger pull-right" id="delete" name="">Удалить</button>' : '';?>
 							        </div>
-							    ';
-							}
-							
-							?>
+
+
+
 								
 						
 									
@@ -140,10 +137,11 @@ $disabled = ($writeoff1['written'] == 0) ? '' : 'disabled';
 	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 
-    <?php if ($disabled == '') {?>
+
     <script>
         $(document).ready(function () {
 
+            <?php if ($disabled == '') {?>
             change_total_price();
 
             $("#save_close").click(function () {
@@ -241,8 +239,33 @@ $disabled = ($writeoff1['written'] == 0) ? '' : 'disabled';
                     }
                 });
             }
+            <?php } else {?>
+
+            $("#save_close").click(function () {
+                $(this).last().addClass("disabled");
+                save_close();
+                return false;
+            });
+
+            function save_close() {
+                $(this).prop('disabled', true);
+                var id = $("#writeoff_id").text();
+                var description = $("#description").val();
+                $.post("./api.php", {
+                    action: "edit_description_writeoff",
+                    id: id,
+                    description: description
+                }).done(function (data) {
+                    console.log(data);
+                    window.location.href = "./writeoff.php";
+                    return false;
+                });
+                return false;
+            }
+
+            <?php } ?>
         });
     </script>
-    <?php } ?>
+
 </body>
 </html>

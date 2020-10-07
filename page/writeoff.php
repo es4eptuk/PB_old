@@ -264,6 +264,17 @@ class Writeoff
         return $result;
     }
 
+    //редактирование списания
+    function edit_description_writeoff($id, $description)
+    {
+        $date = date("Y-m-d H:i:s");
+        $user_id = intval($_COOKIE['id']);
+        $query = "UPDATE `writeoff` SET  `description` = '$description', `update_date` = '$date' WHERE `id` = $id;";
+        $result = $this->pdo->query($query);
+
+        return $result;
+    }
+
     function get_stat($param)
     {
         $startDate = isset($param['startDate']) ? $param['startDate'] : "0";
