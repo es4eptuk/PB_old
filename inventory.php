@@ -1,19 +1,34 @@
 <?php 
 include 'include/class.inc.php';
 
-$current_month = date('m');
-        $current_year = date('y');
-        $tmp_date = "25.".$current_month.".".$current_year;
-        
-        $order_date =  date('d.m.Y',strtotime("$tmp_date +1 month"));
-        
-        $order_date = new DateTime($order_date);
-		$order_date = $order_date->format('d.m.Y');
+function file_force_download($file) {
+    if (file_exists($file)) {
+        if (ob_get_level()) {
+            ob_end_clean();
+        }
+        header('Content-Description: File Transfer');
+        header('Content-Type: application/octet-stream');
+        header('Content-Disposition: attachment; filename=' . basename($file));
+        header('Content-Transfer-Encoding: binary');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate');
+        header('Pragma: public');
+        header('Content-Length: ' . filesize($file));
+        readfile($file);
+        unlink($file);
+        exit;
+    }
+}
 
-
-
+if (isset($_POST['unload'])) {
+    $category = ($_POST['unload_category'] != 0) ? $_POST['unload_category'] : null;
+    $subcategory = ($_POST['unload_subcategory'] != 0) ? $_POST['unload_subcategory'] : null;
+    $file = $position->get_file_pos_item($category, $subcategory);
+    file_force_download($file);
+}
 
 ?>
+
 <?php include 'template/head.php' ?>
 
 <style>

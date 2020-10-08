@@ -686,12 +686,11 @@ class Orders
         $user_id = intval($_COOKIE['id']);
 
         //создаем файлы
-        //для папок
-        $f_date = $order_id.'_'.time();
+        $f_name = 'order_'.$order_id;
         if (!file_exists(PATCH_DIR . "/orders/")) {
             mkdir(PATCH_DIR . "/orders/", 0777);
         }
-        $excel_name = PATCH_DIR . "/orders/" . $f_date . ".xlsx";
+        $excel_name = PATCH_DIR . "/orders/" . $f_name . ".xlsx";
         require_once('excel/Classes/PHPExcel.php');
         require_once('excel/Classes/PHPExcel/IOFactory.php');
         $objPHPExcel = new PHPExcel();

@@ -1424,6 +1424,163 @@ class Position
         return ($result) ? true : false;
     }
 
+    //выгрузка в файл
+    function get_file_pos_item($category_id = null, $subcategory_id = null)
+    {
+        $where = "WHERE `id` > 0";
+        if ($category_id != null) {
+            $where .= " AND `category` = $category_id";
+        }
+        if ($subcategory_id != null) {
+            $where .= " AND `subcategory` = $subcategory_id";
+        }
+        $query = "SELECT * FROM `pos_items` $where";
+        $result = $this->pdo->query($query);
+        while ($line = $result->fetch()) {
+            $pos_items[$line['id']] = $line;
+        }
+
+        //создаем файлы
+        $f_name = time();
+        if (!file_exists(PATCH_DIR . "/orders/")) {
+            mkdir(PATCH_DIR . "/orders/", 0777);
+        }
+        $excel_name = PATCH_DIR . "/orders/" . $f_name . ".xlsx";
+        require_once('excel/Classes/PHPExcel.php');
+        require_once('excel/Classes/PHPExcel/IOFactory.php');
+        $objPHPExcel = new PHPExcel();
+
+        // Add some data
+        $objPHPExcel->setActiveSheetIndex(0);
+        $sheet = $objPHPExcel->getActiveSheet();
+
+        /*
+        $imagePath = PATCH_DIR . "/img/head_letter.png";
+        $logo = new PHPExcel_Worksheet_Drawing();
+        $logo->setPath($imagePath);
+        $width = PHPExcel_Shared_Drawing::pixelsToCellDimension($logo->getWidth(),$sheet->getStyle("B2:G2")->getFont());
+        $sheet->mergeCells("B2:G2");
+        $logo->setCoordinates("B2");
+        $logo->setOffsetX(0);
+        $logo->setOffsetY(0);
+        $logo->setWorksheet($sheet);
+        unset($logo);
+        */
+
+        //ширина
+        $sheet->getColumnDimension('A')->setWidth(18);
+        $sheet->getColumnDimension('B')->setWidth(10);
+        $sheet->getColumnDimension('C')->setWidth(18);
+        $sheet->getColumnDimension('D')->setWidth(11);
+        $sheet->getColumnDimension('E')->setWidth(15);
+        $sheet->getColumnDimension('F')->setWidth(15);
+        $sheet->getColumnDimension('G')->setWidth(10);
+        $sheet->getColumnDimension('H')->setWidth(10);
+        $sheet->getColumnDimension('I')->setWidth(10);
+
+        //колонки
+        $sheet->setCellValue("A1", "Фото");
+        $sheet->setCellValue("B1", "Артикул");
+        $sheet->setCellValue("C1", "Наименование");
+        $sheet->setCellValue("D1", "Ед.\nизмерения");
+        $sheet->setCellValue("E1", "Категория");
+        $sheet->setCellValue("F1", "Подкатегория");
+        $sheet->setCellValue("G1", "Сборная\nпозиция");
+        $sheet->setCellValue("H1", "Текущее\nкол-во");
+        $sheet->setCellValue("I1", "Новое\nкол-во");
+        $sheet->getRowDimension(1)->setRowHeight(50);
+
+        $row = 1;
+        foreach ($pos_items as $item) {
+            $row++;
+
+            $filename_thumb = PATCH_DIR.'/img/catalog/'.$item['category'].'/thumb/'.$item['vendor_code'].".jpg";
+            $filename_thumb = (file_exists($filename_thumb)) ? $filename_thumb : PATCH_DIR.'/img/no-image.png';
+            $logo = new PHPExcel_Worksheet_Drawing();
+            $logo->setPath($filename_thumb);
+            $logo->setCoordinates("A" . $row);
+            //$logo->setOffsetX(0);
+            //$logo->setOffsetY(0);
+            $logo->setWidth(150);
+            $logo->setWorksheet($sheet);
+            unset($logo);
+
+            //$sheet->setCellValue("A" . $row, $item['img']);
+            $sheet->setCellValue("B" . $row, $item['vendor_code']);
+            $sheet->setCellValue("C" . $row, $item['title']);
+            $sheet->setCellValue("D" . $row, $this->getUnits[$item['unit']]['title']);
+            $sheet->setCellValue("E" . $row, $this->getCategoryes[$item['category']]['title']);
+            $sheet->setCellValue("F" . $row, $this->getSubcategoryes[$item['subcategory']]['title']);
+            $assembly = ($item['assembly'] != 0) ? "Да" : "Нет";
+            $sheet->setCellValue("G" . $row, $assembly);
+            $sheet->setCellValue("H" . $row, $item['total']);
+            $sheet->setCellValue("I" . $row, "");
+            $sheet->getRowDimension($row)->setRowHeight(100);
+        }
+        //для всей таблицы
+        $styleArray = [
+            'font' => [
+                'name' => 'Calibri',
+                'size' => 12,
+            ],
+            'alignment' => [
+                'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+                'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER,
+                'wrap' => true,
+            ],
+            'borders' => [
+                'outline' => [
+                    'style' => PHPExcel_Style_Border::BORDER_THIN,
+                    'color' => ['rgb' => '000000'],
+                ],
+                'inside' => [
+                    'style' => PHPExcel_Style_Border::BORDER_THIN,
+                    'color' => ['rgb' => '000000'],
+                ],
+            ],
+        ];
+        $sheet->getStyle("A1:I".$row)->applyFromArray($styleArray);
+
+        //для отдельных колонок
+
+        /*
+        //для всей таблицы
+        $styleArray = [
+            'alignment' => ['vertical' => PHPExcel_Style_Alignment::VERTICAL_TOP, 'wrap' => true,],
+            'borders' => ['outline' => ['style' => PHPExcel_Style_Border::BORDER_THIN, 'color' => ['rgb' => '000000'],], 'inside' => ['style' => PHPExcel_Style_Border::BORDER_THIN, 'color' => ['rgb' => '000000'],],],
+        ];
+        $sheet->getStyle("B17:G" . $row)->applyFromArray($styleArray);
+        //
+        $styleArray = [
+            'alignment' => ['horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,],
+        ];
+        $sheet->getStyle("C17:C" . $row)->applyFromArray($styleArray);
+        $sheet->getStyle("F17:F" . $row)->applyFromArray($styleArray);
+        $sheet->getStyle("G17:G" . $row)->applyFromArray($styleArray);
+        //
+        //$user_id = 43;
+        $contacts = self::CONTACTS;
+        $contact = (isset($contacts[$user_id])) ? $contacts[$user_id] : $contacts[0];
+        if ($contact['signature'] != '') {
+            $imagePath = PATCH_DIR . $contact['signature'];
+            $logo = new PHPExcel_Worksheet_Drawing();
+            $logo->setPath($imagePath);
+            $logo->setCoordinates("F". ($row+4));
+            $logo->setOffsetX(0);
+            $logo->setOffsetY(0);
+            $logo->setHeight($width*0.50);
+            $logo->setWorksheet($sheet);
+            unset($logo);
+        }
+        */
+
+        // Save
+        $objWriter = new PHPExcel_Writer_Excel2007($objPHPExcel);
+        $objWriter->save($excel_name);
+
+        return $excel_name;
+    }
+
     function __destruct()
     {
     }
