@@ -55,6 +55,7 @@ class Position
             2 => ['id' => 2, 'title' => 'кг'],
             3 => ['id' => 3, 'title' => 'м.кв'],
             4 => ['id' => 4, 'title' => 'л'],
+            5 => ['id' => 4, 'title' => 'м.пр'],
         ];
 
     }
@@ -1468,21 +1469,21 @@ class Position
         */
 
         //ширина
-        $sheet->getColumnDimension('A')->setWidth(18);
-        $sheet->getColumnDimension('B')->setWidth(10);
-        $sheet->getColumnDimension('C')->setWidth(18);
-        $sheet->getColumnDimension('D')->setWidth(11);
-        $sheet->getColumnDimension('E')->setWidth(15);
-        $sheet->getColumnDimension('F')->setWidth(15);
-        $sheet->getColumnDimension('G')->setWidth(10);
-        $sheet->getColumnDimension('H')->setWidth(10);
-        $sheet->getColumnDimension('I')->setWidth(10);
+        $sheet->getColumnDimension('A')->setWidth(10);
+        $sheet->getColumnDimension('B')->setWidth(9);
+        $sheet->getColumnDimension('C')->setWidth(14);
+        $sheet->getColumnDimension('D')->setWidth(6);
+        $sheet->getColumnDimension('E')->setWidth(12);
+        $sheet->getColumnDimension('F')->setWidth(12);
+        $sheet->getColumnDimension('G')->setWidth(8);
+        $sheet->getColumnDimension('H')->setWidth(8);
+        $sheet->getColumnDimension('I')->setWidth(8);
 
         //колонки
         $sheet->setCellValue("A1", "Фото");
         $sheet->setCellValue("B1", "Артикул");
         $sheet->setCellValue("C1", "Наименование");
-        $sheet->setCellValue("D1", "Ед.\nизмерения");
+        $sheet->setCellValue("D1", "Ед.\nизм.");
         $sheet->setCellValue("E1", "Категория");
         $sheet->setCellValue("F1", "Подкатегория");
         $sheet->setCellValue("G1", "Сборная\nпозиция");
@@ -1499,9 +1500,15 @@ class Position
             $logo = new PHPExcel_Worksheet_Drawing();
             $logo->setPath($filename_thumb);
             $logo->setCoordinates("A" . $row);
-            //$logo->setOffsetX(0);
-            //$logo->setOffsetY(0);
-            $logo->setWidth(150);
+            $logo->setOffsetX(5);
+            $logo->setOffsetY(5);
+            $width = $logo->getWidth();
+            $height = $logo->getHeight();
+            if ($width > $height) {
+                $logo->setWidth(70);
+            } else {
+                $logo->setHeight(70);
+            }
             $logo->setWorksheet($sheet);
             unset($logo);
 
@@ -1515,13 +1522,13 @@ class Position
             $sheet->setCellValue("G" . $row, $assembly);
             $sheet->setCellValue("H" . $row, $item['total']);
             $sheet->setCellValue("I" . $row, "");
-            $sheet->getRowDimension($row)->setRowHeight(100);
+            $sheet->getRowDimension($row)->setRowHeight(70);
         }
         //для всей таблицы
         $styleArray = [
             'font' => [
                 'name' => 'Calibri',
-                'size' => 12,
+                'size' => 10,
             ],
             'alignment' => [
                 'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,

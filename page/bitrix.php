@@ -4,7 +4,7 @@
 class Bitrix
 {
     const CONFIG = [
-        'domain' => 'https://team.promo-bot.ru/rest/192/z5y7rvalq9ff5lqg/',
+        'domain' => 'https://team.promo-bot.ru/rest/192/iig2tqqrpr5mbnnm/',
     ];
 
     public $test;
@@ -38,6 +38,9 @@ class Bitrix
         $result = curl_exec($ch);
         curl_close($ch);
         return json_decode($result,true);*/
+        //$params = json_encode($params);
+
+        //echo $url;die;
 
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_HEADER, false);
