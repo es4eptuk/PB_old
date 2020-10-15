@@ -55,7 +55,7 @@ class Position
             2 => ['id' => 2, 'title' => 'кг'],
             3 => ['id' => 3, 'title' => 'м.кв'],
             4 => ['id' => 4, 'title' => 'л'],
-            5 => ['id' => 4, 'title' => 'м.пр'],
+            5 => ['id' => 5, 'title' => 'м'],
         ];
 
     }
@@ -1425,6 +1425,12 @@ class Position
         return ($result) ? true : false;
     }
 
+    //загрузка из файла инвенторизации
+    function set_inventory_from_file($file)
+    {
+        return 'OK';
+    }
+
     //выгрузка в файл
     function get_file_pos_item($category_id = null, $subcategory_id = null)
     {
@@ -1455,19 +1461,6 @@ class Position
         $objPHPExcel->setActiveSheetIndex(0);
         $sheet = $objPHPExcel->getActiveSheet();
 
-        /*
-        $imagePath = PATCH_DIR . "/img/head_letter.png";
-        $logo = new PHPExcel_Worksheet_Drawing();
-        $logo->setPath($imagePath);
-        $width = PHPExcel_Shared_Drawing::pixelsToCellDimension($logo->getWidth(),$sheet->getStyle("B2:G2")->getFont());
-        $sheet->mergeCells("B2:G2");
-        $logo->setCoordinates("B2");
-        $logo->setOffsetX(0);
-        $logo->setOffsetY(0);
-        $logo->setWorksheet($sheet);
-        unset($logo);
-        */
-
         //ширина
         $sheet->getColumnDimension('A')->setWidth(10);
         $sheet->getColumnDimension('B')->setWidth(9);
@@ -1494,7 +1487,6 @@ class Position
         $row = 1;
         foreach ($pos_items as $item) {
             $row++;
-
             $filename_thumb = PATCH_DIR.'/img/catalog/'.$item['category'].'/thumb/'.$item['vendor_code'].".jpg";
             $filename_thumb = (file_exists($filename_thumb)) ? $filename_thumb : PATCH_DIR.'/img/no-image.png';
             $logo = new PHPExcel_Worksheet_Drawing();
@@ -1550,43 +1542,14 @@ class Position
 
         //для отдельных колонок
 
-        /*
-        //для всей таблицы
-        $styleArray = [
-            'alignment' => ['vertical' => PHPExcel_Style_Alignment::VERTICAL_TOP, 'wrap' => true,],
-            'borders' => ['outline' => ['style' => PHPExcel_Style_Border::BORDER_THIN, 'color' => ['rgb' => '000000'],], 'inside' => ['style' => PHPExcel_Style_Border::BORDER_THIN, 'color' => ['rgb' => '000000'],],],
-        ];
-        $sheet->getStyle("B17:G" . $row)->applyFromArray($styleArray);
-        //
-        $styleArray = [
-            'alignment' => ['horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,],
-        ];
-        $sheet->getStyle("C17:C" . $row)->applyFromArray($styleArray);
-        $sheet->getStyle("F17:F" . $row)->applyFromArray($styleArray);
-        $sheet->getStyle("G17:G" . $row)->applyFromArray($styleArray);
-        //
-        //$user_id = 43;
-        $contacts = self::CONTACTS;
-        $contact = (isset($contacts[$user_id])) ? $contacts[$user_id] : $contacts[0];
-        if ($contact['signature'] != '') {
-            $imagePath = PATCH_DIR . $contact['signature'];
-            $logo = new PHPExcel_Worksheet_Drawing();
-            $logo->setPath($imagePath);
-            $logo->setCoordinates("F". ($row+4));
-            $logo->setOffsetX(0);
-            $logo->setOffsetY(0);
-            $logo->setHeight($width*0.50);
-            $logo->setWorksheet($sheet);
-            unset($logo);
-        }
-        */
-
         // Save
         $objWriter = new PHPExcel_Writer_Excel2007($objPHPExcel);
         $objWriter->save($excel_name);
 
         return $excel_name;
     }
+
+
 
     function __destruct()
     {
