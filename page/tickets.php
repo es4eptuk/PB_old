@@ -774,12 +774,18 @@ class Tickets
     //$category - id категории тикета
     //$subcategory - id подкатегории тикета
     //$description - result description 
-    function edit($id, $category = 0, $subcategory = 0, $description)
+    function edit($id, $category = 0, $subcategory = 0, $description, $result = null)
     {
+
         $date    = date("Y-m-d H:i:s");
         $user_id = intval($_COOKIE['id']);
-        $this->query = "UPDATE `tickets` SET `category` = $category,`subcategory` = $subcategory, `description` = '$description', `update_user` = $user_id, `update_date` = '$date' WHERE `id` = $id";
-        $result = $this->pdo->query($this->query);
+        if ($result === null) {
+            $query = "UPDATE `tickets` SET `category` = $category,`subcategory` = $subcategory, `description` = '$description', `update_user` = $user_id, `update_date` = '$date' WHERE `id` = $id";
+        } else {
+            $query = "UPDATE `tickets` SET `category` = $category,`subcategory` = $subcategory, `description` = '$description', `result_description` = '$result', `update_user` = $user_id, `update_date` = '$date' WHERE `id` = $id";
+        }
+        $result = $this->pdo->query($query);
+
         return $result;
     }
     

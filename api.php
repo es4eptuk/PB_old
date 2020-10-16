@@ -8,6 +8,17 @@ if (isset($_POST['action'])) {
     if ($_POST['action'] == "invent") {
         echo json_encode($position->invent($_POST['id'], $_POST['new_total']), JSON_UNESCAPED_UNICODE);
     }
+    if ($_POST['action'] == "upload_inventory_file") {
+        $result = ['status' => 202, 'result' => 'Файл не загружен!'];
+        if (isset($_FILES['upload_file'])) {
+            $path = PATCH_DIR . '/files/' . $_FILES['upload_file']['name'];
+            if (move_uploaded_file($_FILES['upload_file']['tmp_name'], $path)) {
+                $result = $position->set_inventory_from_file($path);
+                unlink($path);
+            }
+        }
+        echo json_encode($result, JSON_UNESCAPED_UNICODE);
+    }
     if ($_POST['action'] == "del_pos_equipment") {
         echo json_encode($position->del_pos_equipment($_POST['id'], $_POST['id_row']), JSON_UNESCAPED_UNICODE);
     }
@@ -382,7 +393,7 @@ if (isset($_POST['action'])) {
         echo json_encode($tickets->delete_ticket($_POST['id']), JSON_UNESCAPED_UNICODE);
     }
     if ($_POST['action'] == "ticket_edit") {
-        echo json_encode($tickets->edit($_POST['id'], $_POST['category'], $_POST['subcategory'], $_POST['description']), JSON_UNESCAPED_UNICODE);
+        echo json_encode($tickets->edit($_POST['id'], $_POST['category'], $_POST['subcategory'], $_POST['description'], $_POST['result']), JSON_UNESCAPED_UNICODE);
     }
     //создать комментарий для техпод
     if ($_POST['action'] == "ticket_add_comment") {

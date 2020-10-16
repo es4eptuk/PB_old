@@ -1428,7 +1428,57 @@ class Position
     //загрузка из файла инвенторизации
     function set_inventory_from_file($file)
     {
-        return 'OK';
+        require_once('excel/Classes/PHPExcel.php');
+        require_once('excel/Classes/PHPExcel/IOFactory.php');
+        if (file_exists($file))
+        {
+            $objReader = PHPExcel_IOFactory::createReaderForFile($file);
+            $objReader->setReadDataOnly(true);
+            $objPHPExcel = $objReader->load($file);
+            $worksheet = $objPHPExcel->getSheet(0);
+            $excelData = $worksheet->toArray();
+            $name = array_shift($excelData);
+            if ($name[0] == 'Фото'
+                && $name[1] == "ID"
+                && $name[2] == "Артикул"
+                && $name[3] == "Наименование"
+                && $name[4] == "Ед.\nизм."
+                && $name[5] == "Категория"
+                && $name[6] == "Подкатегория"
+                && $name[7] == "Сборная\nпозиция"
+                && $name[8] == "Текущее\nкол-во"
+                && $name[9] == "Новое\nкол-во") {
+                $result = [];
+                foreach ($excelData as $pos_item) {
+                    if ($pos_item[9] !== null && $this->invent($pos_item[1], $pos_item[9])) {
+                        $category = array_search($pos_item[5], array_column($this->getCategoryes, 'title'));
+                        $filename = '/img/catalog/'.$category.'/'.$pos_item[2].".jpg";
+                        $filename_thumb = '/img/catalog/'.$category.'/thumb/'.$pos_item[2].".jpg";
+                        if (file_exists(PATCH_DIR . $filename_thumb)) {
+                            $img =  '<a class="fancybox" href="'.$filename.'" target="_blank"><img alt="'.$pos_item[2].'" src="'.$filename_thumb.'"/></a>';
+                        } else {
+                            $img = "<img src='/img/no-image.png' width='100'></img>";
+                        }
+                        $result[$pos_item[1]] = [
+                            'id' => $pos_item[1],
+                            'vendor_code' => $pos_item[2] ? $pos_item[2] : '',
+                            'title' => $pos_item[3] ? $pos_item[3] : '',
+                            'unit' => $pos_item[4] ? $pos_item[4] : '',
+                            'category' => $pos_item[5] ? $pos_item[5] : '',
+                            'subcategory' => $pos_item[6] ? $pos_item[6] : '',
+                            'assembly' => $pos_item[7],
+                            'old_total' => $pos_item[8],
+                            'new_total' => $pos_item[9],
+                            'img' => $img,
+                        ];
+                    }
+                }
+                return ['status' => '200', 'result' => $result];
+            } else {
+                return ['status' => '201', 'result' => 'Шаблон не прошел проверку!'];
+            }
+        }
+        return ['status' => '202', 'result' => 'Файл не загружен!'];
     }
 
     //выгрузка в файл
@@ -1463,25 +1513,27 @@ class Position
 
         //ширина
         $sheet->getColumnDimension('A')->setWidth(10);
-        $sheet->getColumnDimension('B')->setWidth(9);
-        $sheet->getColumnDimension('C')->setWidth(14);
-        $sheet->getColumnDimension('D')->setWidth(6);
-        $sheet->getColumnDimension('E')->setWidth(12);
+        $sheet->getColumnDimension('B')->setWidth(6);
+        $sheet->getColumnDimension('C')->setWidth(9);
+        $sheet->getColumnDimension('D')->setWidth(14);
+        $sheet->getColumnDimension('E')->setWidth(6);
         $sheet->getColumnDimension('F')->setWidth(12);
-        $sheet->getColumnDimension('G')->setWidth(8);
+        $sheet->getColumnDimension('G')->setWidth(12);
         $sheet->getColumnDimension('H')->setWidth(8);
         $sheet->getColumnDimension('I')->setWidth(8);
+        $sheet->getColumnDimension('J')->setWidth(8);
 
         //колонки
         $sheet->setCellValue("A1", "Фото");
-        $sheet->setCellValue("B1", "Артикул");
-        $sheet->setCellValue("C1", "Наименование");
-        $sheet->setCellValue("D1", "Ед.\nизм.");
-        $sheet->setCellValue("E1", "Категория");
-        $sheet->setCellValue("F1", "Подкатегория");
-        $sheet->setCellValue("G1", "Сборная\nпозиция");
-        $sheet->setCellValue("H1", "Текущее\nкол-во");
-        $sheet->setCellValue("I1", "Новое\nкол-во");
+        $sheet->setCellValue("B1", "ID");
+        $sheet->setCellValue("C1", "Артикул");
+        $sheet->setCellValue("D1", "Наименование");
+        $sheet->setCellValue("E1", "Ед.\nизм.");
+        $sheet->setCellValue("F1", "Категория");
+        $sheet->setCellValue("G1", "Подкатегория");
+        $sheet->setCellValue("H1", "Сборная\nпозиция");
+        $sheet->setCellValue("I1", "Текущее\nкол-во");
+        $sheet->setCellValue("J1", "Новое\nкол-во");
         $sheet->getRowDimension(1)->setRowHeight(50);
 
         $row = 1;
@@ -1504,16 +1556,16 @@ class Position
             $logo->setWorksheet($sheet);
             unset($logo);
 
-            //$sheet->setCellValue("A" . $row, $item['img']);
-            $sheet->setCellValue("B" . $row, $item['vendor_code']);
-            $sheet->setCellValue("C" . $row, $item['title']);
-            $sheet->setCellValue("D" . $row, $this->getUnits[$item['unit']]['title']);
-            $sheet->setCellValue("E" . $row, $this->getCategoryes[$item['category']]['title']);
-            $sheet->setCellValue("F" . $row, $this->getSubcategoryes[$item['subcategory']]['title']);
+            $sheet->setCellValue("B" . $row, $item['id']);
+            $sheet->setCellValue("C" . $row, $item['vendor_code']);
+            $sheet->setCellValue("D" . $row, $item['title']);
+            $sheet->setCellValue("E" . $row, $this->getUnits[$item['unit']]['title']);
+            $sheet->setCellValue("F" . $row, $this->getCategoryes[$item['category']]['title']);
+            $sheet->setCellValue("G" . $row, $this->getSubcategoryes[$item['subcategory']]['title']);
             $assembly = ($item['assembly'] != 0) ? "Да" : "Нет";
-            $sheet->setCellValue("G" . $row, $assembly);
-            $sheet->setCellValue("H" . $row, $item['total']);
-            $sheet->setCellValue("I" . $row, "");
+            $sheet->setCellValue("H" . $row, $assembly);
+            $sheet->setCellValue("I" . $row, $item['total']);
+            $sheet->setCellValue("J" . $row, "");
             $sheet->getRowDimension($row)->setRowHeight(70);
         }
         //для всей таблицы
@@ -1538,7 +1590,7 @@ class Position
                 ],
             ],
         ];
-        $sheet->getStyle("A1:I".$row)->applyFromArray($styleArray);
+        $sheet->getStyle("A1:J".$row)->applyFromArray($styleArray);
 
         //для отдельных колонок
 

@@ -106,16 +106,6 @@ if (isset($_POST['unload'])) {
                                         <div class="form-group">
                                             <select class="form-control" name="unload_subcategory" id="unload_subcategory">
                                                 <option value="0">Подкатегория</option>
-                                                <?php
-                                                /*
-                                                 *
-                                                $arr = $position->getSubcategoryes;
-                                                foreach ($arr as $subcategory) {
-                                                    if ($subcategory['id'] == 0) {continue;}
-                                                    echo "<option value='" . $subcategory['id'] . "'>" . $subcategory['title'] . "</option>";
-                                                }
-                                                */
-                                                ?>
                                             </select>
                                         </div>
                                     </div>
@@ -138,7 +128,6 @@ if (isset($_POST['unload'])) {
                     <div class="box-body">
                         <div class="row">
                             <div class="col-md-12">
-                                <form action="" method="post" enctype="multipart/form-data" name="upload">
                                     <div style="float:left;margin-right:20px;">
                                         <div class="form-group">
                                             <input type="file" id="upload_file" name="upload_file">
@@ -148,9 +137,28 @@ if (isset($_POST['unload'])) {
                                     <div style="float:right;margin-right:20px;">
                                         <button class="btn btn-primary" type="submit" id="upload" name="upload">Загрузить</button>
                                     </div>
-                                </form>
                             </div>
                         </div>
+                    </div>
+                    <div class="box-footer">
+                        <table id="invent-upload" class="table table-responsive">
+                            <thead>
+                                <tr>
+                                    <th>Изображение</th>
+                                    <th>ID</th>
+                                    <th>Артикул</th>
+                                    <th>Наименование</th>
+                                    <th>Ед.изм.</th>
+                                    <th>Категория</th>
+                                    <th>Подкатегория</th>
+                                    <th>Сборная позиция</th>
+                                    <th>Изменение кол-ва</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                        <p id="error" style="color:#dc322f;font-size:14px;font-weight:bold;"></p>
                     </div>
                 </div>
 
@@ -206,8 +214,51 @@ if (isset($_POST['unload'])) {
                 $('#vendor_code').text(pos_info['vendor_code']);
                 $('#total').text(pos_info['total']);
                 $('#result').text("");
-                });
+            });
             //arr_ids.push([arr_str[0], arr_str[1]]);
+            return false;
+        });
+
+        $("#upload").click(function () {
+            var file = $('#upload_file').prop('files')[0];
+            var form_data = new FormData();
+            form_data.append('upload_file', file);
+            form_data.append('action', 'upload_inventory_file');
+            $.ajax({
+                url: './api.php',
+                //dataType: 'text',
+                cache: false,
+                contentType: false,
+                processData: false,
+                data: form_data,
+                type: 'post',
+                success: function (data) {
+                    $('#invent-upload>tbody').html('');
+                    $('#upload_file').val('');
+                    $('#error').text('');
+                    var result = jQuery.parseJSON(data);
+                    var pos_items = result['result'];
+                    var status = result['status'];
+                    if (status == '200') {
+                        $.each(pos_items, function (index, value) {
+                            $("#invent-upload>tbody")
+                                .append('<tr>\
+                                    <td>' + value['img'] + '</td>\
+                                    <td>' + value['id'] + '</td>\
+                                    <td>' + value['vendor_code'] + '</td>\
+                                    <td>' + value['title'] + '</td>\
+                                    <td>' + value['unit'] + '</td>\
+                                    <td>' + value['category'] + '</td>\
+                                    <td>' + value['subcategory'] + '</td>\
+                                    <td>' + value['assembly'] + '</td>\
+                                    <td>' + value['old_total'] + ' -> ' + value['new_total'] + '</td>\
+                                </tr>');
+                        });
+                    } else {
+                        $('#error').text(pos_items);
+                    }
+                }
+            });
             return false;
         });
 
@@ -254,10 +305,8 @@ if (isset($_POST['unload'])) {
                 } else {
                     $('#unload_subcategory').append($('<option id="0">Подкатегория</option>'));
                 }
-
             });
         });
-
     });
 
     </script>

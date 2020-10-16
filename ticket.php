@@ -160,24 +160,31 @@ $robot_id= $robot_info['id'];
               <!-- post text -->
               
              <p class="ticket_data"><?php echo $ticket_description; ?></p> 
-             Решение: <?php echo $ticket_result; ?>
-                 <div class="form-group ticket_edit">
-                  <label>Описание</label>
-                  <textarea class="form-control" rows="3" placeholder="Enter ..." id="descriprion"><?php echo $ticket_description; ?></textarea>
-                  
-                   <br>
-                  <button type="submit" class="btn btn-info pull-right" id="ticket_save">Сохранить</button>
-                </div>
+             <!--Решение: <?php echo $ticket_result; ?>-->
+             <div class="form-group ticket_edit">
+              <label>Описание</label>
+              <textarea class="form-control" rows="3" placeholder="Enter ..." id="descriprion"><?php echo $ticket_description; ?></textarea>
+             </div>
              <?php
              if ($ticket_status==3) {
-                 echo '
-                    <div class="alert alert-success alert-dismissible">
-                        <h4><i class="icon fa fa-check"></i> Решение</h4>
-                        '.$ticket_result.'
-                    </div>
-                 ';
+                echo '
+                <div class="alert alert-success alert-dismissibl ticket_data">
+                    <h4><i class="icon fa fa-check"></i> Решение</h4>
+                    '.$ticket_result.'
+                </div>
+                <div class="form-group ticket_edit">
+                  <label>Решение</label>
+                  <textarea class="form-control" rows="3" placeholder="Enter ..." id="result">'.$ticket_result.'</textarea>
+                </div>                
+               ';
              }
              ?>
+             <div class="form-group ticket_edit">
+               <button type="submit" class="btn btn-primary" id="ticket_save">Сохранить</button>
+               <button type="submit" class="btn btn-default" id="ticket_cancel_save">Отмена</button>
+             </div>
+
+
               <!-- Attachment
              <div class="attachment-block clearfix">
                 <img class="attachment-img" src="../dist/img/photo1.png" alt="Attachment Image">
@@ -567,6 +574,14 @@ $robot_id= $robot_info['id'];
         $(".ticket_edit").show();
     });
 
+    $("#ticket_cancel_save").click(function () {
+        $(".ticket_data").show();
+        $("#btn_edit_title").show();
+        $(".ticket_edit").hide();
+    });
+
+
+
     $('#btnConnect').click(function () {
         var idConnect = $("#selectConnect").val();
         $.post("./api.php", {
@@ -630,8 +645,11 @@ $robot_id= $robot_info['id'];
         var robot =  <?php echo $robot_id; ?>;
         var ticket_class = "<?php echo $ticket_class; ?>";
         var descriprion = $('#descriprion').val();
+        var result = $('#result').val();
         //var status = $('#ticket_status').val();
-        console.log(ticket_class);
+        if (result === undefined) {
+            result = null;
+        }
         //comment = category_str + ': ' + subcategory_str;
         if (ticket_class == "P") {
             category = $('#category').val();
@@ -645,7 +663,8 @@ $robot_id= $robot_info['id'];
             id: <?php echo $ticket_id; ?>,
             category: category,
             subcategory: subcategory,
-            description: descriprion
+            description: descriprion,
+            result: result
         }).done(function (data) {
             if (data == "false") {
                 alert("Data Loaded: " + data);
