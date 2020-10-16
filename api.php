@@ -11,10 +11,15 @@ if (isset($_POST['action'])) {
     if ($_POST['action'] == "upload_inventory_file") {
         $result = ['status' => 202, 'result' => 'Файл не загружен!'];
         if (isset($_FILES['upload_file'])) {
-            $path = PATCH_DIR . '/files/' . $_FILES['upload_file']['name'];
-            if (move_uploaded_file($_FILES['upload_file']['tmp_name'], $path)) {
-                $result = $position->set_inventory_from_file($path);
-                unlink($path);
+            if($_FILES['upload_file']['type'] == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+                $path = PATCH_DIR . '/files/' . $_FILES['upload_file']['name'];
+                if (move_uploaded_file($_FILES['upload_file']['tmp_name'], $path)) {
+                    $result = $position->set_inventory_from_file($path);
+                    unlink($path);
+                }
+            } else {
+                unlink($_FILES['upload_file']['tmp_name']);
+                $result = ['status' => 203, 'result' => 'Неверный формат файла!'];
             }
         }
         echo json_encode($result, JSON_UNESCAPED_UNICODE);

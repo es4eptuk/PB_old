@@ -1452,9 +1452,9 @@ class Position
                 foreach ($excelData as $pos_item) {
                     if ($pos_item[9] !== null && $this->invent($pos_item[1], $pos_item[9])) {
                         $category = array_search($pos_item[5], array_column($this->getCategoryes, 'title'));
-                        $filename = '/img/catalog/'.$category.'/'.$pos_item[2].".jpg";
-                        $filename_thumb = '/img/catalog/'.$category.'/thumb/'.$pos_item[2].".jpg";
-                        if (file_exists(PATCH_DIR . $filename_thumb)) {
+                        $filename = 'img/catalog/'.$category.'/'.$pos_item[2].".jpg";
+                        $filename_thumb = 'img/catalog/'.$category.'/thumb/'.$pos_item[2].".jpg";
+                        if (file_exists(PATCH_DIR . '/' . $filename_thumb)) {
                             $img =  '<a class="fancybox" href="'.$filename.'" target="_blank"><img alt="'.$pos_item[2].'" src="'.$filename_thumb.'"/></a>';
                         } else {
                             $img = "<img src='/img/no-image.png' width='100'></img>";

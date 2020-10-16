@@ -130,7 +130,7 @@ if (isset($_POST['unload'])) {
                             <div class="col-md-12">
                                     <div style="float:left;margin-right:20px;">
                                         <div class="form-group">
-                                            <input type="file" id="upload_file" name="upload_file">
+                                            <input type="file" id="upload_file" name="upload_file" accept=".xlsx">
                                             <p class="help-block"></p>
                                         </div>
                                     </div>
