@@ -13,7 +13,7 @@ if (isset($_POST['action'])) {
         $host = strstr($robot, '_', true);
         $number = substr(strstr($robot, '_'), 1, 4);
         $version = substr($number,0,1);
-        if ($version != '5' && $version != '6' && $version != '7') {
+        if ($version != '5' && $version != '6' && $version != '7' && $version != '8') {
             $version = '4';
         }
         /**/

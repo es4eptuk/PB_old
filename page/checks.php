@@ -18,6 +18,7 @@ class Checks
         '4' => ['url' => 'https://pb2.icmm.ru/zabbix/api_jsonrpc.php', 'user' => 'manufacture', 'password' => 'queetoh6Ace', 'Manufacture' => '32', 'Manufacture_test' => '31', 'host' => 'promobotv4_'],
         '6' => ['url' => 'https://195.69.158.137/zabbix/api_jsonrpc.php', 'user' => 'manufacture', 'password' => 'queetoh6Ace', 'Manufacture' => '15', 'Manufacture_test' => '19', 'host' => 'promobotv4_'],
         '7' => ['url' => 'https://195.69.158.137/zabbix/api_jsonrpc.php', 'user' => 'manufacture', 'password' => 'queetoh6Ace', 'Manufacture' => '15', 'Manufacture_test' => '19', 'host' => 'promobotv4_'],
+        '8' => ['url' => 'https://195.69.158.137/zabbix/api_jsonrpc.php', 'user' => 'manufacture', 'password' => 'queetoh6Ace', 'Manufacture' => '15', 'Manufacture_test' => '19', 'host' => 'promobotv4_'],
         //дубль
         '21' => ['url' => '', 'user' => '', 'password' => '', 'Manufacture' => '', 'Manufacture_test' => '', 'host' => ''],
         '51' => ['url' => '', 'user' => '', 'password' => '', 'Manufacture' => '', 'Manufacture_test' => '', 'host' => ''],
@@ -351,7 +352,7 @@ class Checks
                 $robot_array[] = $line;
             }
             $version = $robot_array[0]['version'];
-            if ($version != 5 && $version != 6 && $version != 7) {
+            if ($version != 5 && $version != 6 && $version != 7 && $version != 8) {
                 $version = 4;
             }
             $robot_name = $robot_array[0]['name'];
