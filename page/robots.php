@@ -998,6 +998,52 @@ class Robots
         return true;
     }
 
+    //сбор данных по текущему прогрессу сборки
+    function get_progress_statistics() {
+        $arr = [];
+        $robots = [];
+        foreach ($this->getEquipment as $version) {
+            $robots[$version['id']] = [];
+        }
+        $query = "
+            SELECT * FROM `robots` 
+            WHERE `robots`.`progress`!=100
+                AND `robots`.`remont`=0 
+                AND `robots`.`delete`=0 
+                AND `robots`.`writeoff`=0 
+        ";
+        $result = $this->pdo->query($query);
+        while ($line = $result->fetch()) {
+            $robots[$line['version']][] = $line;
+        }
+
+        foreach ($robots as $ver_id => $version) {
+            if (count($version) > 0) {
+                $total_count = count($version);
+                $summary_progress = 0;
+                $in_progress = 0;
+                foreach ($version as $robot) {
+                    $summary_progress += $robot['progress'];
+                    if ($robot['progress'] > 0) {
+                        $in_progress++;
+                    }
+                }
+                $total_progress = intval($summary_progress/$total_count);
+                $arr[$ver_id] = [
+                    'version' => $ver_id,
+                    'total_count' => $total_count,
+                    'in_progress' => $in_progress,
+                    'summary_progress' => $summary_progress,
+                    'total_progress' => $total_progress,
+                ];
+            } else {
+                unset($robots[$ver_id]);
+            }
+        }
+
+        return $arr;
+    }
+
     function __destruct()
     {
 

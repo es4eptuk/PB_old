@@ -404,7 +404,8 @@ if ($userdata['group'] == 1) {
           <ul class="treeview-menu">
             <li class="treeview"><a href=""><i class="fa fa-android"></i>Роботы</a>
                     <ul class="treeview-menu">
-                         <li><a href="./robot_production_statistics.php"><i class="fa fa-circle-o"></i>Время сборки</a></li>
+                        <li><a href="./robot_progress_statistics.php"><i class="fa fa-circle-o"></i>Текущий прогресс сборки</a></li>
+                        <li><a href="./robot_production_statistics.php"><i class="fa fa-circle-o"></i>Время сборки</a></li>
                     </ul>
             </li>
           </ul>

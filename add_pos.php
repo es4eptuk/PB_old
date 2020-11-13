@@ -59,8 +59,7 @@ include 'include/class.inc.php';
                 <div class="form-group">
                   <label>Категория</label>
                   <select class="form-control" name="category" placeholder="Выберите категорию" id="category" required="required">
-                   <option value="0">Выберите категорию...</option>
-                   <?php 
+                   <?php
                    $arr = $position->getCategoryes;
                    if (isset($_GET['category'])) {
                        foreach ($arr as &$category) {
@@ -82,6 +81,17 @@ include 'include/class.inc.php';
                 <div class="form-group">
                   <label>Подкатегория</label>
                   <select class="form-control" name="subcategory" id="subcategory" >
+                  <?php
+                  if (isset($_GET['category'])) {
+                      echo "<option value='0'>Неизвестно</option>";
+                      $arr = $position->getSubcategoryes;
+                      foreach ($arr as $subcategory) {
+                          if ($subcategory['parent'] == $_GET['category']) {
+                              echo "<option value='".$subcategory['id']."'>".$subcategory['title']."</option>";
+                          }
+                      }
+                  }
+                  ?>
                   </select>
                 </div>
 
@@ -105,8 +115,8 @@ include 'include/class.inc.php';
                               case 4:
                                   $cat = "PK";
                                   break;
-                              case 5:
-                                  $cat = "HS";
+                              case 7:
+                                  $cat = "LM";
                                   break;
                           }
                       }
@@ -235,6 +245,7 @@ include 'include/class.inc.php';
             $('option', $("#subcategory")).remove();
             var obj = jQuery.parseJSON(data);
             //console.log(obj);
+            $('#subcategory').append($("<option></option>").attr("value", 0).text("Неизвестно"));
             $.each(obj, function (key, value) {
                 $('#subcategory').append($("<option></option>")
                     .attr("value", value['id'])
@@ -245,14 +256,14 @@ include 'include/class.inc.php';
 
 
     $("#category").change(function () {
+        var code = '';
+        var subcat = $("#subcategory").val();
         var cat = $(this).val();
-        //var version = $(this).val();
         var max_id = <?php echo $gen_code; ?>;
         var cat_str = "";
         switch (cat) {
             case "1":
                 cat_str = "MH";
-                console.log(cat);
                 break;
             case "2":
                 cat_str = "HP";
@@ -263,13 +274,47 @@ include 'include/class.inc.php';
             case "4":
                 cat_str = "PK";
                 break;
-            case "5":
-                cat_str = "HS";
+            case "7":
+                cat_str = "LM";
                 break;
         }
-        var code = cat_str + "-" + max_id;
+        if (cat == 2 && subcat ==5) {
+            code = "HS-" + max_id;
+        } else {
+            code = cat_str + "-" + max_id;
+        }
         $("#vendorcode").val(code);
-        //alert(code);
+    });
+
+    $("#subcategory").change(function () {
+        var code = '';
+        var subcat = $(this).val();
+        var cat = $("#category").val();
+        var max_id = <?php echo $gen_code; ?>;
+        var cat_str = "";
+        switch (cat) {
+            case "1":
+                cat_str = "MH";
+                break;
+            case "2":
+                cat_str = "HP";
+                break;
+            case "3":
+                cat_str = "BD";
+                break;
+            case "4":
+                cat_str = "PK";
+                break;
+            case "7":
+                cat_str = "LM";
+                break;
+        }
+        if (cat == 2 && subcat ==5) {
+            code = "HS-" + max_id;
+        } else {
+            code = cat_str + "-" + max_id;
+        }
+        $("#vendorcode").val(code);
     });
 
     $("#save_close").click(function () {
@@ -319,11 +364,11 @@ include 'include/class.inc.php';
         var vendorcode = $('#vendorcode').val();
         var provider = $('#provider').val();
         var price = $('#price').val();
-        var quant_robot = 0;
         var quant_total = $('#quant_total').val();
         var file = $('#file').val();
 
-        if (title != "" && category != "0" && subcategory != "" && quant_total != "" && price != "" && vendorcode != "") {
+
+        if (title != "" && category != "0" && quant_total != "" && price != "" && vendorcode != "") {
             $.post("./api.php", {
                 action: "add_pos",
                 title: title,
@@ -377,11 +422,10 @@ include 'include/class.inc.php';
         var vendorcode = $('#vendorcode').val();
         var provider = $('#provider').val();
         var price = $('#price').val();
-        var quant_robot = 0;
         var quant_total = $('#quant_total').val();
         var file = $('#file').val();
 
-        if (title != "" && category != "0" && subcategory != "" && quant_total != "" && price != "" && vendorcode != "") {
+        if (title != "" && category != "0" && quant_total != "" && price != "" && vendorcode != "") {
             $.post("./api.php", {
                 action: "add_pos",
                 title: title,
