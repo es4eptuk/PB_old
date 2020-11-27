@@ -168,7 +168,7 @@ $subversions = $robots->getSubVersion;
                                     foreach ($options as &$value) {
                                         $check = ($value['check'] == 1) ? "checked" : "";
                                         $disabled = ($robots->get_dis_check_option($value['id'], $id) || $robot_progress == 100) ? "disabled" : "";
-                                        echo '<div class="checkbox"><label><input type="checkbox" class="check" id="' . $value['id'] . '" name="options" value=' . $value['id'] . ' ' . $check . ' ' . $disabled . '>' . $value['title'] . '</label></div>';
+                                        echo '<div class="checkbox"><label><input type="checkbox" class="check" id="' . $value['id'] . '" name="options" value="' . $value['id'] . '" ' . $check . ' ' . $disabled . '>' . $value['title'] . '</label></div>';
                                     }
                                     ?>
                                 </div>
@@ -362,6 +362,63 @@ $subversions = $robots->getSubVersion;
         });
 
         $(document).ready(function () {
+            addClassControl();
+            checkControl();
+            function addClassControl() {
+                $('#28').addClass( "option-control" );
+                $('#29').addClass( "option-control" );
+                $('#30').addClass( "option-control" );
+                $('#31').addClass( "option-control" );
+                $('#32').addClass( "option-control" );
+                $('#33').addClass( "option-control" );
+                $('#34').addClass( "option-control" );
+                $('#35').addClass( "option-control" );
+                $('#36').addClass( "option-control" );
+                $('#47').addClass( "option-control" );
+                $('#48').addClass( "corob-control" );
+            }
+            function checkControl() {
+                if ($('.corob-control').is(':checked')) {
+                    $('.option-control').attr("disabled", true);
+                    $('.option-control').parent().parent().hide();
+                }
+                var option = 0;
+                $('.option-control').each(function(){
+                    if (this.checked) {
+                        option = 1;
+                    }
+                });
+                if (option == 1) {
+                    $('.corob-control').attr("disabled", true);
+                    $('.corob-control').parent().parent().hide();
+                }
+            }
+            $('.corob-control').change(function() {
+                if (this.checked) {
+                    $('.option-control').attr("disabled", true);
+                    $('.option-control').parent().parent().hide();
+                } else {
+                    $('.option-control').attr("disabled", false);
+                    $('.option-control').parent().parent().show();
+                }
+            });
+            $('.option-control').change(function() {
+                var option = 0;
+                $('.option-control').each(function(){
+                    if (this.checked) {
+                        option = 1;
+                    }
+                });
+                if (option == 1) {
+                    $('.corob-control').attr("disabled", true);
+                    $('.corob-control').parent().parent().hide();
+                } else {
+                    $('.corob-control').attr("disabled", false);
+                    $('.corob-control').parent().parent().show();
+                }
+            });
+
+
             //удаление робота
             $("#delete").click(function () {
                 $(this).last().addClass("disabled");
