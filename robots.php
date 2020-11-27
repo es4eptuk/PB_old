@@ -569,6 +569,65 @@ if (isset($_POST['check_show_all'])) {
 
         //$('.select2').select2();
 
+        //-- костыль Control на опции/псевдоопции
+        addClassControl();
+        checkControl();
+        function addClassControl() {
+            $('#28').addClass( "option-control" );
+            $('#29').addClass( "option-control" );
+            $('#30').addClass( "option-control" );
+            $('#31').addClass( "option-control" );
+            $('#32').addClass( "option-control" );
+            $('#33').addClass( "option-control" );
+            $('#34').addClass( "option-control" );
+            $('#35').addClass( "option-control" );
+            $('#36').addClass( "option-control" );
+            $('#47').addClass( "option-control" );
+            $('#48').addClass( "corob-control" );
+        }
+        function checkControl() {
+            if ($('.corob-control').is(':checked')) {
+                $('.option-control').attr("disabled", true);
+                $('.option-control').parent().parent().hide();
+            }
+            var option = 0;
+            $('.option-control').each(function(){
+                if (this.checked) {
+                    option = 1;
+                }
+            });
+            if (option == 1) {
+                $('.corob-control').attr("disabled", true);
+                $('.corob-control').parent().parent().hide();
+            }
+        }
+        $('.corob-control').change(function() {
+            if (this.checked) {
+                $('.option-control').attr("disabled", true);
+                $('.option-control').parent().parent().hide();
+            } else {
+                $('.option-control').attr("disabled", false);
+                $('.option-control').parent().parent().show();
+            }
+        });
+        $('.option-control').change(function() {
+            var option = 0;
+            $('.option-control').each(function(){
+                if (this.checked) {
+                    option = 1;
+                }
+            });
+            if (option == 1) {
+                $('.corob-control').attr("disabled", true);
+                $('.corob-control').parent().parent().hide();
+            } else {
+                $('.corob-control').attr("disabled", false);
+                $('.corob-control').parent().parent().show();
+            }
+        });
+        //--//
+
+
         //создать покупателя
         $("#btn_add_customer").click(function () {
             var name_cust = $('#name_cust').val();

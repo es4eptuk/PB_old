@@ -362,6 +362,7 @@ $subversions = $robots->getSubVersion;
         });
 
         $(document).ready(function () {
+            //костыль Control на опции/псевдоопции
             addClassControl();
             checkControl();
             function addClassControl() {
@@ -417,6 +418,7 @@ $subversions = $robots->getSubVersion;
                     $('.corob-control').parent().parent().show();
                 }
             });
+            //--//
 
 
             //удаление робота
