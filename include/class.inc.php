@@ -23,6 +23,7 @@ include_once ('page/plan.php');
 include_once ('page/1c.php');
 include_once ('page/settings.php');
 include_once ('page/bitrix.php');
+include_once ('page/bitrixForm.php');
 include_once ('page/statistics.php');
 
 //создание экземпляров
@@ -44,6 +45,7 @@ $plan = new Plan();
 $oneC = new OneC();
 $settings = new Settings();
 $bitrixAPI = new Bitrix();
+$bitrixForm = new BitrixForm();
 $statistics = new Statistics();
 
 //инициализация
@@ -64,18 +66,19 @@ $plan->init();
 $oneC->init();
 $settings->init();
 $bitrixAPI->init();
+$bitrixForm->init();
 $statistics->init();
 
 if (array_key_exists('REQUEST_URI', $_SERVER)) {
     $i = $_SERVER['REQUEST_URI'];
     //echo $i;
     $i2 = stristr($i, '?', true);
-
-    if ($i2 = "") {
+    //echo $i2;
+    if ($i2 != "") {
         $i = $i2;
     }
-
     //echo $i;
+
     switch ($i) {
         case "/new/api.php":
             break;
@@ -84,6 +87,8 @@ if (array_key_exists('REQUEST_URI', $_SERVER)) {
         case "/new/telegram_r.php":
             break;
         case "/new/self_tester.php":
+            break;
+        case "/test/b_handler.php":
             break;
         default:
             include 'include/auth.php';

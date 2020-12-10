@@ -456,6 +456,21 @@ if ($userdata['group'] == 1) {
        
        ';
        }
+
+       if ($userdata['user_id'] == 75) {
+            echo '    
+                <li class="treeview">
+                    <a href="#">
+                        <i class="fa fa-retweet"></i> <span>Обработчик форм</span>
+                        <span class="pull-right-container"></span>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li><a href="./b_forms.php"><i class="fa fa-circle-o"></i>Формы</a></li>
+                        <li><a href="./b_log_forms.php"><i class="fa fa-circle-o"></i>Лог</a></li>
+                    </ul>
+                </li>
+            ';
+       }
         
         
         ?>

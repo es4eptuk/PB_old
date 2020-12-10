@@ -530,6 +530,20 @@ if (isset($_POST['action'])) {
     if ($_POST['action'] == "get_info_subversion") {
         echo json_encode($robots->getSubVersion[$_POST['id']], JSON_UNESCAPED_UNICODE);
     }
+
+    //обработчик форм
+    if ($_POST['action'] == "get_info_bitrix_form") {
+        echo json_encode($bitrixForm->get_info_form($_POST['id']), JSON_UNESCAPED_UNICODE);
+    }
+    if ($_POST['action'] == "delete_bitrix_form") {
+        echo json_encode($bitrixForm->delete_form($_POST['id']), JSON_UNESCAPED_UNICODE);
+    }
+    if ($_POST['action'] == "update_bitrix_form") {
+        echo json_encode($bitrixForm->update_form($_POST['id'], $_POST['key'], $_POST['url'], $_POST['name'], $_POST['handler'], $_POST['script'], $_POST['status'], $_POST['direction'], $_POST['country']), JSON_UNESCAPED_UNICODE);
+    }
+    if ($_POST['action'] == "create_bitrix_form") {
+        echo json_encode($bitrixForm->create_form($_POST['key'], $_POST['url'], $_POST['name'], $_POST['handler'], $_POST['script'], $_POST['status'], $_POST['direction'], $_POST['country']), JSON_UNESCAPED_UNICODE);
+    }
 }
 if (isset($_GET['action'])) {
     //поиск позиций

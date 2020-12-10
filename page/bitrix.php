@@ -4,10 +4,9 @@
 class Bitrix
 {
     const CONFIG = [
-        'domain' => 'https://team.promo-bot.ru/rest/192/iig2tqqrpr5mbnnm/',
+        'domain' => 'https://team.promo-bot.ru/rest/1097/xh3yrqn4yj4pq0ir',
     ];
 
-    public $test;
     public $log;
 
     function __construct()
@@ -17,7 +16,6 @@ class Bitrix
 
     function init()
     {
-        $this->test = 'Работает!';
 
     }
 
@@ -26,9 +24,9 @@ class Bitrix
 
     }
 
-    public function send($method, $params=[])
+    public function send($method, $params=[], $domain = self::CONFIG['domain'])
     {
-        $url = self::CONFIG['domain'].''.$method.'/';
+        $url = $domain.'/'.$method;
 
         /*curl_setopt($ch, CURLOPT_HEADER, false);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -41,13 +39,17 @@ class Bitrix
         //$params = json_encode($params);
 
         //echo $url;die;
+        $sPostFields = http_build_query($params);
 
-        $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_HEADER, false);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, ($params));
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POSTREDIR, 10);
+        curl_setopt($ch, CURLOPT_USERAGENT, 'My script PHP');
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $sPostFields);
+        //define('C_REST_CURRENT_ENCODING','windows-1251');
+        //define('C_REST_IGNORE_SSL',true);//turn off validate ssl by curl
         $result = curl_exec($ch);
         curl_close($ch);
 
