@@ -88,7 +88,7 @@ if (array_key_exists('REQUEST_URI', $_SERVER)) {
             break;
         case "/new/self_tester.php":
             break;
-        case "/test/b_handler.php":
+        case "/new/b_handler.php":
             break;
         default:
             include 'include/auth.php';
