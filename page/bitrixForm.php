@@ -29,7 +29,8 @@ class BitrixForm
     const DISTRIBUTION_BY_COUNTRY = [
         'No' => 0,
         'R&SNG' => 29,
-        'Europa' => 30,
+        'World' => 30,
+        'USA' => 651,
     ];
     const SETTINGS = [
         'ASSIGNED' => 1097,
@@ -204,9 +205,6 @@ class BitrixForm
             if (isset($params['comment_form']) && !empty($params['comment_form'])) {
                 $comment .= "Comment_form:\n".urldecode($params['comment_form'])."\n";
             }
-            if (isset($params['company_title']) && !empty($params['company_title'])) {
-                $comment .= "Company_title:\n".urldecode($params['company_title'])."\n";
-            }
             $phone = [];
             if (isset($params['phone']) && !empty($params['phone'])) {
                 $phone[] = [
@@ -228,11 +226,13 @@ class BitrixForm
                 ];
             }
             $this->params = [
-                "TITLE" => $this->form['url'].'/'.$this->form['name'].'/'.$this->date,
-                "NAME" => (isset($params['name']) && !empty($params['name'])) ? urldecode($params['name']) : "noname",
+                "TITLE" => $this->form['url'].' / '.$this->form['name'].' / '.$this->date,
+                "NAME" => (isset($params['name']) && !empty($params['name'])) ? urldecode($params['name']) : "",
                 "SECOND_NAME" => (isset($params['second_name']) && !empty($params['second_name'])) ? urldecode($params['second_name']) : "",
                 "LAST_NAME" => (isset($params['last_name']) && !empty($params['last_name'])) ? urldecode($params['last_name']) : "",
+                "COMPANY_TITLE" => (isset($params['company_title']) && !empty($params['company_title'])) ? urldecode($params['company_title']) : "",
                 "STATUS_ID" => "NEW",
+                "ADDRESS" => (isset($params['address']) && !empty($params['address'])) ? urldecode($params['address']) : "",
                 "OPENED" => "Y",
                 "ASSIGNED_BY_ID" => self::SETTINGS['ASSIGNED'],
                 "COMMENTS" => $comment,
@@ -243,6 +243,7 @@ class BitrixForm
                 "UTM_CAMPAIGN" => (isset($params['utm_campaign']) && !empty($params['utm_campaign'])) ? urldecode($params['utm_campaign']) : "",
                 "UTM_CONTENT" => (isset($params['utm_content']) && !empty($params['utm_content'])) ? urldecode($params['utm_content']) : "",
                 "UTM_TERM" => (isset($params['utm_term']) && !empty($params['utm_term'])) ? urldecode($params['utm_term']) : "",
+                "UF_CRM_1608101741558" => TRUE,
             ];
             if ($this->form['direction'] != 0) {
                 $this->params['UF_CRM_1607588088964'] = $this->form['direction'];
@@ -260,14 +261,8 @@ class BitrixForm
             if (isset($params['message']) && !empty($params['message'])) {
                 $comment .= "Message:\n".urldecode($params['message'])."\n";
             }
-            if (isset($params['company']) && !empty($params['company'])) {
-                $comment .= "Company:\n".urldecode($params['company'])."\n";
-            }
             if (isset($params['country']) && !empty($params['country'])) {
                 $comment .= "Country:\n".urldecode($params['country'])."\n";
-            }
-            if (isset($params['address']) && !empty($params['address'])) {
-                $comment .= "Address:\n".urldecode($params['address'])."\n";
             }
             if (isset($params['stations']) && !empty($params['stations'])) {
                 $comment .= "Stations:\n".urldecode($params['stations'])."\n";
@@ -287,11 +282,13 @@ class BitrixForm
                 ];
             }
             $this->params = [
-                "TITLE" => $this->form['url'].'/'.$this->form['name'].'/'.$this->date,
-                "NAME" => (isset($params['name']) && !empty($params['name'])) ? urldecode($params['name']) : "noname",
+                "TITLE" => $this->form['url'].' / '.$this->form['name'].' / '.$this->date,
+                "NAME" => (isset($params['name']) && !empty($params['name'])) ? urldecode($params['name']) : "",
                 "SECOND_NAME" => (isset($params['second_name']) && !empty($params['second_name'])) ? urldecode($params['second_name']) : "",
                 "LAST_NAME" => (isset($params['last_name']) && !empty($params['last_name'])) ? urldecode($params['last_name']) : "",
+                "COMPANY_TITLE" => (isset($params['company']) && !empty($params['company'])) ? urldecode($params['company']) : "",
                 "STATUS_ID" => "NEW",
+                "ADDRESS" => (isset($params['address']) && !empty($params['address'])) ? urldecode($params['address']) : "",
                 "OPENED" => "Y",
                 "ASSIGNED_BY_ID" => self::SETTINGS['ASSIGNED'],
                 "COMMENTS" => $comment,
@@ -302,6 +299,7 @@ class BitrixForm
                 "UTM_CAMPAIGN" => (isset($params['utm_campaign']) && !empty($params['utm_campaign'])) ? urldecode($params['utm_campaign']) : "",
                 "UTM_CONTENT" => (isset($params['utm_content']) && !empty($params['utm_content'])) ? urldecode($params['utm_content']) : "",
                 "UTM_TERM" => (isset($params['utm_term']) && !empty($params['utm_term'])) ? urldecode($params['utm_term']) : "",
+                "UF_CRM_1608101741558" => TRUE,
             ];
             if ($this->form['direction'] != 0) {
                 $this->params['UF_CRM_1607588088964'] = $this->form['direction'];
