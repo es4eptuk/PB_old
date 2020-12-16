@@ -37,6 +37,14 @@ class BitrixForm
         'URL' => 'https://team.promo-bot.ru/rest/1097/xh3yrqn4yj4pq0ir',
         'EMAIL' => 'a.baidin@promo-bot.ru',
     ];
+    const DIRECTION_BY = [
+        27 => 33,
+        26 => 16,
+    ];
+    const COUNTRY = [
+        29 => [36,51,54,61,68,105,124,139,221,224,225],
+        651 => [37,],
+    ];
 
 
     private $pdo;
@@ -116,8 +124,20 @@ class BitrixForm
                         break;
                 }
             }
+        } else {
+            $result = true;
         }
         return $result;
+    }
+
+    public function get_country($name)
+    {
+        $query = "SELECT * FROM `bitrix_country` WHERE `name_ru` LIKE '%$name%' OR `name_en` LIKE '%$name%'";
+        $result = $this->pdo->query($query);
+        while ($line = $result->fetch()) {
+            $info[] = $line;
+        }
+        return (isset($info)) ? $info['0'] : [];
     }
 
     public function get_info_form($id)
@@ -205,6 +225,9 @@ class BitrixForm
             if (isset($params['comment_form']) && !empty($params['comment_form'])) {
                 $comment .= "Comment_form:\n".urldecode($params['comment_form'])."\n";
             }
+            if (isset($params['country']) && !empty($params['country'])) {
+                $comment .= "Country:\n".urldecode($params['country'])."\n";
+            }
             $phone = [];
             if (isset($params['phone']) && !empty($params['phone'])) {
                 $phone[] = [
@@ -224,6 +247,13 @@ class BitrixForm
                     "VALUE" => urldecode($params['email']),
                     "VALUE_TYPE" => "OTHER",
                 ];
+            }
+            $country = null;
+            if (isset($params['country']) && !empty($params['country'])) {
+                $db_country = $this->get_country(mb_strtolower($params['country']));
+                if ($db_country != []) {
+                    $country = $db_country['key'];
+                }
             }
             $this->params = [
                 "TITLE" => $this->form['url'].' / '.$this->form['name'].' / '.$this->date,
@@ -247,9 +277,27 @@ class BitrixForm
             ];
             if ($this->form['direction'] != 0) {
                 $this->params['UF_CRM_1607588088964'] = $this->form['direction'];
+                if (array_key_exists($this->form['direction'], self::DIRECTION_BY)) {
+                    $this->params['UF_CRM_1607948122'] = self::DIRECTION_BY[$this->form['direction']];
+                }
             }
             if ($this->form['country'] != 0) {
                 $this->params['UF_CRM_1607589066228'] = $this->form['country'];
+            }
+            if ($country != null) {
+                $this->params['UF_CRM_1607933607'] = $country;
+                $id_country = self::DISTRIBUTION_BY_COUNTRY['World'];
+                foreach (self::COUNTRY as $id_distribution_by_country => $array) {
+                    if (in_array($country, $array)) {
+                        $id_country = $id_distribution_by_country;
+                    }
+                }
+                if ($id_country == self::DISTRIBUTION_BY_COUNTRY['USA']) {
+                    $this->params['UF_CRM_1607588088964'] = self::DISTRIBUTION_BY_DIRECTION['USA'];
+                    $this->params['UF_CRM_1607589066228'] = self::DISTRIBUTION_BY_COUNTRY['USA'];
+                } else {
+                    $this->params['UF_CRM_1607589066228'] = $id_country;
+                }
             }
         }
     }
@@ -281,6 +329,13 @@ class BitrixForm
                     "VALUE_TYPE" => "OTHER",
                 ];
             }
+            $country = null;
+            if (isset($params['country']) && !empty($params['country'])) {
+                $db_country = $this->get_country(mb_strtolower($params['country']));
+                if ($db_country != []) {
+                    $country = $db_country['key'];
+                }
+            }
             $this->params = [
                 "TITLE" => $this->form['url'].' / '.$this->form['name'].' / '.$this->date,
                 "NAME" => (isset($params['name']) && !empty($params['name'])) ? urldecode($params['name']) : "",
@@ -303,9 +358,27 @@ class BitrixForm
             ];
             if ($this->form['direction'] != 0) {
                 $this->params['UF_CRM_1607588088964'] = $this->form['direction'];
+                if (array_key_exists($this->form['direction'], self::DIRECTION_BY)) {
+                    $this->params['UF_CRM_1607948122'] = self::DIRECTION_BY[$this->form['direction']];
+                }
             }
             if ($this->form['country'] != 0) {
                 $this->params['UF_CRM_1607589066228'] = $this->form['country'];
+            }
+            if ($country != null) {
+                $this->params['UF_CRM_1607933607'] = $country;
+                $id_country = self::DISTRIBUTION_BY_COUNTRY['World'];
+                foreach (self::COUNTRY as $id_distribution_by_country => $array) {
+                    if (in_array($country, $array)) {
+                        $id_country = $id_distribution_by_country;
+                    }
+                }
+                if ($id_country == self::DISTRIBUTION_BY_COUNTRY['USA']) {
+                    $this->params['UF_CRM_1607588088964'] = self::DISTRIBUTION_BY_DIRECTION['USA'];
+                    $this->params['UF_CRM_1607589066228'] = self::DISTRIBUTION_BY_COUNTRY['USA'];
+                } else {
+                    $this->params['UF_CRM_1607589066228'] = $id_country;
+                }
             }
         }
     }
@@ -313,7 +386,93 @@ class BitrixForm
     function handler_linkodium($params = [])
     {
         if ($params != []) {
-            $this->params = $params;
+            $comment = '';
+            if (isset($params['message']) && !empty($params['message'])) {
+                $comment .= "Message:\n".urldecode($params['message'])."\n";
+            }
+            if (isset($params['country']) && !empty($params['country'])) {
+                $comment .= "Country:\n".urldecode($params['country'])."\n";
+            }
+            if (isset($params['whatsapp']) && !empty($params['whatsapp'])) {
+                $comment .= "Whatsapp:\n".urldecode($params['whatsapp'])."\n";
+            }
+            if (isset($params['robot']) && !empty($params['robot'])) {
+                $comment .= "Для чего планируется приобретение робота?:\n".urldecode($params['robot'])."\n";
+            }
+            if (isset($params['howfind']) && !empty($params['howfind'])) {
+                $comment .= "Откуда о нас узнали?:\n".urldecode($params['howfind'])."\n";
+            }
+            if (isset($params['where']) && !empty($params['where'])) {
+                $comment .= "Откуда о нас узнали?:\n".urldecode($params['where'])."\n";
+            }
+            if (isset($params['city']) && !empty($params['city'])) {
+                $comment .= "City:\n".urldecode($params['city'])."\n";
+            }
+            $phone = [];
+            if (isset($params['phone']) && !empty($params['phone'])) {
+                $phone[] = [
+                    "VALUE" => urldecode($params['phone']),
+                    "VALUE_TYPE" => "OTHER",
+                ];
+            }
+            $mail = [];
+            if (isset($params['email']) && !empty($params['email'])) {
+                $mail[] = [
+                    "VALUE" => urldecode($params['email']),
+                    "VALUE_TYPE" => "OTHER",
+                ];
+            }
+            $country = null;
+            if (isset($params['country']) && !empty($params['country'])) {
+                $db_country = $this->get_country(mb_strtolower($params['country']));
+                if ($db_country != []) {
+                    $country = $db_country['key'];
+                }
+            }
+            $this->params = [
+                "TITLE" => $this->form['url'].' / '.$this->form['name'].' / '.$this->date,
+                "NAME" => (isset($params['name']) && !empty($params['name'])) ? urldecode($params['name']) : "",
+                "SECOND_NAME" => (isset($params['second_name']) && !empty($params['second_name'])) ? urldecode($params['second_name']) : "",
+                "LAST_NAME" => (isset($params['last_name']) && !empty($params['last_name'])) ? urldecode($params['last_name']) : "",
+                "COMPANY_TITLE" => (isset($params['company']) && !empty($params['company'])) ? urldecode($params['company']) : "",
+                "STATUS_ID" => "NEW",
+                "ADDRESS" => (isset($params['address']) && !empty($params['address'])) ? urldecode($params['address']) : "",
+                "OPENED" => "Y",
+                "ASSIGNED_BY_ID" => self::SETTINGS['ASSIGNED'],
+                "COMMENTS" => $comment,
+                "PHONE" => $phone,
+                "EMAIL" => $mail,
+                "UTM_SOURCE" => (isset($params['utm_source']) && !empty($params['utm_source'])) ? urldecode($params['utm_source']) : "",
+                "UTM_MEDIUM" => (isset($params['utm_medium']) && !empty($params['utm_medium'])) ? urldecode($params['utm_medium']) : "",
+                "UTM_CAMPAIGN" => (isset($params['utm_campaign']) && !empty($params['utm_campaign'])) ? urldecode($params['utm_campaign']) : "",
+                "UTM_CONTENT" => (isset($params['utm_content']) && !empty($params['utm_content'])) ? urldecode($params['utm_content']) : "",
+                "UTM_TERM" => (isset($params['utm_term']) && !empty($params['utm_term'])) ? urldecode($params['utm_term']) : "",
+                "UF_CRM_1608101741558" => TRUE,
+            ];
+            if ($this->form['direction'] != 0) {
+                $this->params['UF_CRM_1607588088964'] = $this->form['direction'];
+                if (array_key_exists($this->form['direction'], self::DIRECTION_BY)) {
+                    $this->params['UF_CRM_1607948122'] = self::DIRECTION_BY[$this->form['direction']];
+                }
+            }
+            if ($this->form['country'] != 0) {
+                $this->params['UF_CRM_1607589066228'] = $this->form['country'];
+            }
+            if ($country != null) {
+                $this->params['UF_CRM_1607933607'] = $country;
+                $id_country = self::DISTRIBUTION_BY_COUNTRY['World'];
+                foreach (self::COUNTRY as $id_distribution_by_country => $array) {
+                    if (in_array($country, $array)) {
+                        $id_country = $id_distribution_by_country;
+                    }
+                }
+                if ($id_country == self::DISTRIBUTION_BY_COUNTRY['USA']) {
+                    $this->params['UF_CRM_1607588088964'] = self::DISTRIBUTION_BY_DIRECTION['USA'];
+                    $this->params['UF_CRM_1607589066228'] = self::DISTRIBUTION_BY_COUNTRY['USA'];
+                } else {
+                    $this->params['UF_CRM_1607589066228'] = $id_country;
+                }
+            }
         }
     }
 
