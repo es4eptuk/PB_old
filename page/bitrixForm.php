@@ -405,8 +405,21 @@ class BitrixForm
             if (isset($params['where']) && !empty($params['where'])) {
                 $comment .= "Откуда о нас узнали?:\n".urldecode($params['where'])."\n";
             }
+            //не для CRM bitrix
+            if (isset($params['position']) && !empty($params['position'])) {
+                $comment .= "Должность:\n".urldecode($params['position'])."\n";
+            }
+            if (isset($params['organization']) && !empty($params['organization'])) {
+                $comment .= "Название компании:\n".urldecode($params['organization'])."\n";
+            }
             if (isset($params['city']) && !empty($params['city'])) {
-                $comment .= "City:\n".urldecode($params['city'])."\n";
+                $comment .= "Город:\n".urldecode($params['city'])."\n";
+            }
+            if (isset($params['website']) && !empty($params['website'])) {
+                $comment .= "Website:\n".urldecode($params['website'])."\n";
+            }
+            if (isset($params['product']) && !empty($params['product'])) {
+                $comment .= "Product:\n".urldecode($params['product'])."\n";
             }
             $phone = [];
             if (isset($params['phone']) && !empty($params['phone'])) {

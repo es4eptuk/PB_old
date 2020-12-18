@@ -855,6 +855,7 @@ class Checks
             $robots_array[] = $line;
         }
         if (isset($robots_array)) {
+            $arr_kits = $this->plan->get_kits();
             foreach ($robots_array as &$value) {
                 $id_robot = $value['id_robot'];
                 //echo $id_robot;
@@ -882,6 +883,8 @@ class Checks
                          NULL, 
                          '0')";
                 $result = $this->pdo->query($query);
+                //добавляем резерв
+                $this->sklad->add_reserv($arr_kits[$kit]);
             }
         }
         return $result;
@@ -890,36 +893,119 @@ class Checks
     //удаление чеклиста
     function del_check($id, $version)
     {
+        $query   = "SELECT * FROM `check_items` WHERE `id` = $id";
+        $result = $this->pdo->query($query);
+        $kit = $result->fetch()['kit'];
+
         $query = "DELETE FROM `check_items` WHERE `id` = $id";
         $result = $this->pdo->query($query);
-        $query = "SELECT * FROM robots WHERE version = $version AND progress != 100 ORDER BY `sort` ASC";
+
+        $query = "
+            SELECT * FROM `robots` 
+            WHERE `version` = $version 
+                AND `progress` != 100
+                AND `writeoff` = 0 
+                AND `remont` = 0 
+                AND `delete` = 0
+            ORDER BY `sort` ASC";
         $result = $this->pdo->query($query);
+        $robots_array = [];
         while ($line = $result->fetch()) {
-            $robots_array[] = $line;
+            $robots_array[] = $line['id'];
         }
-        foreach ($robots_array as &$value) {
-            $id_robot = $value['id'];
-            $query    = "DELETE FROM `check` WHERE id_check = $id AND robot = $id_robot";
+
+        if ($robots_array != []) {
+            if ($kit != 0) {
+                $query = "
+                    SELECT COUNT(*) FROM `check` 
+                    JOIN `robots` ON `check`.`robot` = `robots`.`id` 
+                    WHERE `check`.`id_check` = $id
+                        AND `check`.`check` = 0 
+                        AND `robots`.`progress` != 100
+                        AND `robots`.`writeoff` = 0 
+                        AND `robots`.`remont` = 0 
+                        AND `robots`.`delete` = 0
+                ";
+                $result = $this->pdo->query($query);
+                $count = $result->fetch()['COUNT(*)'];
+                $arr_kits = $this->plan->get_kits();
+                $del_res = [];
+                foreach ($arr_kits[$kit] as $id_pos => $total) {
+                    $del_res[$id_pos] = $total * $count;
+                }
+                $this->sklad->del_reserv($del_res);
+            }
+            //удаляем чеклисты
+            $in_string = implode(',', $robots_array);
+            $query    = "DELETE FROM `check` WHERE `id_check` = $id AND `check` = 0 AND `robot` IN ($in_string)";
             $result = $this->pdo->query($query);
         }
+
         return true;
     }
 
     //удаление чеклиста в опции
     function del_check_in_option($id)
     {
+        $query   = "SELECT * FROM `robot_options_checks` WHERE `check_id` = $id";
+        $result = $this->pdo->query($query);
+        $options_checks = $result->fetch();
+        $kit = $options_checks['id_kit'];
+        $id_option = $options_checks['id_option'];
+        $check_category = $options_checks['check_category'];
+        $check_title = $options_checks['check_title'];
+
         $query = "DELETE FROM `robot_options_checks` WHERE `check_id` = $id";
         $result = $this->pdo->query($query);
-        /*$query = "SELECT * FROM robots WHERE version = $version AND progress != 100 ORDER BY `sort` ASC";
+
+        $query = "
+            SELECT * FROM `robots` 
+            WHERE `progress` != 100
+                AND `writeoff` = 0 
+                AND `remont` = 0 
+                AND `delete` = 0
+            ORDER BY `sort` ASC";
         $result = $this->pdo->query($query);
+        $robots_array = [];
         while ($line = $result->fetch()) {
-            $robots_array[] = $line;
+            $robots_array[] = $line['id'];
         }
-        foreach ($robots_array as &$value) {
-            $id_robot = $value['id'];
-            $query    = "DELETE FROM `check` WHERE id_check = $id AND robot = $id_robot";
+
+        if ($robots_array != []) {
+            if ($kit != 0) {
+                $query = "
+                SELECT COUNT(*) FROM `check` 
+                JOIN `robots` ON `check`.`robot` = `robots`.`id` 
+                WHERE `check`.`check` = 0 
+                    AND `robots`.`writeoff` = 0 
+                    AND `robots`.`remont` = 0 
+                    AND `robots`.`delete` = 0
+                    AND `check`.`option` = '$id_option' 
+                    AND `check`.`category` = '$check_category' 
+                    AND `check`.`operation` LIKE '$check_title'
+                ";
+                $result = $this->pdo->query($query);
+                $count = $result->fetch()['COUNT(*)'];
+                $arr_kits = $this->plan->get_kits();
+                $del_res = [];
+                foreach ($arr_kits[$kit] as $id_pos => $total) {
+                    $del_res[$id_pos] = $total * $count;
+                }
+                $this->sklad->del_reserv($del_res);
+            }
+            //удаляем чеклисты
+            $in_string = implode(',', $robots_array);
+            $query = "
+                DELETE FROM `check` 
+                WHERE `option` = '$id_option' 
+                  AND `check` = 0
+                  AND `category` = '$check_category' 
+                  AND `operation` LIKE '$check_title'                  
+                  AND `robot` IN ($in_string)
+            ";
             $result = $this->pdo->query($query);
-        }*/
+        }
+
         return true;
     }
 
