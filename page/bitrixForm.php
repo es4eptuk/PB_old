@@ -504,7 +504,7 @@ class BitrixForm
 
     function script_add_lead()
     {
-        $email_result = $this->send_email($this->_params);
+        //$email_result = $this->send_email($this->_params);
         $api_result = $this->add_lead($this->params);
         $_params = json_encode($this->_params);
         $api_result = json_encode($api_result);
