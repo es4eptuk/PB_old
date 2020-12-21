@@ -549,7 +549,7 @@ class BitrixForm
     function mapped_implode($array) {
         return implode(PHP_EOL, array_map(
                 function($k, $v) {
-                    return $k . ": " . $v ."\r\n";
+                    return $k . ": " . $v ."<br>";//."\r\n";
                 },
                 array_keys($array),
                 array_values($array)
