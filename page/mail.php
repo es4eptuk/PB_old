@@ -21,9 +21,20 @@ class Mail
 
     }
 
-    public function send($to = '', $mail_to, $subject, $message, $headers = '')
+    public function send($to = '', $mail_to, $subject, $message, $headers = '', $my_config = [])
     {
         global $config;
+
+        if ($my_config != []) {
+            $config['smtp_username'] = (isset($my_config['smtp_username']) && !empty($my_config['smtp_username'])) ? $my_config['smtp_username'] : $config['smtp_username'];
+            $config['smtp_port'] = (isset($my_config['smtp_port']) && !empty($my_config['smtp_port'])) ? $my_config['smtp_port'] : $config['smtp_port'];
+            $config['smtp_host'] = (isset($my_config['smtp_host']) && !empty($my_config['smtp_host'])) ? $my_config['smtp_host'] : $config['smtp_host'];
+            $config['smtp_password'] = (isset($my_config['smtp_password']) && !empty($my_config['smtp_password'])) ? $my_config['smtp_password'] : $config['smtp_password'];
+            $config['smtp_debug'] = (isset($my_config['smtp_debug']) && !empty($my_config['smtp_debug'])) ? $my_config['smtp_debug'] : $config['smtp_debug'];
+            $config['smtp_charset'] = (isset($my_config['smtp_charset']) && !empty($my_config['smtp_charset'])) ? $my_config['smtp_charset'] : $config['smtp_charset'];
+            $config['smtp_from'] = (isset($my_config['smtp_from']) && !empty($my_config['smtp_from'])) ? $my_config['smtp_from'] : $config['smtp_from'];
+        }
+
         $SEND = "Date: " . date("D, d M Y H:i:s") . " UT\r\n";
         $SEND .= 'Subject: =?' . $config['smtp_charset'] . '?B?' . base64_encode($subject) . "=?=\r\n";
         if ($headers) $SEND .= $headers . "\r\n\r\n";

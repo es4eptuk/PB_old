@@ -4,8 +4,19 @@
 class BitrixForm
 {
     const EMAIL_USER = [
-        'LEAD' => 'a.baidin@promo-bot.ru',
-        'HR' => 'a.baidin@promo-bot.ru',
+        1 => 'info@promo-bot.ru',
+        2 => 'a.baidin@promo-bot.ru',
+        3 => 'a.baidin@promo-bot.ru',
+        4 => 'a.baidin@promo-bot.ru',
+    ];
+    const MAIL_CONFIG = [
+        'smtp_username' => 'team@promo-bot.ru',       //Смените на адрес своего почтового ящика.
+        'smtp_port' => '465',                         //Порт работы.
+        'smtp_host' => 'ssl://smtp.yandex.ru',        //сервер для отправки почты
+        'smtp_password' => 'ZPBZrvHpUmvKNpS0',        //Измените пароль
+        'smtp_debug' => true,                         //Если Вы хотите видеть сообщения ошибок, укажите true вместо false
+        'smtp_charset' => 'utf-8',	                  //кодировка сообщений. (windows-1251 или utf-8, итд)
+        'smtp_from' => 'From Site (обработчик форм)', //Ваше имя - или имя Вашего сайта. Будет показывать при прочтении в поле "От кого"
     ];
     const HANDLER_TYPE = [
         1 => 'TILDA',
@@ -14,7 +25,9 @@ class BitrixForm
     ];
     const SCRIPT_TYPE = [
         1 => 'LEAD',
-        2 => 'EMAIL',
+        2 => 'EMAIL_HR',
+        3 => 'EMAIL_SUBSCRIPTION',
+        4 => 'EMAIL_EVENT',
     ];
     const STATUS = [
         'ACTIVE' => 1,
@@ -491,7 +504,7 @@ class BitrixForm
 
     function script_add_lead()
     {
-        //$email_result = $this->send_email(self::SETTINGS['EMAIL'], $this->_params);
+        $email_result = $this->send_email($this->_params);
         $api_result = $this->add_lead($this->params);
         $_params = json_encode($this->_params);
         $api_result = json_encode($api_result);
@@ -524,18 +537,19 @@ class BitrixForm
         }
     }
 
-    function send_email($email, $params = [])
+    function send_email($params = [])
     {
+        $email = self::EMAIL_USER[$this->form['script']];
         $subject = $this->form['url'].'/'.$this->form['name'].'/'.$this->date;
         $message = $this->mapped_implode($params);
-        $result = $this->mail->send('Обработчик форм',  $email, $subject, $message);
+        $result = $this->mail->send('Обработчик форм', $email, $subject, $message, '', self::MAIL_CONFIG);
         return $result;
     }
 
     function mapped_implode($array) {
         return implode(PHP_EOL, array_map(
                 function($k, $v) {
-                    return $k . ": " . $v ."\n";
+                    return $k . ": " . $v ."\r\n";
                 },
                 array_keys($array),
                 array_values($array)
