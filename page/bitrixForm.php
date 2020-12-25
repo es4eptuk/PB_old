@@ -47,6 +47,8 @@ class BitrixForm
     ];
     const SETTINGS = [
         'ASSIGNED' => 1097,
+        'TYPE' => 1350,
+        'CONNECT' => 1271,
         'URL' => 'https://team.promo-bot.ru/rest/1097/xh3yrqn4yj4pq0ir',
         'EMAIL' => 'a.baidin@promo-bot.ru',
     ];
@@ -287,6 +289,8 @@ class BitrixForm
                 "UTM_CONTENT" => (isset($params['utm_content']) && !empty($params['utm_content'])) ? urldecode($params['utm_content']) : "",
                 "UTM_TERM" => (isset($params['utm_term']) && !empty($params['utm_term'])) ? urldecode($params['utm_term']) : "",
                 "UF_CRM_1608101741558" => TRUE,
+                "UF_CRM_1608720560227" => self::SETTINGS['CONNECT'],
+                "UF_CRM_1608875925351" => self::SETTINGS['TYPE'],
             ];
             if ($this->form['direction'] != 0) {
                 $this->params['UF_CRM_1607588088964'] = $this->form['direction'];
@@ -349,6 +353,11 @@ class BitrixForm
                     $country = $db_country['key'];
                 }
             }
+            if (isset($params['start_url']) && !empty($params['start_url'])) {
+                $utm_output = [];
+                $parts = parse_url($params['start_url']);
+                parse_str($parts, $utm_output);
+            }
             $this->params = [
                 "TITLE" => $this->form['url'].' / '.$this->form['name'].' / '.$this->date,
                 "NAME" => (isset($params['name']) && !empty($params['name'])) ? urldecode($params['name']) : "",
@@ -362,12 +371,14 @@ class BitrixForm
                 "COMMENTS" => $comment,
                 "PHONE" => $phone,
                 "EMAIL" => $mail,
-                "UTM_SOURCE" => (isset($params['utm_source']) && !empty($params['utm_source'])) ? urldecode($params['utm_source']) : "",
-                "UTM_MEDIUM" => (isset($params['utm_medium']) && !empty($params['utm_medium'])) ? urldecode($params['utm_medium']) : "",
-                "UTM_CAMPAIGN" => (isset($params['utm_campaign']) && !empty($params['utm_campaign'])) ? urldecode($params['utm_campaign']) : "",
-                "UTM_CONTENT" => (isset($params['utm_content']) && !empty($params['utm_content'])) ? urldecode($params['utm_content']) : "",
-                "UTM_TERM" => (isset($params['utm_term']) && !empty($params['utm_term'])) ? urldecode($params['utm_term']) : "",
+                "UTM_SOURCE" => (isset($utm_output['utm_source']) && !empty($utm_output['utm_source'])) ? urldecode($utm_output['utm_source']) : "",
+                "UTM_MEDIUM" => (isset($utm_output['utm_medium']) && !empty($utm_output['utm_medium'])) ? urldecode($utm_output['utm_medium']) : "",
+                "UTM_CAMPAIGN" => (isset($utm_output['utm_campaign']) && !empty($utm_output['utm_campaign'])) ? urldecode($utm_output['utm_campaign']) : "",
+                "UTM_CONTENT" => (isset($utm_output['utm_content']) && !empty($utm_output['utm_content'])) ? urldecode($utm_output['utm_content']) : "",
+                "UTM_TERM" => (isset($utm_output['utm_term']) && !empty($utm_output['utm_term'])) ? urldecode($utm_output['utm_term']) : "",
                 "UF_CRM_1608101741558" => TRUE,
+                "UF_CRM_1608720560227" => self::SETTINGS['CONNECT'],
+                "UF_CRM_1608875925351" => self::SETTINGS['TYPE'],
             ];
             if ($this->form['direction'] != 0) {
                 $this->params['UF_CRM_1607588088964'] = $this->form['direction'];
@@ -455,6 +466,11 @@ class BitrixForm
                     $country = $db_country['key'];
                 }
             }
+            if (isset($params['start_url']) && !empty($params['start_url'])) {
+                $utm_output = [];
+                $parts = parse_url($params['start_url']);
+                parse_str($parts, $utm_output);
+            }
             $this->params = [
                 "TITLE" => $this->form['url'].' / '.$this->form['name'].' / '.$this->date,
                 "NAME" => (isset($params['name']) && !empty($params['name'])) ? urldecode($params['name']) : "",
@@ -468,12 +484,14 @@ class BitrixForm
                 "COMMENTS" => $comment,
                 "PHONE" => $phone,
                 "EMAIL" => $mail,
-                "UTM_SOURCE" => (isset($params['utm_source']) && !empty($params['utm_source'])) ? urldecode($params['utm_source']) : "",
-                "UTM_MEDIUM" => (isset($params['utm_medium']) && !empty($params['utm_medium'])) ? urldecode($params['utm_medium']) : "",
-                "UTM_CAMPAIGN" => (isset($params['utm_campaign']) && !empty($params['utm_campaign'])) ? urldecode($params['utm_campaign']) : "",
-                "UTM_CONTENT" => (isset($params['utm_content']) && !empty($params['utm_content'])) ? urldecode($params['utm_content']) : "",
-                "UTM_TERM" => (isset($params['utm_term']) && !empty($params['utm_term'])) ? urldecode($params['utm_term']) : "",
+                "UTM_SOURCE" => (isset($utm_output['utm_source']) && !empty($utm_output['utm_source'])) ? urldecode($utm_output['utm_source']) : "",
+                "UTM_MEDIUM" => (isset($utm_output['utm_medium']) && !empty($utm_output['utm_medium'])) ? urldecode($utm_output['utm_medium']) : "",
+                "UTM_CAMPAIGN" => (isset($utm_output['utm_campaign']) && !empty($utm_output['utm_campaign'])) ? urldecode($utm_output['utm_campaign']) : "",
+                "UTM_CONTENT" => (isset($utm_output['utm_content']) && !empty($utm_output['utm_content'])) ? urldecode($utm_output['utm_content']) : "",
+                "UTM_TERM" => (isset($utm_output['utm_term']) && !empty($utm_output['utm_term'])) ? urldecode($utm_output['utm_term']) : "",
                 "UF_CRM_1608101741558" => TRUE,
+                "UF_CRM_1608720560227" => self::SETTINGS['CONNECT'],
+                "UF_CRM_1608875925351" => self::SETTINGS['TYPE'],
             ];
             if ($this->form['direction'] != 0) {
                 $this->params['UF_CRM_1607588088964'] = $this->form['direction'];
