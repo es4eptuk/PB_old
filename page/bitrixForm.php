@@ -231,6 +231,9 @@ class BitrixForm
             if (isset($params['textarea']) && !empty($params['textarea'])) {
                 $comment .= "Textarea:\n".urldecode($params['textarea'])."\n";
             }
+            if (isset($params['text']) && !empty($params['text'])) {
+                $comment .= "Text:\n".urldecode($params['text'])."\n";
+            }
             if (isset($params['comments']) && !empty($params['comments'])) {
                 $comment .= "Comments:\n".urldecode($params['comments'])."\n";
             }
