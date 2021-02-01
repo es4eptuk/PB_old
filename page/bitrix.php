@@ -4,7 +4,7 @@
 class Bitrix
 {
     const CONFIG = [
-        'domain' => 'https://team.promo-bot.ru/rest/1097/xh3yrqn4yj4pq0ir',
+        'domain' => 'https://team.promo-bot.ru/rest/192/zk3dz0xtlxkzb84o',
     ];
 
     public $log;

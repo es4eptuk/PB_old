@@ -52,9 +52,13 @@ class BitrixForm
         'URL' => 'https://team.promo-bot.ru/rest/1097/xh3yrqn4yj4pq0ir',
         'EMAIL' => 'a.baidin@promo-bot.ru',
     ];
-    const DIRECTION_BY = [
+    /*const __DIRECTION_BY = [
         27 => 33,
         26 => 16,
+    ];*/
+    const DIRECTION_BY = [
+        27 => 1711,
+        26 => 1710,
     ];
     const COUNTRY = [
         29 => [36,51,54,61,68,105,124,139,221,224,225],
@@ -298,7 +302,8 @@ class BitrixForm
             if ($this->form['direction'] != 0) {
                 $this->params['UF_CRM_1607588088964'] = $this->form['direction'];
                 if (array_key_exists($this->form['direction'], self::DIRECTION_BY)) {
-                    $this->params['UF_CRM_1607948122'] = self::DIRECTION_BY[$this->form['direction']];
+                    //$this->params['UF_CRM_1607948122'] = self::__DIRECTION_BY[$this->form['direction']];
+                    $this->params['UF_CRM_1611301769946'] = self::DIRECTION_BY[$this->form['direction']];
                 }
             }
             if ($this->form['country'] != 0) {
@@ -386,7 +391,8 @@ class BitrixForm
             if ($this->form['direction'] != 0) {
                 $this->params['UF_CRM_1607588088964'] = $this->form['direction'];
                 if (array_key_exists($this->form['direction'], self::DIRECTION_BY)) {
-                    $this->params['UF_CRM_1607948122'] = self::DIRECTION_BY[$this->form['direction']];
+                    //$this->params['UF_CRM_1607948122'] = self::__DIRECTION_BY[$this->form['direction']];
+                    $this->params['UF_CRM_1611301769946'] = self::DIRECTION_BY[$this->form['direction']];
                 }
             }
             if ($this->form['country'] != 0) {
@@ -499,7 +505,8 @@ class BitrixForm
             if ($this->form['direction'] != 0) {
                 $this->params['UF_CRM_1607588088964'] = $this->form['direction'];
                 if (array_key_exists($this->form['direction'], self::DIRECTION_BY)) {
-                    $this->params['UF_CRM_1607948122'] = self::DIRECTION_BY[$this->form['direction']];
+                    //$this->params['UF_CRM_1607948122'] = self::__DIRECTION_BY[$this->form['direction']];
+                    $this->params['UF_CRM_1611301769946'] = self::DIRECTION_BY[$this->form['direction']];
                 }
             }
             if ($this->form['country'] != 0) {
