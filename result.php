@@ -29,7 +29,7 @@ while ($line = $result->fetch()) {
             while ($line2 = $result2->fetch()) {
                 $ticket_array[] = $line2;
 
-                echo "<tr><td>".$line2['version'].".".$line2['number']."</td><td>".$line2['name']."</td><td>".$line2['description']."</td><td>".$line2['result_description']."</td><td>".$line2['date_create']."</td></tr>";
+                echo "<tr><td>".$line2['version'].".".$line2['number']."</td><td>".$line2['name']."</td><td><a href='https://db.promo-bot.ru/new/ticket.php?id=".$line2['id']."'>".$line2['id']."</a></td><td>".$line2['description']."</td><td>".$line2['result_description']."</td><td>".$line2['date_create']."</td></tr>";
             }
 
             $robot_array[] = $line;
