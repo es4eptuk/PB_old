@@ -122,10 +122,10 @@ include 'include/class.inc.php';
         $.post("./api.php", {action: "resending_bitrix_form", id_row: id_row})
             .done(function (data) {
                 if (data == 'true') {
-                    //console.log(id_row+'-'+data);
+                    console.log(id_row+'-'+data);
                     window.location.reload(true);
                 } else {
-                    //console.log(id_row+'-'+data);
+                    console.log(id_row+'-'+data);
                     alert('Повторная отправка не удалась!');
                 }
 
