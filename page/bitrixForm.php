@@ -556,8 +556,8 @@ class BitrixForm
     {
         //$email_result = $this->send_email($this->_params);
         $api_result = $this->add_lead($this->params);
-        $_params = json_encode($this->_params);
-        $api_result_js = json_encode($api_result);
+        $_params = json_encode($this->_params, JSON_UNESCAPED_UNICODE);
+        $api_result_js = json_encode($api_result, JSON_UNESCAPED_UNICODE);
         $log_result = $this->add_log_forms($this->form['id'], $_params, $api_result_js);
         return $api_result['status'];
         /*
