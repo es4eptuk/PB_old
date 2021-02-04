@@ -38,7 +38,7 @@ include 'include/class.inc.php';
                     <th>script</th>
                     <th>params</th>
                     <th>result</th>
-
+                    <th style="width:30px">повторить</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -62,7 +62,10 @@ include 'include/class.inc.php';
                               </td>
                               <td>
                                 <div style='max-width:200px'><pre>".$result."</pre></div>
-                              </td>                                                        
+                              </td>
+                              <td>
+                                <i class='fa fa-2x fa-send' style='cursor:pointer;color:#337ab7;' data-id='".$pos['log_id']."'></i>
+                              </td>                                                       
                            </tr>
                        ";
                     }
@@ -110,6 +113,24 @@ include 'include/class.inc.php';
     $('#pos').DataTable({
         "iDisplayLength": 100,
         "order": [[0, "desc"]]
+    });
+
+    //повторная отправка
+    $("#pos").on('click', '.fa-send', function () {
+        var id_row = $(this).data("id");
+
+        $.post("./api.php", {action: "resending_bitrix_form", id_row: id_row})
+            .done(function (data) {
+                if (data == 'true') {
+                    //console.log(id_row+'-'+data);
+                    window.location.reload(true);
+                } else {
+                    //console.log(id_row+'-'+data);
+                    alert('Повторная отправка не удалась!');
+                }
+
+            });
+
     });
 
 </script>

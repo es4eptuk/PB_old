@@ -544,6 +544,9 @@ if (isset($_POST['action'])) {
     if ($_POST['action'] == "create_bitrix_form") {
         echo json_encode($bitrixForm->create_form($_POST['key'], $_POST['url'], $_POST['name'], $_POST['handler'], $_POST['script'], $_POST['status'], $_POST['direction'], $_POST['country']), JSON_UNESCAPED_UNICODE);
     }
+    if ($_POST['action'] == "resending_bitrix_form") {
+        echo $bitrixForm->resending($_POST['id_row']);
+    }
 }
 if (isset($_GET['action'])) {
     //поиск позиций

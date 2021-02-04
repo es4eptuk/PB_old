@@ -111,6 +111,18 @@ class BitrixForm
         }
     }
 
+    function resending($id_row)
+    {
+        $log = $this->get_log_form($id_row);
+        $result = false;
+        if ($log != null) {
+            $params = json_decode($log['params'], true);
+            $form_id = $log['form_id'];
+            $result = $this->action($form_id, $params);
+        }
+        return $result;
+    }
+
     function action($id, $params = [])
     {
         $this->_params = $params;
@@ -191,12 +203,22 @@ class BitrixForm
 
     function get_list_log_forms()
     {
-        $query = 'SELECT * FROM `bitrix_form_log` JOIN `bitrix_form` ON `bitrix_form_log`.`form_id` = `bitrix_form`.`id` ORDER BY `bitrix_form_log`.`date` DESC';
+        $query = 'SELECT *, `bitrix_form_log`.`id` AS `log_id` FROM `bitrix_form_log` JOIN `bitrix_form` ON `bitrix_form_log`.`form_id` = `bitrix_form`.`id` ORDER BY `bitrix_form_log`.`date` DESC';
         $result = $this->pdo->query($query);
         while ($line = $result->fetch()) {
             $list[] = $line;
         }
         return (isset($list)) ? $list : [];
+    }
+
+    function get_log_form($id_row)
+    {
+        $query = "SELECT * FROM `bitrix_form_log` WHERE `id` = $id_row";
+        $result = $this->pdo->query($query);
+        while ($line = $result->fetch()) {
+            $list[] = $line;
+        }
+        return (isset($list)) ? $list[0] : null;
     }
 
     function add_log_forms($id_form, $params, $result)
