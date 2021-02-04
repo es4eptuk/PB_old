@@ -116,9 +116,9 @@ class BitrixForm
         $log = $this->get_log_form($id_row);
         $result = false;
         if ($log != null) {
-            $params = json_decode($log['params'], true);
+            $params = json_decode($log['params'], false, 512, JSON_UNESCAPED_UNICODE);
             $form_id = $log['form_id'];
-            $result = $this->action($form_id, $params);
+            $result = $this->action($form_id, (array)$params);
         }
         return $result;
     }

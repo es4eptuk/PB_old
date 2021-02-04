@@ -46,9 +46,9 @@ include 'include/class.inc.php';
                     $arr = $bitrixForm->get_list_log_forms();
                     foreach ($arr as &$pos) {
                        $params = json_decode($pos['params'], false, 512, JSON_UNESCAPED_UNICODE);
-                       $params = print_r($params, true);
+                       $params = print_r((array)$params, true);
                        $result = json_decode($pos['result'], false, 512, JSON_UNESCAPED_UNICODE);
-                       $result = print_r($result, true);
+                       $result = print_r((array)$result, true);
                        echo "
                            <tr>
                               <td>".$pos['date']."</td>
