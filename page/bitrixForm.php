@@ -499,7 +499,7 @@ class BitrixForm
             }
             if (isset($params['start_url']) && !empty($params['start_url'])) {
                 $utm_output = [];
-                $parts = parse_url($params['start_url']);
+                $parts = parse_url($params['start_url'], PHP_URL_QUERY);
                 parse_str($parts, $utm_output);
             }
             $this->params = [
@@ -557,8 +557,8 @@ class BitrixForm
         //$email_result = $this->send_email($this->_params);
         $api_result = $this->add_lead($this->params);
         $_params = json_encode($this->_params);
-        $api_result = json_encode($api_result);
-        $log_result = $this->add_log_forms($this->form['id'], $_params, $api_result);
+        $api_result_js = json_encode($api_result);
+        $log_result = $this->add_log_forms($this->form['id'], $_params, $api_result_js);
         return $api_result['status'];
         /*
 
