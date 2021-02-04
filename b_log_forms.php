@@ -45,9 +45,9 @@ include 'include/class.inc.php';
                 <?php 
                     $arr = $bitrixForm->get_list_log_forms();
                     foreach ($arr as &$pos) {
-                       $params = json_decode($pos['params'], true, 512, JSON_UNESCAPED_UNICODE);
+                       $params = json_decode($pos['params'], false, 512, JSON_UNESCAPED_UNICODE);
                        $params = print_r($params, true);
-                       $result = json_decode($pos['result'], true, 512, JSON_UNESCAPED_UNICODE);
+                       $result = json_decode($pos['result'], false, 512, JSON_UNESCAPED_UNICODE);
                        $result = print_r($result, true);
                        echo "
                            <tr>
