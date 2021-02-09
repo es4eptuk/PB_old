@@ -385,7 +385,7 @@ class BitrixForm
             }
             if (isset($params['url']) && !empty($params['url'])) {
                 $utm_output = [];
-                $parts = parse_url($params['url']);
+                $parts = parse_url($params['url'], PHP_URL_QUERY);
                 parse_str($parts, $utm_output);
             }
             $this->params = [
