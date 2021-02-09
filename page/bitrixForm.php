@@ -383,9 +383,9 @@ class BitrixForm
                     $country = $db_country['key'];
                 }
             }
-            if (isset($params['start_url']) && !empty($params['start_url'])) {
+            if (isset($params['url']) && !empty($params['url'])) {
                 $utm_output = [];
-                $parts = parse_url($params['start_url']);
+                $parts = parse_url($params['url']);
                 parse_str($parts, $utm_output);
             }
             $this->params = [
@@ -497,10 +497,46 @@ class BitrixForm
                     $country = $db_country['key'];
                 }
             }
+            $utm_output = [];
             if (isset($params['start_url']) && !empty($params['start_url'])) {
-                $utm_output = [];
+                $utm_output_start_url = [];
                 $parts = parse_url($params['start_url'], PHP_URL_QUERY);
-                parse_str($parts, $utm_output);
+                parse_str($parts, $utm_output_start_url);
+                if (isset($utm_output_start_url['utm_source']) && !empty($utm_output_start_url['utm_source'])) {
+                    $utm_output['utm_source'] = $utm_output_start_url['utm_source'];
+                }
+                if (isset($utm_output_start_url['utm_medium']) && !empty($utm_output_start_url['utm_medium'])) {
+                    $utm_output['utm_medium'] = $utm_output_start_url['utm_medium'];
+                }
+                if (isset($utm_output_start_url['utm_campaign']) && !empty($utm_output_start_url['utm_campaign'])) {
+                    $utm_output['utm_campaign'] = $utm_output_start_url['utm_campaign'];
+                }
+                if (isset($utm_output_start_url['utm_content']) && !empty($utm_output_start_url['utm_content'])) {
+                    $utm_output['utm_content'] = $utm_output_start_url['utm_content'];
+                }
+                if (isset($utm_output_start_url['utm_term']) && !empty($utm_output_start_url['utm_term'])) {
+                    $utm_output['utm_term'] = $utm_output_start_url['utm_term'];
+                }
+            }
+            if (isset($params['order_url']) && !empty($params['order_url'])) {
+                $utm_output_order_url = [];
+                $parts = parse_url($params['order_url'], PHP_URL_QUERY);
+                parse_str($parts, $utm_output_order_url);
+                if (isset($utm_output_order_url['utm_source']) && !empty($utm_output_order_url['utm_source']) && !(isset($utm_output['utm_source']) && !empty($utm_output['utm_source']))) {
+                    $utm_output['utm_source'] = $utm_output_order_url['utm_source'];
+                }
+                if (isset($utm_output_order_url['utm_medium']) && !empty($utm_output_order_url['utm_medium']) && !(isset($utm_output['utm_medium']) && !empty($utm_output['utm_medium']))) {
+                    $utm_output['utm_medium'] = $utm_output_order_url['utm_medium'];
+                }
+                if (isset($utm_output_order_url['utm_campaign']) && !empty($utm_output_order_url['utm_campaign']) && !(isset($utm_output['utm_campaign']) && !empty($utm_output['utm_campaign']))) {
+                    $utm_output['utm_campaign'] = $utm_output_order_url['utm_campaign'];
+                }
+                if (isset($utm_output_order_url['utm_content']) && !empty($utm_output_order_url['utm_content']) && !(isset($utm_output['utm_content']) && !empty($utm_output['utm_content']))) {
+                    $utm_output['utm_content'] = $utm_output_order_url['utm_content'];
+                }
+                if (isset($utm_output_order_url['utm_term']) && !empty($utm_output_order_url['utm_term']) && !(isset($utm_output['utm_term']) && !empty($utm_output['utm_term']))) {
+                    $utm_output['utm_term'] = $utm_output_order_url['utm_term'];
+                }
             }
             $this->params = [
                 "TITLE" => $this->form['url'].' / '.$this->form['name'].' / '.$this->date,
