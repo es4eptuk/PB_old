@@ -63,7 +63,7 @@ include 'include/class.inc.php';
                               <td>".$bitrixForm->getListDirectionsBy[$pos['directionBy']]."</td>
                               <td>".$bitrixForm->getListCountryBy[$pos['countryBy']]."</td>
                               <td>".$bitrixForm->getListDirections[$pos['direction']]."</td>
-                              <td>".$bitrixForm->getListCountry[$pos['country']]."</td>                                                              
+                              <td>".$bitrixForm->getListCountry[$pos['country']]['name_ru']."</td>                                                              
                               <td>".$bitrixForm->getListStatuses[$pos['status']]."</td>                                                          
                               <td>
                                 <i class='fa fa-2x fa-pencil' style='cursor: pointer;' data-id='".$pos['id']."'></i>
@@ -154,7 +154,7 @@ include 'include/class.inc.php';
                         <label>countryBy</label>
                         <select class="form-control" name="countryBy" id="edit_countryBy">
                             <?php
-                            foreach ($bitrixForm->getListcountryBy as $id => $countryBy) {
+                            foreach ($bitrixForm->getListCountryBy as $id => $countryBy) {
                                 echo "<option value='" . $id . "'>" . $countryBy . "</option>";
                             }
                             ?>
@@ -256,7 +256,7 @@ include 'include/class.inc.php';
                         <label>countryBy</label>
                         <select class="form-control" name="countryBy" id="add_countryBy">
                             <?php
-                            foreach ($bitrixForm->getListcountryBy as $id => $countryBy) {
+                            foreach ($bitrixForm->getListCountryBy as $id => $countryBy) {
                                 echo "<option value='" . $id . "'>" . $countryBy . "</option>";
                             }
                             ?>
