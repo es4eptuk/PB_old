@@ -60,6 +60,10 @@ class BitrixForm
         27 => 1711,
         26 => 1710,
     ];
+    const DIRECTION = [
+        1710 => 'Robots',
+        1711 => 'Devices',
+    ];
     const COUNTRY = [
         29 => [36,51,54,61,68,105,124,139,221,224,225],
         651 => [37,],
@@ -76,8 +80,10 @@ class BitrixForm
     public $getListHandlers;
     public $getListScripts;
     public $getListStatuses;
+    public $getListDirectionsBy;
     public $getListDirections;
     public $getListCountry;
+    public $getListCountryBy;
 
     function __construct()
     {
@@ -104,11 +110,13 @@ class BitrixForm
             $this->getListStatuses[$name] = $id;
         }
         foreach (self::DISTRIBUTION_BY_DIRECTION as $id => $name) {
-            $this->getListDirections[$name] = $id;
+            $this->getListDirectionsBy[$name] = $id;
         }
         foreach (self::DISTRIBUTION_BY_COUNTRY as $id => $name) {
-            $this->getListCountry[$name] = $id;
+            $this->getListCountryBy[$name] = $id;
         }
+        $this->getListCountry = $this->get_list_country();
+        $this->getListDirections = $this->get_list_directions();
     }
 
     function resending($id_row)
@@ -171,6 +179,30 @@ class BitrixForm
         return (isset($info)) ? $info['0'] : [];
     }
 
+    public function get_list_country()
+    {
+        $query = "SELECT * FROM `bitrix_country`";
+        $result = $this->pdo->query($query);
+        $info[0] = [
+            'key' => 0,
+            'name_ru' => 'нет',
+            'name_en' => 'no',
+        ];
+        while ($line = $result->fetch()) {
+            $info[$line['id']] = $line;
+        }
+        return $info;
+    }
+
+    public function get_list_directions()
+    {
+        $info[0] = 'no';
+        foreach (self::DIRECTION as $id => $name) {
+            $info[$id] = $name;
+        }
+        return $info;
+    }
+
     public function get_info_form($id)
     {
         $query = "SELECT * FROM `bitrix_form` WHERE `id`='$id'";
@@ -229,16 +261,16 @@ class BitrixForm
         return ($result) ? true : false;
     }
 
-    function create_form($key, $url, $name, $handler, $script, $status, $direction, $country)
+    function create_form($key, $url, $name, $handler, $script, $status, $directionBy, $countryBy, $direction, $country)
     {
-        $query = "INSERT INTO `bitrix_form` (`id`, `key`, `url`, `name`, `handler`, `script`, `status`, `direction`, `country`) VALUES (NULL, '$key', '$url', '$name', '$handler', '$script', '$status', '$direction', '$country')";
+        $query = "INSERT INTO `bitrix_form` (`id`, `key`, `url`, `name`, `handler`, `script`, `status`, `directionBy`, `countryBy`, `direction`, `country`) VALUES (NULL, '$key', '$url', '$name', '$handler', '$script', '$status', '$directionBy', '$countryBy', '$direction', '$country')";
         $result = $this->pdo->query($query);
         return ($result) ? true : false;
     }
 
-    function update_form($id, $key, $url, $name, $handler, $script, $status, $direction, $country)
+    function update_form($id, $key, $url, $name, $handler, $script, $status, $directionBy, $countryBy, $direction, $country)
     {
-        $query = "UPDATE `bitrix_form` SET `key` = '$key', `url` = '$url', `name` = '$name', `handler` = '$handler', `script` = '$script', `status` = '$status', `direction` = '$direction', `country` = '$country' WHERE `id` = $id";
+        $query = "UPDATE `bitrix_form` SET `key` = '$key', `url` = '$url', `name` = '$name', `handler` = '$handler', `script` = '$script', `status` = '$status', `directionBy` = '$directionBy', `countryBy` = '$countryBy', `direction` = '$direction', `country` = '$country' WHERE `id` = $id";
         $result = $this->pdo->query($query);
         return ($result) ? true : false;
     }
@@ -321,6 +353,18 @@ class BitrixForm
                 "UF_CRM_1608720560227" => self::SETTINGS['CONNECT'],
                 "UF_CRM_1608875925351" => self::SETTINGS['TYPE'],
             ];
+
+            if ($this->form['direction'] != 0) {
+                $this->params['UF_CRM_1611301769946'] = $this->form['direction'];
+            }
+            if ($this->form['country'] != 0) {
+                $this->params['UF_CRM_1607933607'] = $this->getListCountry[$this->form['country']]['key'];
+            }
+            if ($country != null) {
+                $this->params['UF_CRM_1607933607'] = $country;
+            }
+
+            /*
             if ($this->form['direction'] != 0) {
                 $this->params['UF_CRM_1607588088964'] = $this->form['direction'];
                 if (array_key_exists($this->form['direction'], self::DIRECTION_BY)) {
@@ -346,6 +390,7 @@ class BitrixForm
                     $this->params['UF_CRM_1607589066228'] = $id_country;
                 }
             }
+            */
         }
     }
 
@@ -410,6 +455,18 @@ class BitrixForm
                 "UF_CRM_1608720560227" => self::SETTINGS['CONNECT'],
                 "UF_CRM_1608875925351" => self::SETTINGS['TYPE'],
             ];
+
+            if ($this->form['direction'] != 0) {
+                $this->params['UF_CRM_1611301769946'] = $this->form['direction'];
+            }
+            if ($this->form['country'] != 0) {
+                $this->params['UF_CRM_1607933607'] = $this->getListCountry[$this->form['country']]['key'];
+            }
+            if ($country != null) {
+                $this->params['UF_CRM_1607933607'] = $country;
+            }
+
+            /*
             if ($this->form['direction'] != 0) {
                 $this->params['UF_CRM_1607588088964'] = $this->form['direction'];
                 if (array_key_exists($this->form['direction'], self::DIRECTION_BY)) {
@@ -435,6 +492,7 @@ class BitrixForm
                     $this->params['UF_CRM_1607589066228'] = $id_country;
                 }
             }
+            */
         }
     }
 
@@ -560,6 +618,18 @@ class BitrixForm
                 "UF_CRM_1608720560227" => self::SETTINGS['CONNECT'],
                 "UF_CRM_1608875925351" => self::SETTINGS['TYPE'],
             ];
+
+            if ($this->form['direction'] != 0) {
+                $this->params['UF_CRM_1611301769946'] = $this->form['direction'];
+            }
+            if ($this->form['country'] != 0) {
+                $this->params['UF_CRM_1607933607'] = $this->getListCountry[$this->form['country']]['key'];
+            }
+            if ($country != null) {
+                $this->params['UF_CRM_1607933607'] = $country;
+            }
+
+            /*
             if ($this->form['direction'] != 0) {
                 $this->params['UF_CRM_1607588088964'] = $this->form['direction'];
                 if (array_key_exists($this->form['direction'], self::DIRECTION_BY)) {
@@ -585,6 +655,7 @@ class BitrixForm
                     $this->params['UF_CRM_1607589066228'] = $id_country;
                 }
             }
+            */
         }
     }
 

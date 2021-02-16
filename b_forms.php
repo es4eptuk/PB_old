@@ -39,6 +39,8 @@ include 'include/class.inc.php';
                     <th>name</th>
                     <th>handler</th>
                     <th>script</th>
+                    <th>directionBy</th>
+                    <th>countryBy</th>
                     <th>direction</th>
                     <th>country</th>
                     <th>status</th>
@@ -58,7 +60,9 @@ include 'include/class.inc.php';
                               <td>".$pos['name']."</td>
                               <td>".$bitrixForm->getListHandlers[$pos['handler']]."</td>                          
                               <td>".$bitrixForm->getListScripts[$pos['script']]."</td>
-                              <td>".$bitrixForm->getListDirections[$pos['direction']]."</td>  
+                              <td>".$bitrixForm->getListDirectionsBy[$pos['directionBy']]."</td>
+                              <td>".$bitrixForm->getListCountryBy[$pos['countryBy']]."</td>
+                              <td>".$bitrixForm->getListDirections[$pos['direction']]."</td>
                               <td>".$bitrixForm->getListCountry[$pos['country']]."</td>                                                              
                               <td>".$bitrixForm->getListStatuses[$pos['status']]."</td>                                                          
                               <td>
@@ -137,6 +141,26 @@ include 'include/class.inc.php';
                         </select>
                     </div>
                     <div class="form-group">
+                        <label>directionBy</label>
+                        <select class="form-control" name="directionBy" id="edit_directionBy">
+                            <?php
+                            foreach ($bitrixForm->getListDirectionsBy as $id => $directionBy) {
+                                echo "<option value='" . $id . "'>" . $directionBy . "</option>";
+                            }
+                            ?>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>countryBy</label>
+                        <select class="form-control" name="countryBy" id="edit_countryBy">
+                            <?php
+                            foreach ($bitrixForm->getListcountryBy as $id => $countryBy) {
+                                echo "<option value='" . $id . "'>" . $countryBy . "</option>";
+                            }
+                            ?>
+                        </select>
+                    </div>
+                    <div class="form-group">
                         <label>direction</label>
                         <select class="form-control" name="direction" id="edit_direction">
                             <?php
@@ -151,7 +175,7 @@ include 'include/class.inc.php';
                         <select class="form-control" name="country" id="edit_country">
                             <?php
                             foreach ($bitrixForm->getListCountry as $id => $country) {
-                                echo "<option value='" . $id . "'>" . $country . "</option>";
+                                echo "<option value='" . $id . "'>" . $country['name_ru'] . "</option>";
                             }
                             ?>
                         </select>
@@ -219,6 +243,26 @@ include 'include/class.inc.php';
                         </select>
                     </div>
                     <div class="form-group">
+                        <label>directionBy</label>
+                        <select class="form-control" name="directionBy" id="add_directionBy">
+                            <?php
+                            foreach ($bitrixForm->getListDirectionsBy as $id => $directionBy) {
+                                echo "<option value='" . $id . "'>" . $directionBy . "</option>";
+                            }
+                            ?>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>countryBy</label>
+                        <select class="form-control" name="countryBy" id="add_countryBy">
+                            <?php
+                            foreach ($bitrixForm->getListcountryBy as $id => $countryBy) {
+                                echo "<option value='" . $id . "'>" . $countryBy . "</option>";
+                            }
+                            ?>
+                        </select>
+                    </div>
+                    <div class="form-group">
                         <label>direction</label>
                         <select class="form-control" name="direction" id="add_direction">
                             <?php
@@ -233,7 +277,7 @@ include 'include/class.inc.php';
                         <select class="form-control" name="country" id="add_country">
                             <?php
                             foreach ($bitrixForm->getListCountry as $id => $country) {
-                                echo "<option value='" . $id . "'>" . $country . "</option>";
+                                echo "<option value='" . $id . "'>" . $country['name_ru'] . "</option>";
                             }
                             ?>
                         </select>
@@ -292,6 +336,8 @@ include 'include/class.inc.php';
             $('#edit_handler').val(obj['handler']);
             $('#edit_script').val(obj['script']);
             $('#edit_status').val(obj['status']);
+            $('#edit_directionBy').val(obj['directionBy']);
+            $('#edit_countryBy').val(obj['countryBy']);
             $('#edit_direction').val(obj['direction']);
             $('#edit_country').val(obj['country']);
         });
@@ -324,6 +370,8 @@ include 'include/class.inc.php';
         var handler = $('#edit_handler').val();
         var script = $('#edit_script').val();
         var status = $('#edit_status').val();
+        var directionBy = $('#edit_directionBy').val();
+        var countryBy = $('#edit_countryBy').val();
         var direction = $('#edit_direction').val();
         var country = $('#edit_country').val();
         $.post("./api.php", {
@@ -335,6 +383,8 @@ include 'include/class.inc.php';
             handler: handler,
             script: script,
             status: status,
+            directionBy: directionBy,
+            countryBy: countryBy,
             direction: direction,
             country: country
         }).done(function (data) {
@@ -353,6 +403,8 @@ include 'include/class.inc.php';
         var handler = $('#add_handler').val();
         var script = $('#add_script').val();
         var status = $('#add_status').val();
+        var directionBy = $('#add_directionBy').val();
+        var countryBy = $('#add_countryBy').val();
         var direction = $('#add_direction').val();
         var country = $('#add_country').val();
         if (key != "" && url != "" && name != "") {
@@ -364,6 +416,8 @@ include 'include/class.inc.php';
                 handler: handler,
                 script: script,
                 status: status,
+                directionBy: directionBy,
+                countryBy: countryBy,
                 direction: direction,
                 country: country
             }).done(function (data) {
