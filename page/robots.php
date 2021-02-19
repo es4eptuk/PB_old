@@ -639,6 +639,8 @@ class Robots
         //собираем чеклисты привязанные к роботу
         if ($result) {
             $idd = $this->pdo->lastInsertId();
+            $query = "UPDATE `robots` SET `sn`=CONCAT(version,'.',subversion,'.',id) WHERE `id` = $idd";
+            $res = $this->pdo->query($query);
             //категории от 1 до 5
             for ($i=1; $i<=5; $i++) {
                 if ($delete == 2) {break;}
