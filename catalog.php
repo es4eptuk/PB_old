@@ -432,7 +432,8 @@ $( "#category" )
           });
     
    }
-  
+
+   /*
   function save_close() {
     var title =  $('#title').val();
     var longtitle =  $('#longtitle').val();
@@ -474,6 +475,8 @@ $( "#category" )
           });
     
  }
+
+    */
  
  function get_info_user(id) {
      

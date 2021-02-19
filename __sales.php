@@ -276,7 +276,8 @@ var id_order=0;
           });
     
    }
-  
+
+   /*
   function save_close() {
     var title =  $('#title').val();
     var longtitle =  $('#longtitle').val();
@@ -310,6 +311,8 @@ var id_order=0;
           });
     
  }
+
+    */
  
  function get_info_user(id) {
      

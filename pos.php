@@ -55,15 +55,15 @@ include 'include/class.inc.php';
                   <th>Подгруппа</th>
                   <th>Артикул</th>
                   <th>Наименование</th>
-                  <th>Количество на складе</th>
-                  <th>Неснижаемый остаток</th>
+                  <th>Кол-во на складе</th>
+                  <th>Мин. остаток</th>
                   <th>Поставщик</th>
                   <th>Стоимость</th>
                   <th>Сборка</th>
+                  <th>Разработка</th>
+                  <th>Бренд/Арт</th>
                   <th>Изображение</th>
-                  <th>Ред.</th>
-                  <th>Коп.</th>
-                  <th>Лог</th>
+                  <th></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -94,6 +94,9 @@ include 'include/class.inc.php';
                         } else {
                             $img = "<img src='/img/no-image.png' width='100'></img>";
                         }
+                        $brend = ($pos["p_vendor"] != 0) ? $position->getBrends[$pos["p_vendor"]]['name'] : "Нет";
+                        $number = ($pos["p_vendor_code"] != "") ? $pos["p_vendor_code"] : "Нет";
+                        $development = ($pos["development"] == 1) ? "Да" : "Нет";
                      
                        echo "
                        <tr>
@@ -105,10 +108,14 @@ include 'include/class.inc.php';
                           <td>".$provider['title'].", ".$provider['type']."</td>
                           <td>".$pos['price']."</td>
                           <td>".$assembly_out."</td>
+                          <td>".$development."</td>
+                          <td>".$brend." / ".$number."</td>
                           <td>".$img."</td>
-                          <td><i class='fa fa-2x fa-pencil' style='cursor: pointer;' data-id='".$pos['id']."'></i></td>
-                          <td><a href='add_pos.php?title=".$pos['title']."&longtitle=".$pos['longtitle']."&category=".$_GET['id']."&subcategory=".$pos['subcategory']."&provider=".$pos['provider']."&price=".$pos['price']."'><i class='fa fa-2x fa-copy' style='cursor: pointer;' id='".$pos['id']."'></i></a></td>
-                          <td><a href='pos_log.php?id=".$pos['id']."'><i class='fa fa-2x fa-list-alt'></i></a></td>
+                          <td>
+                            <i class='fa fa-2x fa-pencil' style='cursor: pointer;' data-id='".$pos['id']."'></i>
+                            <a href='add_pos.php?title=".$pos['title']."&longtitle=".$pos['longtitle']."&category=".$_GET['id']."&subcategory=".$pos['subcategory']."&provider=".$pos['provider']."&price=".$pos['price']."'><i class='fa fa-2x fa-copy' style='cursor: pointer;' id='".$pos['id']."'></i></a>
+                            <a href='pos_log.php?id=".$pos['id']."'><i class='fa fa-2x fa-list-alt'></i></a>
+                          </td>
                         </tr>
                        
                        
@@ -153,6 +160,25 @@ include 'include/class.inc.php';
       <div class="modal-body">
           
           <form role="form" data-toggle="validator" id="add_pos">
+
+              <!-- ident pos vendor/code -->
+              <div class="form-group">
+                  <label style="color: red;">Бренд*</label>
+                  <select class="form-control" name="p_vendor" id="p_vendor" required="required">
+                      <option value="0">Нет бренда</option>
+                      <?php
+                      $arr = $position->getBrends;
+                      foreach ($arr as $brend) {
+                          echo "<option value='".$brend['id']."' >".$brend['name']."</option>";
+                      }
+                      ?>
+                  </select>
+              </div>
+              <div class="form-group">
+                  <label style="color: red;">Артикул*</label>
+                  <input type="text" class="form-control" name="p_vendor_code" id="p_vendor_code" required="required">
+              </div>
+
                 <!-- text input -->
                 <div class="form-group">
                   <label>Наименование</label>
@@ -265,9 +291,16 @@ include 'include/class.inc.php';
 
                 <div class="form-group">
                   <div class="checkbox">
+                      <label><input type="checkbox" id="development" >Для разработки </label>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <div class="checkbox">
                       <label><input type="checkbox" id="archive" >Архивная позиция </label>
                   </div>
                 </div>
+
                 <div class="form-group">
                   <label for="file">Изображение</label>
                   <input type="file" id="file">
@@ -505,6 +538,8 @@ include 'include/class.inc.php';
                         pos_is_assembly = obj['assembly']
                     }
                     //заменяем поля в форме редактирования позиции
+                    $('#p_vendor').val(obj['p_vendor']);
+                    $('#p_vendor_code').val(obj['p_vendor_code']);
                     $('#vendorcode').val(obj['vendor_code']);
                     $('#provider').val(obj['provider']);
                     $('#price').val(obj['price']);
@@ -522,6 +557,11 @@ include 'include/class.inc.php';
                         $('#archive').prop('checked', true);
                     } else {
                         $('#archive').prop('checked', false);
+                    }
+                    if (obj['development'] == "1") {
+                        $('#development').prop('checked', true);
+                    } else {
+                        $('#development').prop('checked', false);
                     }
                 });
         });
@@ -590,6 +630,8 @@ include 'include/class.inc.php';
         }
         //функция записи изменений позиции
         function save_close() {
+            var p_vendor = $('#p_vendor').val();
+            var p_vendor_code = $('#p_vendor_code').val();
             var title = $('#title').val();
             var longtitle = $('#longtitle').val();
             var category = $('#category').val();
@@ -611,6 +653,10 @@ include 'include/class.inc.php';
             if ($("#archive").prop("checked")) {
                 archive = 1;
             }
+            var development = 0;
+            if ($("#development").prop("checked")) {
+                development = 1;
+            }
             $.post("./api.php", {
                 action: "edit_pos",
                 id: id_pos,
@@ -628,7 +674,10 @@ include 'include/class.inc.php';
                 assembly: assembly,
                 summary: summary,
                 archive: archive,
-                file: file
+                file: file,
+                development: development,
+                p_vendor: p_vendor,
+                p_vendor_code: p_vendor_code
             }).done(function (data) {
                 if (data == "false") {
                     alert("Data Loaded: " + data);

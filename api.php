@@ -113,7 +113,7 @@ if (isset($_POST['action'])) {
     }
     //Добавление позиции  
     if ($_POST['action'] == "add_pos") {
-        echo json_encode($position->add_pos($_POST['title'], $_POST['longtitle'], $_POST['category'], $_POST['unit'], $_POST['subcategory'], $_POST['vendorcode'], $_POST['provider'], $_POST['price'], $_POST['quant_robot'], $_POST['quant_total']), JSON_UNESCAPED_UNICODE);
+        echo json_encode($position->add_pos($_POST['title'], $_POST['longtitle'], $_POST['category'], $_POST['unit'], $_POST['subcategory'], $_POST['vendorcode'], $_POST['provider'], $_POST['price'], $_POST['quant_robot'], $_POST['quant_total'], $_POST['development'], $_POST['p_vendor'], $_POST['p_vendor_code']), JSON_UNESCAPED_UNICODE);
     }
     //Получение списка поставщиков  
     if ($_POST['action'] == "get_pos_provider") {
@@ -147,7 +147,7 @@ if (isset($_POST['action'])) {
     }
     //Редактирование позиции
     if ($_POST['action'] == "edit_pos") {
-        echo json_encode($position->edit_pos($_POST['id'], $_POST['title'], $_POST['longtitle'], $_POST['unit'], $_POST['category'], $_POST['subcategory'], $_POST['vendorcode'], $_POST['provider'], $_POST['price'], $_POST['quant_robot'], $_POST['quant_total'], $_POST['min_balance'], $_POST['assembly'], $_POST['summary'], $_POST['archive'], $_POST['file']), JSON_UNESCAPED_UNICODE);
+        echo json_encode($position->edit_pos($_POST['id'], $_POST['title'], $_POST['longtitle'], $_POST['unit'], $_POST['category'], $_POST['subcategory'], $_POST['vendorcode'], $_POST['provider'], $_POST['price'], $_POST['quant_robot'], $_POST['quant_total'], $_POST['min_balance'], $_POST['assembly'], $_POST['summary'], $_POST['archive'], $_POST['file'], $_POST['development'], $_POST['p_vendor'], $_POST['p_vendor_code']), JSON_UNESCAPED_UNICODE);
     }
     //Редактирование позиции с удаленного склада
     if ($_POST['action'] == "edit_pos_warehouse") {
@@ -547,6 +547,21 @@ if (isset($_POST['action'])) {
     if ($_POST['action'] == "resending_bitrix_form") {
         echo $bitrixForm->resending($_POST['id_row']);
     }
+
+    //бренд
+    if ($_POST['action'] == "get_info_brend") {
+        echo json_encode($position->get_list_brend()[$_POST['id']], JSON_UNESCAPED_UNICODE);
+    }
+    if ($_POST['action'] == "del_brend") {
+        echo json_encode($position->del_brend($_POST['id']), JSON_UNESCAPED_UNICODE);
+    }
+    if ($_POST['action'] == "edit_brend") {
+        echo json_encode($position->edit_brend($_POST['id'], $_POST['name'], $_POST['status']), JSON_UNESCAPED_UNICODE);
+    }
+    if ($_POST['action'] == "add_brend") {
+        echo json_encode($position->add_brend($_POST['name'], $_POST['status']), JSON_UNESCAPED_UNICODE);
+    }
+
 }
 if (isset($_GET['action'])) {
     //поиск позиций

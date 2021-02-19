@@ -32,6 +32,32 @@ include 'include/class.inc.php';
             <!-- /.box-header -->
             <div class="box-body">
               <form role="form" data-toggle="validator" id="add_pos">
+
+                  <!-- ident pos vendor/code -->
+                  <div class="form-group">
+                      <label style="color: red;">Бренд*</label>
+                      <select class="form-control" name="p_vendor" id="p_vendor" required="required">
+                          <option value="0">Нет бренда</option>
+                          <?php
+                          $arr = $position->getBrends;
+                          foreach ($arr as $brend) {
+                              echo "<option value='".$brend['id']."' >".$brend['name']."</option>";
+                          }
+                          ?>
+                      </select>
+                  </div>
+                  <div class="form-group">
+                      <label style="color: red;">Артикул*</label>
+                      <input type="text" class="form-control" name="p_vendor_code" id="p_vendor_code" required="required">
+                  </div>
+
+                  <div class="form-group">
+                      <div class="checkbox">
+                          <label><input type="checkbox" id="development" checked="checked">Для разработки</label>
+                      </div>
+                  </div>
+
+
                 <!-- text input -->
                 <div class="form-group">
                   <label>Наименование</label>
@@ -365,6 +391,12 @@ include 'include/class.inc.php';
         var provider = $('#provider').val();
         var price = $('#price').val();
         var quant_total = $('#quant_total').val();
+        var development = 0;
+        if ($("#development").prop("checked")) {
+            development = 1;
+        }
+        var p_vendor = $('#p_vendor').val();
+        var p_vendor_code = $('#p_vendor_code').val();
         var file = $('#file').val();
 
 
@@ -380,7 +412,10 @@ include 'include/class.inc.php';
                 provider: provider,
                 price: price,
                 quant_robot: 0,
-                quant_total: quant_total
+                quant_total: quant_total,
+                development: development,
+                p_vendor: p_vendor,
+                p_vendor_code: p_vendor_code
             }).done(function (data) {
                 //data.replace(new RegExp("\\r?\\n", "g"), "");
                 //console.log(data);
@@ -423,6 +458,12 @@ include 'include/class.inc.php';
         var provider = $('#provider').val();
         var price = $('#price').val();
         var quant_total = $('#quant_total').val();
+        var development = 0;
+        if ($("#development").prop("checked")) {
+            development = 1;
+        }
+        var p_vendor = $('#p_vendor').val();
+        var p_vendor_code = $('#p_vendor_code').val();
         var file = $('#file').val();
 
         if (title != "" && category != "0" && quant_total != "" && price != "" && vendorcode != "") {
@@ -437,7 +478,10 @@ include 'include/class.inc.php';
                 provider: provider,
                 price: price,
                 quant_robot: 0,
-                quant_total: quant_total
+                quant_total: quant_total,
+                development: development,
+                p_vendor: p_vendor,
+                p_vendor_code: p_vendor_code
             }).done(function (data) {
                 if (data == "false") {
                     alert("Невозможно добавить позицию");

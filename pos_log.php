@@ -383,47 +383,6 @@ $( "#category" )
     
    }
   
-  function save_close() {
-    var title =  $('#title').val();
-    var longtitle =  $('#longtitle').val();
-    var category =  $('#category').val();
-    var subcategory =  $('#subcategory').val();
-   
-    var vendorcode =  $('#vendorcode').val();
-    var provider =  $('#provider').val();
-    var price =  $('#price').val();
-    var quant_robot =  $('#quant_robot').val(); 
-    var quant_total =  $('#quant_total').val();
-    
-    
-      $.post( "./api.php", { 
-        action: "edit_pos", 
-        id: id_pos,
-        title: title,
-        longtitle: longtitle ,
-        category: category ,
-        subcategory: subcategory ,
-      
-        vendorcode: vendorcode ,
-        provider: provider ,
-        price: price ,
-        quant_robot: quant_robot ,
-        quant_total: quant_total 
-    } )
-          .done(function( data ) {
-              if (data=="false") {alert( "Data Loaded: " + data ); }
-              else {
-               // window.location.href = "./pos.php?id="+category;  
-              }
-          });
-    
- }
- 
- function get_info_user(id) {
-     
-     
-     
- }
   $("#btn_add_provider").click(function() {
  	var type = $('#provider_type').val();
  	var title = $('#provider_title').val();

@@ -259,6 +259,7 @@ if ($userdata['group'] == 1) {
           <ul class="treeview-menu">
           
             <li ><a href="./contragents.php"><i class="fa fa-compress"></i><span> Контрагенты</span></a></li>
+            <li ><a href="./brends.php"><i class="fa fa-shield"></i><span> Бренды</span></a></li>
             
             <li class="treeview">
               <a href="#">

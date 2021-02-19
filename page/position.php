@@ -1,6 +1,9 @@
 <?php
 class Position
 {
+    const STATUS_ACTIVE = 1;
+    const STATUS_NOTACTIVE = 0;
+
     private $query;
     private $pdo;
     private $writeoff;
@@ -10,6 +13,8 @@ class Position
     public $getCategoryes;
     public $getSubcategoryes;
     public $getUnits;
+    public $getBrends;
+    public $getStatus;
 
     function __construct()
     {
@@ -59,6 +64,12 @@ class Position
             6 => ['id' => 6, 'title' => 'т'],
         ];
 
+        //список брэндов
+        $this->getBrends = $this->get_list_brend(self::STATUS_ACTIVE);
+
+        //
+        $this->getStatus[self::STATUS_NOTACTIVE] = "не активно";
+        $this->getStatus[self::STATUS_ACTIVE] = "активно";
     }
 
     /**
@@ -241,12 +252,12 @@ class Position
             return $pos_array['0'];*/
     }
 
-    function add_pos($title, $longtitle, $category, $unit, $subcategory, $vendorcode, $provider, $price, $quant_robot, $quant_total)
+    function add_pos($title, $longtitle, $category, $unit, $subcategory, $vendorcode, $provider, $price, $quant_robot, $quant_total, $development, $p_vendor, $p_vendor_code)
     {
         $date    = date("Y-m-d H:i:s");
         $user_id = intval($_COOKIE['id']);
         $title = quotemeta($title);
-        $query   = "INSERT INTO `pos_items` (`id`, `category`, `unit`, `subcategory`, `title`, `vendor_code`, `provider`, `price`, `longtitle`, `quant_robot`, `total`, `update_date`, `update_user`) VALUES (NULL, '$category', '$unit', '$subcategory', '$title', '$vendorcode', $provider, '$price', '$longtitle', '$quant_robot', '$quant_total', '$date', '$user_id')";
+        $query   = "INSERT INTO `pos_items` (`id`, `category`, `unit`, `subcategory`, `title`, `vendor_code`, `provider`, `price`, `longtitle`, `quant_robot`, `total`, `update_date`, `update_user`, `development`, `p_vendor`, `p_vendor_code`) VALUES (NULL, '$category', '$unit', '$subcategory', '$title', '$vendorcode', $provider, '$price', '$longtitle', '$quant_robot', '$quant_total', '$date', '$user_id', '$development', '$p_vendor', '$p_vendor_code')";
         $result = $this->pdo->query($query);
         
         if ($result) {
@@ -255,11 +266,11 @@ class Position
 
         return $result;
     }
-    function edit_pos($id, $title, $longtitle, $unit, $category, $subcategory, $vendorcode, $provider, $price, $quant_robot, $quant_total, $min_balance, $assembly, $summary, $archive)
+    function edit_pos($id, $title, $longtitle, $unit, $category, $subcategory, $vendorcode, $provider, $price, $quant_robot, $quant_total, $min_balance, $assembly, $summary, $archive, $file=null, $development, $p_vendor, $p_vendor_code)
     {
         $date    = date("Y-m-d H:i:s");
         $user_id = intval($_COOKIE['id']);
-        $query   = "UPDATE `pos_items` SET `title` = '$title', `longtitle` = '$longtitle', `category` = '$category', `unit` = '$unit', `subcategory` = '$subcategory', `provider` = '$provider', `price` = '$price', `quant_robot` = '$quant_robot', `total` = '$quant_total', `min_balance` = '$min_balance', `vendor_code` = '$vendorcode', `assembly` = '$assembly', `summary` = '$summary', `archive` = '$archive', `update_date` = '$date', `update_user` = '$user_id' WHERE `pos_items`.`id` = $id;";
+        $query   = "UPDATE `pos_items` SET `title` = '$title', `longtitle` = '$longtitle', `category` = '$category', `unit` = '$unit', `subcategory` = '$subcategory', `provider` = '$provider', `price` = '$price', `quant_robot` = '$quant_robot', `total` = '$quant_total', `min_balance` = '$min_balance', `vendor_code` = '$vendorcode', `assembly` = '$assembly', `summary` = '$summary', `archive` = '$archive', `update_date` = '$date', `update_user` = '$user_id', `development` = '$development', `p_vendor` = '$p_vendor', `p_vendor_code` = '$p_vendor_code' WHERE `pos_items`.`id` = $id;";
         $result = $this->pdo->query($query);
         if ($result && $quant_total != 0) {
             $log_title      = "Редактирвоание позиции";
@@ -969,6 +980,8 @@ class Position
             $count  = $value['3'];
             $query  = "INSERT INTO `pos_kit_items` (`id_kit`, `id_pos`, `count`, `version`, `update_user`, `update_date`) VALUES ( $idd, $pos_id,$count,$version, $user_id, '$date');";
             $result = $this->pdo->query($query);
+            $query  = "UPDATE `pos_items` SET `development` = 0 WHERE `id` = $pos_id";
+            $result = $this->pdo->query($query);
         }
         return $result;
     }
@@ -1020,6 +1033,8 @@ class Position
             
             
             $query = "INSERT INTO `pos_kit_items` (`id_row`,`id_pos`,`id_kit`,`count`,`version`, `update_user`, `update_date`) VALUES ($row_id,$pos_id,$id,$count,$version, $user_id, '$date') ON DUPLICATE KEY UPDATE `count` = $count, `version` = $version, `update_user` = $user_id, `update_date` = '$date'  ";
+            $result = $this->pdo->query($query);
+            $query  = "UPDATE `pos_items` SET `development` = 0 WHERE `id` = $pos_id";
             $result = $this->pdo->query($query);
         }
         return $result;
@@ -1485,7 +1500,7 @@ class Position
     //выгрузка в файл
     function get_file_pos_item($category_id = null, $subcategory_id = null)
     {
-        $where = "WHERE `id` > 0";
+        $where = "WHERE `archive` = 0";
         if ($category_id != null) {
             $where .= " AND `category` = $category_id";
         }
@@ -1602,7 +1617,36 @@ class Position
         return $excel_name;
     }
 
-
+    //БРЕНД
+    function get_list_brend($status=null)
+    {
+        $where = ($status != null) ? " WHERE `status` = $status" : "";
+        $query   = "SELECT * FROM `pos_brand`".$where;
+        $result = $this->pdo->query($query);
+        $array = [];
+        while ($line = $result->fetch()) {
+            $array[$line["id"]] = $line;
+        }
+        return $array;
+    }
+    function add_brend($name, $status=self::STATUS_ACTIVE)
+    {
+        $query   = "INSERT INTO `pos_brand` (`id`, `name`, `status`) VALUES (NULL, '$name', $status);";
+        $result = $this->pdo->query($query);
+        return true;
+    }
+    function edit_brend($id, $name, $status)
+    {
+        $query   = "UPDATE `pos_brand` SET `name` = '$name', `status` = $status WHERE `id` = $id";
+        $result = $this->pdo->query($query);
+        return true;
+    }
+    function del_brend($id)
+    {
+        $query   = "DELETE FROM `pos_brand` WHERE `id` = $id";
+        $result = $this->pdo->query($query);
+        return true;
+    }
 
     function __destruct()
     {
