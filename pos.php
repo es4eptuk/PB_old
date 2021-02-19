@@ -1,5 +1,7 @@
 <?php 
 include 'include/class.inc.php';
+
+$allowed = $position->getAllowedNomenclature($userdata["user_id"]);
 ?>
 
 <?php include 'template/head.php' ?>
@@ -21,6 +23,7 @@ include 'include/class.inc.php';
       </h1>
       
     </section>
+
 
     <!-- Main content -->
     <section class="content">
@@ -97,7 +100,13 @@ include 'include/class.inc.php';
                         $brend = ($pos["p_vendor"] != 0) ? $position->getBrends[$pos["p_vendor"]]['name'] : "Нет";
                         $number = ($pos["p_vendor_code"] != "") ? $pos["p_vendor_code"] : "Нет";
                         $development = ($pos["development"] == 1) ? "Да" : "Нет";
-                     
+                        $knopki = ($allowed)
+                            ? "
+                                <i class='fa fa-2x fa-pencil' style='cursor: pointer;' data-id='".$pos['id']."'></i><br>
+                                <a href='add_pos.php?title=".$pos['title']."&longtitle=".$pos['longtitle']."&category=".$_GET['id']."&subcategory=".$pos['subcategory']."&provider=".$pos['provider']."&price=".$pos['price']."'><i class='fa fa-2x fa-copy' style='cursor: pointer;' id='".$pos['id']."'></i></a><br>
+                            "
+                            : "";
+
                        echo "
                        <tr>
                           <td>".$position->getSubcategoryes[$pos['subcategory']]['title']."</td>
@@ -112,13 +121,11 @@ include 'include/class.inc.php';
                           <td>".$brend." / ".$number."</td>
                           <td>".$img."</td>
                           <td>
-                            <i class='fa fa-2x fa-pencil' style='cursor: pointer;' data-id='".$pos['id']."'></i>
-                            <a href='add_pos.php?title=".$pos['title']."&longtitle=".$pos['longtitle']."&category=".$_GET['id']."&subcategory=".$pos['subcategory']."&provider=".$pos['provider']."&price=".$pos['price']."'><i class='fa fa-2x fa-copy' style='cursor: pointer;' id='".$pos['id']."'></i></a>
+                            ".$knopki."
                             <a href='pos_log.php?id=".$pos['id']."'><i class='fa fa-2x fa-list-alt'></i></a>
                           </td>
                         </tr>
-                       
-                       
+                      
                        ";
                     }  
                     
@@ -138,6 +145,7 @@ include 'include/class.inc.php';
       <!-- /.row -->
     </section>
     <!-- /.content -->
+
   </div>
   <!-- /.content-wrapper -->
  
@@ -147,6 +155,7 @@ include 'include/class.inc.php';
   <div class="control-sidebar-bg"></div>
 </div>
 <!-- ./wrapper -->
+<?php if ($allowed) { ?>
 <!-- Modal -->
 <div class="modal fade" id="pos_edit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
@@ -335,9 +344,8 @@ include 'include/class.inc.php';
     </div>
   </div>
 </div>
-
 <!-- Modal -->
-	<div aria-hidden="true" aria-labelledby="exampleModalLabel" class="modal fade" id="add_provider" role="dialog" tabindex="-1">
+<div aria-hidden="true" aria-labelledby="exampleModalLabel" class="modal fade" id="add_provider" role="dialog" tabindex="-1">
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -376,7 +384,7 @@ include 'include/class.inc.php';
 			</div>
 		</div>
 	</div>
-	
+<?php } ?>
 
 <!-- jQuery 3 -->
 <script src="../../bower_components/jquery/dist/jquery.min.js"></script>
@@ -394,6 +402,8 @@ include 'include/class.inc.php';
 <!-- AdminLTE for demo purposes -->
 <script src="../../dist/js/demo.js"></script>
 <!-- page script -->
+
+
 <script>
 
     $(document).ready(function () {
@@ -442,6 +452,7 @@ include 'include/class.inc.php';
         });
         */
 
+        <?php if ($allowed) { ?>
         var id_pos = 0;
         var pos_in_assembly = null;
         var pos_in_kits = null;
@@ -731,6 +742,8 @@ include 'include/class.inc.php';
                 });
             }
         });
+        <?php } ?>
+
         //отображать архив
         $('#check_show_all').change(function () {
             if ($(this).is(":checked")) {
@@ -741,5 +754,7 @@ include 'include/class.inc.php';
     });
 
 </script>
+
+
 </body>
 </html>

@@ -1,9 +1,12 @@
 <?php 
 include 'include/class.inc.php';
 
+
 $assembly = $position->get_info_assembly($_GET['id']);
 $assembly_id = $assembly['id_assembly'];
 $assembly_title = $assembly['title'];
+
+$allowed = $position->getAllowedAssembly($userdata["user_id"]);
 
 ?>
 <?php include 'template/head.php' ?>
@@ -31,6 +34,8 @@ $assembly_title = $assembly['title'];
 								<h3 class="box-title">Сборка # <span id="assembly_id"><?php echo $assembly_id; ?></span> - <?php echo $assembly_title; ?></h3>
 							</div><!-- /.box-header -->
 							<div class="box-body">
+
+                                <?php if ($allowed) { ?>
 								<form data-toggle="validator" id="add_pos" name="add_pos" role="form">
 									
 									<div class="form-group">
@@ -90,6 +95,8 @@ $assembly_title = $assembly['title'];
 										<button type="button" class="btn btn-primary btn-danger pull-right" id="delete" name="">В архив</button>
 									</div>
 								</form>
+                                <?php } ?>
+
 							</div><!-- /.box-body -->
 						</div>
 					</div><!-- /.col -->
@@ -104,6 +111,7 @@ $assembly_title = $assembly['title'];
 	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 
+    <?php if ($allowed) { ?>
 	<script>
 
         $(document).ready(function () {
@@ -238,5 +246,6 @@ $assembly_title = $assembly['title'];
         });
 
 	</script>
+    <?php } ?>
 </body>
 </html>

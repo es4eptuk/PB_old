@@ -1,5 +1,7 @@
 <?php 
 include 'include/class.inc.php';
+
+$allowed = $position->getAllowedNomenclature($userdata["user_id"]);
 ?>
 
 <?php include 'template/head.php' ?>
@@ -31,6 +33,8 @@ include 'include/class.inc.php';
             </div>
             <!-- /.box-header -->
             <div class="box-body">
+
+              <?php if ($allowed) { ?>
               <form role="form" data-toggle="validator" id="add_pos">
 
                   <!-- ident pos vendor/code -->
@@ -195,7 +199,7 @@ include 'include/class.inc.php';
                     <button type="submit" class="btn btn-primary" id="save_new">Сохранить и создать новую позицию</button>
                 </div>
               </form>
- 
+              <?php } ?>
             </div>
             <!-- /.box-body -->
           </div>
@@ -215,6 +219,7 @@ include 'include/class.inc.php';
   <div class="control-sidebar-bg"></div>
 </div>
 <!-- ./wrapper -->
+<?php if ($allowed) { ?>
 <!-- Modal -->
 <div class="modal fade" id="add_provider" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
@@ -255,8 +260,11 @@ include 'include/class.inc.php';
     </div>
   </div>
 </div>
+<?php } ?>
 
 <?php include 'template/scripts.php'; ?>
+
+<?php if ($allowed) { ?>
 <script>
 
     $("#category").change(function () {
@@ -512,7 +520,7 @@ include 'include/class.inc.php';
     }
   
 </script>
-
+<?php } ?>
 
 
 </body>

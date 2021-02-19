@@ -1,5 +1,7 @@
 <?php 
 include 'include/class.inc.php';
+
+$allowed = $position->getAllowedAssembly($userdata["user_id"]);
 ?>
 
 <?php include 'template/head.php' ?>
@@ -49,29 +51,28 @@ include 'include/class.inc.php';
                 $arr = $position->get_assembly(false, true);
 
                 if (isset($arr)) {
-                foreach ($arr as &$pos) {
-
-                       echo "
-                    <tr>
-                        <td>".$pos['id_assembly']."</td>
-                        <td>".$pos['vendor_code']."</td>                        
-                        <td>".$pos['title']."</td>
-                        <td><i class='fa fa-2x fa-pencil' style='cursor: pointer;' id='".$pos['id_assembly']."'></i></td>
-                    </tr>
-                       
-                       
+                    foreach ($arr as &$pos) {
+                        $knopka = ($allowed) ? "<i class='fa fa-2x fa-pencil' style='cursor: pointer;' id='".$pos['id_assembly']."'></i>" : "";
+                        echo "
+                            <tr>
+                                <td>".$pos['id_assembly']."</td>
+                                <td>".$pos['vendor_code']."</td>                        
+                                <td>".$pos['title']."</td>
+                                <td>".$knopka."</td>
+                            </tr>
                        ";
-                    
-                }
+                    }
                 } 
                 ?>
               </table>
               
             </div>
-            
+
+              <?php if ($allowed) { ?>
               <div class="box-footer">
                     <a href="./add_assembly.php" class="btn btn-primary" >Добавить сборку</a>
                 </div>
+              <?php } ?>
             <!-- /.box-body -->
           </div>
           <!-- /.box -->
@@ -106,6 +107,7 @@ include 'include/class.inc.php';
 <!-- AdminLTE for demo purposes -->
 <script src="../../dist/js/demo.js"></script>
 <!-- page script -->
+<?php if ($allowed) { ?>
 <script>
 
     $( "#items .fa-pencil" ).click(function() {
@@ -115,5 +117,6 @@ include 'include/class.inc.php';
     
 
 </script>
+<?php } ?>
 </body>
 </html>

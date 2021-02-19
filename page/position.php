@@ -3,6 +3,10 @@ class Position
 {
     const STATUS_ACTIVE = 1;
     const STATUS_NOTACTIVE = 0;
+    const ALLOWED = [
+        "Nomenclature" => [101,35,43,14,75],
+        "Assembly" => [101,35,43,14,75],
+    ];
 
     private $query;
     private $pdo;
@@ -70,6 +74,13 @@ class Position
         //
         $this->getStatus[self::STATUS_NOTACTIVE] = "не активно";
         $this->getStatus[self::STATUS_ACTIVE] = "активно";
+    }
+
+    function getAllowedNomenclature($userId) {
+        return (in_array($userId, self::ALLOWED["Nomenclature"])) ? true : false;
+    }
+    function getAllowedAssembly($userId) {
+        return (in_array($userId, self::ALLOWED["Assembly"])) ? true : false;
     }
 
     /**
