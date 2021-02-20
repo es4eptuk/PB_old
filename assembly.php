@@ -28,10 +28,15 @@ $allowed = $position->getAllowedAssembly($userdata["user_id"]);
     <section class="content">
       <div class="row">
         <div class="col-xs-12">
-          
+
 
           <div class="box">
-           
+            <?php if ($allowed) { ?>
+            <div class="box-header">
+                <a href="./add_assembly.php" class="btn btn-primary" >Добавить сборку</a>
+            </div>
+            <?php } ?>
+
             <!-- /.box-header -->
             <div class="box-body">
              
@@ -68,11 +73,6 @@ $allowed = $position->getAllowedAssembly($userdata["user_id"]);
               
             </div>
 
-              <?php if ($allowed) { ?>
-              <div class="box-footer">
-                    <a href="./add_assembly.php" class="btn btn-primary" >Добавить сборку</a>
-                </div>
-              <?php } ?>
             <!-- /.box-body -->
           </div>
           <!-- /.box -->
@@ -113,6 +113,10 @@ $allowed = $position->getAllowedAssembly($userdata["user_id"]);
     $( "#items .fa-pencil" ).click(function() {
             id_element = $(this).attr("id");
             window.location.href = "./edit_assembly.php?id=" + id_element;    
+    });
+
+    $('#items').DataTable({
+        "iDisplayLength": 50
     });
     
 

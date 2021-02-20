@@ -154,12 +154,12 @@ $allowed = $position->getAllowedNomenclature($userdata["user_id"]);
                   ?>
                   <input type="text" class="form-control" name="vendorcode"  id="vendorcode" value="<?php echo $cat."-".$gen_code; ?>">
                 </div>
-                
-                 <div class="form-group">
-                  <label>Поставщик <small>(<a href="#" data-toggle="modal" data-target="#add_provider">Добавить</a>)</small></label>
-                  <select class="form-control" name="provider" placeholder="" id="provider" required="required">
-                      <option value="0">Выберите поставщика...</option>
-                      <?php
+
+                  <div class="form-group">
+                      <label>Поставщик <small>(<a href="#" data-toggle="modal" data-target="#add_provider">Добавить</a>)</small></label>
+                      <select class="form-control select2" name="provider" id="provider">
+                          <option value="0">Выберите поставщика...</option>
+                          <?php
                           $arr = $position->get_pos_provider();
                           if (isset($_GET['provider'])) {
                               foreach ($arr as &$provider) {
@@ -174,10 +174,10 @@ $allowed = $position->getAllowedNomenclature($userdata["user_id"]);
                                   echo "<option value='" . $provider['id'] . "'>" . $provider['type'] . " " . $provider['title'] . "</option>";
                               }
                           }
-                      ?>
-                  </select>
-                </div>
-                
+                          ?>
+                      </select>
+                  </div>
+
                 <div class="form-group">
                   <label>Стоимость</label>
                   <input type="text" class="form-control" name="price" placeholder="0.00" id="price" value="<?= (isset($_GET['price'])) ? $_GET['price'] : 0; ?>">
@@ -263,9 +263,13 @@ $allowed = $position->getAllowedNomenclature($userdata["user_id"]);
 <?php } ?>
 
 <?php include 'template/scripts.php'; ?>
+<!-- Select2 -->
+<script src="./bower_components/select2/dist/js/select2.full.min.js"></script>
 
 <?php if ($allowed) { ?>
 <script>
+    //Select2
+    $('.select2').select2();
 
     $("#category").change(function () {
         var id = "";
@@ -311,6 +315,9 @@ $allowed = $position->getAllowedNomenclature($userdata["user_id"]);
             case "7":
                 cat_str = "LM";
                 break;
+            case "8":
+                cat_str = "FS";
+                break;
         }
         if (cat == 2 && subcat ==5) {
             code = "HS-" + max_id;
@@ -341,6 +348,9 @@ $allowed = $position->getAllowedNomenclature($userdata["user_id"]);
                 break;
             case "7":
                 cat_str = "LM";
+                break;
+            case "8":
+                cat_str = "FS";
                 break;
         }
         if (cat == 2 && subcat ==5) {

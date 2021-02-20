@@ -239,23 +239,16 @@ $allowed = $position->getAllowedNomenclature($userdata["user_id"]);
                 </div>
                 
                  <div class="form-group">
-                  <label>Поставщик <small>(<a href="#" data-toggle="modal" data-target="#add_provider">Добавить</a>)</small></label>
-                  <select class="form-control" name="provider" placeholder="Выберите категорию" id="provider" required="required">
+                  <label class="control-label">Поставщик <small>(<a href="#" data-toggle="modal" data-target="#add_provider">Добавить</a>)</small></label>
+                  <select class="form-control select2" name="provider" id="provider" required="required">
                    <option>Выберите поставщика...</option>
                    <?php 
-                   $arr = $position->get_pos_provider();
-                
+                    $arr = $position->get_pos_provider();
                     foreach ($arr as &$provider) {
-                       echo "
-                       <option value='".$provider['id']."'>".$provider['title'].", ".$provider['type']."</option>
-                       
-                       ";
+                       echo "<option value='".$provider['id']."'>".$provider['title'].", ".$provider['type']."</option>";
                     }
-                   
                    ?>
                   </select>
-                  
-                  
                 </div>
                 
                 <div class="form-group">
@@ -386,27 +379,19 @@ $allowed = $position->getAllowedNomenclature($userdata["user_id"]);
 	</div>
 <?php } ?>
 
-<!-- jQuery 3 -->
-<script src="../../bower_components/jquery/dist/jquery.min.js"></script>
-<!-- Bootstrap 3.3.7 -->
-<script src="../../bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-<!-- DataTables -->
-<script src="../../bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
-<script src="../../bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
-<!-- SlimScroll -->
-<script src="../../bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
-<!-- FastClick -->
-<script src="../../bower_components/fastclick/lib/fastclick.js"></script>
-<!-- AdminLTE App -->
-<script src="../../dist/js/adminlte.min.js"></script>
-<!-- AdminLTE for demo purposes -->
-<script src="../../dist/js/demo.js"></script>
-<!-- page script -->
+<?php include 'template/scripts.php'; ?>
+<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+<!-- Select2 -->
+<script src="./bower_components/select2/dist/js/select2.full.min.js"></script>
 
 
 <script>
 
+
+
     $(document).ready(function () {
+        $('.select2').select2({ width: '100%' });
         /* Для таблицы */
 
         // Setup - add a text input to each footer cell

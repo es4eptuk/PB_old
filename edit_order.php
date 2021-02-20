@@ -92,30 +92,20 @@ $order_date = $order_date->format('d.m.Y');
 									</div>
 									
 								    <div class="form-group">
-										<label>Контрагент <small>(<a data-target="#add_provider" data-toggle="modal" href="#">Добавить</a>)</small></label> <select class="form-control" id="provider" name="provider" required="required">
-											<option>
-												Выберите контррагента...
-											</option><?php 
-											                   $arr = $position->get_pos_provider();
-											                
-											                    foreach ($arr as &$provider) {
-											                      if ( $provider['id'] == $order_provider ) {  
-											                        
-											                       echo "
-											                      <option value='".$provider['id']."' selected>".$provider['title'].", ".$provider['type']."</option>
-											                       ";
-											                       $order_provider = $provider['title'].", ".$provider['type'];
-											                      } else {
-											                          
-											                          echo "
-											                       <option value='".$provider['id']."'>".$provider['type']." ".$provider['title']."</option>
-											                       
-											                       "; 
-											                          
-											                      }
-											                    }
-											                   
-											                   ?>
+										<label>Контрагент <small>(<a data-target="#add_provider" data-toggle="modal" href="#">Добавить</a>)</small></label>
+                                        <select class="form-control select2" id="provider" name="provider" required="required">
+											<option>Выберите контррагента...</option>
+                                            <?php
+                                               $arr = $position->get_pos_provider();
+                                                foreach ($arr as &$provider) {
+                                                  if ( $provider['id'] == $order_provider ) {
+                                                   echo "<option value='".$provider['id']."' selected>".$provider['title'].", ".$provider['type']."</option>";
+                                                   $order_provider = $provider['title'].", ".$provider['type'];
+                                                  } else {
+                                                    echo "<option value='".$provider['id']."'>".$provider['type']." ".$provider['title']."</option>";
+                                                  }
+                                                }
+											?>
 											                  
 										</select>
 									
@@ -301,8 +291,12 @@ $order_date = $order_date->format('d.m.Y');
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <script src="./bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.js"></script>
     <script src="./bower_components/bootstrap-datepicker/dist/locales/bootstrap-datepicker.ru.min.js"></script>
+    <!-- Select2 -->
+    <script src="../../bower_components/select2/dist/js/select2.full.min.js"></script>
 
 	<script>
+
+    $('.select2').select2();
 
     //datepicker
     $(document).on('focus',".datepicker", function(){

@@ -53,22 +53,17 @@ if (isset($_GET['copy'])) {
                                             <option value="Медкейс">Медкейс</option>
 										</select>
 									</div>
-								   
+
 								   <div class="form-group" style="display: none;" id="prvd">
-										<label>Контрагент <small>(<a data-target="#add_provider" data-toggle="modal" href="#">Добавить</a>)</small></label> 
-										<select class="form-control" id="provider" name="provider" required="required">
-											<option value="0">
-												Выберите контррагента...
-											</option><?php 
-											                   $arr = $position->get_pos_provider();
-											                
-											                    foreach ($arr as &$provider) {
-											                       echo "
-											                       <option value='".$provider['id']."'>".$provider['title'].", ".$provider['type']."</option>
-											                       ";
-											                    }
-											                   
-											                   ?>
+										<label>Контрагент <small>(<a data-target="#add_provider" data-toggle="modal" href="#">Добавить</a>)</small></label>
+                                        <select class="form-control select2" id="provider" name="provider" required="required">
+											<option value="0">Выберите контррагента...</option>
+                                            <?php
+                                               $arr = $position->get_pos_provider();
+                                                foreach ($arr as &$provider) {
+                                                   echo "<option value='".$provider['id']."'>".$provider['title'].", ".$provider['type']."</option>";
+                                                }
+						                    ?>
 										</select>
 									</div>
 								   
@@ -150,11 +145,15 @@ if (isset($_GET['copy'])) {
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <!-- Select2 -->
     <script src="../../bower_components/select2/dist/js/select2.full.min.js"></script>
+
+
 	<script>
 
-        $(document).ready(function () {
 
-            $('.select2').select2();
+
+        $(document).ready(function () {
+            $('.select2').select2({ width: '100%' });
+
 
             var arr_str = [];
             var arr_ids = [];

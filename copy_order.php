@@ -95,30 +95,19 @@ $order_responsible = $order['order_responsible'];
 										</select>
 									</div>
 								    <div class="form-group">
-										<label>Контрагент <small>(<a data-target="#add_provider" data-toggle="modal" href="#">Добавить</a>)</small></label> <select class="form-control select2" id="provider" name="provider" required="required">
-											<option value="0">
-												Выберите контррагента...
-											</option><?php 
-											                  $arr = $position->get_pos_provider();
-											                
-											                    foreach ($arr as &$provider) {
-											                      if ( $provider['id'] == $order_provider ) {  
-											                        
-											                       echo "
-											                      <option value='".$provider['id']."' selected>".$provider['title'].", ".$provider['type']."</option>
-											                       
-											                       ";
-											                      } else {
-											                          
-											                          echo "
-											                       <option value='".$provider['id']."'>".$provider['type']." ".$provider['title']."</option>
-											                       
-											                       "; 
-											                          
-											                      }
-											                    }
-											                   
-											                   ?>
+										<label>Контрагент <small>(<a data-target="#add_provider" data-toggle="modal" href="#">Добавить</a>)</small></label>
+                                        <select class="form-control select2" id="provider" name="provider" required="required">
+											<option value="0">Выберите контррагента...</option>
+                                            <?php
+                                              $arr = $position->get_pos_provider();
+                                                foreach ($arr as &$provider) {
+                                                  if ( $provider['id'] == $order_provider ) {
+                                                      echo "<option value='".$provider['id']."' selected>".$provider['title'].", ".$provider['type']."</option>";
+                                                  } else {
+                                                      echo "<option value='".$provider['id']."'>".$provider['type']." ".$provider['title']."</option>";
+                                                  }
+                                                }
+											?>
 										</select>
 									</div>
                                     <p class="p-label">Добавить позицию</p>

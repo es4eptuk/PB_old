@@ -100,7 +100,7 @@ include 'include/class.inc.php';
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Редактирование покупателя</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Редактирование форму</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -203,7 +203,7 @@ include 'include/class.inc.php';
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Добавить покупателя</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Добавить форму</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>

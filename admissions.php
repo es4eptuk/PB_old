@@ -91,7 +91,7 @@ include 'include/class.inc.php';
   <div class="control-sidebar-bg"></div>
 </div>
 <!-- ./wrapper -->
-<!-- Modal -->
+<!-- Modal
 <div class="modal fade" id="order_edit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -104,8 +104,7 @@ include 'include/class.inc.php';
       <div class="modal-body">
           
           <form role="form" data-toggle="validator" id="add_pos">
-                <!-- text input -->
-                <!-- select -->
+
                 <div class="form-group">
                   <label>Категория</label>
                   <select class="form-control" name="category" placeholder="Выберите категорию" id="category" required="required">
@@ -127,22 +126,15 @@ include 'include/class.inc.php';
                 
                  <div class="form-group">
                   <label>Поставщик <small>(<a href="#" data-toggle="modal" data-target="#add_provider">Добавить</a>)</small></label>
-                  <select class="form-control" name="provider" placeholder="Выберите категорию" id="provider" required="required">
+                  <select class="form-control select2" name="provider" id="provider" required="required">
                    <option>Выберите поставщика...</option>
                    <?php 
                    $arr = $position->get_pos_provider();
-                
                     foreach ($arr as &$provider) {
-                       echo "
-                       <option value='".$provider['id']."'>".$provider['type']." ".$provider['title']."</option>
-                       
-                       ";
+                       echo "<option value='".$provider['id']."'>".$provider['type']." ".$provider['title']."</option>";
                     }
-                   
                    ?>
                   </select>
-                  
-                  
                 </div>
                 
                 <div class="form-group">
@@ -192,24 +184,18 @@ include 'include/class.inc.php';
     </div>
   </div>
 </div>
-<!-- jQuery 3 -->
-<script src="../../bower_components/jquery/dist/jquery.min.js"></script>
-<!-- Bootstrap 3.3.7 -->
-<script src="../../bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-<!-- DataTables -->
-<script src="../../bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
-<script src="../../bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
-<!-- SlimScroll -->
-<script src="../../bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
-<!-- FastClick -->
-<script src="../../bower_components/fastclick/lib/fastclick.js"></script>
-<!-- AdminLTE App -->
-<script src="../../dist/js/adminlte.min.js"></script>
-<!-- AdminLTE for demo purposes -->
-<script src="../../dist/js/demo.js"></script>
-<!-- page script -->
+-->
+<?php include 'template/scripts.php'; ?>
+<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+<!-- Select2 -->
+<script src="./bower_components/select2/dist/js/select2.full.min.js"></script>
+
 <script>
-var id_order=0;
+    //$('.select2').select2();
+
+    /*
+    var id_order=0;
 
 
     $( "#orders tr" ).click(function() {
@@ -248,6 +234,7 @@ var id_order=0;
           });
     
    }
+   */
 
    /*
   function save_close() {
@@ -285,7 +272,7 @@ var id_order=0;
  }
 
     */
- 
+ /*
  function get_info_user(id) {
      
       $.post( "./api.php", { 
@@ -302,6 +289,8 @@ var id_order=0;
           });
      
  }
+
+  */
  $('#orders').DataTable({
        "iDisplayLength": 100,
         "order": [[ 0, "desc" ]]
