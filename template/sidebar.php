@@ -31,7 +31,7 @@
            <ul class="treeview-menu">
                <li><a href="./add_pos.php"><i class="fa fa-circle-o"></i>Добавить позицию</a></li>
                <li><a href="./pos.php?id=1"><i class="fa fa-circle-o"></i> Механика</a></li>
-               <li><a href="./pos.php?id=8"><i class="fa fa-circle-o"></i> Крепежи</a></li>
+               <li><a href="./pos.php?id=8"><i class="fa fa-circle-o"></i> Крепеж</a></li>
                <li><a href="./pos.php?id=2"><i class="fa fa-circle-o"></i> Аппаратка</a></li>
                <li><a href="./pos.php?id=3"><i class="fa fa-circle-o"></i> Корпус</a></li>
                <li><a href="./pos.php?id=4"><i class="fa fa-circle-o"></i> Упаковка</a></li>
@@ -49,7 +49,7 @@
                </a>
                <ul class="treeview-menu">
                    <li><a href="./pos_on_robot.php?id=1"><i class="fa fa-circle-o"></i> Механика</a></li>
-                   <li><a href="./pos_on_robot.php?id=8"><i class="fa fa-circle-o"></i> Крепежи</a></li>
+                   <li><a href="./pos_on_robot.php?id=8"><i class="fa fa-circle-o"></i> Крепеж</a></li>
                    <li><a href="./pos_on_robot.php?id=2"><i class="fa fa-circle-o"></i> Аппаратка</a></li>
                    <li><a href="./pos_on_robot.php?id=3"><i class="fa fa-circle-o"></i> Корпус</a></li>
                    <li><a href="./pos_on_robot.php?id=4"><i class="fa fa-circle-o"></i> Упаковка</a></li>
@@ -70,7 +70,7 @@
           <ul class="treeview-menu">
             <li><a href="./add_order.php"><i class="fa fa-circle-o"></i>Добавить заказ</a></li>
             <li><a href="./orders.php?id=1"><i class="fa fa-circle-o"></i> Механика</a></li>
-            <li><a href="./orders.php?id=8"><i class="fa fa-circle-o"></i> Крепежи</a></li>
+            <li><a href="./orders.php?id=8"><i class="fa fa-circle-o"></i> Крепеж</a></li>
             <li><a href="./orders.php?id=2"><i class="fa fa-circle-o"></i> Аппаратка</a></li>
             <li><a href="./orders.php?id=3"><i class="fa fa-circle-o"></i> Корпус</a></li>
             <li><a href="./orders.php?id=4"><i class="fa fa-circle-o"></i> Упаковка</a></li>
@@ -91,7 +91,7 @@
           <ul class="treeview-menu">
             <li><a href="./add_admission.php"><i class="fa fa-circle-o"></i>Добавить поступление</a></li>
             <li><a href="./admissions.php?id=1"><i class="fa fa-circle-o"></i> Механика</a></li>
-            <li><a href="./admissions.php?id=8"><i class="fa fa-circle-o"></i> Крепежи</a></li>
+            <li><a href="./admissions.php?id=8"><i class="fa fa-circle-o"></i> Крепеж</a></li>
             <li><a href="./admissions.php?id=2"><i class="fa fa-circle-o"></i> Аппаратка</a></li>
             <li><a href="./admissions.php?id=3"><i class="fa fa-circle-o"></i> Корпус</a></li>
             <li><a href="./admissions.php?id=4"><i class="fa fa-circle-o"></i> Упаковка</a></li>
@@ -132,7 +132,7 @@
           </a>
           <ul class="treeview-menu">
             <li><a href="./plan.php?id=1"><i class="fa fa-circle-o"></i> Механика</a></li>
-            <li><a href="./plan.php?id=8"><i class="fa fa-circle-o"></i> Крепежи</a></li>
+            <li><a href="./plan.php?id=8"><i class="fa fa-circle-o"></i> Крепеж</a></li>
             <li><a href="./plan.php?id=2"><i class="fa fa-circle-o"></i> Аппаратка</a></li>
             <li><a href="./plan.php?id=3"><i class="fa fa-circle-o"></i> Корпус</a></li>
             <li><a href="./plan.php?id=4"><i class="fa fa-circle-o"></i> Упаковка</a></li>
@@ -154,7 +154,7 @@
            </a>
            <ul class="treeview-menu">
                <li><a href="./pos_warehouse.php?id=1"><i class="fa fa-circle-o"></i> Механика</a></li>
-               <li><a href="./pos_warehouse.php?id=8"><i class="fa fa-circle-o"></i> Крепежи</a></li>
+               <li><a href="./pos_warehouse.php?id=8"><i class="fa fa-circle-o"></i> Крепеж</a></li>
                <li><a href="./pos_warehouse.php?id=2"><i class="fa fa-circle-o"></i> Аппаратка</a></li>
                <li><a href="./pos_warehouse.php?id=3"><i class="fa fa-circle-o"></i> Корпус</a></li>
                <li><a href="./pos_warehouse.php?id=4"><i class="fa fa-circle-o"></i> Упаковка</a></li>
@@ -384,7 +384,7 @@ if ($userdata['group'] == 1) {
           </a>
           <ul class="treeview-menu">
             <li><a href="./catalog.php?id=1"><i class="fa fa-circle-o"></i> Механика</a></li>
-            <li><a href="./catalog.php?id=8"><i class="fa fa-circle-o"></i> Крепежи</a></li>
+            <li><a href="./catalog.php?id=8"><i class="fa fa-circle-o"></i> Крепеж</a></li>
             <li><a href="./catalog.php?id=2"><i class="fa fa-circle-o"></i> Аппаратка</a></li>
             <li><a href="./catalog.php?id=3"><i class="fa fa-circle-o"></i> Корпус</a></li>
             <li><a href="./catalog.php?id=4"><i class="fa fa-circle-o"></i> Упаковка</a></li>
