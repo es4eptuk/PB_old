@@ -49,7 +49,7 @@ class BitrixForm
         'ASSIGNED' => 1097,
         'TYPE' => 1350,
         'CONNECT' => 1271,
-        'URL' => 'https://team.promo-bot.ru/rest/1097/xh3yrqn4yj4pq0ir',
+        'URL' => 'https://team.promo-bot.ru/rest/1097/7kxtvn9s9u811vm1',
         'EMAIL' => 'a.baidin@promo-bot.ru',
     ];
     /*const __DIRECTION_BY = [
