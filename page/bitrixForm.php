@@ -301,6 +301,9 @@ class BitrixForm
             if (isset($params['comment_form']) && !empty($params['comment_form'])) {
                 $comment .= "Comment_form:\n".urldecode($params['comment_form'])."\n";
             }
+            if (isset($params['comment']) && !empty($params['comment'])) {
+                $comment .= "comment:\n".urldecode($params['comment'])."\n";
+            }
             if (isset($params['country']) && !empty($params['country'])) {
                 $comment .= "Country:\n".urldecode($params['country'])."\n";
             }
