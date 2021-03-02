@@ -12,6 +12,7 @@ class Position
     private $pdo;
     private $writeoff;
     private $log;
+    private $robots;
 
     //списки
     public $getCategoryes;
@@ -35,10 +36,11 @@ class Position
 
     function init()
     {
-        global $writeoff, $log;
+        global $writeoff, $log, $robots;
 
         $this->writeoff = $writeoff; //new Writeoff;
         $this->log = $log; //new Log;
+        $this->robots = $robots;
 
         //список категорий
         $query = "SELECT * FROM `pos_category`";
@@ -1508,9 +1510,130 @@ class Position
         return ['status' => '202', 'result' => 'Файл не загружен!'];
     }
 
+    //выгрузка в файл для подверсии
+    function get_file_pos_item_subversion($subversion_id)
+    {
+        $pos_items = [];
+        $arr_subver = $this->robots->get_composition_subversion($subversion_id);
+        //print_r($arr_subver);die;
+
+        $query = "SELECT * FROM `pos_items` WHERE `archive` = 0";
+        $result = $this->pdo->query($query);
+        while ($line = $result->fetch()) {
+            if (array_key_exists($line['id'], $arr_subver)) {
+                $pos_items[$line['id']] = $line;
+            }
+        }
+        unset($arr_subver);
+
+        //создаем файлы
+        $f_name = time();
+        if (!file_exists(PATCH_DIR . "/orders/")) {
+            mkdir(PATCH_DIR . "/orders/", 0777);
+        }
+        $excel_name = PATCH_DIR . "/orders/" . $f_name . ".xlsx";
+        require_once('excel/Classes/PHPExcel.php');
+        require_once('excel/Classes/PHPExcel/IOFactory.php');
+        $objPHPExcel = new PHPExcel();
+
+        // Add some data
+        $objPHPExcel->setActiveSheetIndex(0);
+        $sheet = $objPHPExcel->getActiveSheet();
+
+        //ширина
+        $sheet->getColumnDimension('A')->setWidth(10);
+        $sheet->getColumnDimension('B')->setWidth(6);
+        $sheet->getColumnDimension('C')->setWidth(9);
+        $sheet->getColumnDimension('D')->setWidth(14);
+        $sheet->getColumnDimension('E')->setWidth(6);
+        $sheet->getColumnDimension('F')->setWidth(12);
+        $sheet->getColumnDimension('G')->setWidth(12);
+        $sheet->getColumnDimension('H')->setWidth(8);
+        $sheet->getColumnDimension('I')->setWidth(8);
+        $sheet->getColumnDimension('J')->setWidth(8);
+
+        //колонки
+        $sheet->setCellValue("A1", "Фото");
+        $sheet->setCellValue("B1", "ID");
+        $sheet->setCellValue("C1", "Артикул");
+        $sheet->setCellValue("D1", "Наименование");
+        $sheet->setCellValue("E1", "Ед.\nизм.");
+        $sheet->setCellValue("F1", "Категория");
+        $sheet->setCellValue("G1", "Подкатегория");
+        $sheet->setCellValue("H1", "Сборная\nпозиция");
+        $sheet->setCellValue("I1", "Текущее\nкол-во");
+        $sheet->setCellValue("J1", "Новое\nкол-во");
+        $sheet->getRowDimension(1)->setRowHeight(50);
+
+        $row = 1;
+        foreach ($pos_items as $item) {
+            $row++;
+            $filename_thumb = PATCH_DIR.'/img/catalog/'.$item['category'].'/thumb/'.$item['vendor_code'].".jpg";
+            $filename_thumb = (file_exists($filename_thumb)) ? $filename_thumb : PATCH_DIR.'/img/no-image.png';
+            $logo = new PHPExcel_Worksheet_Drawing();
+            $logo->setPath($filename_thumb);
+            $logo->setCoordinates("A" . $row);
+            $logo->setOffsetX(5);
+            $logo->setOffsetY(5);
+            $width = $logo->getWidth();
+            $height = $logo->getHeight();
+            if ($width > $height) {
+                $logo->setWidth(70);
+            } else {
+                $logo->setHeight(70);
+            }
+            $logo->setWorksheet($sheet);
+            unset($logo);
+
+            $sheet->setCellValue("B" . $row, $item['id']);
+            $sheet->setCellValue("C" . $row, $item['vendor_code']);
+            $sheet->setCellValue("D" . $row, $item['title']);
+            $sheet->setCellValue("E" . $row, $this->getUnits[$item['unit']]['title']);
+            $sheet->setCellValue("F" . $row, $this->getCategoryes[$item['category']]['title']);
+            $sheet->setCellValue("G" . $row, $this->getSubcategoryes[$item['subcategory']]['title']);
+            $assembly = ($item['assembly'] != 0) ? "Да" : "Нет";
+            $sheet->setCellValue("H" . $row, $assembly);
+            $sheet->setCellValue("I" . $row, $item['total']);
+            $sheet->setCellValue("J" . $row, "");
+            $sheet->getRowDimension($row)->setRowHeight(70);
+        }
+        //для всей таблицы
+        $styleArray = [
+            'font' => [
+                'name' => 'Calibri',
+                'size' => 10,
+            ],
+            'alignment' => [
+                'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+                'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER,
+                'wrap' => true,
+            ],
+            'borders' => [
+                'outline' => [
+                    'style' => PHPExcel_Style_Border::BORDER_THIN,
+                    'color' => ['rgb' => '000000'],
+                ],
+                'inside' => [
+                    'style' => PHPExcel_Style_Border::BORDER_THIN,
+                    'color' => ['rgb' => '000000'],
+                ],
+            ],
+        ];
+        $sheet->getStyle("A1:J".$row)->applyFromArray($styleArray);
+
+        //для отдельных колонок
+
+        // Save
+        $objWriter = new PHPExcel_Writer_Excel2007($objPHPExcel);
+        $objWriter->save($excel_name);
+
+        return $excel_name;
+    }
+
     //выгрузка в файл
     function get_file_pos_item($category_id = null, $subcategory_id = null)
     {
+        $pos_items = [];
         $where = "WHERE `archive` = 0";
         if ($category_id != null) {
             $where .= " AND `category` = $category_id";

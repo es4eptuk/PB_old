@@ -27,6 +27,14 @@ if (isset($_POST['unload'])) {
     file_force_download($file);
 }
 
+if (isset($_POST['unload_subversion'])) {
+    $unload_subversion_id = ($_POST['unload_subversion_id'] != 0) ? $_POST['unload_subversion_id'] : null;
+    if ($unload_subversion_id != null) {
+        $file = $position->get_file_pos_item_subversion($unload_subversion_id);
+        file_force_download($file);
+    }
+}
+
 ?>
 
 <?php include 'template/head.php' ?>
@@ -118,6 +126,43 @@ if (isset($_POST['unload'])) {
                     </div>
                 </div>
 
+
+                <div class="box box-default collapsed-box">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Выгрузить шаблон для инвенторизации для подверсии</h3>
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
+                        </div>
+                    </div>
+                    <div class="box-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <form action="" method="post" name="unload_subversion">
+                                    <div style="float:left;margin-right:20px;">
+                                        <div class="form-group">
+                                            <select class="form-control" name="unload_subversion_id" id="unload_subversion_id">
+                                                <option value="0">Выбирите подверсию</option>
+                                                <?php
+                                                    $arr = $robots->getSubVersion;
+                                                    foreach ($arr as $subversion) {
+                                                        $selected = ($subversion['id'] == $robot_subversion_id) ? "selected" : "";
+                                                        echo "<option value='" . $subversion['id'] . " '".$selected.">" . $subversion['title'] . "</option>";
+                                                    }
+                                                ?>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div style="float:right;margin-right:20px;">
+                                        <button class="btn btn-primary" type="submit" id="unload_subversion" name="unload_subversion">Выгрузить</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
                 <div class="box box-default collapsed-box">
                     <div class="box-header with-border">
                         <h3 class="box-title">Пакетная загрузка</h3>
@@ -174,6 +219,9 @@ if (isset($_POST['unload'])) {
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <!-- Select2 -->
     <script src="../../bower_components/select2/dist/js/select2.full.min.js"></script>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/validate.js/0.13.1/validate.min.js"></script>
+
 	<script>
 
     $(document).ready(function() {
