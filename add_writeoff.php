@@ -72,6 +72,17 @@ if (isset($_GET['copy'])) {
                                       <label>Описание</label>
                                       <textarea class="form-control" rows="3" placeholder="Укажите уточнение к списанию ..." id="description"></textarea>
                                     </div>
+
+                                    <p class="p-label">Добавить позиции комплектом </p>
+                                    <div class="form-group input-group" id="pos">
+                                        <input type="text" style="width:85%" class="form-control" name="pos_kit_name" id="pos_kit_name" placeholder="Введите название комплекта...">
+                                        <input type="text" style="width:5%" class="form-control" name="pos_kit_dis" id="pos_kit_dis" placeholder="∑=" disabled="disabled">
+                                        <input type="text" style="width:10%" class="form-control" name="pos_kit_total" id="pos_kit_total" placeholder="Количество">
+                                        <span class="input-group-btn">
+                                              <button type="button" class="btn btn-info btn-flat" id="add_kit">+</button>
+                                        </span>
+                                    </div>
+
                                     <p class="p-label">Добавить позицию</p>
 								    <div class="form-group input-group" id="pos">
                                       
@@ -199,6 +210,12 @@ if (isset($_GET['copy'])) {
                 source: "./tt.php", // url-адрес
                 minLength: 2 // минимальное количество для совершения запроса
             });
+
+            $("#pos_kit_name").autocomplete({
+                source: "./tt_kit.php", // url-адрес
+                minLength: 1 // минимальное количество для совершения запроса
+            });
+
             /*
             function set_category(data) {
                 category1 = data;
@@ -217,6 +234,10 @@ if (isset($_GET['copy'])) {
                 var vendor_code = arr_str[1];
                 var title = arr_str[2];
                 var subcategory = "";
+                if (!(id.match(/^[\d]{1,5}$/g) && title !== undefined)) {
+                    alert("Неверно указана позиция!");
+                    return false;
+                }
                 $.post("./api.php", {
                     action: "get_info_pos",
                     id: id
@@ -232,8 +253,49 @@ if (isset($_GET['copy'])) {
                         <td><i class="fa fa-2x fa-remove" style="cursor: pointer;"></i></td> \
                         </tr>');
                     $('#search_pos').val("");
+                    change_total_price();
                 });
                 //arr_ids.push([arr_str[0], arr_str[1]]);
+                return false;
+            });
+
+            $("#add_kit").click(function () {
+                var str = $('#pos_kit_name').val();
+                arr_str = str.split('::');
+                var id = arr_str[0];
+                var title = arr_str[1];
+                var total = $('#pos_kit_total').val();
+                if (!(id.match(/^[\d]{1,5}$/g) && title !== undefined)) {
+                    alert("Неверно указан комплект!");
+                    return false;
+                }
+                if (!total.match(/^[\d]{1,2}$/g)) {
+                    alert("Неверно указано количество!");
+                    return false;
+                }
+                $.post("./api.php", {
+                    action: "get_pos_in_kit",
+                    id: id
+                }).done(function (data) {
+                    var pos_arr = jQuery.parseJSON(data);
+                    $.each( pos_arr, function( key, pos_info ) {
+                        $('#listPos tr:eq(0)').after('<tr> \
+                            <td>' + pos_info['id_pos'] + '</td> \
+                            <td>' + pos_info['vendor_code'] + '</td> \
+                            <td>' + pos_info['title'] + '</td> \
+                            <td class="quant"><span style="position: absolute;">' + (pos_info['count']*total) + '</span><input type="text" class="form-control quant_inp" style="position: relative;  width: 55px; text-align: center;" value="' + (pos_info['count']*total) + '"></td> \
+                            <td class="price">' + pos_info['price'] + '</td> \
+                            <td class="sum">' + (pos_info['count']*total*pos_info['price']) + '</td> \
+                            <td><i class="fa fa-2x fa-remove" style="cursor: pointer;"></i></td> \
+                        </tr>');
+                    });
+                    var comment = $('#description').val();
+                    $('#description').val(comment+"\n"+str+" - "+total+"шт");
+                    $('#pos_kit_name').val("");
+                    $('#pos_kit_total').val("");
+                    change_total_price();
+                });
+
                 return false;
             });
 
