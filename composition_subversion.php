@@ -71,6 +71,7 @@ if (isset($_GET['subversion'])) {
                                 usort($arr_pos, function ($a,$b) {
                                     return strcmp($a["title"], $b["title"]);
                                 });
+                                $summ = 0;
                                 foreach ($arr_pos as $pos) {
                                     $assembly = ($pos['assembly'] == 0) ? '' :  '<i class="fa fa-check"></i>';
                                     echo '   
@@ -85,9 +86,15 @@ if (isset($_GET['subversion'])) {
                                         <td>'. ($pos['price']*$pos['count']).'</td>
                                         <td><i class="fa fa-2x fa-remove" style="cursor:pointer;"></i></td> 
                                     </tr>
-                                ';
+                                    ';
+                                    $summ += $pos['price']*$pos['count'];
                                 }
                                 ?>
+                                <tr>
+                                    <td align="right" colspan="7"><b>ИТОГО:<b></td>
+                                    <td><?= $summ ?></td>
+                                    <td></td>
+                                </tr>
                                 </tbody>
                             </table>
                             <?php }?>

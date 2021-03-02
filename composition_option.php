@@ -71,23 +71,30 @@ if (isset($_GET['option'])) {
                                     usort($arr_pos, function ($a,$b) {
                                         return strcmp($a["title"], $b["title"]);
                                     });
+                                    $summ = 0;
                                     foreach ($arr_pos as $pos) {
                                         $assembly = ($pos['assembly'] == 0) ? '' :  '<i class="fa fa-check"></i>';
                                         echo '   
-                                    <tr> 
-                                        <td>'.$pos['id_pos'].'</td>
-                                        <td>'.$assembly.'</td>
-                                        <td>'.$pos['vendor_code'].'</td>
-                                        <td>'.$pos['title'].'</td> 
-                                        <td class="quant">'.$pos['count'].'</td>                                         
-                                        <td>'.$pos['total'].'</td>                                          
-                                        <td>'.$pos['price'].'</td>                                        
-                                        <td>'. ($pos['price']*$pos['count']).'</td>
-                                        <td><i class="fa fa-2x fa-remove" style="cursor:pointer;"></i></td> 
-                                    </tr>
-                                ';
+                                        <tr> 
+                                            <td>'.$pos['id_pos'].'</td>
+                                            <td>'.$assembly.'</td>
+                                            <td>'.$pos['vendor_code'].'</td>
+                                            <td>'.$pos['title'].'</td> 
+                                            <td class="quant">'.$pos['count'].'</td>                                         
+                                            <td>'.$pos['total'].'</td>                                          
+                                            <td>'.$pos['price'].'</td>                                        
+                                            <td>'. ($pos['price']*$pos['count']).'</td>
+                                            <td><i class="fa fa-2x fa-remove" style="cursor:pointer;"></i></td> 
+                                        </tr>
+                                        ';
+                                        $summ += $pos['price']*$pos['count'];
                                     }
                                     ?>
+                                    <tr>
+                                        <td align="right" colspan="7"><b>ИТОГО:<b></td>
+                                        <td><?= $summ ?></td>
+                                        <td></td>
+                                    </tr>
                                     </tbody>
                                 </table>
                             <?php }?>

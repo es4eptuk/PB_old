@@ -156,8 +156,8 @@ $allowed = $position->getAllowedNomenclature($userdata["user_id"]);
 </div>
 <!-- ./wrapper -->
 <?php if ($allowed) { ?>
-<!-- Modal -->
-<div class="modal fade" id="pos_edit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<!-- Modal tabindex="-1" -->
+<div class="modal fade" id="pos_edit" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -258,23 +258,17 @@ $allowed = $position->getAllowedNomenclature($userdata["user_id"]);
                 
                  <div class="form-group">
                   <label>Сборка</label>
-
-                  <select class="form-control" name="assembly"  id="assembly" required="required">
-                   <option value="0"></option>
-                   <?php 
-                   $arr = $position->get_assembly(false, true);
-                
-                    foreach ($arr as &$provider) {
-                        
-                        
-                       echo "
-                       <option value='".$provider['id_assembly']."'>".$provider['title']."</option>
-                       ";
-                    }
-                   
-                   ?>
+                  <select class="form-control select2" name="assembly"  id="assembly" required="required">
+                       <option value="0"></option>
+                       <?php
+                       $arr = $position->get_assembly(false, true);
+                       foreach ($arr as &$provider) {
+                           echo "<option value='".$provider['id_assembly']."'>".$provider['title']."</option>";
+                       }
+                       ?>
                   </select>
                 </div>
+
                 <div class="form-group">
                   <label>Неснижаемый остаток</label>
                   <input type="text" class="form-control" name="min_balance" placeholder="0" id="min_balance">
@@ -390,8 +384,19 @@ $allowed = $position->getAllowedNomenclature($userdata["user_id"]);
 
 
 
+
     $(document).ready(function () {
-        $('.select2').select2({ width: '100%' });
+
+        $('body').on('shown.bs.modal', '.modal', function() {
+            $(this).find('.select2').each(function() {
+                var dropdownParent = $(document.body);
+                if ($(this).parents('.modal.in:first').length !== 0) {
+                    dropdownParent = $(this).parents('.modal.in:first');
+                }
+                $(this).select2();
+            });
+        });
+
         /* Для таблицы */
 
         // Setup - add a text input to each footer cell

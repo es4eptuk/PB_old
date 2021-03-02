@@ -93,12 +93,15 @@ $del_eneble = $position->get_del_eneble_kit($id);
                                       <th>Артикул</th>
                                       <th>Наименование</th>
                                       <th>Количество</th>
+                                      <th>Стоимость</th>
+                                      <th>Сумма</th>
                                       <th>Удаление</th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     <?php 
                                     $arr_pos = $position->get_pos_in_kit($kit_id);
+                                    $summ = 0;
                                     foreach ($arr_pos as &$value) {
                                         $title = $value['title'];
                                         $vendor_code = $value['vendor_code'];
@@ -106,22 +109,30 @@ $del_eneble = $position->get_del_eneble_kit($id);
                                         $disabled = ($edit_eneble) ? '' : 'disabled';
                                         echo '   
                                             <tr> 
-                                            <td>'.$value['id_row'].'</td>
-                                            <td>'.$value['id_pos'].'</td>
-                                            <td>'.$vendor_code.'</td> 
-                                            <td>'.$title.'</td> 
-                                            <td class="quant">
-                                                <span style="position:absolute;">'.$value['count'].'</span>
-                                                <input type="text" class="form-control quant_inp" style="position:relative;height:20px;width:75px;text-align:center;" placeholder="'.$value['count'].'" value="'.$value['count'].'" '.$disabled.'>
-                                            </td> 
-                                            <td>'.$remove.'</td> 
+                                                <td>'.$value['id_row'].'</td>
+                                                <td>'.$value['id_pos'].'</td>
+                                                <td>'.$vendor_code.'</td> 
+                                                <td>'.$title.'</td> 
+                                                <td class="quant">
+                                                    <span style="position:absolute;">'.$value['count'].'</span>
+                                                    <input type="text" class="form-control quant_inp" style="position:relative;height:20px;width:75px;text-align:center;" placeholder="'.$value['count'].'" value="'.$value['count'].'" '.$disabled.'>
+                                                </td>
+                                                <td>'.$value['price'].'</td>
+                                                <td>'.($value['count']*$value['price']).'</td>
+                                                <td>'.$remove.'</td> 
                                             </tr>
                                         ';
+                                        $summ += $value['count']*$value['price'];
                                     }
                                     ?>
+                                    <tr>
+                                        <td align="right" colspan="6"><b>ИТОГО:<b></td>
+                                        <td><?= $summ ?></td>
+                                        <td></td>
+                                    </tr>
                                     </tbody>
                                     </table>
-									
+
 									<div class="box-footer">
                                         <button class="btn btn-primary" id="save_close" type="submit">Сохранить</button>
                                         <button class="btn btn-primary" onclick="history.back();" >Закрыть</button>
@@ -198,6 +209,8 @@ $del_eneble = $position->get_del_eneble_kit($id);
                         <td>' + pos_info['vendor_code'] + '</td> \
                         <td>' + pos_info['title'] + '</td> \
                         <td class="quant"><span style="position:absolute;">' + pos_info['quant_robot'] + '</span><input type="text" class="form-control quant_inp"  style="position:relative;height:20px;width:75px;text-align:center;" placeholder="' + pos_info['quant_robot'] + '"></td> \
+                        <td>' + pos_info['price'] + '</td>\
+                        <td>0</td>\
                         <td><i class="fa fa-2x fa-remove" style="cursor: pointer;"></i></td> \
                         </tr>');
                     $('#search_pos').val("");
