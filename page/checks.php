@@ -147,6 +147,7 @@ class Checks
                 AND `robots`.`writeoff` = 0 
                 AND `robots`.`remont` = 0 
                 AND `robots`.`delete` = 0
+                AND `robots`.`progress` != 100
             ";
             $result = $this->pdo->query($query);
             $count = $result->fetch()['COUNT(*)'];
