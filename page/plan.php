@@ -483,11 +483,11 @@ class Plan
                 //если не месяц
                 if ($v_filtr != []) {
                     //есть фильтр
-                    $sum = 0;
+                    $sum = [0];
                     foreach ($pos['month'] as $month) {
-                        $sum = $sum + $month['inorder'];
+                        $sum[] = $month['inorder'];
                     }
-                    $inorder = $sum;
+                    $inorder = max($sum);
                 } else {
                     //нет фильтра
                     $inorder = ($pos['total']<0) ? 0 : $pos['inorder'];
