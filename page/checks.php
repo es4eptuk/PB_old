@@ -86,7 +86,15 @@ class Checks
         $query   = "INSERT INTO `check_items` (`id`, `name`, `title`, `category`, `sort` , `version`, `subversion`, `kit`) VALUES (NULL, '', '$title', '$category',  '$sort', $version, $subversion, $kit)";
         $result = $this->pdo->query($query);
         $idd   = $this->pdo->lastInsertId();
-        $query = "SELECT * FROM `robots` WHERE `subversion` = $subversion AND `progress` != 100 ORDER BY `sort` ASC";
+        $query = "
+            SELECT * FROM `robots` 
+            WHERE `subversion` = $subversion 
+                AND `progress` != 100
+                AND `writeoff` = 0 
+                AND `remont` = 0 
+                AND `delete` = 0
+            ORDER BY `sort` ASC
+        ";
         $result = $this->pdo->query($query);
         $robots_array = [];
         while ($line = $result->fetch()) {
