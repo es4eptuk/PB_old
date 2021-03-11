@@ -327,8 +327,8 @@ class BitrixForm
                     "VALUE_TYPE" => "OTHER",
                 ];
                 if (isset($params['communication']) && !empty($params['communication'])) {
-                    $key_communication = strtoupper($params['communication']);
-                    $comment .= "Предпочтительный способ связи: ".urldecode($params['communication'])."\n"; //
+                    $key_communication = mb_strtoupper($params['communication']);
+                    $comment .= "Предпочтительный способ связи: ".urldecode($key_communication)."\n"; //
                     $type = $this->getTypeIm($key_communication);
                     if ($type != self::IM_TYPE['CALL']) {
                         $communication[] = [
