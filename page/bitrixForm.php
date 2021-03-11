@@ -6,8 +6,8 @@ class BitrixForm
     const IM_TYPE = [
         'OTHER' => 'OTHER',
         'ДРУГОЙ' => 'OTHER',
-        'PHONE' => 'PHONE',
-        'ТЕЛЕФОН' => 'PHONE',
+        'CALL' => 'PHONE',
+        'ЗВОНОК' => 'PHONE',
         'VIBER' => 'VIBER',
         'TELEGRAM' => 'TELEGRAM',
         'VK' => 'VK',
@@ -329,7 +329,7 @@ class BitrixForm
                 if (isset($params['communication']) && !empty($params['communication'])) {
                     $comment .= "Предпочтительный способ связи: ".urldecode($params['communication'])."\n";
                     $type = $this->getTypeIm($params['communication']);
-                    if ($type != self::IM_TYPE['PHONE']) {
+                    if ($type != self::IM_TYPE['CALL']) {
                         $communication[] = [
                             "VALUE" => urldecode($params['phone']),
                             "VALUE_TYPE" => $type,
