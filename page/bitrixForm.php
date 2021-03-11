@@ -328,8 +328,8 @@ class BitrixForm
                 ];
                 if (isset($params['communication']) && !empty($params['communication'])) {
 
-                    $type = $this->getTypeIm($params['communication']);
-                    $comment .= "Предпочтительный способ связи: ".urldecode($type)."\n"; //$params['communication']
+                    $type = $this->getTypeIm(strtoupper($params['communication']));
+                    $comment .= "Предпочтительный способ связи: ".urldecode(strtoupper($params['communication']))."\n"; //$params['communication']
                     if ($type != self::IM_TYPE['CALL']) {
                         $communication[] = [
                             "VALUE" => urldecode($params['phone']),
@@ -753,7 +753,7 @@ class BitrixForm
     }
 
     function getTypeIm($value) {
-        if (array_key_exists(strtoupper($value), self::IM_TYPE)) {
+        if (array_key_exists($value, self::IM_TYPE)) {
             return self::IM_TYPE[strtoupper($value)];
         } else {
             return self::IM_TYPE['OTHER'];
