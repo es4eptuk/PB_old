@@ -3,6 +3,18 @@
 
 class BitrixForm
 {
+    const IM_TYPE = [
+        'OTHER' => 'OTHER',
+        'ДРУГОЙ' => 'OTHER',
+        'PHONE' => 'PHONE',
+        'ТЕЛЕФОН' => 'PHONE',
+        'VIBER' => 'VIBER',
+        'TELEGRAM' => 'TELEGRAM',
+        'VK' => 'VK',
+        'INSTAGRAM' => 'INSTAGRAM',
+        'SKYPE' => 'SKYPE',
+        'FACEBOOK' => 'FACEBOOK',
+    ];
     const EMAIL_USER = [
         1 => 'info@promo-bot.ru',
         2 => 'a.baidin@promo-bot.ru',
@@ -308,11 +320,23 @@ class BitrixForm
                 $comment .= "Country:\n".urldecode($params['country'])."\n";
             }
             $phone = [];
+            $communication = [];
             if (isset($params['phone']) && !empty($params['phone'])) {
                 $phone[] = [
                     "VALUE" => urldecode($params['phone']),
                     "VALUE_TYPE" => "OTHER",
                 ];
+                if (isset($params['communication']) && !empty($params['communication'])) {
+                    $comment .= "Предпочтительный способ связи: ".urldecode($params['communication'])."\n";
+                    $type = $this->getTypeIm($params['communication']);
+                    if ($type != self::IM_TYPE['PHONE']) {
+                        $communication[] = [
+                            "VALUE" => urldecode($params['phone']),
+                            "VALUE_TYPE" => $type,
+                        ];
+                        $phone = [];
+                    }
+                }
             }
             if (isset($params['phone_mobile']) && !empty($params['phone_mobile'])) {
                 $phone[] = [
@@ -346,6 +370,7 @@ class BitrixForm
                 "ASSIGNED_BY_ID" => self::SETTINGS['ASSIGNED'],
                 "COMMENTS" => $comment,
                 "PHONE" => $phone,
+                "IM" => $communication,
                 "EMAIL" => $mail,
                 "UTM_SOURCE" => (isset($params['utm_source']) && !empty($params['utm_source'])) ? urldecode($params['utm_source']) : "",
                 "UTM_MEDIUM" => (isset($params['utm_medium']) && !empty($params['utm_medium'])) ? urldecode($params['utm_medium']) : "",
@@ -717,13 +742,21 @@ class BitrixForm
         );
     }
 
-    function prepare_keys_params($params){
+    function prepare_keys_params($params) {
         $result = [];
         foreach ($params as $key => $value) {
             $k = mb_strtolower($key);
             $result[$k] = $value;
         }
         return $result;
+    }
+
+    function getTypeIm($value) {
+        if (array_key_exists(strtoupper($value), self::IM_TYPE)) {
+            return self::IM_TYPE[strtoupper($value)];
+        } else {
+            return self::IM_TYPE['OTHER'];
+        }
     }
 
     function __destruct()
