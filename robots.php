@@ -96,7 +96,7 @@ if (isset($_POST['check_show_all'])) {
                   <th style="width:100px;">Этап</th>
                   <th style="width:150px;">Начало производства</th>
                   <th style="width:150px;">Дата отгрузки</th>
-                  <th style="width:100px;"></th>
+                  <th style="width:120px;"></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -158,7 +158,7 @@ if (isset($_POST['check_show_all'])) {
                          } else{
                              $sub = $subversions[$robot['subversion']]['title'];
                          }
-
+                        $writeoff_link = "<a href='./edit_writeoff_on_robot.php?id=".$robot['id']."'><i class='fa fa-2x fa-dropbox' style='cursor: pointer;'></i></a>";
                          echo "
                             <tr class='edit' id='".$robot['id']."' style='cursor: pointer; background: ".$color.";'>
                                 <td>".$robot['version'].".".$num."</td>
@@ -169,7 +169,12 @@ if (isset($_POST['check_show_all'])) {
                                 <td>".$position->getCategoryes[$robot['stage']]['title']."</td>
                                 <td>".$robot_date."</td>
                                 <td>".$robot_date_send."</td>                                
-                                <td>".$check.'&nbsp;&nbsp;&nbsp;&nbsp;'.$print.'&nbsp;&nbsp;&nbsp;&nbsp;'.$edit."</td>
+                                <td>"
+                                    .$check."&nbsp;&nbsp;&nbsp;&nbsp;"
+                                    .$print."&nbsp;&nbsp;&nbsp;&nbsp;"
+                                    .$edit."&nbsp;&nbsp;&nbsp;&nbsp;"
+                                    .$writeoff_link."
+                                </td>
                             </tr>
                          ";
 
