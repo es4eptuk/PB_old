@@ -484,7 +484,7 @@ $allowed = $position->getAllowedNomenclature($userdata["user_id"]);
         var p_vendor_code = $('#p_vendor_code').val();
         var file = $('#file').val();
 
-        if (title != "" && category != "0" && quant_total != "" && price != "" && vendorcode != "") {
+        if (title != "" && category != "0" && quant_total != "" && price != "" && vendorcode != "" && p_vendor != "" && p_vendor_code != "") {
             $.post("./api.php", {
                 action: "add_pos",
                 title: title,
