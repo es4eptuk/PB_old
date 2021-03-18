@@ -173,7 +173,7 @@ $allowed = $position->getAllowedNomenclature($userdata["user_id"]);
               <!-- ident pos vendor/code -->
               <div class="form-group">
                   <label style="color: red;">Бренд*</label>
-                  <select class="form-control" name="p_vendor" id="p_vendor" required="required">
+                  <select class="form-control" name="p_vendor" id="p_vendor">
                       <option value="0">Нет бренда</option>
                       <?php
                       $arr = $position->getBrends;
@@ -185,7 +185,7 @@ $allowed = $position->getAllowedNomenclature($userdata["user_id"]);
               </div>
               <div class="form-group">
                   <label style="color: red;">Артикул*</label>
-                  <input type="text" class="form-control" name="p_vendor_code" id="p_vendor_code" required="required">
+                  <input type="text" class="form-control" name="p_vendor_code" id="p_vendor_code">
               </div>
 
                 <!-- text input -->
@@ -582,7 +582,11 @@ $allowed = $position->getAllowedNomenclature($userdata["user_id"]);
         $("#save_close").click(function () {
             $(this).hide();
             $('.overlay').show();
-            save_close();
+            var result = save_close();
+            if (!result) {
+                $(this).show();
+                $('.overlay').hide();
+            }
             return false;
         });
         //при нажатии на кнопку "удалить"
@@ -658,53 +662,60 @@ $allowed = $position->getAllowedNomenclature($userdata["user_id"]);
             if ($("#development").prop("checked")) {
                 development = 1;
             }
-            $.post("./api.php", {
-                action: "edit_pos",
-                id: id_pos,
-                title: title,
-                longtitle: longtitle,
-                category: category,
-                unit: unit,
-                subcategory: subcategory,
-                vendorcode: vendorcode,
-                provider: provider,
-                price: price,
-                quant_robot: quant_robot,
-                quant_total: quant_total,
-                min_balance: min_balance,
-                assembly: assembly,
-                summary: summary,
-                archive: archive,
-                file: file,
-                development: development,
-                p_vendor: p_vendor,
-                p_vendor_code: p_vendor_code
-            }).done(function (data) {
-                if (data == "false") {
-                    alert("Data Loaded: " + data);
-                } else {
-                    var file_data = $('#file').prop('files')[0];
-                    var form_data = new FormData();
-                    form_data.append('file', file_data);
-                    form_data.append('category', category);
-                    form_data.append('vendor', vendorcode);
-                    //alert(form_data);
-                    $.ajax({
-                        url: 'upload.php',
-                        dataType: 'text',
-                        cache: false,
-                        contentType: false,
-                        processData: false,
-                        data: form_data,
-                        type: 'post',
-                        success: function (php_script_response) {
-                            //alert(php_script_response);
-                            //window.location.href = "./pos.php?id=" + category;
-                            location.reload();
-                        }
-                    });
-                }
-            });
+
+            if (title != "" && category != "0" && quant_total != "" && price != "" && vendorcode != "") {
+                $.post("./api.php", {
+                    action: "edit_pos",
+                    id: id_pos,
+                    title: title,
+                    longtitle: longtitle,
+                    category: category,
+                    unit: unit,
+                    subcategory: subcategory,
+                    vendorcode: vendorcode,
+                    provider: provider,
+                    price: price,
+                    quant_robot: quant_robot,
+                    quant_total: quant_total,
+                    min_balance: min_balance,
+                    assembly: assembly,
+                    summary: summary,
+                    archive: archive,
+                    file: file,
+                    development: development,
+                    p_vendor: p_vendor,
+                    p_vendor_code: p_vendor_code
+                }).done(function (data) {
+
+                    var obj = jQuery.parseJSON(data);
+                    if (obj['status'] == true) {
+                        var file_data = $('#file').prop('files')[0];
+                        var form_data = new FormData();
+                        form_data.append('file', file_data);
+                        form_data.append('category', category);
+                        form_data.append('vendor', vendorcode);
+                        //alert(form_data);
+                        $.ajax({
+                            url: 'upload.php',
+                            dataType: 'text',
+                            cache: false,
+                            contentType: false,
+                            processData: false,
+                            data: form_data,
+                            type: 'post',
+                            success: function (php_script_response) {
+                                //alert(php_script_response);
+                                window.location.href = "./pos.php?id=" + category;
+                            }
+                        });
+                    } else {
+                        alert(obj['error']);
+                        return false;
+                    }
+                });
+            } else {
+                return false;
+            }
         }
         //??
         /*function get_info_user(id) {

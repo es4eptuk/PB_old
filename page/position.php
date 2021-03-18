@@ -267,6 +267,13 @@ class Position
 
     function add_pos($title, $longtitle, $category, $unit, $subcategory, $vendorcode, $provider, $price, $quant_robot, $quant_total, $development, $p_vendor, $p_vendor_code)
     {
+        $query = "SELECT * FROM pos_items WHERE `title` LIKE '$title'";
+        $result = $this->pdo->query($query);
+        $pos = $result->fetch();
+        if ($pos != []) {
+            return ['status' => false, 'error' => 'Позиция с таким наименованием уже существует!'];
+        }
+
         $date    = date("Y-m-d H:i:s");
         $user_id = intval($_COOKIE['id']);
         $title = quotemeta($title);
@@ -274,30 +281,42 @@ class Position
         $result = $this->pdo->query($query);
         
         if ($result) {
-             $this->log->add(__METHOD__,"Добавлена новая позиция $vendorcode $title через перемещение");
+            $this->log->add(__METHOD__,"Добавлена новая позиция $vendorcode $title через перемещение");
+            return ['status' => true, 'error' => ''];
         }
 
-        return $result;
+        return ['status' => false, 'error' => 'Что то пошло не так!'];
     }
     function edit_pos($id, $title, $longtitle, $unit, $category, $subcategory, $vendorcode, $provider, $price, $quant_robot, $quant_total, $min_balance, $assembly, $summary, $archive, $file=null, $development, $p_vendor, $p_vendor_code)
     {
+        $query = "SELECT * FROM pos_items WHERE `title` LIKE '$title' AND `id` != $id";
+        $result = $this->pdo->query($query);
+        $pos = $result->fetch();
+        if ($pos != []) {
+            return ['status' => false, 'error' => 'Позиция с таким наименованием уже существует!'];
+        }
+
         $date    = date("Y-m-d H:i:s");
         $user_id = intval($_COOKIE['id']);
         $query   = "UPDATE `pos_items` SET `title` = '$title', `longtitle` = '$longtitle', `category` = '$category', `unit` = '$unit', `subcategory` = '$subcategory', `provider` = '$provider', `price` = '$price', `quant_robot` = '$quant_robot', `total` = '$quant_total', `min_balance` = '$min_balance', `vendor_code` = '$vendorcode', `assembly` = '$assembly', `summary` = '$summary', `archive` = '$archive', `update_date` = '$date', `update_user` = '$user_id', `development` = '$development', `p_vendor` = '$p_vendor', `p_vendor_code` = '$p_vendor_code' WHERE `pos_items`.`id` = $id;";
         $result = $this->pdo->query($query);
-        if ($result && $quant_total != 0) {
-            $log_title      = "Редактирвоание позиции";
-            $param['id']    = $id;
-            $param['type']  = "edit";
-            $param['count'] = $quant_total;
-            $param['title'] = $log_title;
-            $this->add_log($param);
-            $this->log->add(__METHOD__,"Редактирование позиции  $vendorcode - $title");
-        
-        }
 
-        return $result;
+        if ($result) {
+            if ($quant_total != 0) {
+                $log_title      = "Редактирвоание позиции";
+                $param['id']    = $id;
+                $param['type']  = "edit";
+                $param['count'] = $quant_total;
+                $param['title'] = $log_title;
+                $this->add_log($param);
+                $this->log->add(__METHOD__,"Редактирование позиции  $vendorcode - $title");
+            }
+            return ['status' => true, 'error' => ''];
+        } else {
+            return ['status' => false, 'error' => 'Что то пошло не так!'];
+        }
     }
+
     function edit_provider($id, $title, $name, $type, $phone, $email, $address, $contact)
     {
         $date    = date("Y-m-d H:i:s");

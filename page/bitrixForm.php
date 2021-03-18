@@ -45,18 +45,22 @@ class BitrixForm
         'ACTIVE' => 1,
         'NOTACTIVE' => 2,
     ];
+    //надо удалять
     const DISTRIBUTION_BY_DIRECTION = [
         'No' => 0,
         'Devices' => 27,
         'Robots' => 26,
         'USA' => 28,
     ];
+    //
+    //надо удалять
     const DISTRIBUTION_BY_COUNTRY = [
         'No' => 0,
         'R&SNG' => 29,
         'World' => 30,
         'USA' => 651,
     ];
+    //
     const SETTINGS = [
         'ASSIGNED' => 1097,
         'TYPE' => 1350,
@@ -92,10 +96,10 @@ class BitrixForm
     public $getListHandlers;
     public $getListScripts;
     public $getListStatuses;
-    public $getListDirectionsBy;
+    public $getListDirectionsBy; //надо удалять
     public $getListDirections;
     public $getListCountry;
-    public $getListCountryBy;
+    public $getListCountryBy; //надо удалять
 
     function __construct()
     {
@@ -121,12 +125,16 @@ class BitrixForm
         foreach (self::STATUS as $id => $name) {
             $this->getListStatuses[$name] = $id;
         }
+        //надо удалять
         foreach (self::DISTRIBUTION_BY_DIRECTION as $id => $name) {
             $this->getListDirectionsBy[$name] = $id;
         }
+        //
+        //надо удалять
         foreach (self::DISTRIBUTION_BY_COUNTRY as $id => $name) {
             $this->getListCountryBy[$name] = $id;
         }
+        //
         $this->getListCountry = $this->get_list_country();
         $this->getListDirections = $this->get_list_directions();
     }

@@ -435,12 +435,8 @@ $allowed = $position->getAllowedNomenclature($userdata["user_id"]);
                 p_vendor: p_vendor,
                 p_vendor_code: p_vendor_code
             }).done(function (data) {
-                //data.replace(new RegExp("\\r?\\n", "g"), "");
-                //console.log(data);
-                if (data == "false") {
-                    alert("Невозможно добавить позицию");
-                    return false;
-                } else {
+                var obj = jQuery.parseJSON(data);
+                if (obj['status'] == true) {
                     var file_data = $('#file').prop('files')[0];
                     var form_data = new FormData();
                     form_data.append('file', file_data);
@@ -460,6 +456,9 @@ $allowed = $position->getAllowedNomenclature($userdata["user_id"]);
                             window.location.href = "./pos.php?id=" + category;
                         }
                     });
+                } else {
+                    alert(obj['error']);
+                    return false;
                 }
             });
         }
@@ -501,10 +500,8 @@ $allowed = $position->getAllowedNomenclature($userdata["user_id"]);
                 p_vendor: p_vendor,
                 p_vendor_code: p_vendor_code
             }).done(function (data) {
-                if (data == "false") {
-                    alert("Невозможно добавить позицию");
-                    return false;
-                } else {
+                var obj = jQuery.parseJSON(data);
+                if (obj['status'] == true) {
                     var file_data = $('#file').prop('files')[0];
                     var form_data = new FormData();
                     form_data.append('file', file_data);
@@ -521,9 +518,12 @@ $allowed = $position->getAllowedNomenclature($userdata["user_id"]);
                         type: 'post',
                         success: function (php_script_response) {
                             //alert(php_script_response);
-                            window.location.href = "./add_pos.php";
+                            window.location.href = "./pos.php?id=" + category;
                         }
                     });
+                } else {
+                    alert(obj['error']);
+                    return false;
                 }
             });
         }
