@@ -121,7 +121,7 @@ class TelegramAPI {
         $isHoliday = $this->isHolidays($curDateStr);
         $isNight = $this->isNight($date);
         $this->query  = "INSERT INTO `bot_message` (`id`, `chatId`,  `author`, `chatTitle`, `isEmployee`, `userId`, `message`, `createDate`,`responseMinutes`, `responseSeconds`,`isWeekend`,`isHoliday`,`isNight`,`notification`,`violation`) VALUES (NULL, '$chatId', '$author', '$title','$isEmployee', '$userId', $message, '$date',$responseMinutes,$responseSeconds,'$isWeekend','$isHoliday','$isNight', '$setNotify', 0)";
-        $this->sendNotify('client', $this->query,  123622748);
+        //$this->sendNotify('client', $this->query,  123622748);
 
         $result = $this->pdo->query($this->query);
 
