@@ -259,7 +259,7 @@ class BitrixForm
 
     function get_list_log_forms()
     {
-        $query = 'SELECT *, `bitrix_form_log`.`id` AS `log_id` FROM `bitrix_form_log` JOIN `bitrix_form` ON `bitrix_form_log`.`form_id` = `bitrix_form`.`id` ORDER BY `bitrix_form_log`.`date` DESC';
+        $query = 'SELECT *, `bitrix_form_log`.`id` AS `log_id` FROM `bitrix_form_log` JOIN `bitrix_form` ON `bitrix_form_log`.`form_id` = `bitrix_form`.`id` ORDER BY `bitrix_form_log`.`date` DESC LIMIT 1000';
         $result = $this->pdo->query($query);
         while ($line = $result->fetch()) {
             $list[] = $line;
