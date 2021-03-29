@@ -512,7 +512,7 @@ class Orders
         return $result;
     }
     
-    function update_order($id)
+    /*function update_order($id)
     {
         $sum       = 0;
         $p_finish  = 0;
@@ -548,7 +548,7 @@ class Orders
         }
         
         return $result;
-    }
+    }*/
     
     function orderDate($id) {
         $query = "SELECT * FROM `orders_items` WHERE `pos_id` = $id AND pos_count_finish<pos_count ORDER BY `orders_items`.`pos_date` ASC";

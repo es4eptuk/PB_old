@@ -8,6 +8,10 @@ class BitrixForm
         'ДРУГОЙ' => 'OTHER',
         'CALL' => 'PHONE',
         'ЗВОНОК' => 'PHONE',
+        'TELEFON' => 'PHONE',
+        'TELEFONE' => 'PHONE',
+        'PHONE' => 'PHONE',
+        'هاتف' => 'PHONE', //هاتف
         'VIBER' => 'VIBER',
         'TELEGRAM' => 'TELEGRAM',
         'VK' => 'VK',
