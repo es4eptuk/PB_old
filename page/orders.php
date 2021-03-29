@@ -24,13 +24,21 @@ class Orders
             'email' => 'm.bekbulatova@promo-bot.ru',
             'signature' => '/img/podpis_bekbulatova.png',
         ],
-        101 => [
+        /*101 => [
             'role' => 'Специалист отдела закупок ООО "ПРОМОБОТ"',
             'name' => 'Бусовикова Надежда',
             'mobile' => '+7-950-463-17-00',
             'phone' => '+7(342)257-80-85 доб.405',
             'email' => 'n.biusovikova@promo-bot.ru',
             'signature' => '/img/podpis_biusovikova.png',
+        ],*/
+        112 => [
+            'role' => 'Специалист отдела закупок ООО "ПРОМОБОТ"',
+            'name' => 'Дарья Драчева',
+            'mobile' => '+7-929-232-97-07',
+            'phone' => '+7(342)257-80-85 доб.405',
+            'email' => 'd.dracheva@promo-bot.ru',
+            'signature' => '/img/podpis_dracheva.png',
         ],
         0 => [
             'role' => 'отдела закупок ООО "ПРОМОБОТ"',
