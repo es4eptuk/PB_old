@@ -817,7 +817,13 @@ class Orders
             $logo->setCoordinates("F". ($row+4));
             $logo->setOffsetX(0);
             $logo->setOffsetY(0);
-            $logo->setHeight($width*0.50);
+            $w = $logo->getWidth();
+            $h = $logo->getHeight();
+            if ($h/$w < 1) {
+                $logo->setHeight($width*0.50);
+            } else {
+                $logo->setHeight($width);
+            }
             $logo->setWorksheet($sheet);
             unset($logo);
         }
