@@ -395,7 +395,8 @@ class BitrixForm
                 "UF_CRM_1608101741558" => TRUE,
                 "UF_CRM_1608720560227" => self::SETTINGS['CONNECT'],
                 "UF_CRM_1608875925351" => self::SETTINGS['TYPE'],
-                "UF_CRM_1617622300" => (array_key_exists('roistat_visit', $cookies)) ? $cookies['roistat_visit'] : "",
+                //"UF_CRM_1617622300" => (array_key_exists('roistat_visit', $cookies)) ? $cookies['roistat_visit'] : "",
+                "UF_CRM_1617622300" => (isset($cookies['roistat_visit']) && !empty($cookies['roistat_visit'])) ? $cookies['roistat_visit'] : "",
             ];
 
             if ($this->form['direction'] != 0) {
