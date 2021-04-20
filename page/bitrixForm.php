@@ -371,6 +371,8 @@ class BitrixForm
                     $country = $db_country['key'];
                 }
             }
+            $cookies = (isset($params['COOKIES']) && !empty($params['COOKIES'])) ? $this->prepare_cookies_params($params['COOKIES']) : [];
+
             $this->params = [
                 "TITLE" => $this->form['url'].' / '.$this->form['name'].' / '.$this->date,
                 "NAME" => (isset($params['name']) && !empty($params['name'])) ? urldecode($params['name']) : "",
@@ -393,6 +395,7 @@ class BitrixForm
                 "UF_CRM_1608101741558" => TRUE,
                 "UF_CRM_1608720560227" => self::SETTINGS['CONNECT'],
                 "UF_CRM_1608875925351" => self::SETTINGS['TYPE'],
+                "UF_CRM_1617622300" => (array_key_exists('roistat_visit', $cookies)) ? $cookies['roistat_visit'] : "",
             ];
 
             if ($this->form['direction'] != 0) {
@@ -495,6 +498,7 @@ class BitrixForm
                 "UF_CRM_1608101741558" => TRUE,
                 "UF_CRM_1608720560227" => self::SETTINGS['CONNECT'],
                 "UF_CRM_1608875925351" => self::SETTINGS['TYPE'],
+                "UF_CRM_1617622300" => (isset($params['roistat_visit']) && !empty($params['roistat_visit'])) ? $params['roistat_visit'] : "",
             ];
 
             if ($this->form['direction'] != 0) {
@@ -658,6 +662,7 @@ class BitrixForm
                 "UF_CRM_1608101741558" => TRUE,
                 "UF_CRM_1608720560227" => self::SETTINGS['CONNECT'],
                 "UF_CRM_1608875925351" => self::SETTINGS['TYPE'],
+                "UF_CRM_1617622300" => (isset($params['roistat_visit']) && !empty($params['roistat_visit'])) ? $params['roistat_visit'] : "",
             ];
 
             if ($this->form['direction'] != 0) {
@@ -760,6 +765,16 @@ class BitrixForm
         foreach ($params as $key => $value) {
             $k = mb_strtolower($key);
             $result[$k] = $value;
+        }
+        return $result;
+    }
+
+    function prepare_cookies_params($cookies) {
+        $array = array_filter(array_map('trim', explode(';', $cookies)), 'strlen');
+        $result = [];
+        foreach ($array as $param) {
+            $n = strstr($param, '=');
+            $result[stristr($param, '=', true)] = mb_substr($n, 1);
         }
         return $result;
     }
