@@ -371,7 +371,7 @@ class BitrixForm
                     $country = $db_country['key'];
                 }
             }
-            $cookies = (isset($params['COOKIES']) && !empty($params['COOKIES'])) ? $this->prepare_cookies_params($params['COOKIES']) : [];
+            $cookies = (isset($params['cookies']) && !empty($params['cookies'])) ? $this->prepare_cookies_params($params['cookies']) : [];
 
             $this->params = [
                 "TITLE" => $this->form['url'].' / '.$this->form['name'].' / '.$this->date,
