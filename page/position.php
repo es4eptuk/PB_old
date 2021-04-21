@@ -248,8 +248,8 @@ class Position
             $pos_array[] = $line;
         }
 
-        if (isset($pos_array))
-            return $pos_array['0'];
+
+        return (isset($pos_array)) ? $pos_array['0'] : null;
     }
 
     function get_info_pos($id)

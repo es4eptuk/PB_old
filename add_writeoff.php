@@ -330,7 +330,7 @@ if (isset($_GET['copy'])) {
 
             $("#category").change(function () {
                 var title = $(this).val();
-                if (title == "Возврат поставщику" || title == "Покраска/Покрытие") {
+                if (title == "Возврат поставщику" || title == "Покраска/Покрытие" || title == "Сварка/Зенковка") {
                     $('#prvd').show();
                 } else {
                     $('#prvd').hide();
@@ -355,7 +355,7 @@ if (isset($_GET['copy'])) {
                 var provider = $("#provider").val();
                 var description = $("#description").val();
                 var TableArray = [];
-                TableArray.push([$('#category').val(), $("#description").val(), 0, 0, $("#provider").val()]);
+                TableArray.push([category, description, 0, 0, provider]);
 
                 $("#listPos tr").each(function () {
                     var arrayOfThisRow = [];

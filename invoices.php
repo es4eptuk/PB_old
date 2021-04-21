@@ -92,7 +92,7 @@ include 'include/class.inc.php';
 
                         <div class="box-footer">
                             <a href="./add_writeoff.php" class="btn btn-primary" >Добавить списание</a>
-                            <a href="./add_writeoff_kit.php" class="btn btn-primary" >Списать комплект</a>
+                            <!--<a href="./add_writeoff_kit.php" class="btn btn-primary" >Списать комплект</a>-->
                         </div>
                         <!-- /.box-body -->
                     </div>

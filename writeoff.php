@@ -1,5 +1,31 @@
 <?php 
 include 'include/class.inc.php';
+
+function file_force_download($file) {
+    if (file_exists($file)) {
+        if (ob_get_level()) {
+            ob_end_clean();
+        }
+        header('Content-Description: File Transfer');
+        header('Content-Type: application/octet-stream');
+        header('Content-Disposition: attachment; filename=' . basename($file));
+        header('Content-Transfer-Encoding: binary');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate');
+        header('Pragma: public');
+        header('Content-Length: ' . filesize($file));
+        readfile($file);
+        unlink($file);
+        exit;
+    }
+}
+
+if (isset($_POST['print'])) {
+    $file = $writeoff->createFileDeliveryNote($_POST['writeoff_id']);
+    file_force_download($file);
+}
+
+
 ?>
 
 <?php include 'template/head.php' ?>
@@ -38,6 +64,7 @@ include 'include/class.inc.php';
                         <th>Пользователь</th>
                         <th></th>
                         <th></th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -48,6 +75,10 @@ include 'include/class.inc.php';
                     foreach ($arr as &$pos) {
                         $user_info = $user->get_info_user($pos['update_user']);
                         $create_date = new DateTime($pos['update_date']);
+                        $tn = '';
+                        if ($pos['category'] == "Возврат поставщику" || $pos['category'] == "Покраска/Покрытие" || $pos['category'] == "Сварка/Зенковка") {
+                            $tn = "<i class='fa fa-2x fa-print' style='cursor: pointer;' data-id='".$pos['id']."'></i>";
+                        }
                         echo "
                             <tr>
                                 <td>".$pos['id']."</td>
@@ -58,6 +89,7 @@ include 'include/class.inc.php';
                                 <td>".$user_info['user_name']."</td>
                                 <td><i class='fa fa-2x fa-pencil' style='cursor: pointer;' data-id='".$pos['id']."'></i></td>
                                 <td><i class='fa fa-2x fa-copy' style='cursor: pointer;' data-id='".$pos['id']."'></i></td>
+                                <td>".$tn."</td>
                             </tr>
                         ";
                     }
@@ -67,7 +99,7 @@ include 'include/class.inc.php';
             </div>
             <div class="box-footer">
                 <a href="./add_writeoff.php" class="btn btn-primary" >Добавить списание</a>
-                <a href="./add_writeoff_kit.php" class="btn btn-primary" >Списать комплект</a>
+                <!--<a href="./add_writeoff_kit.php" class="btn btn-primary" >Списать комплект</a>-->
             </div>
             <!-- /.box-body -->
           </div>
@@ -85,6 +117,14 @@ include 'include/class.inc.php';
   <!-- Add the sidebar's background. This div must be placed
        immediately after the control sidebar -->
   <div class="control-sidebar-bg"></div>
+
+  <div style="display: none;">
+    <form action="" method="post" name="writeoff_print" id="writeoff_print">
+        <input type="hidden" id="print" name="print" value="">
+        <input type="hidden" id="writeoff_id" name="writeoff_id" value="">
+    </form>
+  </div>
+
 </div>
 <!-- ./wrapper -->
 <!-- Modal -->
@@ -139,6 +179,24 @@ include 'include/class.inc.php';
         $("#writeoffs").on('click', '.fa-pencil', function () {
             id_writeoff = $(this).data("id");
             window.location.href = "./edit_writeoff.php?id=" + id_writeoff;
+        });
+
+        $("#writeoffs").on('click', '.fa-print', function () {
+            var id_writeoff = $(this).data("id");
+            $('input#writeoff_id').val(id_writeoff);
+            document.getElementById('writeoff_print').submit()
+            /*$.post("./api.php", {
+                action: "print_order",
+                id: id_order,
+            }).done(function (data) {
+                if (data == '') {
+                    alert('Заказы не сформировались, т.к. заказывать нечего!');
+                } else {
+                    alert('Заказы успешно сформированны: ' + data + '.');
+                }
+                window.location.href = data;
+            });*/
+            return false;
         });
 
     });

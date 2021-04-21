@@ -8,6 +8,7 @@ $writeoff_category = $writeoff1['category'];
 $writeoff_description = $writeoff1['description'];
 $writeoff_price = $writeoff1['total_price'];
 $writeoff_user_id = $writeoff1['update_user'];
+$writeoff_provider = $writeoff1['provider_id'];
 $disabled = ($writeoff1['written'] == 0) ? '' : 'disabled';
 ?>
 <?php include 'template/head.php' ?>
@@ -63,7 +64,22 @@ $disabled = ($writeoff1['written'] == 0) ? '' : 'disabled';
 											?>
 										</select>
 									</div>
-							   
+                                    <div class="form-group">
+                                        <label>Контрагент <small>(<a data-target="#add_provider" data-toggle="modal" href="#">Добавить</a>)</small></label>
+                                        <select class="form-control select2" id="provider" name="provider" required="required">
+                                            <option value="0">Выберите контррагента...</option>
+                                            <?php
+                                            $arr = $position->get_pos_provider();
+                                            foreach ($arr as &$provider) {
+                                                if ( $provider['id'] == $writeoff_provider ) {
+                                                    echo "<option value='".$provider['id']."' selected>".$provider['type']." ".$provider['title']."</option>";
+                                                } else {
+                                                    echo "<option value='".$provider['id']."'>".$provider['type']." ".$provider['title']."</option>";
+                                                }
+                                            }
+                                            ?>
+                                        </select>
+                                    </div>
 							   	    <div class="form-group">
 										<label>Описание</label> 
 										 <input type="text" class="form-control" name="description" required="required" id="description" value="<?= $writeoff_description ?>">
@@ -133,13 +149,76 @@ $disabled = ($writeoff1['written'] == 0) ? '' : 'disabled';
 		<div class="control-sidebar-bg"></div>
 	</div><!-- ./wrapper -->
 	<!-- Modal -->
+    <!-- Modal -->
+    <div aria-hidden="true" aria-labelledby="exampleModalLabel" class="modal fade" id="add_provider" role="dialog" tabindex="-1">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Добавить поставщика</h5><button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <form data-toggle="validator" id="add_provider_form" name="add_provider_form" role="form">
+                        <!-- select -->
+                        <div class="form-group">
+                            <label>Форма собственности</label> <select class="form-control" id="provider_type" name="provider_type" required="required">
+                                <option value="ИП">
+                                    ИП
+                                </option>
+                                <option value="ООО">
+                                    ООО
+                                </option>
+                                <option value="ОАО">
+                                    ОАО
+                                </option>
+                                <option value="ЗАО">
+                                    Ltd.
+                                </option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Наименование</label> <input class="form-control" id="provider_title" name="provider_title" required="required" type="text">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-dismiss="modal" type="button">Закрыть</button> <button class="btn btn-primary" id="btn_add_provider" type="button">Добавить</button>
+                </div>
+            </div>
+        </div>
+    </div>
 	<?php include 'template/scripts.php'; ?>
 	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-
+    <!-- Select2 -->
+    <script src="./bower_components/select2/dist/js/select2.full.min.js"></script>
 
     <script>
         $(document).ready(function () {
+
+            $('.select2').select2();
+
+            $("#btn_add_provider").click(function() {
+                var type = $('#provider_type').val();
+                var title = $('#provider_title').val();
+                //alert("123");
+                if (title != "") {
+                    $.post("./api.php", {
+                        action: "add_pos_provider",
+                        type: type,
+                        title: title
+                    }).done(function(data) {
+                        console.log(data);
+                        if (data == "false") {
+                            alert("Data Loaded: " + data);
+                            return false;
+                        } else {
+                            $('#provider').append("<option value='" + data + "' selected>" + title + "<\/option>");
+                            $('#add_provider').modal('hide');
+                            //return false;
+                        }
+                    });
+                }
+            });
 
             <?php if ($disabled == '') {?>
             change_total_price();
@@ -192,8 +271,9 @@ $disabled = ($writeoff1['written'] == 0) ? '' : 'disabled';
                 var id = $("#writeoff_id").text();
                 var title = "<?php echo $writeoff_category; ?>";
                 var description = $("#description").val();
+                var provider = $("#provider").val();
                 var TableArray = [];
-                TableArray.push([title, description]);
+                TableArray.push([title, description, provider]);
                 $("#listPos tr").each(function () {
                     var arrayOfThisRow = [];
                     var tableData = $(this).find('td');
@@ -247,7 +327,7 @@ $disabled = ($writeoff1['written'] == 0) ? '' : 'disabled';
                 return false;
             });
 
-            function save_close() {
+            /*function save_close() {
                 $(this).prop('disabled', true);
                 var id = $("#writeoff_id").text();
                 var description = $("#description").val();
@@ -261,7 +341,7 @@ $disabled = ($writeoff1['written'] == 0) ? '' : 'disabled';
                     return false;
                 });
                 return false;
-            }
+            }*/
 
             <?php } ?>
         });
