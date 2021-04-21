@@ -76,7 +76,7 @@ if (isset($_POST['print'])) {
                         $user_info = $user->get_info_user($pos['update_user']);
                         $create_date = new DateTime($pos['update_date']);
                         $tn = '';
-                        if ($pos['category'] == "Возврат поставщику" || $pos['category'] == "Покраска/Покрытие" || $pos['category'] == "Сварка/Зенковка") {
+                        if ($pos['category'] == "Возврат поставщику" || $pos['category'] == "Покраска/Покрытие" || $pos['category'] == "Давальческие материалы") {
                             $tn = "<i class='fa fa-2x fa-print' style='cursor: pointer;' data-id='".$pos['id']."'></i>";
                         }
                         echo "

@@ -330,7 +330,7 @@ if (isset($_GET['copy'])) {
 
             $("#category").change(function () {
                 var title = $(this).val();
-                if (title == "Возврат поставщику" || title == "Покраска/Покрытие" || title == "Сварка/Зенковка") {
+                if (title == "Возврат поставщику" || title == "Покраска/Покрытие" || title == "Давальческие материалы") {
                     $('#prvd').show();
                 } else {
                     $('#prvd').hide();
