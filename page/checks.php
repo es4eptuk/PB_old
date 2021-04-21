@@ -294,6 +294,11 @@ class Checks
             $checks_array[] = $line;
         }
 
+        //проверка
+        if ($checks_array[0]['check'] == $value) {
+            return false;
+        }
+
         $date    = date("Y-m-d H:i:s");
         $user_id = intval($_COOKIE['id']);
         $arr_kits = $this->plan->get_kits();

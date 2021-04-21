@@ -117,8 +117,8 @@ $del_eneble = $position->get_del_eneble_kit($id);
                                                     <span style="position:absolute;">'.$value['count'].'</span>
                                                     <input type="text" class="form-control quant_inp" style="position:relative;height:20px;width:75px;text-align:center;" placeholder="'.$value['count'].'" value="'.$value['count'].'" '.$disabled.'>
                                                 </td>
-                                                <td>'.$value['price'].'</td>
-                                                <td>'.($value['count']*$value['price']).'</td>
+                                                <td>'.number_format($value['price'], 2, ",","").'</td>
+                                                <td>'.number_format(($value['count']*$value['price']), 2, ",","").'</td>
                                                 <td>'.$remove.'</td> 
                                             </tr>
                                         ';
@@ -127,7 +127,7 @@ $del_eneble = $position->get_del_eneble_kit($id);
                                     ?>
                                     <tr>
                                         <td align="right" colspan="6"><b>ИТОГО:<b></td>
-                                        <td><?= $summ ?></td>
+                                        <td><?= number_format($summ,2, ",","") ?></td>
                                         <td></td>
                                     </tr>
                                     </tbody>
