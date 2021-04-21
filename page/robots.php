@@ -737,7 +737,8 @@ class Robots
         }
         $robot = $this->get_info_robot($id);
         //удаляем опции
-        $del = array_diff($options_old, $options);
+        $del_u = array_diff($options_old, $options);
+        $del = array_unique($del_u);
         if (isset($del)) {
             foreach ($del as $option) {
                 $this->del_options_on_robot($option, $id);
@@ -746,12 +747,15 @@ class Robots
             }
         }
         //добавлем опции
-        $add = array_diff($options, $options_old);
+        $add_u = array_diff($options, $options_old);
+        $add = array_unique($add_u);
         if (isset($add)) {
             foreach ($add as $option) {
-                $this->add_options_on_robot($option, $id);
+                $q = $this->add_options_on_robot($option, $id);
                 if ($robot['delete'] == 2) {continue;}
-                $this->checks->add_option_check($option, $id,1);
+                if ($q) {
+                    $this->checks->add_option_check($option, $id,1);
+                }
             }
         }
 
@@ -874,9 +878,16 @@ class Robots
     //добавление опции к роботу
     function add_options_on_robot($option,$robot)
     {
+        $this->query = "SELECT COUNT(*) FROM `robot_options_items` WHERE `id_option` = $option AND `id_robot` = $robot";
+        $result = $this->pdo->query($this->query);
+        $line = $result->fetch();
+        $cnt_a =  $line['COUNT(*)'];
+        if ($cnt_a != 0) {
+            return false;
+        }
         $this->query = "INSERT INTO `robot_options_items` (`id_row`, `id_option`, `id_robot`) VALUES (NULL, $option, $robot)";
         $result = $this->pdo->query($this->query);
-        return $result;
+        return ($result) ? true : false;
     }
 
     //удаление опции у робота
