@@ -203,7 +203,8 @@ $("#listPos").on("keyup", ".quant_inp", function() {
  			order_id: id,
  			json: JsonString,
  			category : category,
- 			provider : provider
+ 			provider : provider,
+            description: ""
  		}).done(function(data) {
  			console.log(data);
  			window.location.href = "./orders.php?id="+ category;
@@ -239,7 +240,8 @@ $("#listPos").on("keyup", ".quant_inp", function() {
  			order_id: id,
  			json: JsonString,
  			category : category,
- 			provider : provider
+ 			provider : provider,
+            description: ""
  		}).done(function(data) {
  			console.log(data);
  			

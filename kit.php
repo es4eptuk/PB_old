@@ -46,6 +46,7 @@ include 'include/class.inc.php';
                         <li><a href="?category=3">Корпус</a></li>
                         <li><a href="?category=4">Отладка/Упаковка</a></li>
                         <li><a href="?category=5">Настройка</a></li>
+                        <li><a href="?category=6">Техподдержка</a></li>
                       </ul>
                     </div>
              </div> 
