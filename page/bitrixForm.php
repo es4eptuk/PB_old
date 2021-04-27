@@ -347,7 +347,7 @@ class BitrixForm
                             "VALUE" => urldecode($params['phone']),
                             "VALUE_TYPE" => $type,
                         ];
-                        $phone = [];
+                        //$phone = [];
                     }
                 }
             }
