@@ -35,15 +35,13 @@ $allowed = $position->getAllowedAssembly($userdata["user_id"]);
 							</div><!-- /.box-header -->
 							<div class="box-body">
 
-                                <?php if ($allowed) { ?>
+
 								<form data-toggle="validator" id="add_pos" name="add_pos" role="form">
-									
+                                    <?php if ($allowed) { ?>
 									<div class="form-group">
 										<label>Название</label> 
 										 <input type="text" class="form-control" name="title" required="required" id="title" value="<?php echo $assembly_title; ?> ">
 									</div>
-									
-									
 									 Добавить позицию
 								    <div class="form-group input-group" id="pos">
                                       <input type="text" class="form-control" name="pos" id="search_pos" placeholder="Введите название позиции...">
@@ -51,51 +49,46 @@ $allowed = $position->getAllowedAssembly($userdata["user_id"]);
                                           <button type="button" class="btn btn-info btn-flat" id="add">+</button>
                                       </span>
                                     </div>
+                                    <?php } ?>
 									<table class="table table-bordered table-striped" id="listPos">
 									<thead>    
-                                    <tr>
-                                      <th>ID</th>
-                                      <th>posID</th>
-                                      <th>Артикул</th>
-                                      <th>Наименование</th>
-                                      <th>Количество</th>
-                                      
-                                      <th>Удаление</th>
-                                    </tr>
-                                     </thead>
-                                   <tbody>
+                                        <tr>
+                                          <th>ID</th>
+                                          <th>posID</th>
+                                          <th>Артикул</th>
+                                          <th>Наименование</th>
+                                          <th>Количество</th>
+                                          <th>Удаление</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
                                     <?php 
-                                    $arr_pos = $position->get_pos_in_assembly($assembly_id);
-                                    //print_r($arr_pos);
-                                foreach ($arr_pos as &$value) { 
-                                 
-                                  $title = $value['title'];
-                                  $vendor_code = $value['vendor_code']; 
-                                  
-                                echo '   
-                                    <tr> 
-                        <td>'.$value['id_row'].'</td>
-                         <td>'.$value['id_pos'].'</td>
-                        <td>'.$vendor_code.'</td> 
-                        <td>'.$title.'</td> 
-                        <td class="quant"><span style="display: none;">'.$value['count'].'</span><input type="text" class="form-control quant_inp"  style="position: relative; height: 20px; width: 55px; text-align: center;" placeholder="'.$value['count'].'" value="'.$value['count'].'"></td> 
-                       
-                        <td><i class="fa fa-2x fa-remove" style="cursor: pointer;" id="'.$value['id_row'].'"></i></td> 
-                        </tr>
-                        ';
-                                }
-                                    
+                                        $arr_pos = $position->get_pos_in_assembly($assembly_id);
+                                        foreach ($arr_pos as &$value) {
+                                            $title = $value['title'];
+                                            $vendor_code = $value['vendor_code'];
+                                            echo '   
+                                                <tr> 
+                                                    <td>'.$value['id_row'].'</td>
+                                                    <td>'.$value['id_pos'].'</td>
+                                                    <td>'.$vendor_code.'</td> 
+                                                    <td>'.$title.'</td> 
+                                                    <td class="quant"><span style="display: none;">'.$value['count'].'</span><input type="text" class="form-control quant_inp"  style="position: relative; height: 20px; width: 55px; text-align: center;" placeholder="'.$value['count'].'" value="'.$value['count'].'"></td> 
+                                                    <td><i class="fa fa-2x fa-remove" style="cursor: pointer;" id="'.$value['id_row'].'"></i></td> 
+                                                </tr>
+                                            ';
+                                        }
                                     ?>
-                                    
                                     </tbody>
                                     </table>
-									
+                                    <?php if ($allowed) { ?>
 									<div class="box-footer">
 										<button class="btn btn-primary" id="save_close" type="submit">Сохранить</button> 
 										<button type="button" class="btn btn-primary btn-danger pull-right" id="delete" name="">В архив</button>
 									</div>
+                                    <?php } ?>
 								</form>
-                                <?php } ?>
+
 
 							</div><!-- /.box-body -->
 						</div>
