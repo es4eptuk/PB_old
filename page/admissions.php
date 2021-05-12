@@ -142,7 +142,7 @@ class Admissions
             //добовляем изменения в базу (позиции в текущем заказе)
             if ($order_id != 0) {
                 $return_pos = intval($return_pos) - intval($admis_pos);
-                $query      = "UPDATE IGNORE `orders_items` SET `pos_count_finish` = $total_finish,`pos_return` = $return_pos WHERE `order_id` = $order_id AND `pos_id` = $pos_id";
+                $query      = "UPDATE `orders_items` SET `pos_count_finish` = $total_finish, `pos_return` = $return_pos WHERE `order_id` = $order_id AND `pos_id` = $pos_id";
                 $result = $this->pdo->query($query);
             }
         }
