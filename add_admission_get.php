@@ -70,6 +70,7 @@ include 'include/class.inc.php';
                                       <th>Заказанное количество</th>
                                       <th>Отгружено</th>
                                       <th>Поступление</th>
+                                      <th></th>
                                         <th>  </th>
                                         <?php if ($provider_id==49 || $provider_id==1) {
 
@@ -92,7 +93,8 @@ include 'include/class.inc.php';
                             <td>'.$value['title'].'</td> 
                             <td class="quant tot">'.$value['pos_count'].'</td> 
                             <td class="finish">'.$value['pos_count_finish'].'</td> 
-                            <td class="quant inp_tot"><span style="position: absolute;">0</span><input type="text" class="form-control quant_inp"  style="position: relative;  width: 55px; text-align: center;" placeholder="0"></td> 
+                            <td class="quant inp_tot"><span style="position: absolute;">0</span><input type="text" class="form-control quant_inp"  style="position: relative;  width: 55px; text-align: center;" placeholder="0"></td>
+                            <td><span style="display:none;">0</span></td> 
                             <td></td>
                              ';
                                     if ($provider_id==49 || $provider_id==1) {
