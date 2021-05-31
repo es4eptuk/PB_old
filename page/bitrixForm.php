@@ -311,25 +311,25 @@ class BitrixForm
         if ($params != []) {
             $comment = '';
             if (isset($params['textarea']) && !empty($params['textarea'])) {
-                $comment .= "Textarea:\n".urldecode($params['textarea'])."\n";
+                $comment .= "Textarea:\n".urldecode($params['textarea'])."<br>";
             }
             if (isset($params['text']) && !empty($params['text'])) {
-                $comment .= "Text:\n".urldecode($params['text'])."\n";
+                $comment .= "Text:\n".urldecode($params['text'])."<br>";
             }
             if (isset($params['comments']) && !empty($params['comments'])) {
-                $comment .= "Comments:\n".urldecode($params['comments'])."\n";
+                $comment .= "Comments:\n".urldecode($params['comments'])."<br>";
             }
             if (isset($params['comments_2']) && !empty($params['comments_2'])) {
-                $comment .= "Comments_2:\n".urldecode($params['comments_2'])."\n";
+                $comment .= "Comments_2:\n".urldecode($params['comments_2'])."<br>";
             }
             if (isset($params['comment_form']) && !empty($params['comment_form'])) {
-                $comment .= "Comment_form:\n".urldecode($params['comment_form'])."\n";
+                $comment .= "Comment_form:\n".urldecode($params['comment_form'])."<br>";
             }
             if (isset($params['comment']) && !empty($params['comment'])) {
-                $comment .= "comment:\n".urldecode($params['comment'])."\n";
+                $comment .= "comment:\n".urldecode($params['comment'])."<br>";
             }
             if (isset($params['country']) && !empty($params['country'])) {
-                $comment .= "Country:\n".urldecode($params['country'])."\n";
+                $comment .= "Country:\n".urldecode($params['country'])."<br>";
             }
             $phone = [];
             $communication = [];
@@ -340,7 +340,7 @@ class BitrixForm
                 ];
                 if (isset($params['communication']) && !empty($params['communication'])) {
                     $key_communication = mb_strtoupper($params['communication']);
-                    $comment .= "Предпочтительный способ связи: ".urldecode($key_communication)."\n"; //
+                    $comment .= "Предпочтительный способ связи: ".urldecode($key_communication)."<br>"; //
                     $type = $this->getTypeIm($key_communication);
                     if ($type != self::IM_TYPE['CALL']) {
                         $communication[] = [
@@ -372,7 +372,7 @@ class BitrixForm
                 }
             }
             $cookies = (isset($params['cookies']) && !empty($params['cookies'])) ? $this->prepare_cookies_params($params['cookies']) : [];
-
+            $domen = explode( '/', $this->form['url'] );
             $this->params = [
                 "TITLE" => $this->form['url'].' / '.$this->form['name'].' / '.$this->date,
                 "NAME" => (isset($params['name']) && !empty($params['name'])) ? urldecode($params['name']) : "",
@@ -398,6 +398,9 @@ class BitrixForm
                 //"UF_CRM_1617622300" => (array_key_exists('roistat_visit', $cookies)) ? $cookies['roistat_visit'] : "",
                 "UF_CRM_1617622300" => (isset($cookies['roistat_visit']) && !empty($cookies['roistat_visit'])) ? $cookies['roistat_visit'] : "",
                 "UF_CRM_1620729038" => (isset($params['timezone']) && !empty($params['timezone'])) ? urldecode($params['timezone']) : "",
+                "UF_CRM_1622448857864" => $this->form['key'],
+                "UF_CRM_1622449617181" => $domen[0],
+                "UF_CRM_1622448780833" => 'https://'.$this->form['url'],
             ];
 
             if ($this->form['direction'] != 0) {
@@ -445,13 +448,13 @@ class BitrixForm
         if ($params != []) {
             $comment = '';
             if (isset($params['message']) && !empty($params['message'])) {
-                $comment .= "Message:\n".urldecode($params['message'])."\n";
+                $comment .= "Message:\n".urldecode($params['message'])."<br>";
             }
             if (isset($params['country']) && !empty($params['country'])) {
-                $comment .= "Country:\n".urldecode($params['country'])."\n";
+                $comment .= "Country:\n".urldecode($params['country'])."<br>";
             }
             if (isset($params['stations']) && !empty($params['stations'])) {
-                $comment .= "Stations:\n".urldecode($params['stations'])."\n";
+                $comment .= "Stations:\n".urldecode($params['stations'])."<br>";
             }
             $phone = [];
             if (isset($params['phone']) && !empty($params['phone'])) {
@@ -474,11 +477,14 @@ class BitrixForm
                     $country = $db_country['key'];
                 }
             }
+            $url = '';
             if (isset($params['url']) && !empty($params['url'])) {
+                $url = $params['url'];
                 $utm_output = [];
                 $parts = parse_url($params['url'], PHP_URL_QUERY);
                 parse_str($parts, $utm_output);
             }
+            $domen = explode( '/', $this->form['url'] );
             $this->params = [
                 "TITLE" => $this->form['url'].' / '.$this->form['name'].' / '.$this->date,
                 "NAME" => (isset($params['name']) && !empty($params['name'])) ? urldecode($params['name']) : "",
@@ -501,6 +507,9 @@ class BitrixForm
                 "UF_CRM_1608720560227" => self::SETTINGS['CONNECT'],
                 "UF_CRM_1608875925351" => self::SETTINGS['TYPE'],
                 "UF_CRM_1617622300" => (isset($params['roistat_visit']) && !empty($params['roistat_visit'])) ? $params['roistat_visit'] : "",
+                "UF_CRM_1622448857864" => $this->form['key'],
+                "UF_CRM_1622449617181" => $domen[0],
+                "UF_CRM_1622448780833" => $url,
             ];
 
             if ($this->form['direction'] != 0) {
@@ -548,38 +557,38 @@ class BitrixForm
         if ($params != []) {
             $comment = '';
             if (isset($params['message']) && !empty($params['message'])) {
-                $comment .= "Message:\n".urldecode($params['message'])."\n";
+                $comment .= "Message:\n".urldecode($params['message'])."<br>";
             }
             if (isset($params['country']) && !empty($params['country'])) {
-                $comment .= "Country:\n".urldecode($params['country'])."\n";
+                $comment .= "Country:\n".urldecode($params['country'])."<br>";
             }
             if (isset($params['whatsapp']) && !empty($params['whatsapp'])) {
-                $comment .= "Whatsapp:\n".urldecode($params['whatsapp'])."\n";
+                $comment .= "Whatsapp:\n".urldecode($params['whatsapp'])."<br>";
             }
             if (isset($params['robot']) && !empty($params['robot'])) {
-                $comment .= "Для чего планируется приобретение робота?:\n".urldecode($params['robot'])."\n";
+                $comment .= "Для чего планируется приобретение робота?:\n".urldecode($params['robot'])."<br>";
             }
             if (isset($params['howfind']) && !empty($params['howfind'])) {
-                $comment .= "Откуда о нас узнали?:\n".urldecode($params['howfind'])."\n";
+                $comment .= "Откуда о нас узнали?:\n".urldecode($params['howfind'])."<br>";
             }
             if (isset($params['where']) && !empty($params['where'])) {
-                $comment .= "Откуда о нас узнали?:\n".urldecode($params['where'])."\n";
+                $comment .= "Откуда о нас узнали?:\n".urldecode($params['where'])."<br>";
             }
             //не для CRM bitrix
             if (isset($params['position']) && !empty($params['position'])) {
-                $comment .= "Должность:\n".urldecode($params['position'])."\n";
+                $comment .= "Должность:\n".urldecode($params['position'])."<br>";
             }
             if (isset($params['organization']) && !empty($params['organization'])) {
-                $comment .= "Название компании:\n".urldecode($params['organization'])."\n";
+                $comment .= "Название компании:\n".urldecode($params['organization'])."<br>";
             }
             if (isset($params['city']) && !empty($params['city'])) {
-                $comment .= "Город:\n".urldecode($params['city'])."\n";
+                $comment .= "Город:\n".urldecode($params['city'])."<br>";
             }
             if (isset($params['website']) && !empty($params['website'])) {
-                $comment .= "Website:\n".urldecode($params['website'])."\n";
+                $comment .= "Website:\n".urldecode($params['website'])."<br>";
             }
             if (isset($params['product']) && !empty($params['product'])) {
-                $comment .= "Product:\n".urldecode($params['product'])."\n";
+                $comment .= "Product:\n".urldecode($params['product'])."<br>";
             }
             $phone = [];
             if (isset($params['phone']) && !empty($params['phone'])) {
@@ -623,7 +632,9 @@ class BitrixForm
                     $utm_output['utm_term'] = $utm_output_start_url['utm_term'];
                 }
             }
+            $url = '';
             if (isset($params['order_url']) && !empty($params['order_url'])) {
+                $url = $params['order_url'];
                 $utm_output_order_url = [];
                 $parts = parse_url($params['order_url'], PHP_URL_QUERY);
                 parse_str($parts, $utm_output_order_url);
@@ -643,6 +654,30 @@ class BitrixForm
                     $utm_output['utm_term'] = $utm_output_order_url['utm_term'];
                 }
             }
+            if (isset($params['submit_url']) && !empty($params['submit_url'])) {
+                if ($url == '') {
+                    $url = $params['submit_url'];
+                }
+                $utm_output_submit_url = [];
+                $parts = parse_url($params['submit_url'], PHP_URL_QUERY);
+                parse_str($parts, $utm_output_submit_url);
+                if (isset($utm_output_submit_url['utm_source']) && !empty($utm_output_submit_url['utm_source']) && !(isset($utm_output['utm_source']) && !empty($utm_output['utm_source']))) {
+                    $utm_output['utm_source'] = $utm_output_submit_url['utm_source'];
+                }
+                if (isset($utm_output_submit_url['utm_medium']) && !empty($utm_output_submit_url['utm_medium']) && !(isset($utm_output['utm_medium']) && !empty($utm_output['utm_medium']))) {
+                    $utm_output['utm_medium'] = $utm_output_submit_url['utm_medium'];
+                }
+                if (isset($utm_output_submit_url['utm_campaign']) && !empty($utm_output_submit_url['utm_campaign']) && !(isset($utm_output['utm_campaign']) && !empty($utm_output['utm_campaign']))) {
+                    $utm_output['utm_campaign'] = $utm_output_submit_url['utm_campaign'];
+                }
+                if (isset($utm_output_submit_url['utm_content']) && !empty($utm_output_submit_url['utm_content']) && !(isset($utm_output['utm_content']) && !empty($utm_output['utm_content']))) {
+                    $utm_output['utm_content'] = $utm_output_submit_url['utm_content'];
+                }
+                if (isset($utm_output_submit_url['utm_term']) && !empty($utm_output_submit_url['utm_term']) && !(isset($utm_output['utm_term']) && !empty($utm_output['utm_term']))) {
+                    $utm_output['utm_term'] = $utm_output_submit_url['utm_term'];
+                }
+            }
+            $domen = explode( '/', $this->form['url'] );
             $this->params = [
                 "TITLE" => $this->form['url'].' / '.$this->form['name'].' / '.$this->date,
                 "NAME" => (isset($params['name']) && !empty($params['name'])) ? urldecode($params['name']) : "",
@@ -665,6 +700,9 @@ class BitrixForm
                 "UF_CRM_1608720560227" => self::SETTINGS['CONNECT'],
                 "UF_CRM_1608875925351" => self::SETTINGS['TYPE'],
                 "UF_CRM_1617622300" => (isset($params['roistat_visit']) && !empty($params['roistat_visit'])) ? $params['roistat_visit'] : "",
+                "UF_CRM_1622448857864" => $this->form['key'],
+                "UF_CRM_1622449617181" => $domen[0],
+                "UF_CRM_1622448780833" => $url,
             ];
 
             if ($this->form['direction'] != 0) {
