@@ -1,17 +1,27 @@
 <?php include 'include/class.inc.php';
+
+
 //списки
 $versions = $robots->getEquipment;
 $subversions = $robots->getSubVersion;
 $category = $position->getCategoryes;
 $subcategory = $position->getSubcategoryes;
-//фильтр по версиям
-$v_filtr = [6,7];
+
 //двигаем роботов
-$robots->change_date_robot($v_filtr);
+$robots->change_date_robot(array_column($versions, 'id'));
+
+//фильтр по версиям
+//$v_filtr = [6,7];
+$v_filtr = [];
+foreach ($versions as $version) {
+    if (isset($_POST['version'][$version['id']])) {
+        array_push($v_filtr, $version['id']);
+    }
+}
 //фильтр по категориям
 $cat_filtr = [];
 foreach ($category as $cat) {
-    if (isset($_POST[$cat['id']])) {
+    if (isset($_POST['category'][$cat['id']])) {
         array_push($cat_filtr, $cat['id']);
     }
 }
@@ -52,9 +62,9 @@ foreach ($arr_pos as $k => $v) {
     //- на складе как -
     $stok = $arr_pos[$k]['total'];
     $need_summ = 0;
-    foreach ($arr_need as $date => $versions) {
+    foreach ($arr_need as $date => $vers) {
         $need_summ_all_vers = 0;
-        foreach ($versions as $version_id => $posits) {
+        foreach ($vers as $version_id => $posits) {
             if (in_array($version_id, $v_filtr)) {
                 if (isset($posits[$k])) {
                     //$arr_pos[$k]['need_invers'][$date][$version_id] = $posits[$k];
@@ -95,6 +105,10 @@ foreach ($arr_need as $date => $info) {
     $d = $d->format('d.m.Y');
     $out .= '<th style="width:60px;">'.$d.'</th>';
 }
+
+/*print_r('<pre>');
+print_r($_POST);
+print_r('</pre>');*/
 ?>
 
 
@@ -118,21 +132,36 @@ foreach ($arr_need as $date => $info) {
                         <div class="box-body table-responsive">
                             <div class="">
                                 <form action="./plan_operational.php" method="post">
-                                    <div class="form-group">
+                                    <div class="form-group" style="float:left;margin-right:20px;">
                                         <?php
                                         foreach ($category as $cat_id => $cat) {
                                             if ($cat_id > 10) {continue;}
-                                            if (isset($_POST[$cat_id])) {
+                                            if (isset($_POST['category'][$cat_id])) {
                                                 $checked = 'checked';
                                             } else {
                                                 $checked = '';
                                             }
                                             echo '<div class="checkbox">';
-                                            echo '<label><input type="checkbox" id="'.$cat_id.'" name="'.$cat_id.'" '.$checked.'> '.$cat['title'].'</label>';
+                                            echo '<label><input type="checkbox" id="category['.$cat_id.']" name="category['.$cat_id.']" '.$checked.'> '.$cat['title'].'</label>';
                                             echo '</div>';
                                         }
                                         ?>
                                     </div>
+                                    <div class="form-group" style="float:left;margin-right:20px;">
+                                        <?php
+                                        foreach ($versions as $version) {
+                                            if (isset($_POST['version'][$version['id']])) {
+                                                $checked = 'checked';
+                                            } else {
+                                                $checked = '';
+                                            }
+                                            echo '<div class="checkbox">';
+                                            echo '<label><input type="checkbox" id="version['.$version['id'].']" name="version['.$version['id'].']" '.$checked.'> '.$version['title'].'</label>';
+                                            echo '</div>';
+                                        }
+                                        ?>
+                                    </div>
+                                    <div class="clearfix"></div>
                                     <div class="form-group">
                                         <button type="submit" class="btn btn-primary" id="add_filtr" name="">Применить</button>
                                         <button type="reset" class="btn btn-default" id="del_filtr" name="" onclick="javascript:document.location = './plan_operational.php'">Сбросить</button>
