@@ -979,11 +979,11 @@ class Robots
     }
 
     //двигаем роботов по дате производства
-    function change_date_robot($v_filtr = []) {
+    function change_date_robot($v_filtr = [], $day = 0) {
         $day_now = date('d');
         $month_now = date('m');
         $year_now = date('Y');
-        $date_old = date('Y-m-d', mktime(0,0,0, $month_now, $day_now - 4, $year_now));
+        $date_old = date('Y-m-d', mktime(0,0,0, $month_now, $day_now - $day, $year_now));
         $date_new = date('Y-m-d', mktime(0,0,0, $month_now, $day_now, $year_now));
         $query = "
             SELECT * FROM `robots` 

@@ -8,7 +8,8 @@ $category = $position->getCategoryes;
 $subcategory = $position->getSubcategoryes;
 
 //двигаем роботов
-$robots->change_date_robot(array_column($versions, 'id'));
+$day_change = 90;
+$robots->change_date_robot(array_column($versions, 'id'), $day_change);
 
 //фильтр по версиям
 //$v_filtr = [6,7];
