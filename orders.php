@@ -146,7 +146,7 @@ if (isset($_POST['print'])) {
                         
                         <td>".$pos['version']."</td>
                         <td>".$provider['title'].", ".$provider['type']."</td>
-                        <td>".$order_delivery->format('d.m.Y')."</td>
+                        <td>".$order_delivery->format('Y.m.d')."</td>
                         <td>".$pos['order_completion']."</td>
                         <td>".number_format($pos['order_price'], 2, ',', ' ')."</td>
                         <td>".$pos['order_status']."</td>
