@@ -30,29 +30,21 @@ if (isset($_GET['copy'])) {
 
                                     <p class="p-label" style="font-size:16px;">Общая сумма списания: <span id="total_price"><?php echo number_format($writeoff_price, 2, ',', ' ') ; ?> </span></p>
                                     <br>
-									<div class="form-group">
-										<label>Категория</label> <select class="form-control" id="category" name="category" required="required" >
-											<option value="0">
-												Выберите категорию...
-											</option>
-										    <option value="Модернизация">Модернизация</option>
-											<option value="Брак">Брак</option>
-											<option value="Сервис">Сервис</option>
-											<option value="Разработка">Разработка</option>
-											<option value="Продажа">Продажа</option>
-                                            <option value="Маркетинг">Маркетинг</option>
-											<option value="Содержание офиса">Содержание офиса</option>
-											<option value="Давальческие материалы">Давальческие материалы</option>
-											<option value="Возврат поставщику">Возврат поставщику</option>
-                                            <option value="Покраска/Покрытие">Покраска/Покрытие</option>
-                                            <option value="Сварка/Зенковка">Сварка/Зенковка</option>
-                                            <option value="Не актуально">Не актуально</option>
-                                            <option value="Производство">Производство</option>
-                                            <option value="ThermoControl">ThermoControl</option>
-                                            <option value="Удаленный склад">Удаленный склад</option>
-                                            <option value="Медкейс">Медкейс</option>
-										</select>
-									</div>
+
+
+                                    <div class="form-group">
+                                        <label>Категория</label> <select class="form-control" id="category" name="category" required="required" >
+                                            <option value="0">
+                                                Выберите категорию...
+                                            </option>
+                                            <?php
+                                            foreach ($writeoff::TYPES as &$value) {
+                                                echo '<option value="'.$value.'">'.$value.'</option>';
+                                            }
+                                            ?>
+                                        </select>
+                                    </div>
+
 
 								   <div class="form-group" style="display: none;" id="prvd">
 										<label>Контрагент <small>(<a data-target="#add_provider" data-toggle="modal" href="#">Добавить</a>)</small></label>

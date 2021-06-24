@@ -35,25 +35,8 @@ $disabled = ($writeoff1['written'] == 0) ? '' : 'disabled';
 							    <br>
                                 <div class="form-group">
 										<label>Категория</label> <select class="form-control" id="category" name="category" required="required" disabled>
-											<?php $arr = [
-											        "Модернизация",
-                                                    "Брак",
-                                                    "Сервис",
-                                                    "Разработка",
-                                                    "Продажа",
-                                                    "Маркетинг",
-                                                    "Содержание офиса",
-                                                    "Давальческие материалы",
-                                                    "Возврат поставщику",
-                                                    "Покраска/Покрытие",
-                                                    "Сварка/Зенковка",
-                                                    "Не актуально",
-                                                    "Производство",
-                                                    "ThermoControl",
-                                                    "Удаленный склад",
-                                                    "Медкейс",
-                                                ];
-											foreach ($arr as &$value) {
+											<?php
+											foreach ($writeoff::TYPES as &$value) {
                                                if ($writeoff_category == $value) {
                                                    echo '<option value="'.$value.'" selected>'.$value.'</option>';
                                                } else {
