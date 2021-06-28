@@ -193,14 +193,25 @@ class BitrixForm
         return $result;
     }
 
-    public function get_country($name)
+    public function get_country_by_name($name)
     {
         $query = "SELECT * FROM `bitrix_country` WHERE `name_ru` LIKE '%$name%' OR `name_en` LIKE '%$name%'";
         $result = $this->pdo->query($query);
         while ($line = $result->fetch()) {
             $info[] = $line;
         }
-        return (isset($info)) ? $info['0'] : [];
+        return (isset($info)) ? $info['0'] : null;
+    }
+
+    public function get_country_by_code_t($code)
+    {
+        $code = substr($code, 1);
+        $query = "SELECT * FROM `bitrix_country` WHERE `code_t` LIKE '$code'";
+        $result = $this->pdo->query($query);
+        while ($line = $result->fetch()) {
+            $info[] = $line;
+        }
+        return (isset($info)) ? $info['0'] : null;
     }
 
     public function get_list_country()
@@ -366,11 +377,18 @@ class BitrixForm
             }
             $country = null;
             if (isset($params['country']) && !empty($params['country'])) {
-                $db_country = $this->get_country(mb_strtolower($params['country']));
-                if ($db_country != []) {
+                $db_country = $this->get_country_by_name(mb_strtolower($params['country']));
+                if ($db_country != null) {
                     $country = $db_country['key'];
                 }
             }
+            if ($country == null && isset($params['country_code']) && !empty($params['country_code'])) {
+                $db_country = $this->get_country_by_code_t($params['country_code']);
+                if ($db_country != null) {
+                    $country = $db_country['key'];
+                }
+            }
+
             $cookies = (isset($params['cookies']) && !empty($params['cookies'])) ? $this->prepare_cookies_params($params['cookies']) : [];
             $domen = explode( '/', $this->form['url'] );
             $this->params = [
@@ -472,8 +490,14 @@ class BitrixForm
             }
             $country = null;
             if (isset($params['country']) && !empty($params['country'])) {
-                $db_country = $this->get_country(mb_strtolower($params['country']));
-                if ($db_country != []) {
+                $db_country = $this->get_country_by_name(mb_strtolower($params['country']));
+                if ($db_country != null) {
+                    $country = $db_country['key'];
+                }
+            }
+            if ($country == null && isset($params['country_code']) && !empty($params['country_code'])) {
+                $db_country = $this->get_country_by_code_t($params['country_code']);
+                if ($db_country != null) {
                     $country = $db_country['key'];
                 }
             }
@@ -606,8 +630,14 @@ class BitrixForm
             }
             $country = null;
             if (isset($params['country']) && !empty($params['country'])) {
-                $db_country = $this->get_country(mb_strtolower($params['country']));
-                if ($db_country != []) {
+                $db_country = $this->get_country_by_name(mb_strtolower($params['country']));
+                if ($db_country != null) {
+                    $country = $db_country['key'];
+                }
+            }
+            if ($country == null && isset($params['country_code']) && !empty($params['country_code'])) {
+                $db_country = $this->get_country_by_code_t($params['country_code']);
+                if ($db_country != null) {
                     $country = $db_country['key'];
                 }
             }
