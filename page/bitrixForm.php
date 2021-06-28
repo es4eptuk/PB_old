@@ -346,7 +346,7 @@ class BitrixForm
             $communication = [];
             if (isset($params['phone']) && !empty($params['phone'])) {
                 $phone[] = [
-                    "VALUE" => urldecode($params['phone']),
+                    "VALUE" => $params['phone'],
                     "VALUE_TYPE" => "OTHER",
                 ];
                 if (isset($params['communication']) && !empty($params['communication'])) {
@@ -355,7 +355,7 @@ class BitrixForm
                     $type = $this->getTypeIm($key_communication);
                     if ($type != self::IM_TYPE['CALL']) {
                         $communication[] = [
-                            "VALUE" => urldecode($params['phone']),
+                            "VALUE" => $params['phone'],
                             "VALUE_TYPE" => $type,
                         ];
                         //$phone = [];
@@ -364,7 +364,7 @@ class BitrixForm
             }
             if (isset($params['phone_mobile']) && !empty($params['phone_mobile'])) {
                 $phone[] = [
-                    "VALUE" => urldecode($params['phone_mobile']),
+                    "VALUE" => $params['phone_mobile'],
                     "VALUE_TYPE" => "MOBILE",
                 ];
             }
@@ -477,7 +477,7 @@ class BitrixForm
             $phone = [];
             if (isset($params['phone']) && !empty($params['phone'])) {
                 $phone[] = [
-                    "VALUE" => urldecode($params['phone']),
+                    "VALUE" => $params['phone'],
                     "VALUE_TYPE" => "OTHER",
                 ];
             }
@@ -617,7 +617,7 @@ class BitrixForm
             $phone = [];
             if (isset($params['phone']) && !empty($params['phone'])) {
                 $phone[] = [
-                    "VALUE" => urldecode($params['phone']),
+                    "VALUE" => $params['phone'],
                     "VALUE_TYPE" => "OTHER",
                 ];
             }
