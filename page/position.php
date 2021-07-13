@@ -1300,7 +1300,7 @@ class Position
             $id_kits = [];
             foreach ($kit_array as $kit) {
                 if (!in_array($kit['id_kit'], $id_kits)) {
-                    if ($delete = 0) {
+                    if ($delete == 0) {
                         if ($kit['delete'] == 0) {
                             $result[] = $kit;
                         }
