@@ -501,7 +501,7 @@ class Checks
         $result = $this->pdo->query($query);
         if ($result && $kit != 0 && $value == 1 && $remont==0) {
             //списание комплекта
-            $this->sklad->set_writeoff_kit($robot_version, $number, $kit, $id, $robot);
+            $this->sklad->set_writeoff_kit0($robot_version, $number, $kit, $id, $robot);
             //списание резерва
             $this->sklad->del_reserv($arr_kits[$kit]);
         }

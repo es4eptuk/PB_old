@@ -36,11 +36,12 @@ class Position
 
     function init()
     {
-        global $writeoff, $log, $robots;
+        global $writeoff, $log, $robots, $plan;
 
         $this->writeoff = $writeoff; //new Writeoff;
         $this->log = $log; //new Log;
         $this->robots = $robots;
+        $this->plan = $plan;
 
         //список категорий
         $query = "SELECT * FROM `pos_category`";
@@ -603,6 +604,48 @@ class Position
             $json[$count]['4'] = $info_pos['price'];
             $count++;
              
+        }
+        //print_r($json);
+        $this->writeoff->add_writeoff(json_encode($json));
+        return true;
+    }
+
+    function set_writeoff_kit0($version, $number, $kit, $check, $robot)
+    {
+        $arr_assemble = $this->plan->get_assemblyes_items();
+        $arr_pos_kit = $this->get_pos_in_kit($kit);
+
+        $info_kit = $this->get_info_kit($kit);
+        $title_kit = $info_kit['kit_title'];
+        $json['0']['0'] = "Производство";
+        $json['0']['1'] = "Робот  $version.$number комплект - $title_kit";
+        $json['0']['2'] = $check;
+        $json['0']['3'] = $robot;
+        $count          = 1;
+        //print_r($arr_pos);
+        foreach ($arr_pos_kit as &$value) {
+            //print_r($value);
+            $pos_id2 = $value['id_pos'];
+            $value_count = $value['count'];
+            $info_pos          = $this->get_info_pos($pos_id2);
+            $json[$count]['0'] = $pos_id2;
+            $json[$count]['1'] = $info_pos['vendor_code'];
+            $json[$count]['2'] = $info_pos['title'];
+            $json[$count]['3'] = $value_count;
+            $json[$count]['4'] = $info_pos['price'];
+            $count++;
+            if ($info_pos['assembly'] != 0) {
+                foreach ($arr_assemble[$info_pos['assembly']] as $id_pos_a => $count_a) {
+                    $info_pos_a        = $this->get_info_pos($id_pos_a);
+                    $json[$count]['0'] = $id_pos_a;
+                    $json[$count]['1'] = $info_pos_a['vendor_code'];
+                    $json[$count]['2'] = $info_pos_a['title'];
+                    $json[$count]['3'] = $value_count * $count_a;
+                    $json[$count]['4'] = $info_pos_a['price'];
+                    $count++;
+                }
+            }
+
         }
         //print_r($json);
         $this->writeoff->add_writeoff(json_encode($json));
