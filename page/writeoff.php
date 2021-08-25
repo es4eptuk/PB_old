@@ -903,7 +903,7 @@ class Writeoff
         $sheet->getStyle("V".$row.":Z".$row)->applyFromArray(['alignment' => ['horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_LEFT],'font' => ['size' => 9,],]);
         $sheet->mergeCells("AB".$row.":AF".$row);$sheet->setCellValue("AB".$row, " ");
         $sheet->getStyle("AB".$row.":AF".$row)->applyFromArray(['borders' => ['bottom' => ['style' => PHPExcel_Style_Border::BORDER_THIN],],'alignment' => ['horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_LEFT],]);
-        $sheet->mergeCells("AH".$row.":AQ".$row);$sheet->setCellValue("AH".$row, "Чернова А. Ю.");
+        $sheet->mergeCells("AH".$row.":AQ".$row);$sheet->setCellValue("AH".$row, "Шардакова И. М.");
         $sheet->getStyle("AH".$row.":AQ".$row)->applyFromArray(['borders' => ['bottom' => ['style' => PHPExcel_Style_Border::BORDER_THIN],],'alignment' => ['horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_LEFT],]);
         $sheet->getRowDimension($row)->setRowHeight($height*0.77);
         //
