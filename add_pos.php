@@ -148,6 +148,9 @@ $allowed = $position->getAllowedNomenclature($userdata["user_id"]);
                               case 7:
                                   $cat = "LM";
                                   break;
+                              case 8:
+                                  $cat = "FS";
+                                  break;
                           }
                       }
                       //print_r($gen_code);
@@ -318,9 +321,30 @@ $allowed = $position->getAllowedNomenclature($userdata["user_id"]);
             case "8":
                 cat_str = "FS";
                 break;
+            case "9":
+                cat_str = "";
+                break;
         }
-        if (cat == 2 && subcat ==5) {
+        if (cat == 2 && subcat == 5) {
             code = "HS-" + max_id;
+        }
+        else if (cat == 9 && subcat == 30) {
+            code = "MH-" + max_id;
+        }
+        else if (cat == 9 && subcat == 31) {
+            code = "HP-" + max_id;
+        }
+        else if (cat == 9 && subcat == 32) {
+            code = "BD-" + max_id;
+        }
+        else if (cat == 9 && subcat == 33) {
+            code = "PK-" + max_id;
+        }
+        else if (cat == 9 && subcat == 34) {
+            code = "LM-" + max_id;
+        }
+        else if (cat == 9 && subcat == 35) {
+            code = "FS-" + max_id;
         } else {
             code = cat_str + "-" + max_id;
         }
@@ -352,9 +376,30 @@ $allowed = $position->getAllowedNomenclature($userdata["user_id"]);
             case "8":
                 cat_str = "FS";
                 break;
+            case "9":
+                cat_str = "";
+                break;
         }
-        if (cat == 2 && subcat ==5) {
+        if (cat == 2 && subcat == 5) {
             code = "HS-" + max_id;
+        }
+        else if (cat == 9 && subcat == 30) {
+            code = "MH-" + max_id;
+        }
+        else if (cat == 9 && subcat == 31) {
+            code = "HP-" + max_id;
+        }
+        else if (cat == 9 && subcat == 32) {
+            code = "BD-" + max_id;
+        }
+        else if (cat == 9 && subcat == 33) {
+            code = "PK-" + max_id;
+        }
+        else if (cat == 9 && subcat == 34) {
+            code = "LM-" + max_id;
+        }
+        else if (cat == 9 && subcat == 35) {
+            code = "FS-" + max_id;
         } else {
             code = cat_str + "-" + max_id;
         }

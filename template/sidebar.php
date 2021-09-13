@@ -36,6 +36,7 @@
                <li><a href="./pos.php?id=3"><i class="fa fa-circle-o"></i> Корпус</a></li>
                <li><a href="./pos.php?id=4"><i class="fa fa-circle-o"></i> Упаковка</a></li>
                <li><a href="./pos.php?id=7"><i class="fa fa-circle-o"></i> Листовые материалы</a></li>
+               <li><a href="./pos.php?id=9"><i class="fa fa-circle-o"></i> Давальческие материалы</a></li>
            </ul>
 
        </li>
@@ -54,6 +55,7 @@
                    <li><a href="./pos_on_robot.php?id=3"><i class="fa fa-circle-o"></i> Корпус</a></li>
                    <li><a href="./pos_on_robot.php?id=4"><i class="fa fa-circle-o"></i> Упаковка</a></li>
                    <li><a href="./pos_on_robot.php?id=7"><i class="fa fa-circle-o"></i> Листовые материалы</a></li>
+                   <li><a href="./pos_on_robot.php?id=9"><i class="fa fa-circle-o"></i> Давальческие материалы</a></li>
                </ul>
 
            </li>
@@ -75,6 +77,7 @@
             <li><a href="./orders.php?id=3"><i class="fa fa-circle-o"></i> Корпус</a></li>
             <li><a href="./orders.php?id=4"><i class="fa fa-circle-o"></i> Упаковка</a></li>
             <li><a href="./orders.php?id=7"><i class="fa fa-circle-o"></i> Листовые материалы</a></li>
+            <li><a href="./orders.php?id=9"><i class="fa fa-circle-o"></i> Давальческие материалы</a></li>
             <li><a href="./orders.php?id=999"><i class="fa fa-circle-o"></i> Возвраты поставщику</a></li>
             <li><a href="./orders.php?id=998"><i class="fa fa-circle-o"></i> Покраска/Покрытие</a></li>
             <li><a href="./orders.php?id=997"><i class="fa fa-circle-o"></i> Сварка/Зенковка</a></li>
@@ -95,7 +98,8 @@
             <li><a href="./admissions.php?id=2"><i class="fa fa-circle-o"></i> Аппаратка</a></li>
             <li><a href="./admissions.php?id=3"><i class="fa fa-circle-o"></i> Корпус</a></li>
             <li><a href="./admissions.php?id=4"><i class="fa fa-circle-o"></i> Упаковка</a></li>
-              <li><a href="./admissions.php?id=7"><i class="fa fa-circle-o"></i> Листовые материалы</a></li>
+            <li><a href="./admissions.php?id=7"><i class="fa fa-circle-o"></i> Листовые материалы</a></li>
+            <li><a href="./admissions.php?id=9"><i class="fa fa-circle-o"></i> Давальческие материалы</a></li>
           </ul>
           
         </li>
@@ -136,7 +140,8 @@
             <li><a href="./plan.php?id=2"><i class="fa fa-circle-o"></i> Аппаратка</a></li>
             <li><a href="./plan.php?id=3"><i class="fa fa-circle-o"></i> Корпус</a></li>
             <li><a href="./plan.php?id=4"><i class="fa fa-circle-o"></i> Упаковка</a></li>
-              <li><a href="./plan.php?id=7"><i class="fa fa-circle-o"></i> Листовые материалы</a></li>
+            <li><a href="./plan.php?id=7"><i class="fa fa-circle-o"></i> Листовые материалы</a></li>
+            <li><a href="./plan.php?id=9"><i class="fa fa-circle-o"></i> Давальческие материалы</a></li>
           </ul>
         </li>
         
@@ -159,6 +164,7 @@
                <li><a href="./pos_warehouse.php?id=3"><i class="fa fa-circle-o"></i> Корпус</a></li>
                <li><a href="./pos_warehouse.php?id=4"><i class="fa fa-circle-o"></i> Упаковка</a></li>
                <li><a href="./pos_warehouse.php?id=7"><i class="fa fa-circle-o"></i> Листовые материалы</a></li>
+               <li><a href="./pos_warehouse.php?id=9"><i class="fa fa-circle-o"></i> Давальческие материалы</a></li>
            </ul>
        </li>
         <li class="treeview">
