@@ -20,6 +20,7 @@ class Int1C
     private $pdo;
     private $client;
     private $position;
+    private $plan;
 
 
     function __construct()
@@ -47,9 +48,9 @@ class Int1C
 
     function init()
     {
-        global $position;
+        global $position, $plan;
         $this->position = $position;
-
+        $this->plan = $plan;
         $this->getList = self::LIST_I;
     }
 
@@ -414,6 +415,51 @@ class Int1C
             $this->position->invent($id, $new_total, "ОСТАТКИ ИЗ 1С", true);
         }
         return ['result' => true, 'err' => 'Остатки успешно загружены в DB!'];
+    }
+
+    //ДОП ПО РЕЗЕРВАМ
+    function change_reserv_to_null() {
+        $query = "UPDATE `pos_items` SET `reserv` = 0 WHERE `reserv` != 0";
+        $result = $this->pdo->query($query);
+        return ['result' => true, 'err' => 'Все резервы обнулены!'];
+    }
+    function add_new_reserv() {
+        $query = "
+            SELECT * FROM `check` 
+            JOIN `robots` ON `check`.`robot` = `robots`.`id` 
+            WHERE `robots`.`delete` = 0 
+                AND `robots`.`writeoff` = 0 
+                AND `robots`.`remont` = 0 
+                AND `check`.`check` = 0 
+                AND `check`.`id_kit` != 0
+                AND `robots`.`progress` != 100
+        ";
+        $result = $this->pdo->query($query);
+        $arr_kits = $this->plan->get_kits();
+        while ($line = $result->fetch()) {
+            $checks[] = $line;
+        }
+        $col_kits = [];
+        foreach ($checks as $check) {
+            if (isset($col_kits[$check['id_kit']])) {
+                $col_kits[$check['id_kit']]++;
+            } else {
+                $col_kits[$check['id_kit']] = 1;
+            }
+        }
+        foreach ($arr_kits as $id_kit => $positions) {
+            if (isset($col_kits[$id_kit])) {
+                foreach ($positions as $id_pos => $count) {
+                    $arr_kits[$id_kit][$id_pos] = $count * $col_kits[$id_kit];
+                }
+            } else {
+                unset($arr_kits[$id_kit]);
+            }
+        }
+        foreach ($arr_kits as $arr_pos) {
+            $this->position->add_reserv($arr_pos);
+        }
+        return ['result' => true, 'err' => 'Созданы резервы по всем активным чеклистам!'];
     }
 
     function __destruct()

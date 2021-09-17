@@ -483,6 +483,7 @@ if ($userdata['group'] == 1) {
                         <li><a href="./1с_accounts.php"><i class="fa fa-bank"></i>Счета</a></li>
                         <li><a href="./1с_nomenclatures.php"><i class="fa fa-cube"></i>Номенклатура</a></li>
                         <li><a href="./1с_storage.php"><i class="fa fa-cubes"></i>Остатки</a></li>
+                        <li><a href="./1с_function.php"><i class="fa fa-life-ring"></i>Доп функционал</a></li>
                     </ul>
                 </li>
             ';

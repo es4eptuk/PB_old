@@ -612,6 +612,13 @@ if (isset($_POST['action'])) {
     if ($_POST['action'] == "c_invent_from_1c_leftovers") {
         echo json_encode($int1C->c_invent_from_1c_leftovers(), JSON_UNESCAPED_UNICODE);
     }
+    //доп функ
+    if ($_POST['action'] == "change_reserv_to_null") {
+        echo json_encode($int1C->change_reserv_to_null(), JSON_UNESCAPED_UNICODE);
+    }
+    if ($_POST['action'] == "add_new_reserv") {
+        echo json_encode($int1C->add_new_reserv(), JSON_UNESCAPED_UNICODE);
+    }
 
 }
 if (isset($_GET['action'])) {
