@@ -118,4 +118,5 @@ return array(
     'Bitrix24\\Task\\Planner' => $vendorDir . '/mesilov/bitrix24-php-sdk/src/classes/task/planner.php',
     'Bitrix24\\User\\User' => $vendorDir . '/mesilov/bitrix24-php-sdk/src/classes/user/user.php',
     'Bitrix24\\UserfieldType\\UserfieldType' => $vendorDir . '/mesilov/bitrix24-php-sdk/src/classes/userfieldtype/UserfieldType.php',
+    'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
 );

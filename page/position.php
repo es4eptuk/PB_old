@@ -92,26 +92,31 @@ class Position
      * @return false|PDOStatement
      * Инвентаризация позиций
      */
-    function invent($id, $new_total) {
-        $query   = "UPDATE `pos_items` SET  `total` = '$new_total' WHERE `pos_items`.`id` = $id;";
-        $result = $this->pdo->query($query);
+    function invent($id, $new_total, $description = null, $check = false) {
         $info_pos = $this->get_info_pos($id);
-        if ($info_pos != []) {
-            $title = $info_pos['title'];
-            $vendorcode = $info_pos['vendor_code'];
-            if ($result) {
-                $log_title      = "Инвентаризация ";
-                $param['id']    = $id;
-                $param['type']  = "edit";
-                $param['count'] = $new_total;
-                $param['title'] = $log_title;
-                $this->add_log($param);
-                $this->log->add(__METHOD__,"Инвентаризация  $vendorcode - $title -> $new_total");
-
+        $o = ($check) ? $info_pos['total'] != $new_total : true;
+        if ($o) {
+            $query   = "UPDATE `pos_items` SET  `total` = '$new_total' WHERE `pos_items`.`id` = $id;";
+            $result = $this->pdo->query($query);
+            $description = ($description) ? "Инвентаризация ".$description." " : "Инвентаризация ";
+            if ($info_pos != []) {
+                $title = $info_pos['title'];
+                $vendorcode = $info_pos['vendor_code'];
+                if ($result) {
+                    $log_title      = "$description ";
+                    $param['id']    = $id;
+                    $param['type']  = "edit";
+                    $param['count'] = $new_total;
+                    $param['title'] = $log_title;
+                    $this->add_log($param);
+                    $this->log->add(__METHOD__,"$description  $vendorcode - $title -> $new_total");
+                }
             }
+            return $result;
+        } else {
+            return true;
         }
 
-        return $result;
     }
 
 

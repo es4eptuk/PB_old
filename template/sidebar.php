@@ -471,8 +471,25 @@ if ($userdata['group'] == 1) {
        ';
        }
 
+       if ($userdata['user_id'] == 75 || $userdata['user_id'] == 35 || $userdata['user_id'] == 17 || $userdata['user_id'] == 118) {
+           echo '
+                <li class="treeview">
+                    <a href="#">
+                        <i class="fa fa-download"></i> <span>Интеграция 1С</span>
+                        <span class="pull-right-container"></span>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li><a href="./1с_warehouses.php"><i class="fa fa-archive"></i>Склады</a></li>
+                        <li><a href="./1с_accounts.php"><i class="fa fa-bank"></i>Счета</a></li>
+                        <li><a href="./1с_nomenclatures.php"><i class="fa fa-cube"></i>Номенклатура</a></li>
+                        <li><a href="./1с_storage.php"><i class="fa fa-cubes"></i>Остатки</a></li>
+                    </ul>
+                </li>
+            ';
+       }
+
        if ($userdata['user_id'] == 75) {
-            echo '    
+            echo '
                 <li class="treeview">
                     <a href="#">
                         <i class="fa fa-retweet"></i> <span>Обработчик форм</span>

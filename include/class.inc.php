@@ -25,6 +25,7 @@ include_once ('page/settings.php');
 include_once ('page/bitrix.php');
 include_once ('page/bitrixForm.php');
 include_once ('page/statistics.php');
+include_once ('page/int1C.php');
 
 //создание экземпляров
 $dbconnect = new Dbconnect();
@@ -47,6 +48,7 @@ $settings = new Settings();
 $bitrixAPI = new Bitrix();
 $bitrixForm = new BitrixForm();
 $statistics = new Statistics();
+$int1C = new Int1C();
 
 //инициализация
 $log->init();
@@ -68,6 +70,7 @@ $settings->init();
 $bitrixAPI->init();
 $bitrixForm->init();
 $statistics->init();
+$int1C->init();
 
 if (array_key_exists('REQUEST_URI', $_SERVER)) {
     $i = $_SERVER['REQUEST_URI'];

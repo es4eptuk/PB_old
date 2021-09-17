@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "794d593620fbd14e594731567e94ec6a",
+    "content-hash": "e263bb9af440f55621f1769d3fb6617e",
     "packages": [
         {
             "name": "doctrine/inflector",
@@ -416,6 +416,54 @@
             "time": "2017-01-05T09:01:54+00:00"
         },
         {
+            "name": "kilylabs/odata-1c",
+            "version": "0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/kilylabs/odata-1c.git",
+                "reference": "3f3fd7ef93f77536f31a1769cabbae9e8057989d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/kilylabs/odata-1c/zipball/3f3fd7ef93f77536f31a1769cabbae9e8057989d",
+                "reference": "3f3fd7ef93f77536f31a1769cabbae9e8057989d",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "^6.2"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Kily\\Tools1C\\OData\\": "src/OData"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Alexander Bogdanov",
+                    "email": "ab@dev.kily.ru"
+                }
+            ],
+            "description": "ODATA protocol client adopted to use with 1C",
+            "keywords": [
+                "1c",
+                "1c enterprise",
+                "1С",
+                "1с enterprise 8.3",
+                "8.3",
+                "odata"
+            ],
+            "support": {
+                "issues": "https://github.com/kilylabs/odata-1c/issues",
+                "source": "https://github.com/kilylabs/odata-1c/tree/master"
+            },
+            "time": "2018-03-25T13:24:13+00:00"
+        },
+        {
             "name": "longman/telegram-bot",
             "version": "0.54.0",
             "source": {
@@ -814,5 +862,6 @@
     "platform": {
         "ext-mysqli": "*"
     },
-    "platform-dev": []
+    "platform-dev": [],
+    "plugin-api-version": "2.0.0"
 }

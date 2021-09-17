@@ -1,4 +1,10 @@
 <?php
+
+ini_set('max_execution_time', '100000');
+set_time_limit(0);
+ini_set('memory_limit', '2048M');
+ignore_user_abort(true);
+
 include_once('include/class.inc.php');
 //echo $_POST['action'];
 if (isset($_POST['action'])) {
@@ -560,6 +566,51 @@ if (isset($_POST['action'])) {
     }
     if ($_POST['action'] == "add_brend") {
         echo json_encode($position->add_brend($_POST['name'], $_POST['status']), JSON_UNESCAPED_UNICODE);
+    }
+
+    //1C Интеграция
+    //склады
+    if ($_POST['action'] == "c_get_warehouses") {
+        echo json_encode($int1C->c_get_warehouses($_POST['id']), JSON_UNESCAPED_UNICODE);
+    }
+    if ($_POST['action'] == "c_update_warehouse") {
+        echo json_encode($int1C->c_update_warehouse($_POST['id'], $_POST['title'], $_POST['uuid'], $_POST['on'], $_POST['deletion']), JSON_UNESCAPED_UNICODE);
+    }
+    if ($_POST['action'] == "c_delete_warehouse") {
+        echo json_encode($int1C->c_delete_warehouse($_POST['id']), JSON_UNESCAPED_UNICODE);
+    }
+    if ($_POST['action'] == "c_download_from_1c_warehouses") {
+        echo json_encode($int1C->c_download_from_1c_warehouses(), JSON_UNESCAPED_UNICODE);
+    }
+    //счета
+    if ($_POST['action'] == "c_get_accounts") {
+        echo json_encode($int1C->c_get_accounts($_POST['id']), JSON_UNESCAPED_UNICODE);
+    }
+    if ($_POST['action'] == "c_update_account") {
+        echo json_encode($int1C->c_update_account($_POST['id'], $_POST['title'], $_POST['code'], $_POST['uuid'], $_POST['storage'], $_POST['transfer'], $_POST['deletion']), JSON_UNESCAPED_UNICODE);
+    }
+    if ($_POST['action'] == "c_delete_account") {
+        echo json_encode($int1C->c_delete_account($_POST['id']), JSON_UNESCAPED_UNICODE);
+    }
+    if ($_POST['action'] == "c_download_from_1c_accounts") {
+        echo json_encode($int1C->c_download_from_1c_accounts(), JSON_UNESCAPED_UNICODE);
+    }
+    //номенклатура
+    if ($_POST['action'] == "c_download_from_1c_nomenclatures") {
+        echo json_encode($int1C->c_download_from_1c_nomenclatures(), JSON_UNESCAPED_UNICODE);
+    }
+    //остатки
+    if ($_POST['action'] == "c_renew_leftover") {
+        echo json_encode($int1C->c_renew_leftover(), JSON_UNESCAPED_UNICODE);
+    }
+    if ($_POST['action'] == "c_download_from_1c_storage") {
+        echo json_encode($int1C->c_download_from_1c_storage(), JSON_UNESCAPED_UNICODE);
+    }
+    if ($_POST['action'] == "c_download_from_1c_transfer") {
+        echo json_encode($int1C->c_download_from_1c_transfer(), JSON_UNESCAPED_UNICODE);
+    }
+    if ($_POST['action'] == "c_invent_from_1c_leftovers") {
+        echo json_encode($int1C->c_invent_from_1c_leftovers(), JSON_UNESCAPED_UNICODE);
     }
 
 }

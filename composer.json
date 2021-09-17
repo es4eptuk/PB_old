@@ -4,6 +4,7 @@
         "telegram-bot/api": "^2.3",
         "irazasyed/telegram-bot-sdk": "^2.0",
         "ext-mysqli": "*",
-        "mesilov/bitrix24-php-sdk": "^0.6.1"
+        "mesilov/bitrix24-php-sdk": "^0.6.1",
+        "kilylabs/odata-1c": "^0.2.0"
     }
 }

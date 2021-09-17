@@ -33,6 +33,10 @@ class ComposerStaticInitbe3ca9adb987d9f457db14c1ce03ba0b
         array (
             'Longman\\TelegramBot\\' => 20,
         ),
+        'K' => 
+        array (
+            'Kily\\Tools1C\\OData\\' => 19,
+        ),
         'I' => 
         array (
             'Illuminate\\Support\\' => 19,
@@ -70,6 +74,10 @@ class ComposerStaticInitbe3ca9adb987d9f457db14c1ce03ba0b
         'Longman\\TelegramBot\\' => 
         array (
             0 => __DIR__ . '/..' . '/longman/telegram-bot/src',
+        ),
+        'Kily\\Tools1C\\OData\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/kilylabs/odata-1c/src/OData',
         ),
         'Illuminate\\Support\\' => 
         array (
@@ -216,6 +224,7 @@ class ComposerStaticInitbe3ca9adb987d9f457db14c1ce03ba0b
         'Bitrix24\\Task\\Planner' => __DIR__ . '/..' . '/mesilov/bitrix24-php-sdk/src/classes/task/planner.php',
         'Bitrix24\\User\\User' => __DIR__ . '/..' . '/mesilov/bitrix24-php-sdk/src/classes/user/user.php',
         'Bitrix24\\UserfieldType\\UserfieldType' => __DIR__ . '/..' . '/mesilov/bitrix24-php-sdk/src/classes/userfieldtype/UserfieldType.php',
+        'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
     );
 
     public static function getInitializer(ClassLoader $loader)

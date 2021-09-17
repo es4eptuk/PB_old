@@ -2,6 +2,7 @@
 include 'include/class.inc.php';
 
 $allowed = $position->getAllowedNomenclature($userdata["user_id"]);
+$c_pos = $int1C->c_get_leftover_for_position();
 ?>
 
 <?php include 'template/head.php' ?>
@@ -60,6 +61,7 @@ $allowed = $position->getAllowedNomenclature($userdata["user_id"]);
                   <th>Наименование</th>
                   <th>Кол-во на складе</th>
                   <th>Мин. остаток</th>
+                  <th>1C остаток</th>
                   <th>Поставщик</th>
                   <th>Стоимость</th>
                   <th>Сборка</th>
@@ -107,13 +109,21 @@ $allowed = $position->getAllowedNomenclature($userdata["user_id"]);
                             "
                             : "";
 
+                        $bg = "";
+                        if (array_key_exists($pos['id'], $c_pos)) {
+                            $fol = $c_pos[$pos['id']]['storage']." | ".$c_pos[$pos['id']]['transfer'];
+                        } else {
+                            $fol = "-";
+                            $bg = "class='bg-yellow'";
+                        }
                        echo "
-                       <tr>
+                       <tr ".$bg.">
                           <td>".$position->getSubcategoryes[$pos['subcategory']]['title']."</td>
                           <td>".$pos['vendor_code']."</td>
                           <td>".$pos['title']."</td>
                           <td>".$pos['total']."</td>
                           <td>".$pos['min_balance']."</td>
+                          <td>".$fol."</td>
                           <td>".$provider['title'].", ".$provider['type']."</td>
                           <td>".$pos['price']."</td>
                           <td>".$assembly_out."</td>
