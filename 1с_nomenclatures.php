@@ -95,6 +95,7 @@ include 'include/class.inc.php';
                 alert(obj['err']);
                 return false;
             } else {
+                alert(obj['err']);
                 window.location.reload(true);
             }
         });

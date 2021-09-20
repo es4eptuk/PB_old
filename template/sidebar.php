@@ -471,7 +471,7 @@ if ($userdata['group'] == 1) {
        ';
        }
 
-       if ($userdata['user_id'] == 75 || $userdata['user_id'] == 35 || $userdata['user_id'] == 17 || $userdata['user_id'] == 118) {
+       if ($userdata['user_id'] == 75 || $userdata['user_id'] == 35 || $userdata['user_id'] == 17 || $userdata['user_id'] == 118 || $userdata['user_id'] == 127) {
            echo '
                 <li class="treeview">
                     <a href="#">

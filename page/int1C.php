@@ -210,9 +210,9 @@ class Int1C
                 $second_parent = (is_array($nomenclature["Parent"]) && is_array($nomenclature["Parent"]["Parent"])) ? $nomenclature["Parent"]["Parent"]["Description"] : "-";
                 $this->c_create_nomenclature($nomenclature["DB_POS_ID"], $nomenclature["НаименованиеПолное"], $nomenclature["Артикул"], $nomenclature["Ref_Key"], $nomenclature["Code"], $first_parent, $second_parent, $deletion);
             }
-            return ['result' => true, 'err' => ''];
+            return ['result' => true, 'err' => 'Номенклатура успешно загружена!'];
         }
-        return ['result' => false, 'err' => ''];
+        return ['result' => false, 'err' => 'Что то пошло не так, попробуйте еще раз!'];
     }
     function c_get_nomenclatures($id = null)
     {
