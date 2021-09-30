@@ -107,14 +107,16 @@ $categoryes = $position->getCategoryes;
                     $arr_robot = $plan->get_robot_inprocess_new();
                     $arr_robot_num = $plan->get_robot_inprocess_num_new();
 
-                    //$arr_robot = (isset($arr_robot)) ? $arr_robot : [];
-                    //ksort($arr_robot);
-                    echo "<dt>Потребность</dt><br>";
-                    foreach ($arr_robot as $v => $c) {
-                        if (in_array($v, $v_filtr) || $v_filtr == []) {
-                            $name = trim($version[$v]['title']);
-                            $robotss = implode(', ', $arr_robot_num[$v]);
-                            echo "<dd><span style='display:block;float:left;width:110px;padding-left:10px'>$name</span><span style='display:inline-block;width:80%;'> - $c ($robotss)</span></dd>";
+                    $arr_robot = (isset($arr_robot)) ? $arr_robot : [];
+                    ksort($arr_robot);
+                    foreach ($arr_robot as $k => $v) {
+                        echo "<dt>$k</dt>";
+                        foreach ($v as $kv => $vv) {
+                            if (in_array($kv, $v_filtr) || $v_filtr == []) {
+                                $name = trim($version[$kv]['title']);
+                                $robotss = implode(', ', $arr_robot_num[$k][$kv]);
+                                echo "<dd><span style='display:block;float:left;width:110px;padding-left:10px'>$name</span><span style='display:inline-block;width:80%;'> - $vv ($robotss)</span></dd>";
+                            }
                         }
                     }
                 ?>
@@ -128,8 +130,16 @@ $categoryes = $position->getCategoryes;
                     $out ="";
                     $out2="";
                     //на основе дат собираем шапку таблицы
-                    $out .= '<th colspan="3"><b>Потребность</b> <button type="button" class="btn btn-block btn-primary btn-xs add_order" data-date="1">Заказ</button></th>';
-                    $out2 .= '<th><b>надо</b></th><th><b>есть</b></th><th><b>статус</b></th>';
+
+                    //переворачиваем массив
+                    $m_arr_robot = $arr_robot;
+                    krsort($m_arr_robot);
+                    //енд переворота
+
+                    foreach ($m_arr_robot as $k => $v) {
+                        $out .= '<th colspan="3"><b>'.$k.'</b> <button type="button" class="btn btn-block btn-primary btn-xs add_order" data-date="'.$k.'">Заказ</button></th>';
+                        $out2 .= '<th><b>надо</b></th><th><b>есть</b></th><th><b>статус</b></th>';
+                    }
                 ?>
                     
               <table class="table table-bordered">
@@ -138,7 +148,8 @@ $categoryes = $position->getCategoryes;
                     <th colspan="3"><b>Номенклатура</b></th>
                     <th colspan="3">
                         <b>Склад</b><br>
-                        <button type="button" class="btn btn-block btn-danger btn-xs add_order" data-date="0">Заказ</button>
+                        <button type="button" class="btn btn-block <?= (isset($_GET['version']) || $v_filtr != []) ? "btn-danger" : "btn-primary";?> btn-xs add_order" data-date="0" <?php /*echo (isset($_GET['version']) || $v_filtr != []) ? "disabled" : "";*/?>>Заказ</button>
+                        <!--<button type="button" class="btn btn-primary btn-xs add_order" data-date="" style="width:48%;" <?php echo (!isset($_GET['version'])) ? "disabled" : "";?>>На робота</button>-->
                     </th>
                     <?php echo $out; ?>
                   </tr>
@@ -156,48 +167,57 @@ $categoryes = $position->getCategoryes;
                   <?php
 
                   //подготовка потребностей
-                  $arr_kit_items = $plan->get_kits();
+                  $arr_kit_items = $plan->get_kits_new();
                   $arr_need = [];
-                  foreach ($arr_robot as $v => $c) {
+                  foreach ($arr_robot as $k => $v) {
                       if (isset($v)) {
-                          if (!in_array($v, $v_filtr) && $v_filtr != []) {
-                              continue;
+                          foreach ($v as $kv => $vv) {
+                              if (!in_array($kv, $v_filtr) && $v_filtr != []) {
+                                  continue;
+                              }
+                              foreach ($plan->get_check_in_process_by_version_new($kv) as $chesk) {
+                                  foreach ($arr_kit_items[$chesk['id_kit']] as $id_pos => $count) {
+                                      $arr_need[$k][$kv][] = [
+                                          'id_pos' => $id_pos,
+                                          'count' => $count,
+                                          'operation' => $chesk['operation'].' ('.$count.')',
+                                      ];
+                                  }
+                              }
                           }
-                          foreach ($plan->get_check_in_process_by_version_new($v) as $chesk) {
-                              foreach ($arr_kit_items[$chesk['id_kit']] as $id_pos => $count) {
-                                  $arr_need[$v][] = [
-                                      'id_pos' => $id_pos,
+                      }
+                  }
+                  /*
+                  print_r("<pre>");
+                  print_r($arr_need);
+                  print_r("</pre>");
+                  */
+                  $arr_inneed = [];
+                  foreach ($arr_need as $month => $versions) {
+                      foreach ($versions as $version => $positions) {
+                          foreach ($positions as $pos) {
+                              $count = $pos['count'];
+                              $operation = $pos['operation'];
+                              if (isset($arr_inneed[$month][$version][$pos['id_pos']])) {
+
+                                  $arr_inneed[$month][$version][$pos['id_pos']]['count'] = $arr_inneed[$month][$version][$pos['id_pos']]['count'] + $count;
+                                  $arr_inneed[$month][$version][$pos['id_pos']]['operation'][] = $operation;
+                              } else {
+                                  $arr_inneed[$month][$version][$pos['id_pos']] = [
                                       'count' => $count,
-                                      'operation' => $chesk['operation'].' ('.$count.')',
+                                      'operation' => [$operation],
                                   ];
                               }
                           }
                       }
                   }
+                  unset($arr_need);
                   unset($arr_kit_items);
 
-                  $arr_inneed = [];
-                  foreach ($arr_need as $version => $positions) {
-                      foreach ($positions as $pos) {
-                          $count = $pos['count'];
-                          $operation = $pos['operation'];
-                          if (isset($arr_inneed[$version][$pos['id_pos']])) {
-                              $arr_inneed[$version][$pos['id_pos']]['count'] = $arr_inneed[$version][$pos['id_pos']]['count'] + $count;
-                              $arr_inneed[$version][$pos['id_pos']]['operation'][] = $operation;
-                          } else {
-                              $arr_inneed[$version][$pos['id_pos']] = [
-                                  'count' => $count,
-                                  'operation' => [$operation],
-                              ];
-                          }
-                      }
-                  }
-                  unset($arr_need);
-
                   //собираем все позиции в заказе, пока без категории $_GET['id']
-                  $orderss = $orders->get_orders_items_inprocess();
+                  $orders = $orders->get_orders_items_inprocess();
                   //создаем массив заказов [id_pos => [id_order => in_order]]
-                  foreach ($orderss as $v) {
+                  foreach ($orders as $v) {
                       $in_order = $v['pos_count'] - $v['pos_count_finish'];
                       $pos_date = date('d.m.Y', strtotime($v['pos_date']));
                       if ($in_order > 0) {
@@ -208,10 +228,10 @@ $categoryes = $position->getCategoryes;
                           ];
                       }
                   }
-                  unset($orderss);
+                  unset($orders);
 
                   //создаем массив позиций по категории (без архивных и сборных позиций)
-                  $arr_pos = $position->get_pos_in_category();
+                  $arr_pos = $position->get_pos_in_category($_GET['id']);
                   $arr_pos = (isset($arr_pos)) ? $arr_pos : [];
                   //подготовка массива
                   foreach ($arr_pos as $k => $v) {
@@ -219,6 +239,7 @@ $categoryes = $position->getCategoryes;
                       unset($arr_pos[$k]['longtitle']);
                       unset($arr_pos[$k]['version']);
                       unset($arr_pos[$k]['quant_robot']);
+                      unset($arr_pos[$k]['assembly']);
                       unset($arr_pos[$k]['summary']);
                       unset($arr_pos[$k]['apply']);
                       unset($arr_pos[$k]['ow']);
@@ -230,58 +251,60 @@ $categoryes = $position->getCategoryes;
                       $arr_pos[$k]['subcategory'] = $position->getSubcategoryes[$v['subcategory']]['title'];
                       //добавляем поля
                       $arr_pos[$k]['need'] = $v['total'] - $v['reserv'] - $v['min_balance']; //общая потребность
+                      $arr_pos[$k]['onrobot'] = ""; //на робота если будет проставлен фильтр по роботу
                       $arr_pos[$k]['orders'] = (isset($arr_orders[$k])) ? $arr_orders[$k] : [];
-                      $arr_pos[$k]['stock'] = ($v['total'] > 0) ? $v['total'] : 0;
-                      $arr_pos[$k]['order'] = array_sum (array_column($arr_pos[$k]['orders'], 'count'));
-                      $arr_pos[$k]['inorder'] = ($arr_pos[$k]['need']<0 && (abs($arr_pos[$k]['need'])-$arr_pos[$k]['order'])>0)
-                          ? abs($arr_pos[$k]['need']) - $arr_pos[$k]['order']
-                          : 0;
-                      //
-                      $arr_pos[$k]['deleting_post'] = 0;
-                      $incount = 0;
-                      $operation = [];
-                      foreach ($arr_robot as $version => $count) {
-                          if (isset($arr_inneed[$version][$k])) {
-                              $incount = $incount + $arr_inneed[$version][$k]['count'];
-                              $operation = array_merge ($operation, $arr_inneed[$version][$k]['operation']);
+                      $stock = ($v['total'] > 0) ? $v['total'] : 0;
+                      $order = array_sum (array_column($arr_pos[$k]['orders'], 'count'));
+                      $arr_pos[$k]['inorder'] = ($arr_pos[$k]['need']<0 && (abs($arr_pos[$k]['need'])-$order)>0) ? abs($arr_pos[$k]['need']) - $order : 0;
+                      $deleting = 0;
+                      $sum_inorder = 0;
+                      foreach ($arr_robot as $month => $versions) {
+                          $incount = 0;
+                          $inorder = 0;
+                          $operation = [];
+                          //если есть фильтр по версиям
+                          if (isset($_GET['version'])) {
+                              if (isset($arr_inneed[$month][$_GET['version']][$k])) {
+                                  $incount = $arr_inneed[$month][$_GET['version']][$k]['count'];
+                                  $operation = $arr_inneed[$month][$_GET['version']][$k]['operation'];
+                              }
+                          //если нет фильтра по версиям
+                          } else {
+                              foreach ($versions as $version => $count) {
+                                  if (isset($arr_inneed[$month][$version][$k])) {
+                                      $incount = $incount + $arr_inneed[$month][$version][$k]['count'];
+                                      $operation = array_merge ($operation, $arr_inneed[$month][$version][$k]['operation']);
+                                  }
+
+                              }
                           }
-                      }
-                      //считаем занчения
-                      $instock = ($arr_pos[$k]['stock'] - $incount >= 0) ? $incount : $arr_pos[$k]['stock'];
-                      $inorder = ($incount - $instock - $arr_pos[$k]['order'] <= 0) ? 0 : $incount - $instock - $arr_pos[$k]['order'];
-                      //присваеваем значения
-                      $arr_pos[$k]['in']['inneed'] = $incount;
-                      $arr_pos[$k]['in']['instock'] = $instock;
-                      $arr_pos[$k]['in']['inorder'] = $inorder;
-                      $arr_pos[$k]['in']['operation'] = $operation;
-                  }
-
-
-                  //обработка вхождений
-                  $arr_pos = $plan->prepare_array_items($arr_pos);
-
-                  //удаляем лишнее
-                  foreach ($arr_pos as $k => $v) {
-                      if ($v['category'] == $_GET['id']) {
-                          $arr_pos[$k]['in']['operation'] = implode("<br>", $arr_pos[$k]['in']['operation']);
+                          //считаем занчения
+                          $instock = ($stock - $incount >= 0) ? $incount : $stock;
+                          $stock = ($stock - $instock > 0) ? $stock - $instock : 0;
+                          $inorder = ($incount - $instock - $order <= 0) ? 0 : $incount - $instock - $order;
+                          $order = (($order - ($incount - $instock)) <= 0) ? 0 : ($order - ($incount - $instock));
+                          $sum_inorder = $sum_inorder + $inorder;
+                          //присваеваем значения
+                          $arr_pos[$k]['month'][$month]['inneed'] = $incount;
+                          $arr_pos[$k]['month'][$month]['instock'] = $instock;
+                          $arr_pos[$k]['month'][$month]['inorder'] = ($inorder == 0) ? 0 : $sum_inorder;
+                          $arr_pos[$k]['month'][$month]['operation'] = implode("<br>", $operation);
                           //определяем статус
-                          $arr_pos[$k]['in']['status'] = 0;
-                          if ($arr_pos[$k]['in']['inneed'] == $arr_pos[$k]['in']['instock'] && $arr_pos[$k]['in']['inneed'] != 0) {
-                              $arr_pos[$k]['in']['status'] = 3;
+                          $arr_pos[$k]['month'][$month]['status'] = 0;
+                          if ($incount == $instock && $incount != 0) {
+                              $arr_pos[$k]['month'][$month]['status'] = 3;
                           }
-                          if ($arr_pos[$k]['in']['inneed'] != $arr_pos[$k]['in']['instock'] && $arr_pos[$k]['in']['inorder'] == 0) {
-                              $arr_pos[$k]['in']['status'] = 2;
+                          if ($incount != $instock && $inorder == 0) {
+                              $arr_pos[$k]['month'][$month]['status'] = 2;
                           }
-                          if ($arr_pos[$k]['in']['inneed'] != $arr_pos[$k]['in']['instock'] && $arr_pos[$k]['in']['inorder'] != 0) {
-                              $arr_pos[$k]['in']['status'] = 1;
+                          if ($incount != $instock && $inorder != 0) {
+                              $arr_pos[$k]['month'][$month]['status'] = 1;
                           }
-                          $arr_pos[$k]['deleting_post'] = $arr_pos[$k]['deleting_post'] + $arr_pos[$k]['in']['inneed'];
-                          if ((isset($_GET['version']) && $arr_pos[$k]['deleting_post']==0) || ($v_filtr != [] && $arr_pos[$k]['deleting_post']==0)) {
-                              unset($arr_pos[$k]);
-                              continue;
-                          }
-                      } else {
+                          $deleting = $deleting + $incount;
+                      }
+                      if ((isset($_GET['version']) && $deleting==0) || ($v_filtr != [] && $deleting==0)) {
                           unset($arr_pos[$k]);
+                          continue;
                       }
                   }
                   ksort($arr_pos);
@@ -300,6 +323,12 @@ $categoryes = $position->getCategoryes;
                           $orders .= "<a href='./edit_order.php?id=".$id."' target='_blank'>".$info['date']." (".$info['category'].") - ".$info['count']." шт.</a><br>";
                       }
 
+                      //переворачиваем массив
+                      $mas_edit = $v['month'];
+                      krsort($mas_edit);
+                      $v['month'] = $mas_edit;
+                      //енд переворота
+
                       //создаем шапку слева
                       echo '
                         <td>'.$v['subcategory'].'</td>
@@ -313,28 +342,29 @@ $categoryes = $position->getCategoryes;
                         <td><b>'.$v['need'].'</b></td>
                         <td><b>'.$v['total'].'</b></td>
                       ';
-
-                      //вывод Потребности
-                      $color = $color_statuses[$v['in']['status']];
-                      $checks = $v['in']['operation'];
-                      $toorder = ($v['in']['inorder'] != 0) ? "<br>(".$v['in']['inorder'].")" : "";
-                      echo '
-                        <td>
-                            <span style="color:'.$color.'" data-toggle="tooltip" data-html="true" data-delay=\'{"show":"100", "hide":"3000"}\' data-placement="bottom" title="'.$checks.'">
-                                '.$v['in']['inneed'].'                         
-                            </span>                            
-                        </td>
-                        <td>
-                            <span style="color:'.$color.'">
-                                '.$v['in']['instock'].'                         
-                            </span>                              
-                        </td>
-                        <td>
-                            <span style="color:'.$color.'" data-template=\'<div class="tooltip" role="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner large"></div></div>\' data-toggle="tooltip" data-html="true" data-delay=\'{"show":"100", "hide":"3000"}\' data-placement="bottom" title="'.$orders.'">
-                                '.$statuses[$v['in']['status']].$toorder.'                            
-                            </span>
-                        </td>                            
-                      ';
+                      //вывод по месяцам
+                      foreach ($v['month'] as $km => $vm) {
+                          $color = $color_statuses[$vm['status']];
+                          $checks = $vm['operation'];
+                          $toorder = ($vm['inorder'] != 0) ? "<br>(".$vm['inorder'].")" : "";
+                          echo '
+                            <td>
+                                <span style="color:'.$color.'" data-toggle="tooltip" data-html="true" data-delay=\'{"show":"100", "hide":"3000"}\' data-placement="bottom" title="'.$checks.'">
+                                    '.$vm['inneed'].'                         
+                                </span>                            
+                            </td>
+                            <td>
+                                <span style="color:'.$color.'">
+                                    '.$vm['instock'].'                         
+                                </span>                              
+                            </td>
+                            <td>
+                                <span style="color:'.$color.'" data-template=\'<div class="tooltip" role="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner large"></div></div>\' data-toggle="tooltip" data-html="true" data-delay=\'{"show":"100", "hide":"3000"}\' data-placement="bottom" title="'.$orders.'">
+                                    '.$statuses[$vm['status']].$toorder.'                            
+                                </span>
+                            </td>                            
+                          ';
+                      }
                       echo '</tr>';
                   }
 

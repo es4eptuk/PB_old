@@ -116,34 +116,6 @@ include 'include/class.inc.php';
         });
     });
 
-    $("#btn_transfer").click(function () {
-        $(this).prop('disabled', true);
-        $.post("./api.php", {action: "c_download_from_1c_transfer"}).done(function (data) {
-            let obj = jQuery.parseJSON(data);
-            if (obj['result'] == false) {
-                alert(obj['err']);
-                return false;
-            } else {
-                alert(obj['err']);
-                window.location.reload(true);
-            }
-        });
-    });
-
-    $("#btn_invent").click(function () {
-        $(this).prop('disabled', true);
-        $.post("./api.php", {action: "c_invent_from_1c_leftovers"}).done(function (data) {
-            let obj = jQuery.parseJSON(data);
-            if (obj['result'] == false) {
-                alert(obj['err']);
-                return false;
-            } else {
-                alert(obj['err']);
-                window.location.reload(true);
-            }
-        });
-    });
-
     $('#pos').DataTable({
         "iDisplayLength": 100,
         "order": [[0, "asc"]]

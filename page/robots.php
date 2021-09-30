@@ -124,7 +124,7 @@ class Robots
     //информация из чего состоит подверсия
     function get_composition_subversion($subversion)
     {
-        $arr_assemble = $this->plan->get_assemblyes_items();
+        $arr_assemble = $this->plan->get_assemblyes_items_new();//plan->get_assemblyes_items();
         //добавляем инфу по позициям
         $this->query = "SELECT * FROM `pos_items`";
         $result = $this->pdo->query($this->query);
@@ -182,7 +182,7 @@ class Robots
     //информация из чего состоит опция
     function get_composition_option($option)
     {
-        $arr_assemble = $this->plan->get_assemblyes_items();
+        $arr_assemble = $this->plan->get_assemblyes_items_new();//plan->get_assemblyes_items();
         //добавляем инфу по позициям
         $this->query = "SELECT * FROM `pos_items`";
         $result = $this->pdo->query($this->query);
@@ -268,7 +268,7 @@ class Robots
             $query = "DELETE FROM `robot_options_items` WHERE `id_robot` = $id";
             $result = $this->pdo->query($query);
             //списываем резервы
-            $arr_kits = $this->plan->get_kits();
+            $arr_kits = $this->plan->get_kits(); //plan->get_kits()
             $query = "
             SELECT `id_kit` FROM `check` WHERE `robot` = $id AND `id_kit` != 0";
             $result = $this->pdo->query($query);

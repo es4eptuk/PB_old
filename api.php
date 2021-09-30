@@ -210,6 +210,10 @@ if (isset($_POST['action'])) {
     if ($_POST['action'] == "add_order_plan_new") {
         echo $plan->add_order_plan_new($_POST['category'], $_POST['version'], $_POST['month'], $_POST['filter']);
     }
+    //Создание нового заказа
+    if ($_POST['action'] == "add_order_plan_new_new") {
+        echo $plan->add_order_plan_new_new($_POST['category'], $_POST['version'], $_POST['month'], $_POST['filter']);
+    }
     //Выгрузка заказа
     /*if ($_POST['action'] == "print_order") {
         echo $orders->createFileOrder($_POST['id']);

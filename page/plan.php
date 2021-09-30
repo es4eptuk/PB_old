@@ -8,6 +8,10 @@ class Plan
     private $position;
     private $robots;
 
+    private $temp_assembly;
+    private $arr_plan;
+    private $arr_plan_dop;
+
 
     function __construct()
     {
@@ -98,6 +102,22 @@ class Plan
         return $robot;
     }
 
+    function get_robot_inprocess_new()
+    {
+        $query = "SELECT * FROM `robots` WHERE `writeoff` = 0 AND `remont` = 0 AND `delete` = 0 AND `progress` != 100";
+        $result = $this->pdo->query($query);
+        $robot = [];
+        while ($line = $result->fetch()) {
+            $version = $line['version'];
+            if (isset($robot[$version])) {
+                $robot[$version] = $robot[$version] + 1;
+            } else {
+                $robot[$version] = 0;
+            }
+        }
+        return $robot;
+    }
+
     //собирает номера роботов
     function get_robot_inprocess_num()
     {
@@ -115,6 +135,18 @@ class Plan
                 $robot[$date][$version] = [];
             }*/
             $robot[$date][$version][]=$number;
+        }
+        return $robot;
+    }
+    function get_robot_inprocess_num_new()
+    {
+        $query = "SELECT * FROM `robots` WHERE `writeoff` = 0 AND `remont` = 0 AND `delete` = 0 AND `progress` != 100";
+        $result = $this->pdo->query($query);
+        $robot = [];
+        while ($line = $result->fetch()) {
+            $number = $line['number'];
+            $version = $line['version'];
+            $robot[$version][]=$number;
         }
         return $robot;
     }
@@ -274,6 +306,31 @@ class Plan
         }
         return $checks;
     }
+    function get_check_in_process_by_version_new($version)
+    {
+        $query = "
+            SELECT * FROM `check` 
+            JOIN `robots` ON `check`.`robot` = `robots`.`id`
+            WHERE `robots`.`progress`!=100 
+                AND `robots`.`version`=$version 
+                AND `robots`.`remont`=0 
+                AND `robots`.`delete`=0 
+                AND `robots`.`writeoff`=0 
+                AND `check`.`check`=0 
+                AND `check`.`id_kit`!=0
+        ";
+        $result = $this->pdo->query($query);
+        $checks = [];
+        while ($line = $result->fetch()) {
+            //$checks[] = $line;
+            $checks[] = [
+                'id_kit' => $line['id_kit'],
+                'operation' => $line['operation'] . ' - ' . $line['version'] . '.' . $line['number'],
+            ];
+
+        }
+        return $checks;
+    }
 
     //собираем массив китов
     function get_kits_items()
@@ -305,7 +362,39 @@ class Plan
     //возвращает обработанный масив с кит (разложив сборки)
     function get_kits()
     {
-        $assemblyes = $this->get_assemblyes_items();
+        //$assemblyes = $this->get_assemblyes_items();
+        $kits = $this->get_kits_items();
+        $result = [];
+        foreach ($kits as $id_kit => $pos) {
+            foreach ($pos as $pos_id => $data) {
+                //if ($data['assembly'] == 0) {
+                if (isset($result[$id_kit][$pos_id])) {
+                    $tmp = $result[$id_kit][$pos_id];
+                    $result[$id_kit][$pos_id] = $tmp + $data['count'];
+                } else {
+                    $result[$id_kit][$pos_id] = $data['count'];
+                }
+                //} else {
+                /*if ($data['assembly'] != 0) {
+                    foreach ($assemblyes[$data['assembly']] as $id => $count) {
+                        if (isset($result[$id_kit][$id])) {
+                            $tmp = $result[$id_kit][$id];
+                            $result[$id_kit][$id] = $tmp + $count * $data['count'];
+                        } else {
+                            $result[$id_kit][$id] = $count * $data['count'];
+                        }
+                    }
+                }*/
+                //}
+            }
+        }
+
+        return $result;
+    }
+
+    function get_kits_new()
+    {
+        $assemblyes = $this->get_assemblyes_items_new();
         $kits = $this->get_kits_items();
         $result = [];
         foreach ($kits as $id_kit => $pos) {
@@ -333,6 +422,163 @@ class Plan
         }
 
         return $result;
+    }
+    function get_assemblyes_items_new()
+    {
+        $query = "SELECT * FROM `pos_assembly_items` JOIN `pos_items` ON `pos_assembly_items`.`id_pos` = `pos_items`.`id`";
+        $result = $this->pdo->query($query);
+        $array = [];
+        while ($line = $result->fetch()) {
+            $array[$line["id_assembly"]][$line["id_pos"]] = $line;
+        }
+        $this->temp_assembly = $array;
+        unset($array);
+        $assemblyes = [];
+        foreach ($this->temp_assembly as $id_assembly_line => $lines) {
+            foreach ($lines as $id_pos => $line) {
+                $assemblyes[$line['id_assembly']][$line['id_pos']] = $line['count'];
+                if ($line['assembly'] != 0) {
+                    $inner = $this->get_recursive_assemblyes_items_new($line['assembly']);
+                    foreach ($inner as $id_assembly => $poss) {
+                        foreach ($poss as $id_pos => $count) {
+                            if (isset($assemblyes[$line['id_assembly']][$id_pos])) {
+                                $assemblyes[$line['id_assembly']][$id_pos] = $assemblyes[$line['id_assembly']][$id_pos] + $count * $line['count'];
+                            } else {
+                                $assemblyes[$line['id_assembly']][$id_pos] = $count * $line['count'];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        unset($this->temp_assembly);
+        return $assemblyes;
+    }
+    function get_recursive_assemblyes_items_new($id)
+    {
+        $lines = (isset($this->temp_assembly[$id])) ? $this->temp_assembly[$id] : [];
+
+        $assemblyes = [];
+        foreach ($lines as $id_pos => $line) {
+            $assemblyes[$line['id_assembly']][$line['id_pos']] = $line['count'];
+            if ($line['assembly'] != 0) {
+                $inner = $this->get_recursive_assemblyes_items_new($line['assembly']);
+                foreach ($inner as $id_assembly => $poss) {
+                    foreach ($poss as $id_pos => $count) {
+                        if (isset($assemblyes[$line['id_assembly']][$id_pos])) {
+                            $assemblyes[$line['id_assembly']][$id_pos] = $assemblyes[$line['id_assembly']][$id_pos] + $count * $line['count'];
+                        } else {
+                            $assemblyes[$line['id_assembly']][$id_pos] = $count * $line['count'];
+                        }
+                    }
+                }
+            }
+        }
+        return $assemblyes;
+    }
+
+    //перебор массива со вставкой сборок
+    function prepare_array_items($arr)
+    {
+        $this->arr_plan = $arr;
+        unset($arr);
+        $this->set_assemblyes_plan();
+        $this->arr_plan_dop = [];
+
+        foreach ($this->arr_plan as $pos_id => $item) {
+            if ($item['assembly'] != 0 && $item['inorder'] != 0) {
+                $this->add_in_arr_plan($item['assembly'], $item['inorder'], $item['in']['inorder'], $pos_id, $item['in']['inneed']);
+            }
+        }
+        foreach ($this->arr_plan_dop as $pos_id => $item) {
+            if (array_key_exists($pos_id, $this->arr_plan)) {
+                $this->arr_plan[$pos_id]['need'] = $item['need'];
+                $incount = $item['in']['inneed'];
+                $this->arr_plan[$pos_id]['inorder'] = ($this->arr_plan[$pos_id]['need']<0 && (abs($this->arr_plan[$pos_id]['need'])-$this->arr_plan[$pos_id]['order'])>0)
+                    ? abs($this->arr_plan[$pos_id]['need']) - $this->arr_plan[$pos_id]['order']
+                    : 0;
+                //считаем занчения
+                $instock = ($this->arr_plan[$pos_id]['stock'] - $incount >= 0) ? $incount : $this->arr_plan[$pos_id]['stock'];
+                $inorder = ($incount - $instock - $this->arr_plan[$pos_id]['order'] <= 0) ? 0 : $incount - $instock - $this->arr_plan[$pos_id]['order'];
+                //присваеваем значения
+                $this->arr_plan[$pos_id]['in']['inneed'] = $incount;
+                $this->arr_plan[$pos_id]['in']['instock'] = $instock;
+                $this->arr_plan[$pos_id]['in']['inorder'] = $inorder;
+                $this->arr_plan[$pos_id]['in']['operation'] = array_merge($this->arr_plan[$pos_id]['in']['operation'], $item['operation']);
+            }
+        }
+        $arr = $this->arr_plan;
+        unset($this->arr_plan);
+        unset($this->arr_plan_dop);
+        unset($this->temp_assembly);
+        return $arr;
+    }
+    function add_in_arr_plan($id_assembly, $count, $incount, $pos_out_id, $col)
+    {
+        $assembly_items = $this->temp_assembly[$id_assembly];
+        foreach ($assembly_items as $pos_id => $item) {
+
+            $need = 0;
+            $in = [
+                'inneed' => 0,
+                'instock' => 0,
+                'inorder' => 0,
+            ];
+            $inorder_old = 0;
+            $ininorder_old = 0;
+            if (array_key_exists($pos_id, $this->arr_plan)) {
+                $need = $this->arr_plan[$pos_id]['need'];
+                $in = $this->arr_plan[$pos_id]['in'];
+                $inorder_old = $this->arr_plan[$pos_id]['inorder'];;
+                $ininorder_old = $this->arr_plan[$pos_id]['in']['inorder'];
+                unset($in['operation']);
+            }
+            if (array_key_exists($pos_id, $this->arr_plan_dop)) {
+                $need_dop = $this->arr_plan_dop[$pos_id]['need'];
+                $in_dop = $this->arr_plan_dop[$pos_id]['in'];
+                $inorder_dop_old = $this->arr_plan_dop[$pos_id]['inorder'];
+                $ininorder_dop_old = $this->arr_plan_dop[$pos_id]['in']['inorder'];
+            } else {
+                $need_dop = $need;
+                $in_dop = $in;
+                $inorder_dop_old = $inorder_old;
+                $ininorder_dop_old = $ininorder_old;
+            }
+            $need_dop = $need_dop - $item['count'] * $count;
+            $inorder_dop = ($need_dop<0 && (abs($need_dop)-$this->arr_plan[$pos_id]['order'])>0)
+                ? abs($need_dop) - $this->arr_plan[$pos_id]['order']
+                : 0;
+
+            $incount_dop = $in_dop['inneed'] + $item['count'] * $incount;
+            //считаем занчения
+            $instock_dop = ($this->arr_plan[$pos_id]['stock'] - $incount_dop >= 0) ? $incount_dop : $this->arr_plan[$pos_id]['stock'];
+            $ininorder_dop = ($incount_dop - $instock_dop - $this->arr_plan[$pos_id]['order'] <= 0) ? 0 : $incount_dop - $instock_dop - $this->arr_plan[$pos_id]['order'];
+            //присваеваем значения
+            $in_dop['inneed'] = $incount_dop;
+            $in_dop['instock'] = $instock_dop;
+            $in_dop['inorder'] = $ininorder_dop;
+
+            $this->arr_plan_dop[$pos_id]['need'] = $need_dop;
+            $this->arr_plan_dop[$pos_id]['inorder'] = $inorder_dop;
+            $this->arr_plan_dop[$pos_id]['in'] = $in_dop;
+            $this->arr_plan_dop[$pos_id]['operation'][] = $this->arr_plan[$pos_out_id]['vendor_code'].' '.$this->arr_plan[$pos_out_id]['title'].' ('.$col.'*'.$item['count'].')';
+
+            if ($item['assembly'] != 0 && $item['count'] * $count !=0) {
+                $this->add_in_arr_plan($item['assembly'], $inorder_dop-$inorder_dop_old, $ininorder_dop-$ininorder_dop_old, $pos_id, $col * $item['count']);
+            }
+        }
+    }
+    function set_assemblyes_plan()
+    {
+        $query = "SELECT * FROM `pos_assembly_items` JOIN `pos_items` ON `pos_assembly_items`.`id_pos` = `pos_items`.`id` WHERE `pos_items`.`archive` = 0 ";
+        $result = $this->pdo->query($query);
+        $array = [];
+        while ($line = $result->fetch()) {
+            $array[$line["id_assembly"]][$line["id_pos"]] = $line;
+        }
+        $this->temp_assembly = $array;
+        unset($array);
     }
 
     //создание файлов по плану заказов
@@ -566,6 +812,217 @@ class Plan
         return $orders_id;
 
     }
+
+
+
+    /**
+     * НАДО ПЕРЕПИСАТЬ!!!! - ПЕРЕПИСАН
+     */
+    function add_order_plan_new_new($id_category, $id_version, $id_month, $v_filtr)
+    {
+        $v_filtr = json_decode($v_filtr);
+
+        $arr_robot = $this->get_robot_inprocess_new();
+        $arr_robot = (isset($arr_robot)) ? $arr_robot : [];
+
+        //подготовка потребностей
+        $arr_kit_items = $this->get_kits();
+        $arr_need = [];
+        foreach ($arr_robot as $v => $c) {
+            if (isset($v)) {
+                if (!in_array($v, $v_filtr) && $v_filtr != []) {
+                    continue;
+                }
+                foreach ($this->get_check_in_process_by_version_new($v) as $chesk) {
+                    foreach ($arr_kit_items[$chesk['id_kit']] as $id_pos => $count) {
+                        $arr_need[$v][] = [
+                            'id_pos' => $id_pos,
+                            'count' => $count,
+                            'operation' => $chesk['operation'].' ('.$count.')',
+                        ];
+                    }
+                }
+            }
+        }
+        unset($arr_kit_items);
+
+        $arr_inneed = [];
+        foreach ($arr_need as $version => $positions) {
+            foreach ($positions as $pos) {
+                $count = $pos['count'];
+                $operation = $pos['operation'];
+                if (isset($arr_inneed[$version][$pos['id_pos']])) {
+                    $arr_inneed[$version][$pos['id_pos']]['count'] = $arr_inneed[$version][$pos['id_pos']]['count'] + $count;
+                    $arr_inneed[$version][$pos['id_pos']]['operation'][] = $operation;
+                } else {
+                    $arr_inneed[$version][$pos['id_pos']] = [
+                        'count' => $count,
+                        'operation' => [$operation],
+                    ];
+                }
+            }
+        }
+        unset($arr_need);
+
+        //собираем все позиции в заказе, пока без категории $_GET['id']
+        $orderss = $this->orders->get_orders_items_inprocess();
+        //создаем массив заказов [id_pos => [id_order => in_order]]
+        foreach ($orderss as $v) {
+            $in_order = $v['pos_count'] - $v['pos_count_finish'];
+            $pos_date = date('d.m.Y', strtotime($v['pos_date']));
+            if ($in_order > 0) {
+                $arr_orders[$v['pos_id']][$v['order_id']] = [
+                    'count' => $in_order,
+                    'date' => $pos_date,
+                ];
+            }
+        }
+        unset($orderss);
+
+        //создаем массив позиций по категории (без архивных и сборных позиций)
+        $arr_pos = $this->position->get_pos_in_category();
+        $arr_pos = (isset($arr_pos)) ? $arr_pos : [];
+        //подготовка массива
+        foreach ($arr_pos as $k => $v) {
+            //удаляем лишние поля
+            unset($arr_pos[$k]['longtitle']);
+            unset($arr_pos[$k]['version']);
+            unset($arr_pos[$k]['quant_robot']);
+            unset($arr_pos[$k]['summary']);
+            unset($arr_pos[$k]['apply']);
+            unset($arr_pos[$k]['ow']);
+            unset($arr_pos[$k]['img']);
+            unset($arr_pos[$k]['archive']);
+            unset($arr_pos[$k]['update_date']);
+            unset($arr_pos[$k]['update_user']);
+            //редактируем поля
+            $arr_pos[$k]['subcategory'] = $this->position->getSubcategoryes[$v['subcategory']]['title'];
+            //добавляем поля
+            $arr_pos[$k]['need'] = $v['total'] - $v['reserv'] - $v['min_balance']; //общая потребность
+            $arr_pos[$k]['orders'] = (isset($arr_orders[$k])) ? $arr_orders[$k] : [];
+            $arr_pos[$k]['stock'] = ($v['total'] > 0) ? $v['total'] : 0;
+            $arr_pos[$k]['order'] = array_sum (array_column($arr_pos[$k]['orders'], 'count'));
+            $arr_pos[$k]['inorder'] = ($arr_pos[$k]['need']<0 && (abs($arr_pos[$k]['need'])-$arr_pos[$k]['order'])>0)
+                ? abs($arr_pos[$k]['need']) - $arr_pos[$k]['order']
+                : 0;
+            //
+            $arr_pos[$k]['deleting_post'] = 0;
+            $incount = 0;
+            $operation = [];
+            foreach ($arr_robot as $version => $count) {
+                if (isset($arr_inneed[$version][$k])) {
+                    $incount = $incount + $arr_inneed[$version][$k]['count'];
+                    $operation = array_merge ($operation, $arr_inneed[$version][$k]['operation']);
+                }
+            }
+            //считаем занчения
+            $instock = ($arr_pos[$k]['stock'] - $incount >= 0) ? $incount : $arr_pos[$k]['stock'];
+            $inorder = ($incount - $instock - $arr_pos[$k]['order'] <= 0) ? 0 : $incount - $instock - $arr_pos[$k]['order'];
+            //присваеваем значения
+            $arr_pos[$k]['in']['inneed'] = $incount;
+            $arr_pos[$k]['in']['instock'] = $instock;
+            $arr_pos[$k]['in']['inorder'] = $inorder;
+            $arr_pos[$k]['in']['operation'] = $operation;
+        }
+
+
+        //обработка вхождений
+        $arr_pos = $this->prepare_array_items($arr_pos);
+
+        //удаляем лишнее
+        foreach ($arr_pos as $k => $v) {
+            if ($v['category'] == $id_category) {
+                $arr_pos[$k]['in']['operation'] = implode("<br>", $arr_pos[$k]['in']['operation']);
+                //определяем статус
+                $arr_pos[$k]['in']['status'] = 0;
+                if ($arr_pos[$k]['in']['inneed'] == $arr_pos[$k]['in']['instock'] && $arr_pos[$k]['in']['inneed'] != 0) {
+                    $arr_pos[$k]['in']['status'] = 3;
+                }
+                if ($arr_pos[$k]['in']['inneed'] != $arr_pos[$k]['in']['instock'] && $arr_pos[$k]['in']['inorder'] == 0) {
+                    $arr_pos[$k]['in']['status'] = 2;
+                }
+                if ($arr_pos[$k]['in']['inneed'] != $arr_pos[$k]['in']['instock'] && $arr_pos[$k]['in']['inorder'] != 0) {
+                    $arr_pos[$k]['in']['status'] = 1;
+                }
+                $arr_pos[$k]['deleting_post'] = $arr_pos[$k]['deleting_post'] + $arr_pos[$k]['in']['inneed'];
+                if (($id_version != 0 && $arr_pos[$k]['deleting_post']==0) || ($v_filtr != [] && $arr_pos[$k]['deleting_post']==0)) {
+                    unset($arr_pos[$k]);
+                    continue;
+                }
+            } else {
+                unset($arr_pos[$k]);
+            }
+        }
+        ksort($arr_pos);
+        unset($arr_inneed);
+        unset($arr_orders);
+
+        //предварительная обработка массива для создания заказа и файла
+        $arr_pos = (isset($arr_pos)) ? $arr_pos : [];
+        $result = [];
+        foreach ($arr_pos as $id => $pos) {
+
+            /*новая логика*/
+            if ($id_month != 0) {
+                //если потребность
+                $inorder = $pos['in']['inorder'];
+            } else {
+                //если склад
+                $inorder = $pos['inorder'];
+            }
+
+            if ($inorder == 0) {
+                continue;
+            }
+            $result[$pos['provider']][$id] = [
+                'id' => $id,
+                'vendor_code' => $pos['vendor_code'],
+                'title' => $pos['title'],
+                'count' => $inorder,
+                'price' => $pos['price'],
+            ];
+        }
+        unset($arr_pos);
+
+        //новое
+        $tmp_date = date('Y-m-d');
+
+        $order_date = date('d.m.Y',strtotime("$tmp_date +2 week")); //$tmp_date +1 month
+        $order_date = new DateTime($order_date);
+        $order_date = $order_date->format('Y-m-d H:i:s');
+
+        $orders_id = '';
+        foreach ($result as $key_provider => $orders) {
+            $json = [];
+            $json['0']['0'] = $id_category;
+            if ($key_provider == 0) {
+                $key_provider = 1;
+            }
+            $json['0']['1'] = $key_provider;
+            $i = 1;
+            foreach ($orders as $id_pos => $order) {
+                $json[$i]['0'] = $order['id'];
+                $json[$i]['1'] = $order['vendor_code'];
+                $json[$i]['2'] = $order['title'];
+                $json[$i]['3'] = $order['count'];
+                $json[$i]['5'] = $order['price'];
+                $json[$i]['6'] = $order_date;
+                $i++;
+            }
+            $orders_id = $orders_id . ', ' . $this->orders->add_order(json_encode($json),0,true);
+        }
+
+        //$date_folder = new DateTime($order_date);
+        //$date_folder = $date_folder->format('d_m_y');
+
+        $orders_id = substr($orders_id, 2);
+        return $orders_id;
+    }
+
+    /**
+     *
+     */
+
     /** ОПЕРАТИВНЫЙ ПЛАН **/
     //сбор роботов по дням
     function get_robot_operational_plan($days, $start = 0) {
@@ -665,7 +1122,7 @@ class Plan
         }
 
         $arr_kit_items = $this->get_kits_items();
-        $arr_assemble_items = $this->get_assemblyes_items();
+        $arr_assemble_items = $this->get_assemblyes_items();//plan->get_assemblyes_items();
 
         $res = [];
         foreach ($kits as $kit) {
@@ -725,7 +1182,7 @@ class Plan
 
         //собираем позиции
         $arr_kit_items = $this->get_kits_items();
-        $arr_assemble_items = $this->get_assemblyes_items();
+        $arr_assemble_items = $this->get_assemblyes_items();//plan->get_assemblyes_items();
 
         $pos = [];
         foreach ($kits as $id_kit => $count) {

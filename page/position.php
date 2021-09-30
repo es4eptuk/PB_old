@@ -4,8 +4,8 @@ class Position
     const STATUS_ACTIVE = 1;
     const STATUS_NOTACTIVE = 0;
     const ALLOWED = [
-        "Nomenclature" => [112,101,35,43,14,75],
-        "Assembly" => [112,101,35,43,14,75],
+        "Nomenclature" => [112,101,35,43,14,75,124],
+        "Assembly" => [112,101,35,43,14,75,124],
     ];
 
     private $query;
@@ -200,19 +200,22 @@ class Position
         return (isset($pos_array)) ? $pos_array : [];
     }
 
-    function get_pos_in_category($category, $subcategory = 0, $version = 0, $archive = 0)
+    function get_pos_in_category($category = 0, $subcategory = 0, $version = 0, $archive = 0)
     {
         $where = "";
+        if ($category != 0) {
+            $where .= " AND `category` = $category ";
+        }
         if ($subcategory != 0) {
-            $where .= " AND subcategory = $subcategory ";
+            $where .= " AND `subcategory` = $subcategory ";
         }
         if ($version != 0) {
-            $where .= " AND version = $version ";
+            $where .= " AND `version` = $version ";
         }
         if ($archive == 0) {
-            $where .= " AND archive = 0 ";
+            $where .= " AND `archive` = 0 ";
         }
-        $query = "SELECT * FROM pos_items WHERE category='$category'" . $where;
+        $query = "SELECT * FROM `pos_items` WHERE `id` > 0" . $where;
         $result = $this->pdo->query($query);
         while ($line = $result->fetch()) {
             $pos_array[$line['id']] = $line;
@@ -617,7 +620,7 @@ class Position
 
     function set_writeoff_kit0($version, $number, $kit, $check, $robot)
     {
-        $arr_assemble = $this->plan->get_assemblyes_items();
+        $arr_assemble = $this->plan->get_assemblyes_items();//plan->get_assemblyes_items();
         $arr_pos_kit = $this->get_pos_in_kit($kit);
 
         $info_kit = $this->get_info_kit($kit);

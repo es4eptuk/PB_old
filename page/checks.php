@@ -100,7 +100,7 @@ class Checks
         while ($line = $result->fetch()) {
             $robots_array[] = $line;
         }
-        $arr_kits = $this->plan->get_kits();
+        $arr_kits = $this->plan->get_kits();//plan->get_kits()
         foreach ($robots_array as &$value) {
             $id_robot = $value['id'];
             $query    = "INSERT INTO `check` (
@@ -159,7 +159,7 @@ class Checks
             ";
             $result = $this->pdo->query($query);
             $count = $result->fetch()['COUNT(*)'];
-            $arr_kits = $this->plan->get_kits();
+            $arr_kits = $this->plan->get_kits();//plan->get_kits()
             //убираем старое списание
             if ($old_kit != 0) {
                 foreach ($arr_kits[$old_kit] as $id_pos => $total) {
@@ -222,7 +222,7 @@ class Checks
             ";
             $result = $this->pdo->query($query);
             $count = $result->fetch()['COUNT(*)'];
-            $arr_kits = $this->plan->get_kits();
+            $arr_kits = $this->plan->get_kits();//plan->get_kits()
             //убираем старое списание
             if ($old_kit != 0) {
                 foreach ($arr_kits[$old_kit] as $id_pos => $total) {
@@ -301,7 +301,7 @@ class Checks
 
         $date    = date("Y-m-d H:i:s");
         $user_id = intval($_COOKIE['id']);
-        $arr_kits = $this->plan->get_kits();
+        $arr_kits = $this->plan->get_kits();//plan->get_kits()
         if ($kit != 0) {
             if ($checks_array[0]['id_kit'] != $kit) {
                 //списание старого резерва
@@ -880,7 +880,7 @@ class Checks
             $robots_array[] = $line;
         }
         if (isset($robots_array)) {
-            $arr_kits = $this->plan->get_kits();
+            $arr_kits = $this->plan->get_kits();//plan->get_kits()
             foreach ($robots_array as &$value) {
                 $id_robot = $value['id_robot'];
                 //echo $id_robot;
@@ -953,7 +953,7 @@ class Checks
                 ";
                 $result = $this->pdo->query($query);
                 $count = $result->fetch()['COUNT(*)'];
-                $arr_kits = $this->plan->get_kits();
+                $arr_kits = $this->plan->get_kits();//plan->get_kits()
                 $del_res = [];
                 foreach ($arr_kits[$kit] as $id_pos => $total) {
                     $del_res[$id_pos] = $total * $count;
@@ -1011,7 +1011,7 @@ class Checks
                 ";
                 $result = $this->pdo->query($query);
                 $count = $result->fetch()['COUNT(*)'];
-                $arr_kits = $this->plan->get_kits();
+                $arr_kits = $this->plan->get_kits();//plan->get_kits()
                 $del_res = [];
                 foreach ($arr_kits[$kit] as $id_pos => $total) {
                     $del_res[$id_pos] = $total * $count;
@@ -1042,7 +1042,7 @@ class Checks
         //выборка из бд чеклисты по ид опции
         $query = "SELECT robot_options_checks.check_id, robot_options_checks.id_option, robot_options_checks.check_title, robot_options_checks.check_category, robot_options_checks.id_kit, robot_options.id_option, robot_options.version, robot_options.title    FROM `robot_options_checks` JOIN robot_options ON robot_options_checks.id_option = robot_options.id_option WHERE robot_options_checks.id_option = $id";
         $result = $this->pdo->query($query);
-        $arr_kits = $this->plan->get_kits();
+        $arr_kits = $this->plan->get_kits();//plan->get_kits()
         //проходимся по чеклистам
         while ($line = $result->fetch()) {
             //print_r($line);
@@ -1102,7 +1102,7 @@ class Checks
         while ($line = $result->fetch()) {
             $arr[] = $line;
         }
-        $arr_kits = $this->plan->get_kits();
+        $arr_kits = $this->plan->get_kits();//plan->get_kits()
         //добавляем в базу чеклисты
         foreach ($arr as & $value) {
             $operation = $value['title']; //заголовок чеклиста
@@ -1132,7 +1132,7 @@ class Checks
         while ($line = $result->fetch()) {
             $arr[] = $line;
         }
-        $arr_kits = $this->plan->get_kits();
+        $arr_kits = $this->plan->get_kits();//plan->get_kits()
         foreach ($arr as $value) {
             if ($value['id_kit'] != 0) {
                 $this->sklad->del_reserv($arr_kits[$value['id_kit']]);
@@ -1190,7 +1190,7 @@ class Checks
     }
     //собрать частное по версии
     function get_pos_by_subversion($subversion) {
-        $arr_kit_items = $this->plan->get_kits();
+        $arr_kit_items = $this->plan->get_kits(); //plan->get_kits()
         $query = "SELECT * FROM `check_items` WHERE `subversion` = $subversion AND `kit` != 0";
         $result = $this->pdo->query($query);
         $arr_pos = [];
@@ -1208,7 +1208,7 @@ class Checks
     }
     //
     function get_mass($sub) {
-        $arr_kit_items = $this->plan->get_kits();
+        $arr_kit_items = $this->plan->get_kits(); //plan->get_kits()
         return true;
     }
     /** КОНЕЦ ДЛЯ ВЫБОРА ПОДВЕРСИИ **/

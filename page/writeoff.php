@@ -457,7 +457,7 @@ class Writeoff
     //информация по списаниям для бухгалтера
     function get_writeoff_on_robot($robot) {
         //информация по сборкам
-        $arr_assemble = $this->plan->get_assemblyes_items();
+        $arr_assemble = $this->plan->get_assemblyes_items();//plan->get_assemblyes_items();
         //добавляем инфу по позициям
         $this->query = "SELECT * FROM `pos_items`";
         $result = $this->pdo->query($this->query);
