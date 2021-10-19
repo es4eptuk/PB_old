@@ -316,7 +316,7 @@ $categoryes = $position->getCategoryes;
 
                       //вывод Потребности
                       $color = $color_statuses[$v['in']['status']];
-                      $checks = $v['in']['operation'];
+                      $checks = str_replace("\"", "'", $v['in']['operation']);
                       $toorder = ($v['in']['inorder'] != 0) ? "<br>(".$v['in']['inorder'].")" : "";
                       echo '
                         <td>

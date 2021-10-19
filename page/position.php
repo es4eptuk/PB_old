@@ -4,8 +4,8 @@ class Position
     const STATUS_ACTIVE = 1;
     const STATUS_NOTACTIVE = 0;
     const ALLOWED = [
-        "Nomenclature" => [112,101,35,43,14,75,124,130],
-        "Assembly" => [112,101,35,43,14,75,124,130],
+        "Nomenclature" => [112,101,35,43,14,75,124,130,134],
+        "Assembly" => [112,101,35,43,14,75,124,130,134],
     ];
 
     private $query;
