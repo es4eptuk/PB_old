@@ -32,6 +32,14 @@ class Orders
             'email' => 'k.alferova@promo-bot.ru',
             'signature' => '/img/podpis_alferova.png',
         ],
+        134 => [
+            'role' => 'Специалист отдела закупок ООО "ПРОМОБОТ"',
+            'name' => 'Тарантина Наталья',
+            'mobile' => '+7-908-256-16-66',
+            'phone' => '+7(342)257-80-85 доб.409',
+            'email' => 'n.tarantina@promo-bot.ru',
+            'signature' => '/img/podpis_tarantina.png',
+        ],
         112 => [
             'role' => 'Специалист отдела закупок ООО "ПРОМОБОТ"',
             'name' => 'Дарья Драчева',
