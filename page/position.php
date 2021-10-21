@@ -1706,7 +1706,7 @@ class Position
     function get_file_pos_item($category_id = null, $subcategory_id = null)
     {
         $pos_items = [];
-        $where = "WHERE `id` > 0"; //`archive` = 0";
+        $where = "WHERE `archive` = 0";
         if ($category_id != null) {
             $where .= " AND `category` = $category_id";
         }
