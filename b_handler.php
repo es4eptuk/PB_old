@@ -12,6 +12,7 @@ $no_lid = [
     "личность" => ["personeco","personality","pèsonalite","pribadine","pagkatao","personalidad","tuakiri","personaliti","toetra","kepribadian","umunthu","hali","utu","shakhsiyadda","botho","eniyan","ụdị onye","ubuntu","persoonlikheid","شخصیت","אישי","شخصية","個性","cwm pwm","व्यक्तित्व","شخصیت","shaxsiyat","kişilik","వ్యక్తిత్వం","ஆளுமை","บุคลิกภาพ","шахсият","පෞරුෂත්වය","व्यक्तित्व","хувийн","व्यक्तिमत्व","വ്യക്തിത്വം","ບຸກຄະລິກກະ","បុគ្គលិកលក្ខណៈ","성격","个性","個性","ವ್ಯಕ್ತಿತ್ವದ","жеке адам","વ્યક્તિત્વ","პიროვნება","nhân cách","ပုဂ္ဂိုလ်","ব্যক্তিত্ব","անհատականություն","şəxsiyyət","isiksus","personlighet","osobnost","osoba","personnalité","persoonallisuus","особистість","osebnost","osobnosť","личност","personalitate","personalidade","osobowość","personlighet","persönlichkeit","personalità","личност","asmenybė","personība","personalitat","personalità","personalidad","persónuleiki","pearsantacht","פּערזענלעכקייט","personlighed","προσωπικότητα","persoonlijkheid","personalidade","személyiség","personoliaeth","ličnost","индивидуалност","асобу","nortasuna","personality","personalitet"],
     "доп" => ["facial","person","identity","лица","voice","rights"]
 ];
+$no_field = ["formid","formname","utm_content","utm_campaign", "utm_source", "utm_medium","utm_term","roistat_url","cookies","COOKIES","url","start_url","order_url","submit_url"];
 $no_lid_bool = false;
 //
 
@@ -27,7 +28,8 @@ if ($rest_key == REST_KEY) {
             $post[$name] = $value;
 
             //ВРЕМЕННО
-            if ($no_lid_bool === false) {
+            $no_name_bool = in_array($name, $no_field);
+            if ($no_lid_bool === false && $no_name_bool === false) {
                 foreach ($no_lid as $w) {
                     foreach ($w as $w0) {
                         if (stripos($value, $w0) !== false) {
