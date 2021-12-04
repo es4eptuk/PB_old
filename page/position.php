@@ -13,6 +13,7 @@ class Position
     private $writeoff;
     private $log;
     private $robots;
+    private $plan;
 
     //списки
     public $getCategoryes;
@@ -137,7 +138,80 @@ class Position
             return $cat_array;
     }*/
 
+    /**
+     * @param $category
+     * @return array
+     * Привязка позиции к комплектам
+     */
+    function get_pos_versions()
+    {
+        $query = "SELECT * FROM `check_items` WHERE `kit` != 0";
+        $result = $this->pdo->query($query);
+        $checks = [];
+        while ($line = $result->fetch()) {
+            $checks[$line['id']] = $line;
+        }
+        $kits = [];
+        foreach ($checks as $check) {
+            if (array_key_exists($check['kit'], $kits)) {
+                $kits[$check['kit']] = array_merge($kits[$check['kit']], [$check['version']]);
+            } else {
+                $kits[$check['kit']] = [$check['version']];
+            }
+            $par_kits = $this->get_all_kits_by_id($check['kit']);
+            if ($par_kits != null) {
+                foreach ($par_kits as $kit) {
+                    if (array_key_exists($kit['id_kit'], $kits)) {
+                        $kits[$kit['id_kit']] = array_merge($kits[$kit['id_kit']], [$check['version']]);
+                    } else {
+                        $kits[$kit['id_kit']] = [$check['version']];
+                    }
+                }
+            }
+        }
+        unset($checks);
+        foreach ($kits as $id => $kit) {
+            $kits[$id] = array_unique($kit);
+        }
 
+        $query = "SELECT * FROM `pos_kit_items` JOIN `pos_items` ON `pos_items`.`id` = `pos_kit_items`.`id_pos`";
+        $result = $this->pdo->query($query);
+        $kits_pos_items = [];
+        while ($line = $result->fetch()) {
+            if (array_key_exists($line['id_kit'], $kits)) {
+                $kits_pos_items[$line['id_kit']][$line['id']] = $line;
+            }
+        }
+
+        $assemblyes = $this->plan->get_assemblyes_items_new();
+        $result = [];
+        foreach ($kits_pos_items as $id_kit => $items) {
+            foreach ($items as $item) {
+                if (array_key_exists($item['id'], $result)) {
+                    $result[$item['id']] = array_merge($result[$item['id']], $kits[$id_kit]);
+                } else {
+                    $result[$item['id']] = $kits[$id_kit];
+                }
+                if ($item['assembly'] != 0) {
+                    foreach ($assemblyes[$item['assembly']] as $item_dop => $count) {
+                        if (array_key_exists($item_dop, $result)) {
+                            $result[$item_dop] = array_merge($result[$item_dop], $kits[$id_kit]);
+                        } else {
+                            $result[$item_dop] = $kits[$id_kit];
+                        }
+                    }
+                }
+            }
+        }
+        unset($kits);
+        unset($kits_pos_items);
+        foreach ($result as $pos_id => $vers) {
+            $result[$pos_id] = array_unique($vers);
+        }
+
+        if (isset($result))
+            return $result;
+    }
 
     /**
      * @param $category
@@ -269,6 +343,22 @@ class Position
         $result = $this->pdo->query($query);
         while ($line = $result->fetch()) {
             $pos_array[] = $line;
+        }
+
+
+        if (isset($pos_array['0'])) {
+            $arr_ver = $this->get_pos_versions();
+            if (array_key_exists($pos_array['0']['id'], $arr_ver)) {
+                $versions = $arr_ver[$pos_array['0']['id']];
+                $text_versions = [];
+                foreach ($versions as $version) {
+                    $text_versions[] = $this->robots->getEquipment[$version]['title'];
+                }
+                $pos_array['0']['versions'] = implode(", ", $text_versions);
+            } else {
+                $pos_array['0']['versions'] = "";
+            }
+
         }
 
         return (isset($pos_array)) ? $pos_array['0']: [];

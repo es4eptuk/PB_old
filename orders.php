@@ -86,15 +86,14 @@ if (isset($_POST['print'])) {
                   <th></th>
                   <th>Номер</th>
                   <th>Дата составления</th>
-                  
-                  <th>Версия робота</th>
+                  <!--<th>Версия робота</th>-->
                   <th>Контрагент</th>
                   <th>Срок поставки</th>
                   <th>% выполнения</th>
                   <th>Стоимость, руб</th>
                   <th>Статус</th>
                   <th>Просрок, дней</th>
-                  <th>Оплата</th>
+                  <!--<th>Оплата</th>-->
                   <th>Ответственный</th>
                   <th></th>
                   <th></th>
@@ -143,8 +142,7 @@ if (isset($_POST['print'])) {
                         <td>".$auto."</td>
                         <td>".$pos['order_id']."</td>
                         <td>".$order_date->format('d.m.Y')."</td>
-                        
-                        <td>".$pos['version']."</td>
+                        <!--<td>".$pos['version']."</td>-->
                         <td>".$provider['title'].", ".$provider['type']."</td>
                         <td>".$order_delivery->format('Y.m.d')."</td>
                         <td>".$pos['order_completion']."</td>
@@ -152,7 +150,7 @@ if (isset($_POST['print'])) {
                         <td>".$pos['order_status']."</td>
                         <td>".$pos['order_prosecution']. "</td>
                        
-                        <td><div style='text-align: center;'><input type='checkbox' data-id='" .$pos['order_id']."' class='payment' ".$checkPayment." ></div></td>
+                        <!--<td><div style='text-align: center;'><input type='checkbox' data-id='" .$pos['order_id']."' class='payment' ".$checkPayment." ></div></td>-->
                         <td>".$user_info['user_name']."</td>
                          
                         <td><i class='fa fa-2x fa-copy' style='cursor: pointer;' data-id='".$pos['order_id']."'></i></td>

@@ -117,6 +117,7 @@ include 'include/class.inc.php';
                                       <th>Сумма</th>
                                       <th>Срок поставки</th>
                                       <th></th>
+                                      <th>Версии</th>
                                       <th>Удаление</th>
                                     </tr>
 
@@ -377,6 +378,7 @@ var category1 = "---";
                           <span style="position: absolute;">' + date + '</span><input  type="text" class="form-control pull-right date_inp datepicker" style="position: relative;   text-align: center;" placeholder="' + date + '" value="' + date + '" onchange="textData($(this))"> \
                         </div></td> \
                         <td><div id="icon_' + pos_info['id'] + '" class="btn_get_assembly"></div></td> \
+                        <td>' + pos_info['versions'] + '</td> \
                         <td><i class="fa fa-2x fa-remove" style="cursor: pointer;"></i></td> \
                         </tr>');
 

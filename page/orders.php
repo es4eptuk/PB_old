@@ -6,6 +6,7 @@ class Orders
     private $log;
 
     private $position;
+    private $robots;
 
     const CONTACTS = [
         35 => [
@@ -74,10 +75,11 @@ class Orders
 
     function init()
     {
-        global $log, $position;
+        global $log, $position, $robots;
 
         $this->log = $log; //new Log;
         $this->position = $position;
+        $this->robots = $robots;
         //$this -> robot = new Robots;
     }
 
@@ -499,6 +501,24 @@ class Orders
             }
               $pos_array[] = $line;
         }
+
+        if (isset($pos_array)) {
+            $arr_ver = $this->position->get_pos_versions();
+            foreach ($pos_array as $id => $pos) {
+                if (array_key_exists($pos['id'], $arr_ver)) {
+                    $versions = $arr_ver[$pos['id']];
+                    $text_versions = [];
+                    foreach ($versions as $version) {
+                        $text_versions[] = $this->robots->getEquipment[$version]['title'];
+                    }
+                    $pos_array[$id]['versions'] = implode(", ", $text_versions);
+                } else {
+                    $pos_array[$id]['versions'] = "";
+                }
+            }
+        }
+
+
         if (isset($pos_array))
             return $pos_array;
     }

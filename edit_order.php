@@ -193,6 +193,7 @@ $order_date = $order_date->format('d.m.Y');
                                       <th>Цена</th>
                                       <th>Сумма</th>
                                       <th>Срок поставки</th>
+                                      <th>Версии</th>
                                       <th style="text-align: center;" >Удаление</th>
                                     </tr>
                                    
@@ -212,7 +213,7 @@ $order_date = $order_date->format('d.m.Y');
                         <td>'.$value['title'].'</td> 
                         <td class="quant"><span style="position: absolute;">'.$value['pos_count'].'</span><input type="text" class="form-control quant_inp"  style="position: relative; width: 55px; text-align: center;" placeholder="'.$value['pos_count'].'" value="'.$value['pos_count'].'"></td> 
                         <td class="finish">'.$value['pos_count_finish'].'</td> 
-                        <td >'.$value['pos_return'].'</td> 
+                        <td>'.$value['pos_return'].'</td> 
                         <td class="price">'.$value['price'].'</td> 
                         <td class="sum">'.$value['price']*$value['pos_count'].'</td> 
                         <td><div class="input-group date" style="width: 135px;"> 
@@ -220,7 +221,8 @@ $order_date = $order_date->format('d.m.Y');
                             <i class="fa fa-calendar"></i> 
                           </div> 
                           <span style="position: absolute;">'.$pos_date.'</span><input type="text" class="form-control pull-right date_inp datepicker" style="position: relative;   text-align: center;" placeholder="'.$pos_date.'" value="'.$pos_date.'" onchange="textData($(this))"> 
-                        </div></td> 
+                        </div></td>
+                        <td>'.$value['versions'].'</td> 
                         <td style="text-align: center;" ><i class="fa fa-2x fa-remove" style="cursor: pointer;"></i></td> 
                         </tr>
                         ';
@@ -401,6 +403,7 @@ var category1 = "---";
                               </div> \
                               <span style="position: absolute;">' + date + '</span><input type="text" class="form-control pull-right date_inp datepicker" style="position: relative; text-align: center;" placeholder="' + date + '" value="' + date + '" onchange="textData($(this))"> \
                               </div></td> \
+                              <td>'+pos_info['versions']+'</td> \
                               <td style="text-align: center;"><i class="fa fa-2x fa-remove" style="cursor: pointer;"></i></td> \
                               </tr>'
                           );
