@@ -192,7 +192,7 @@ class Position
                 } else {
                     $result[$item['id']] = $kits[$id_kit];
                 }
-                if ($item['assembly'] != 0) {
+                if ($item['assembly'] != 0 && array_key_exists($item['assembly'], $assemblyes)) {
                     foreach ($assemblyes[$item['assembly']] as $item_dop => $count) {
                         if (array_key_exists($item_dop, $result)) {
                             $result[$item_dop] = array_merge($result[$item_dop], $kits[$id_kit]);
