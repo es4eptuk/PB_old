@@ -479,6 +479,98 @@ class Plan
     }
 
     //перебор массива со вставкой сборок
+    /* НЕ ВЫЧИТАЕМ ИЗ ЗАКАЗ */
+    function prepare_array_items($arr)
+    {
+        $this->arr_plan = $arr;
+        unset($arr);
+        $this->set_assemblyes_plan();
+        $this->arr_plan_dop = [];
+
+        foreach ($this->arr_plan as $pos_id => $item) {
+            if ($item['assembly'] != 0 && $item['need'] < 0) {
+                $this->add_in_arr_plan($item['assembly'], abs($item['need']), $item['in']['inneed'] - $item['in']['instock'], $pos_id, $item['in']['inneed'] - $item['in']['instock']);
+            }
+        }
+        foreach ($this->arr_plan_dop as $pos_id => $item) {
+            if (array_key_exists($pos_id, $this->arr_plan)) {
+                $this->arr_plan[$pos_id]['need'] = $item['need'];
+                $incount = $item['in']['inneed'];
+                $this->arr_plan[$pos_id]['inorder'] = ($this->arr_plan[$pos_id]['need']<0 && (abs($this->arr_plan[$pos_id]['need'])-$this->arr_plan[$pos_id]['order'])>0)
+                    ? abs($this->arr_plan[$pos_id]['need']) - $this->arr_plan[$pos_id]['order']
+                    : 0;
+                //считаем занчения
+                $instock = ($this->arr_plan[$pos_id]['stock'] - $incount >= 0) ? $incount : $this->arr_plan[$pos_id]['stock'];
+                $inorder = ($incount - $instock - $this->arr_plan[$pos_id]['order'] <= 0) ? 0 : $incount - $instock - $this->arr_plan[$pos_id]['order'];
+                //присваеваем значения
+                $this->arr_plan[$pos_id]['in']['inneed'] = $incount;
+                $this->arr_plan[$pos_id]['in']['instock'] = $instock;
+                $this->arr_plan[$pos_id]['in']['inorder'] = $inorder;
+                $this->arr_plan[$pos_id]['in']['operation'] = array_merge($this->arr_plan[$pos_id]['in']['operation'], $item['operation']);
+            }
+        }
+        $arr = $this->arr_plan;
+        unset($this->arr_plan);
+        unset($this->arr_plan_dop);
+        unset($this->temp_assembly);
+        return $arr;
+    }
+    function add_in_arr_plan($id_assembly, $count, $incount, $pos_out_id, $col)
+    {
+        $assembly_items = $this->temp_assembly[$id_assembly];
+        foreach ($assembly_items as $pos_id => $item) {
+
+            $need = 0;
+            $in = [
+                'inneed' => 0,
+                'instock' => 0,
+                'inorder' => 0,
+            ];
+            $inorder_old = 0;
+            $ininorder_old = 0;
+            if (array_key_exists($pos_id, $this->arr_plan)) {
+                $need = $this->arr_plan[$pos_id]['need'];
+                $in = $this->arr_plan[$pos_id]['in'];
+                $inorder_old = $this->arr_plan[$pos_id]['inorder'];;
+                $ininorder_old = $this->arr_plan[$pos_id]['in']['inorder'];
+                unset($in['operation']);
+            }
+            if (array_key_exists($pos_id, $this->arr_plan_dop)) {
+                $need_dop = $this->arr_plan_dop[$pos_id]['need'];
+                $in_dop = $this->arr_plan_dop[$pos_id]['in'];
+                $inorder_dop_old = $this->arr_plan_dop[$pos_id]['inorder'];
+                $ininorder_dop_old = $this->arr_plan_dop[$pos_id]['in']['inorder'];
+            } else {
+                $need_dop = $need;
+                $in_dop = $in;
+                $inorder_dop_old = $inorder_old;
+                $ininorder_dop_old = $ininorder_old;
+            }
+            $need_dop = $need_dop - $item['count'] * $count;
+            $inorder_dop = ($need_dop<0 && (abs($need_dop)-$this->arr_plan[$pos_id]['order'])>0)
+                ? abs($need_dop) - $this->arr_plan[$pos_id]['order']
+                : 0;
+
+            $incount_dop = $in_dop['inneed'] + $item['count'] * $incount;
+            //считаем занчения
+            $instock_dop = ($this->arr_plan[$pos_id]['stock'] - $incount_dop >= 0) ? $incount_dop : $this->arr_plan[$pos_id]['stock'];
+            $ininorder_dop = ($incount_dop - $instock_dop - $this->arr_plan[$pos_id]['order'] <= 0) ? 0 : $incount_dop - $instock_dop - $this->arr_plan[$pos_id]['order'];
+            //присваеваем значения
+            $in_dop['inneed'] = $incount_dop;
+            $in_dop['instock'] = $instock_dop;
+            $in_dop['inorder'] = $ininorder_dop;
+
+            $this->arr_plan_dop[$pos_id]['need'] = $need_dop;
+            $this->arr_plan_dop[$pos_id]['inorder'] = $inorder_dop;
+            $this->arr_plan_dop[$pos_id]['in'] = $in_dop;
+            $this->arr_plan_dop[$pos_id]['operation'][] = $this->arr_plan[$pos_out_id]['vendor_code'].' '.$this->arr_plan[$pos_out_id]['title'].' ('.$col.'*'.$item['count'].')';
+
+            if ($item['assembly'] != 0 && $need_dop < 0) {
+                $this->add_in_arr_plan($item['assembly'], abs($need_dop), $incount_dop - $instock_dop, $pos_id, $incount_dop - $instock_dop);
+            }
+        }
+    }
+    /* ВЫЧИТАЕМ ИЗ ЗАКАЗА
     function prepare_array_items($arr)
     {
         $this->arr_plan = $arr;
@@ -569,6 +661,7 @@ class Plan
             }
         }
     }
+    */
     function set_assemblyes_plan()
     {
         $query = "SELECT * FROM `pos_assembly_items` JOIN `pos_items` ON `pos_assembly_items`.`id_pos` = `pos_items`.`id` WHERE `pos_items`.`archive` = 0 ";
