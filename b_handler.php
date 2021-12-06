@@ -28,12 +28,16 @@ if ($rest_key == REST_KEY) {
             $post[$name] = $value;
 
             //ВРЕМЕННО
-            $no_name_bool = in_array($name, $no_field);
-            if ($no_lid_bool === false && $no_name_bool === false) {
-                foreach ($no_lid as $w) {
-                    foreach ($w as $w0) {
-                        if (stripos($value, $w0) !== false) {
-                            $no_lid_bool = true;
+            if ($name == 'humanoid_project' && $value == 'Yes') {
+                break;
+            } else {
+                $no_name_bool = in_array($name, $no_field);
+                if ($no_lid_bool === false && $no_name_bool === false) {
+                    foreach ($no_lid as $w) {
+                        foreach ($w as $w0) {
+                            if (stripos($value, $w0) !== false) {
+                                $no_lid_bool = true;
+                            }
                         }
                     }
                 }
