@@ -406,13 +406,21 @@ class Int1C
     //ИНВЕНТАРИЗАЦИЯ
     function c_invent_from_1c_leftovers()
     {
+        $query = "SELECT * FROM `pos_items`";
+        $result = $this->pdo->query($query);
+        $pos_items = [];
+        while ($line = $result->fetch()) {
+            $pos_items[$line['id']] = $line;
+        }
         $nomenclatures = $this->c_get_leftover_for_position();
         if ($nomenclatures == []) {
             return ['result' => false, 'err' => 'Сначала заполните номенклатуру!'];
         }
         foreach ($nomenclatures as $id => $nomenclature) {
             $new_total = $nomenclature['storage'] + $nomenclature['transfer'];
-            $this->position->invent($id, $new_total, "ОСТАТКИ ИЗ 1С", true);
+            if ($new_total != $pos_items[$id]['total']) {
+                $this->position->invent($id, $new_total, "ОСТАТКИ ИЗ 1С", true);
+            }
         }
         return ['result' => true, 'err' => 'Остатки успешно загружены в DB!'];
     }
