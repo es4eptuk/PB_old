@@ -418,7 +418,7 @@ class Int1C
         }
         foreach ($nomenclatures as $id => $nomenclature) {
             $new_total = $nomenclature['storage'] + $nomenclature['transfer'];
-            if ($new_total != $pos_items[$id]['total']) {
+            if (array_key_exists($id, $pos_items) && $new_total != $pos_items[$id]['total']) {
                 $this->position->invent($id, $new_total, "ОСТАТКИ ИЗ 1С", true);
             }
         }
