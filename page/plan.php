@@ -339,10 +339,15 @@ class Plan
         $result = $this->pdo->query($query);
         $kits = [];
         while ($line = $result->fetch()) {
-            $kits[$line['id_kit']][$line['id_pos']] = [
-                'count' => $line['count'],
-                'assembly' => $line['assembly'],
-            ];
+            if (isset($kits[$line['id_kit']][$line['id_pos']])) {
+                $tmp = $kits[$line['id_kit']][$line['id_pos']]['count'];
+                $kits[$line['id_kit']][$line['id_pos']]['count'] = $tmp + $line['count'];
+            } else {
+                $kits[$line['id_kit']][$line['id_pos']] = [
+                    'count' => $line['count'],
+                    'assembly' => $line['assembly'],
+                ];
+            }
         }
         return $kits;
     }
