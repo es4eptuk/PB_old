@@ -41,6 +41,14 @@ class Orders
             'email' => 'n.tarantina@promo-bot.ru',
             'signature' => '/img/podpis_tarantina.png',
         ],
+        137 => [
+            'role' => 'Специалист отдела закупок ООО "ПРОМОБОТ"',
+            'name' => 'Арсланова Юлия',
+            'mobile' => '+7-922-384-31-47',
+            'phone' => '+7(342)257-80-85 доб.408',
+            'email' => 'yu.arslanova@promo-bot.ru',
+            'signature' => '/img/podpis_arslanova.png',
+        ],
         112 => [
             'role' => 'Специалист отдела закупок ООО "ПРОМОБОТ"',
             'name' => 'Дарья Драчева',
