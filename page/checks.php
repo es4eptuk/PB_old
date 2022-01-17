@@ -440,7 +440,7 @@ class Checks
             $comment      = " Робот  #" . $number . "(" . $robot_name . ") упакован и готов к отправке";
             $telegram_str = $icon . $comment;
             $this->telegram->sendNotify("sale", $telegram_str);
-            $this->mail->send('Екатерина Старцева',  'startceva@promo-bot.ru', 'Списание на робота '.$number . '(' . $robot_name . ')', 'Пройдите по ссылке для просмотра списания https://db.promo-bot.ru/new/edit_writeoff_on_robot.php?id='.$robot);
+            $this->mail->send('Наталья Цыплякова',  'n.tsyplyakova@promo-bot.ru', 'Списание на робота '.$number . '(' . $robot_name . ')', 'Пройдите по ссылке для просмотра списания https://db.promo-bot.ru/new/edit_writeoff_on_robot.php?id='.$robot);
 
         }
         $query = "SELECT * FROM robots WHERE id='$robot'";
